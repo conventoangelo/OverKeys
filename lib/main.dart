@@ -17,7 +17,7 @@ void main() async {
   windowManager.waitUntilReadyToShow(windowOptions, () async {
     await windowManager.setAlwaysOnTop(true);
     await windowManager.setAsFrameless();
-    await windowManager.setOpacity(0.8);
+    await windowManager.setOpacity(0.6);
     await windowManager.show();
     // await windowManager.setIgnoreMouseEvents(true);
   });
@@ -95,15 +95,19 @@ class KeyboardScreen extends StatelessWidget {
         decoration: BoxDecoration(
           color: const Color.fromARGB(255, 119, 171, 255),
           border: Border.all(
-            color: Colors.black,
-            width: 2.0,
+            color: const Color.fromARGB(255, 0, 67, 174),
+            width: 2,
           ),
-          borderRadius: BorderRadius.circular(10.0),
+          borderRadius: BorderRadius.circular(12.0),
         ),
         child: Center(
           child: Text(
             key,
-            style: const TextStyle(color: Colors.black, fontSize: 18),
+            style: const TextStyle(
+              color: Colors.black,
+              fontSize: 18,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ),
       ),
