@@ -10,6 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   window_manager: ^0.4.2
+  tray_manager: ^0.2.3
 
 dev_dependencies:
   flutter_test:
@@ -26,3 +27,6 @@ flutter:
           weight: 500
         - asset: assets/fonts/GeistMono-Bold.ttf
           weight: 700
+
+  assets:
+    - assets/images/

@@ -1,5 +1,7 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
+import 'package:tray_manager/tray_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,16 +19,90 @@ void main() async {
   windowManager.waitUntilReadyToShow(windowOptions, () async {
     await windowManager.setAlwaysOnTop(true);
     await windowManager.setAsFrameless();
+    await windowManager.setIgnoreMouseEvents(false);
     await windowManager.setOpacity(0.6);
     await windowManager.show();
-    // await windowManager.setIgnoreMouseEvents(true);
   });
 
   runApp(const MainApp());
 }
 
-class MainApp extends StatelessWidget {
+class MainApp extends StatefulWidget {
   const MainApp({super.key});
+
+  @override
+  State<MainApp> createState() => _MainAppState();
+}
+
+class _MainAppState extends State<MainApp> with TrayListener {
+  bool _ignoreMouseEvents = false;
+  bool _isWindowVisible = true;
+
+  @override
+  void initState() {
+    trayManager.addListener(this);
+    super.initState();
+    _setupTray();
+  }
+
+  @override
+  void dispose() {
+    trayManager.removeListener(this);
+    super.dispose();
+  }
+
+  Future<void> _setupTray() async {
+    String iconPath = Platform.isWindows
+        ? 'assets/images/tray_icon.ico'
+        : 'assets/images/tray_icon.png';
+
+    await trayManager.setIcon(iconPath);
+    trayManager.setToolTip('OverKeys');
+    trayManager.setContextMenu(Menu(items: [
+      MenuItem.checkbox(
+        checked: true,
+        key: 'toggle_mouse_events',
+        label: 'Move',
+      ),
+      MenuItem.separator(),
+      MenuItem(
+        key: 'exit',
+        label: 'Exit',
+      ),
+    ]));
+  }
+
+  @override
+  void onTrayMenuItemClick(MenuItem menuItem) {
+    switch (menuItem.key) {
+      case 'toggle_mouse_events':
+        setState(() {
+          _ignoreMouseEvents = !_ignoreMouseEvents;
+          menuItem.checked = !_ignoreMouseEvents;
+          windowManager.setIgnoreMouseEvents(_ignoreMouseEvents);
+          windowManager.setOpacity(0.6); // TODO: Fix opacity bug
+        });
+      case 'exit':
+        windowManager.close();
+    }
+  }
+
+  @override
+  void onTrayIconMouseDown() {
+    setState(() {
+      _isWindowVisible = !_isWindowVisible;
+    });
+    if (_isWindowVisible) {
+      windowManager.show();
+    } else {
+      windowManager.hide();
+    }
+  }
+
+  @override
+  void onTrayIconRightMouseDown() {
+    trayManager.popUpContextMenu();
+  }
 
   @override
   Widget build(BuildContext context) {
