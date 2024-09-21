@@ -1,7 +1,58 @@
 import 'dart:io';
+import 'dart:ffi' hide Size;
+import 'dart:isolate';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:tray_manager/tray_manager.dart';
+import 'package:win32/win32.dart';
+import 'package:ffi/ffi.dart';
+
+final keyboardProc = Pointer.fromFunction<HOOKPROC>(lowLevelKeyboardProc, 0);
+late int hookId;
+SendPort? sendPort;
+
+int lowLevelKeyboardProc(
+  int nCode,
+  int wParam,
+  int lParam,
+) {
+  if (nCode >= 0 && wParam == WM_KEYDOWN || wParam == WM_KEYUP) {
+    final keyStruct = Pointer<KBDLLHOOKSTRUCT>.fromAddress(lParam).ref;
+    int key = keyStruct.vkCode;
+    bool isKeyDown = (wParam == WM_KEYDOWN);
+
+    sendPort?.send([key, isKeyDown]);
+    if (kDebugMode) {
+      print('Key Pressed: $key');
+      print('Key State: $isKeyDown');
+    }
+  }
+  return CallNextHookEx(hookId, nCode, wParam, lParam);
+}
+
+void setHook(SendPort port) {
+  sendPort = port;
+  hookId = SetWindowsHookEx(WINDOWS_HOOK_ID.WH_KEYBOARD_LL, keyboardProc,
+      GetModuleHandle(nullptr), 0);
+  if (hookId == 0) {
+    if (kDebugMode) {
+      print('Failed to install hook.');
+    }
+    exit(1);
+  }
+  final msg = calloc<MSG>();
+  while (GetMessage(msg, NULL, 0, 0) != 0) {
+    TranslateMessage(msg);
+    DispatchMessage(msg);
+    sendPort?.send(msg);
+  }
+  calloc.free(msg);
+}
+
+void unhook() {
+  UnhookWindowsHookEx(hookId);
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,18 +88,54 @@ class MainApp extends StatefulWidget {
 class _MainAppState extends State<MainApp> with TrayListener {
   bool _ignoreMouseEvents = false;
   bool _isWindowVisible = true;
+  final Map<int, bool> _keyPressStates = {};
 
   @override
   void initState() {
-    trayManager.addListener(this);
     super.initState();
+    trayManager.addListener(this);
     _setupTray();
+    listenForKeyEvents();
   }
 
   @override
   void dispose() {
     trayManager.removeListener(this);
+    unhook();
     super.dispose();
+  }
+
+  void listenForKeyEvents() {
+    ReceivePort receivePort = ReceivePort();
+    if (kDebugMode) {
+      print('listenForKeyEvents called');
+    }
+    Isolate.spawn(setHook, receivePort.sendPort).then((_) {
+      if (kDebugMode) {
+        print('Isolate spawned successfully');
+      }
+    }).catchError((error) {
+      if (kDebugMode) {
+        print('Error spawning Isolate: $error');
+      }
+    });
+
+    receivePort.listen((message) {
+      if (kDebugMode) {
+        print('Received message: $message');
+      }
+      setState(() {
+        if (message[0] is int) {
+          int key = message[0];
+          bool isPressed = message[1];
+
+          _keyPressStates[key] = isPressed;
+        }
+        // if (kDebugMode) {
+        //   print('Key press state updated: $_keyPressStates');
+        // }
+      });
+    });
   }
 
   Future<void> _setupTray() async {
@@ -118,8 +205,8 @@ class _MainAppState extends State<MainApp> with TrayListener {
           },
           child: Container(
             color: Colors.transparent,
-            child: const Center(
-              child: KeyboardScreen(),
+            child: Center(
+              child: KeyboardScreen(keyPressStates: _keyPressStates),
             ),
           ),
         ),
@@ -130,7 +217,9 @@ class _MainAppState extends State<MainApp> with TrayListener {
 }
 
 class KeyboardScreen extends StatelessWidget {
-  const KeyboardScreen({super.key});
+  final Map<int, bool> keyPressStates;
+
+  const KeyboardScreen({super.key, required this.keyPressStates});
 
   @override
   Widget build(BuildContext context) {
@@ -162,27 +251,115 @@ class KeyboardScreen extends StatelessWidget {
     );
   }
 
+  int getVirtualKeyCode(String key) {
+    switch (key) {
+      case 'A':
+        return VIRTUAL_KEY.VK_A;
+      case 'B':
+        return VIRTUAL_KEY.VK_B;
+      case 'C':
+        return VIRTUAL_KEY.VK_C;
+      case 'D':
+        return VIRTUAL_KEY.VK_D;
+      case 'E':
+        return VIRTUAL_KEY.VK_E;
+      case 'F':
+        return VIRTUAL_KEY.VK_F;
+      case 'G':
+        return VIRTUAL_KEY.VK_G;
+      case 'H':
+        return VIRTUAL_KEY.VK_H;
+      case 'I':
+        return VIRTUAL_KEY.VK_I;
+      case 'J':
+        return VIRTUAL_KEY.VK_J;
+      case 'K':
+        return VIRTUAL_KEY.VK_K;
+      case 'L':
+        return VIRTUAL_KEY.VK_L;
+      case 'M':
+        return VIRTUAL_KEY.VK_M;
+      case 'N':
+        return VIRTUAL_KEY.VK_N;
+      case 'O':
+        return VIRTUAL_KEY.VK_O;
+      case 'P':
+        return VIRTUAL_KEY.VK_P;
+      case 'Q':
+        return VIRTUAL_KEY.VK_Q;
+      case 'R':
+        return VIRTUAL_KEY.VK_R;
+      case 'S':
+        return VIRTUAL_KEY.VK_S;
+      case 'T':
+        return VIRTUAL_KEY.VK_T;
+      case 'U':
+        return VIRTUAL_KEY.VK_U;
+      case 'V':
+        return VIRTUAL_KEY.VK_V;
+      case 'W':
+        return VIRTUAL_KEY.VK_W;
+      case 'X':
+        return VIRTUAL_KEY.VK_X;
+      case 'Y':
+        return VIRTUAL_KEY.VK_Y;
+      case 'Z':
+        return VIRTUAL_KEY.VK_Z;
+      case ' ':
+        return VIRTUAL_KEY.VK_SPACE; // Space bar
+      case "'":
+        return VIRTUAL_KEY
+            .VK_OEM_7; // Typically corresponds to the single quote
+      case ',':
+        return VIRTUAL_KEY.VK_OEM_COMMA;
+      case '.':
+        return VIRTUAL_KEY.VK_OEM_PERIOD;
+      case '/':
+        return VIRTUAL_KEY.VK_OEM_2; // Typically corresponds to the slash
+      case ';':
+        return VIRTUAL_KEY.VK_OEM_1; // Typically corresponds to the semicolon
+      case '[':
+        return VIRTUAL_KEY
+            .VK_OEM_4; // Typically corresponds to the opening bracket
+      case ']':
+        return VIRTUAL_KEY
+            .VK_OEM_6; // Typically corresponds to the closing bracket
+      default:
+        return 0; // Return 0 for unmapped keys
+    }
+  }
+
   Widget buildKeys(int rowIndex, String key, int keyIndex) {
+    int virtualKeyCode = getVirtualKeyCode(key);
+    bool isPressed = keyPressStates[virtualKeyCode] ?? false;
+
+    Color keyColor = isPressed
+        ? const Color.fromARGB(255, 30, 30, 30)
+        : const Color.fromARGB(255, 119, 171, 255);
+    Color textColor = isPressed
+        ? const Color.fromARGB(255, 255, 255, 255)
+        : const Color.fromARGB(255, 0, 0, 0);
+
     Widget keyWidget = Padding(
       padding: const EdgeInsets.all(3.0),
       child: Container(
         width: key == " " ? 319 : 48,
         height: 48,
         decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 119, 171, 255),
-          border: Border.all(
-            color: const Color.fromARGB(255, 0, 67, 174),
-            width: 2,
-          ),
+          color: keyColor,
+          // border: Border.all(
+          //   color: const Color.fromARGB(255, 0, 67, 174),
+          //   width: 2,
+          // ),
           borderRadius: BorderRadius.circular(12.0),
         ),
         child: Center(
           child: Text(
             key,
-            style: const TextStyle(
-              color: Colors.black,
+            style: TextStyle(
+              color: textColor,
               fontSize: 18,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ),

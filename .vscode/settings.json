@@ -1,4 +1,13 @@
 {
 	"cmake.ignoreCMakeListsMissing": true,
-	"cSpell.words": ["ARGB"]
+	"cSpell.words": [
+		"ARGB",
+		"calloc",
+		"HOOKPROC",
+		"KBDLLHOOKSTRUCT",
+		"KEYDOWN",
+		"KEYUP",
+		"nullptr"
+	],
+	"dart.openDevTools": "never"
 }
