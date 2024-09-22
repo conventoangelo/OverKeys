@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:ffi' hide Size;
 import 'dart:isolate';
@@ -23,10 +24,10 @@ int lowLevelKeyboardProc(
     bool isKeyDown = (wParam == WM_KEYDOWN);
 
     sendPort?.send([key, isKeyDown]);
-    if (kDebugMode) {
-      print('Key Pressed: $key');
-      print('Key State: $isKeyDown');
-    }
+    // if (kDebugMode) {
+    //   print('Key Pressed: $key');
+    //   print('Key State: $isKeyDown');
+    // }
   }
   return CallNextHookEx(hookId, nCode, wParam, lParam);
 }
@@ -71,7 +72,6 @@ void main() async {
     await windowManager.setAlwaysOnTop(true);
     await windowManager.setAsFrameless();
     await windowManager.setIgnoreMouseEvents(false);
-    await windowManager.setOpacity(0.6);
     await windowManager.show();
   });
 
@@ -88,6 +88,9 @@ class MainApp extends StatefulWidget {
 class _MainAppState extends State<MainApp> with TrayListener {
   bool _ignoreMouseEvents = false;
   bool _isWindowVisible = true;
+  bool _autoHideEnabled = false;
+  Timer? _autoHideTimer;
+  double _opacity = 0.6;
   final Map<int, bool> _keyPressStates = {};
 
   @override
@@ -95,20 +98,21 @@ class _MainAppState extends State<MainApp> with TrayListener {
     super.initState();
     trayManager.addListener(this);
     _setupTray();
-    listenForKeyEvents();
+    _setupKeyListener();
   }
 
   @override
   void dispose() {
     trayManager.removeListener(this);
     unhook();
+    _autoHideTimer?.cancel();
     super.dispose();
   }
 
-  void listenForKeyEvents() {
+  void _setupKeyListener() {
     ReceivePort receivePort = ReceivePort();
     if (kDebugMode) {
-      print('listenForKeyEvents called');
+      print('_setupKeyListener called');
     }
     Isolate.spawn(setHook, receivePort.sendPort).then((_) {
       if (kDebugMode) {
@@ -130,10 +134,46 @@ class _MainAppState extends State<MainApp> with TrayListener {
           bool isPressed = message[1];
 
           _keyPressStates[key] = isPressed;
+          _resetAutoHideTimer();
+          if (_autoHideEnabled && !_isWindowVisible) {
+            _fadeIn();
+          }
         }
         // if (kDebugMode) {
         //   print('Key press state updated: $_keyPressStates');
         // }
+      });
+    });
+  }
+
+  void _resetAutoHideTimer() {
+    _autoHideTimer?.cancel();
+    if (_autoHideEnabled) {
+      _autoHideTimer = Timer(const Duration(seconds: 2), () {
+        if (_autoHideEnabled && _isWindowVisible) {
+          _fadeOut();
+        }
+      });
+    }
+  }
+
+  void _fadeOut() {
+    setState(() {
+      _opacity = 0.0;
+    });
+    Timer(const Duration(milliseconds: 300), () {
+      setState(() {
+        _isWindowVisible = false;
+      });
+      windowManager.hide();
+    });
+  }
+
+  void _fadeIn() {
+    windowManager.show().then((_) {
+      setState(() {
+        _isWindowVisible = true;
+        _opacity = 0.6;
       });
     });
   }
@@ -147,9 +187,15 @@ class _MainAppState extends State<MainApp> with TrayListener {
     trayManager.setToolTip('OverKeys');
     trayManager.setContextMenu(Menu(items: [
       MenuItem.checkbox(
-        checked: true,
         key: 'toggle_mouse_events',
         label: 'Move',
+        checked: true,
+      ),
+      MenuItem.separator(),
+      MenuItem.checkbox(
+        key: 'toggle_auto_hide',
+        label: 'Auto Hide',
+        checked: false,
       ),
       MenuItem.separator(),
       MenuItem(
@@ -162,12 +208,33 @@ class _MainAppState extends State<MainApp> with TrayListener {
   @override
   void onTrayMenuItemClick(MenuItem menuItem) {
     switch (menuItem.key) {
+      case 'toggle_auto_hide':
+        setState(() {
+          if (kDebugMode) {
+            print('Auto Hide Toggled');
+          }
+          _autoHideEnabled = !_autoHideEnabled;
+          menuItem.checked = _autoHideEnabled;
+          if (_autoHideEnabled) {
+            _resetAutoHideTimer();
+          } else {
+            _autoHideTimer?.cancel();
+            if (!_isWindowVisible) {
+              setState(() {
+                _isWindowVisible = true;
+              });
+              windowManager.show();
+            }
+          }
+        });
       case 'toggle_mouse_events':
         setState(() {
+          if (kDebugMode) {
+            print('Mouse Events Toggled');
+          }
           _ignoreMouseEvents = !_ignoreMouseEvents;
           menuItem.checked = !_ignoreMouseEvents;
           windowManager.setIgnoreMouseEvents(_ignoreMouseEvents);
-          windowManager.setOpacity(0.6); // TODO: Fix opacity bug
         });
       case 'exit':
         windowManager.close();
@@ -176,13 +243,11 @@ class _MainAppState extends State<MainApp> with TrayListener {
 
   @override
   void onTrayIconMouseDown() {
-    setState(() {
-      _isWindowVisible = !_isWindowVisible;
-    });
     if (_isWindowVisible) {
-      windowManager.show();
+      _fadeOut();
     } else {
-      windowManager.hide();
+      _fadeIn();
+      _resetAutoHideTimer();
     }
   }
 
@@ -198,15 +263,19 @@ class _MainAppState extends State<MainApp> with TrayListener {
       theme: ThemeData(fontFamily: 'GeistMono'),
       home: Scaffold(
         backgroundColor: Colors.transparent,
-        body: GestureDetector(
-          behavior: HitTestBehavior.translucent,
-          onPanStart: (details) {
-            windowManager.startDragging();
-          },
-          child: Container(
-            color: Colors.transparent,
-            child: Center(
-              child: KeyboardScreen(keyPressStates: _keyPressStates),
+        body: AnimatedOpacity(
+          opacity: _opacity,
+          duration: const Duration(milliseconds: 200),
+          child: GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onPanStart: (details) {
+              windowManager.startDragging();
+            },
+            child: Container(
+              color: Colors.transparent,
+              child: Center(
+                child: KeyboardScreen(keyPressStates: _keyPressStates),
+              ),
             ),
           ),
         ),
@@ -358,7 +427,7 @@ class KeyboardScreen extends StatelessWidget {
             key,
             style: TextStyle(
               color: textColor,
-              fontSize: 18,
+              fontSize: 20,
               fontWeight: FontWeight.w600,
             ),
           ),
