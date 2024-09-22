@@ -220,14 +220,12 @@ class _MainAppState extends State<MainApp> with TrayListener {
           } else {
             _autoHideTimer?.cancel();
             if (!_isWindowVisible) {
-              setState(() {
-                _isWindowVisible = true;
-              });
-              windowManager.show();
+              _fadeIn();
             }
           }
         });
       case 'toggle_mouse_events':
+        //TODO: Window does not appear when toggled off during hidden
         setState(() {
           if (kDebugMode) {
             print('Mouse Events Toggled');
