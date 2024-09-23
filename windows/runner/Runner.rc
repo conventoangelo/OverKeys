@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "overkeys" "\0"
+            VALUE "FileDescription", "OverKeys" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "overkeys" "\0"
+            VALUE "InternalName", "OverKeys" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2024 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "overkeys.exe" "\0"
-            VALUE "ProductName", "overkeys" "\0"
+            VALUE "OriginalFilename", "OverKeys.exe" "\0"
+            VALUE "ProductName", "OverKeys" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END
