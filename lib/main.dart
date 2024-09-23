@@ -2,12 +2,15 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:ffi' hide Size;
 import 'dart:isolate';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:tray_manager/tray_manager.dart';
 import 'package:win32/win32.dart';
 import 'package:ffi/ffi.dart';
+
+import 'keyboard_layouts.dart';
 
 final keyboardProc = Pointer.fromFunction<HOOKPROC>(lowLevelKeyboardProc, 0);
 late int hookId;
@@ -92,6 +95,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
   Timer? _autoHideTimer;
   double _opacity = 0.6;
   final Map<int, bool> _keyPressStates = {};
+  KeyboardLayout _keyboardLayout = canary;
 
   @override
   void initState() {
@@ -178,6 +182,12 @@ class _MainAppState extends State<MainApp> with TrayListener {
     });
   }
 
+  void _changeLayout(KeyboardLayout newLayout) {
+    setState(() {
+      _keyboardLayout = newLayout;
+    });
+  }
+
   Future<void> _setupTray() async {
     String iconPath = Platform.isWindows
         ? 'assets/images/tray_icon.ico'
@@ -198,6 +208,18 @@ class _MainAppState extends State<MainApp> with TrayListener {
         checked: false,
       ),
       MenuItem.separator(),
+      MenuItem.submenu(
+        label: 'Layout',
+        submenu: Menu(
+          items: availableLayouts
+              .map((layout) => MenuItem(
+                    key: layout.name.toLowerCase(),
+                    label: layout.name,
+                  ))
+              .toList(),
+        ),
+      ),
+      MenuItem.separator(),
       MenuItem(
         key: 'exit',
         label: 'Exit',
@@ -208,6 +230,16 @@ class _MainAppState extends State<MainApp> with TrayListener {
   @override
   void onTrayMenuItemClick(MenuItem menuItem) {
     switch (menuItem.key) {
+      case 'toggle_mouse_events':
+        //TODO: Window does not appear when toggled off during hidden
+        setState(() {
+          if (kDebugMode) {
+            print('Mouse Events Toggled');
+          }
+          _ignoreMouseEvents = !_ignoreMouseEvents;
+          menuItem.checked = !_ignoreMouseEvents;
+          windowManager.setIgnoreMouseEvents(_ignoreMouseEvents);
+        });
       case 'toggle_auto_hide':
         setState(() {
           if (kDebugMode) {
@@ -224,16 +256,29 @@ class _MainAppState extends State<MainApp> with TrayListener {
             }
           }
         });
-      case 'toggle_mouse_events':
-        //TODO: Window does not appear when toggled off during hidden
-        setState(() {
-          if (kDebugMode) {
-            print('Mouse Events Toggled');
-          }
-          _ignoreMouseEvents = !_ignoreMouseEvents;
-          menuItem.checked = !_ignoreMouseEvents;
-          windowManager.setIgnoreMouseEvents(_ignoreMouseEvents);
-        });
+      case 'qwerty':
+        _changeLayout(qwerty);
+      case 'colemak':
+        _changeLayout(colemak);
+      case 'dvorak':
+        _changeLayout(dvorak);
+      case 'colemak-dh':
+        _changeLayout(colemakdh);
+      case 'canary':
+        _changeLayout(canary);
+      case 'workman':
+        _changeLayout(workman);
+      case 'nerps':
+        _changeLayout(nerps);
+
+      case 'norman':
+        _changeLayout(norman);
+      case 'halmak':
+        _changeLayout(halmak);
+      case 'engram':
+        _changeLayout(engram);
+      case 'graphite':
+        _changeLayout(graphite);
       case 'exit':
         windowManager.close();
     }
@@ -272,7 +317,8 @@ class _MainAppState extends State<MainApp> with TrayListener {
             child: Container(
               color: Colors.transparent,
               child: Center(
-                child: KeyboardScreen(keyPressStates: _keyPressStates),
+                child: KeyboardScreen(
+                    keyPressStates: _keyPressStates, layout: _keyboardLayout),
               ),
             ),
           ),
@@ -285,8 +331,10 @@ class _MainAppState extends State<MainApp> with TrayListener {
 
 class KeyboardScreen extends StatelessWidget {
   final Map<int, bool> keyPressStates;
+  final KeyboardLayout layout;
 
-  const KeyboardScreen({super.key, required this.keyPressStates});
+  const KeyboardScreen(
+      {super.key, required this.keyPressStates, required this.layout});
 
   @override
   Widget build(BuildContext context) {
@@ -294,14 +342,11 @@ class KeyboardScreen extends StatelessWidget {
       Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            buildRow(0,
-                ["W", "L", "Y", "P", "K", "Z", "X", "O", "U", ";", "[", "]"]),
-            buildRow(
-                1, ["C", "R", "S", "T", "B", "F", "N", "E", "I", "A", "'"]),
-            buildRow(2, ["J", "V", "D", "G", "Q", "M", "H", "/", ",", "."]),
-            buildRow(3, [" "]),
-          ],
+          children: layout.keys.asMap().entries.map((entry) {
+            int rowIndex = entry.key;
+            List<String> row = entry.value;
+            return buildRow(rowIndex, row);
+          }).toList(),
         ),
       ),
     ]);
@@ -414,21 +459,26 @@ class KeyboardScreen extends StatelessWidget {
         height: 48,
         decoration: BoxDecoration(
           color: keyColor,
-          // border: Border.all(
-          //   color: const Color.fromARGB(255, 0, 67, 174),
-          //   width: 2,
-          // ),
           borderRadius: BorderRadius.circular(12.0),
         ),
         child: Center(
-          child: Text(
-            key,
-            style: TextStyle(
-              color: textColor,
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
+          child: key == " "
+              ? Text(
+                  layout.name.toLowerCase(),
+                  style: TextStyle(
+                    color: textColor,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                )
+              : Text(
+                  key,
+                  style: TextStyle(
+                    color: textColor,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
         ),
       ),
     );

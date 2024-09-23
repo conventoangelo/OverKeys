@@ -3,10 +3,14 @@
 	"cSpell.words": [
 		"ARGB",
 		"calloc",
+		"colemak",
+		"colemakdh",
+		"halmak",
 		"HOOKPROC",
 		"KBDLLHOOKSTRUCT",
 		"KEYDOWN",
 		"KEYUP",
+		"nerps",
 		"nullptr"
 	],
 	"dart.openDevTools": "never"
