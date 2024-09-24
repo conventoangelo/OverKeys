@@ -199,23 +199,24 @@ class _MainAppState extends State<MainApp> with TrayListener {
       MenuItem.checkbox(
         key: 'toggle_mouse_events',
         label: 'Move',
-        checked: true,
+        checked: !_ignoreMouseEvents,
       ),
       MenuItem.separator(),
       MenuItem.checkbox(
         key: 'toggle_auto_hide',
         label: 'Auto Hide',
-        checked: false,
+        checked: _autoHideEnabled,
       ),
       MenuItem.separator(),
       MenuItem.submenu(
         label: 'Layout',
         submenu: Menu(
           items: availableLayouts
-              .map((layout) => MenuItem(
-                    // TODO: Add checked state for selected layout
+              .map((layout) => MenuItem.checkbox(
                     key: layout.name.toLowerCase(),
                     label: layout.name,
+                    checked: layout == _keyboardLayout ? true : false,
+                    onClick: (menuItem) => _changeLayout(layout),
                   ))
               .toList(),
         ),
@@ -238,7 +239,6 @@ class _MainAppState extends State<MainApp> with TrayListener {
             print('Mouse Events Toggled');
           }
           _ignoreMouseEvents = !_ignoreMouseEvents;
-          menuItem.checked = !_ignoreMouseEvents;
           windowManager.setIgnoreMouseEvents(_ignoreMouseEvents);
         });
       case 'toggle_auto_hide':
@@ -247,7 +247,6 @@ class _MainAppState extends State<MainApp> with TrayListener {
             print('Auto Hide Toggled');
           }
           _autoHideEnabled = !_autoHideEnabled;
-          menuItem.checked = _autoHideEnabled;
           if (_autoHideEnabled) {
             _resetAutoHideTimer();
           } else {
@@ -257,31 +256,10 @@ class _MainAppState extends State<MainApp> with TrayListener {
             }
           }
         });
-      case 'qwerty':
-        _changeLayout(qwerty);
-      case 'colemak':
-        _changeLayout(colemak);
-      case 'dvorak':
-        _changeLayout(dvorak);
-      case 'colemak-dh':
-        _changeLayout(colemakdh);
-      case 'canary':
-        _changeLayout(canary);
-      case 'workman':
-        _changeLayout(workman);
-      case 'nerps':
-        _changeLayout(nerps);
-      case 'norman':
-        _changeLayout(norman);
-      case 'halmak':
-        _changeLayout(halmak);
-      case 'engram':
-        _changeLayout(engram);
-      case 'graphite':
-        _changeLayout(graphite);
       case 'exit':
         windowManager.close();
     }
+    _setupTray();
   }
 
   @override
