@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:ui';
 import 'dart:io';
 import 'dart:ffi' hide Size;
@@ -10,6 +11,7 @@ import 'package:window_manager/window_manager.dart';
 import 'package:tray_manager/tray_manager.dart';
 import 'package:win32/win32.dart';
 import 'package:ffi/ffi.dart';
+import 'package:desktop_multi_window/desktop_multi_window.dart';
 
 import 'keyboard_layouts.dart';
 
@@ -66,21 +68,10 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await windowManager.ensureInitialized();
 
-  // Device size getters inconsistent
-  // Size size = view.physicalSize;
-  // Size screenSize = await windowManager.getSize();
-
-  // Default size set to 1920x1080
-  Size screenSize = const Size(1920.0, 1080.0);
   double windowWidth = 850 / dpr;
   double windowHeight = 290 / dpr;
-  Size windowSize = Size(windowWidth, windowHeight);
 
-  double left = ((screenSize.width / dpr) - (windowWidth)) / 2;
-  double top = ((screenSize.height / dpr) - (windowHeight)) - 50 / dpr;
-
-  WindowOptions windowOptions = WindowOptions(
-    size: windowSize,
+  WindowOptions windowOptions = const WindowOptions(
     backgroundColor: Colors.transparent,
     skipTaskbar: true,
     title: "OverKeys",
@@ -92,11 +83,14 @@ void main() async {
     await windowManager.setAsFrameless();
     await windowManager.setSize(Size(windowWidth, windowHeight));
     await windowManager.setIgnoreMouseEvents(true);
-    await windowManager.setPosition(Offset(left, top));
+    await windowManager.setAlignment(Alignment.bottomCenter);
+
     Offset position = await windowManager.getPosition();
     if (kDebugMode) {
       print('Window Position: $position');
     }
+    await windowManager.setPosition(Offset(position.dx, position.dy - 50 / dpr));
+
     await windowManager.show();
   });
 
@@ -276,6 +270,17 @@ class _MainAppState extends State<MainApp> with TrayListener {
       ),
       MenuItem.separator(),
       MenuItem(
+        key: 'preferences',
+        label: 'Preferences',
+        onClick: (menuItem) {
+          if (kDebugMode) {
+            print('Preferences Window Opened');
+          }
+          _showPreferences();
+        },
+      ),
+      MenuItem.separator(),
+      MenuItem(
         key: 'exit',
         label: 'Exit',
         onClick: (menuItem) {
@@ -296,13 +301,26 @@ class _MainAppState extends State<MainApp> with TrayListener {
       _fadeOut();
     } else {
       _fadeIn();
-      _resetAutoHideTimer();
     }
   }
 
   @override
   void onTrayIconRightMouseDown() {
     trayManager.popUpContextMenu();
+  }
+
+  Future<void> _showPreferences() async {
+    final window = await DesktopMultiWindow.createWindow(jsonEncode({
+      'args1': 'Sub window',
+      'args2': 100,
+      'args3': true,
+      'business': 'business_test',
+    }));
+    window
+      ..setFrame(const Offset(0, 0) & const Size(1280, 720))
+      ..center()
+      ..setTitle('Another window')
+      ..show();
   }
 
   @override
