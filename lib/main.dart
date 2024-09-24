@@ -202,6 +202,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
         _opacity = 0.6;
       });
     });
+    _resetAutoHideTimer();
   }
 
   void _changeLayout(KeyboardLayout newLayout) {
@@ -222,12 +223,39 @@ class _MainAppState extends State<MainApp> with TrayListener {
         key: 'toggle_mouse_events',
         label: 'Move',
         checked: !_ignoreMouseEvents,
+        onClick: (menuItem) {
+          // TODO: Window does not appear when toggled off during hidden
+          setState(() {
+            if (kDebugMode) {
+              print('Mouse Events Toggled');
+            }
+            _ignoreMouseEvents = !_ignoreMouseEvents;
+            windowManager.setIgnoreMouseEvents(_ignoreMouseEvents);
+          });
+          _fadeIn();
+        },
       ),
       MenuItem.separator(),
       MenuItem.checkbox(
         key: 'toggle_auto_hide',
         label: 'Auto Hide',
         checked: _autoHideEnabled,
+        onClick: (menuItem) {
+          setState(() {
+            if (kDebugMode) {
+              print('Auto Hide Toggled');
+            }
+            _autoHideEnabled = !_autoHideEnabled;
+            if (_autoHideEnabled) {
+              _resetAutoHideTimer();
+            } else {
+              _autoHideTimer?.cancel();
+              if (!_isWindowVisible) {
+                _fadeIn();
+              }
+            }
+          });
+        },
       ),
       MenuItem.separator(),
       MenuItem.submenu(
@@ -238,7 +266,10 @@ class _MainAppState extends State<MainApp> with TrayListener {
                     key: layout.name.toLowerCase(),
                     label: layout.name,
                     checked: layout == _keyboardLayout ? true : false,
-                    onClick: (menuItem) => _changeLayout(layout),
+                    onClick: (menuItem) {
+                      _changeLayout(layout);
+                      _fadeIn();
+                    },
                   ))
               .toList(),
         ),
@@ -247,40 +278,15 @@ class _MainAppState extends State<MainApp> with TrayListener {
       MenuItem(
         key: 'exit',
         label: 'Exit',
+        onClick: (menuItem) {
+          windowManager.close();
+        },
       ),
     ]));
   }
 
   @override
   void onTrayMenuItemClick(MenuItem menuItem) {
-    switch (menuItem.key) {
-      case 'toggle_mouse_events':
-        //TODO: Window does not appear when toggled off during hidden
-        setState(() {
-          if (kDebugMode) {
-            print('Mouse Events Toggled');
-          }
-          _ignoreMouseEvents = !_ignoreMouseEvents;
-          windowManager.setIgnoreMouseEvents(_ignoreMouseEvents);
-        });
-      case 'toggle_auto_hide':
-        setState(() {
-          if (kDebugMode) {
-            print('Auto Hide Toggled');
-          }
-          _autoHideEnabled = !_autoHideEnabled;
-          if (_autoHideEnabled) {
-            _resetAutoHideTimer();
-          } else {
-            _autoHideTimer?.cancel();
-            if (!_isWindowVisible) {
-              _fadeIn();
-            }
-          }
-        });
-      case 'exit':
-        windowManager.close();
-    }
     _setupTray();
   }
 
