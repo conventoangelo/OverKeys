@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 import 'dart:io';
 import 'dart:ffi' hide Size;
 import 'dart:isolate';
@@ -58,13 +59,28 @@ void unhook() {
   UnhookWindowsHookEx(hookId);
 }
 
+FlutterView view = WidgetsBinding.instance.platformDispatcher.views.first;
+double dpr = view.devicePixelRatio;
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await windowManager.ensureInitialized();
 
-  WindowOptions windowOptions = const WindowOptions(
-    center: true,
-    size: Size(700, 260),
+  // Device size getters inconsistent
+  // Size size = view.physicalSize;
+  // Size screenSize = await windowManager.getSize();
+
+  // Default size set to 1920x1080
+  Size screenSize = const Size(1920.0, 1080.0);
+  double windowWidth = 850 / dpr;
+  double windowHeight = 290 / dpr;
+  Size windowSize = Size(windowWidth, windowHeight);
+
+  double left = ((screenSize.width / dpr) - (windowWidth)) / 2;
+  double top = ((screenSize.height / dpr) - (windowHeight)) - 50 / dpr;
+
+  WindowOptions windowOptions = WindowOptions(
+    size: windowSize,
     backgroundColor: Colors.transparent,
     skipTaskbar: true,
     title: "OverKeys",
@@ -74,7 +90,13 @@ void main() async {
   windowManager.waitUntilReadyToShow(windowOptions, () async {
     await windowManager.setAlwaysOnTop(true);
     await windowManager.setAsFrameless();
-    await windowManager.setIgnoreMouseEvents(false);
+    await windowManager.setSize(Size(windowWidth, windowHeight));
+    await windowManager.setIgnoreMouseEvents(true);
+    await windowManager.setPosition(Offset(left, top));
+    Offset position = await windowManager.getPosition();
+    if (kDebugMode) {
+      print('Window Position: $position');
+    }
     await windowManager.show();
   });
 
@@ -89,7 +111,7 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> with TrayListener {
-  bool _ignoreMouseEvents = false;
+  bool _ignoreMouseEvents = true;
   bool _isWindowVisible = true;
   bool _autoHideEnabled = false;
   Timer? _autoHideTimer;
@@ -442,11 +464,11 @@ class KeyboardScreen extends StatelessWidget {
     Widget keyWidget = Padding(
       padding: const EdgeInsets.all(3.0),
       child: Container(
-        width: key == " " ? 319 : 48,
-        height: 48,
+        width: key == " " ? 399 / dpr : 60 / dpr,
+        height: 60 / dpr,
         decoration: BoxDecoration(
           color: keyColor,
-          borderRadius: BorderRadius.circular(12.0),
+          borderRadius: BorderRadius.circular(15.0 / dpr),
         ),
         child: Center(
           child: key == " "
@@ -454,7 +476,7 @@ class KeyboardScreen extends StatelessWidget {
                   layout.name.toLowerCase(),
                   style: TextStyle(
                     color: textColor,
-                    fontSize: 14,
+                    fontSize: 18 / dpr,
                     fontWeight: FontWeight.w600,
                   ),
                 )
@@ -462,7 +484,7 @@ class KeyboardScreen extends StatelessWidget {
                   key,
                   style: TextStyle(
                     color: textColor,
-                    fontSize: 20,
+                    fontSize: 25 / dpr,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -477,13 +499,13 @@ class KeyboardScreen extends StatelessWidget {
         children: [
           keyWidget,
           Positioned(
-            bottom: 12,
+            bottom: 15 / dpr,
             child: Container(
-              width: 10,
-              height: 2,
+              width: 12.5 / dpr,
+              height: 2.5 / dpr,
               decoration: BoxDecoration(
                 color: Colors.black54,
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(12.5 / dpr),
               ),
             ),
           ),
