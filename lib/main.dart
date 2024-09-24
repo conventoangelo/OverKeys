@@ -213,6 +213,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
         submenu: Menu(
           items: availableLayouts
               .map((layout) => MenuItem(
+                    // TODO: Add checked state for selected layout
                     key: layout.name.toLowerCase(),
                     label: layout.name,
                   ))
@@ -270,7 +271,6 @@ class _MainAppState extends State<MainApp> with TrayListener {
         _changeLayout(workman);
       case 'nerps':
         _changeLayout(nerps);
-
       case 'norman':
         _changeLayout(norman);
       case 'halmak':
@@ -418,26 +418,35 @@ class KeyboardScreen extends StatelessWidget {
       case 'Z':
         return VIRTUAL_KEY.VK_Z;
       case ' ':
-        return VIRTUAL_KEY.VK_SPACE; // Space bar
-      case "'":
-        return VIRTUAL_KEY
-            .VK_OEM_7; // Typically corresponds to the single quote
+        return VIRTUAL_KEY.VK_SPACE;
       case ',':
         return VIRTUAL_KEY.VK_OEM_COMMA;
       case '.':
         return VIRTUAL_KEY.VK_OEM_PERIOD;
-      case '/':
-        return VIRTUAL_KEY.VK_OEM_2; // Typically corresponds to the slash
       case ';':
-        return VIRTUAL_KEY.VK_OEM_1; // Typically corresponds to the semicolon
+        return VIRTUAL_KEY.VK_OEM_1;
+      case '/':
+        return VIRTUAL_KEY.VK_OEM_2;
+      case '?':
+        return VIRTUAL_KEY.VK_OEM_2;
+      // No virtual key code for number sign
+      case '#':
+        return VIRTUAL_KEY.VK_3;
       case '[':
-        return VIRTUAL_KEY
-            .VK_OEM_4; // Typically corresponds to the opening bracket
+        return VIRTUAL_KEY.VK_OEM_4;
       case ']':
-        return VIRTUAL_KEY
-            .VK_OEM_6; // Typically corresponds to the closing bracket
+        return VIRTUAL_KEY.VK_OEM_6;
+      // No separate keycode for single and double quotes
+      case "'":
+        return VIRTUAL_KEY.VK_OEM_7;
+      case '"':
+        return VIRTUAL_KEY.VK_OEM_7;
+      case '=':
+        return VIRTUAL_KEY.VK_OEM_PLUS;
+      case '-':
+        return VIRTUAL_KEY.VK_OEM_MINUS;
       default:
-        return 0; // Return 0 for unmapped keys
+        return 0;
     }
   }
 
