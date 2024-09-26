@@ -5,6 +5,7 @@
 		"calloc",
 		"colemak",
 		"colemakdh",
+		"colorpicker",
 		"halmak",
 		"HOOKPROC",
 		"KBDLLHOOKSTRUCT",

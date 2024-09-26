@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:ui';
 import 'dart:io';
 import 'dart:ffi' hide Size;
 import 'dart:isolate';
@@ -14,6 +13,7 @@ import 'package:ffi/ffi.dart';
 import 'package:desktop_multi_window/desktop_multi_window.dart';
 
 import 'keyboard_layouts.dart';
+import 'preferences_window.dart';
 
 final keyboardProc = Pointer.fromFunction<HOOKPROC>(lowLevelKeyboardProc, 0);
 late int hookId;
@@ -61,15 +61,26 @@ void unhook() {
   UnhookWindowsHookEx(hookId);
 }
 
-FlutterView view = WidgetsBinding.instance.platformDispatcher.views.first;
-double dpr = view.devicePixelRatio;
-
-void main() async {
+void main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
-  await windowManager.ensureInitialized();
+  if (args.firstOrNull == 'multi_window') {
+    final windowId = int.parse(args[1]);
+    final arguments = args[2].isEmpty
+        ? const {}
+        : jsonDecode(args[2]) as Map<String, dynamic>;
 
-  double windowWidth = 850 / dpr;
-  double windowHeight = 290 / dpr;
+    Map windows = {
+      "preferences": PreferencesWindow(
+        windowController: WindowController.fromWindowId(windowId),
+      ),
+    };
+    runApp(windows[arguments["name"]]);
+    return;
+  }
+
+  await windowManager.ensureInitialized();
+  double windowWidth = 720;
+  double windowHeight = 240;
 
   WindowOptions windowOptions = const WindowOptions(
     backgroundColor: Colors.transparent,
@@ -89,7 +100,7 @@ void main() async {
     if (kDebugMode) {
       print('Window Position: $position');
     }
-    await windowManager.setPosition(Offset(position.dx, position.dy - 50 / dpr));
+    await windowManager.setPosition(Offset(position.dx, position.dy - 40));
 
     await windowManager.show();
   });
@@ -207,9 +218,8 @@ class _MainAppState extends State<MainApp> with TrayListener {
 
   Future<void> _setupTray() async {
     String iconPath = Platform.isWindows
-        ? 'assets/images/tray_icon.ico'
-        : 'assets/images/tray_icon.png';
-
+        ? 'assets/images/app_icon.ico'
+        : 'assets/images/app_icon.png';
     await trayManager.setIcon(iconPath);
     trayManager.setToolTip('OverKeys');
     trayManager.setContextMenu(Menu(items: [
@@ -218,7 +228,6 @@ class _MainAppState extends State<MainApp> with TrayListener {
         label: 'Move',
         checked: !_ignoreMouseEvents,
         onClick: (menuItem) {
-          // TODO: Window does not appear when toggled off during hidden
           setState(() {
             if (kDebugMode) {
               print('Mouse Events Toggled');
@@ -311,15 +320,11 @@ class _MainAppState extends State<MainApp> with TrayListener {
 
   Future<void> _showPreferences() async {
     final window = await DesktopMultiWindow.createWindow(jsonEncode({
-      'args1': 'Sub window',
-      'args2': 100,
-      'args3': true,
-      'business': 'business_test',
+      'name': 'preferences',
     }));
     window
       ..setFrame(const Offset(0, 0) & const Size(1280, 720))
       ..center()
-      ..setTitle('Another window')
       ..show();
   }
 
@@ -327,7 +332,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'OverKeys',
-      theme: ThemeData(fontFamily: 'GeistMono'),
+      theme: ThemeData(fontFamily: 'Geist Mono'),
       home: Scaffold(
         backgroundColor: Colors.transparent,
         body: AnimatedOpacity(
@@ -362,18 +367,16 @@ class KeyboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(children: [
-      Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: layout.keys.asMap().entries.map((entry) {
-            int rowIndex = entry.key;
-            List<String> row = entry.value;
-            return buildRow(rowIndex, row);
-          }).toList(),
-        ),
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: layout.keys.asMap().entries.map((entry) {
+          int rowIndex = entry.key;
+          List<String> row = entry.value;
+          return buildRow(rowIndex, row);
+        }).toList(),
       ),
-    ]);
+    );
   }
 
   Widget buildRow(int rowIndex, List<String> keys) {
@@ -488,11 +491,11 @@ class KeyboardScreen extends StatelessWidget {
     Widget keyWidget = Padding(
       padding: const EdgeInsets.all(3.0),
       child: Container(
-        width: key == " " ? 399 / dpr : 60 / dpr,
-        height: 60 / dpr,
+        width: key == " " ? 320 : 48,
+        height: 48,
         decoration: BoxDecoration(
           color: keyColor,
-          borderRadius: BorderRadius.circular(15.0 / dpr),
+          borderRadius: BorderRadius.circular(12),
         ),
         child: Center(
           child: key == " "
@@ -500,7 +503,7 @@ class KeyboardScreen extends StatelessWidget {
                   layout.name.toLowerCase(),
                   style: TextStyle(
                     color: textColor,
-                    fontSize: 18 / dpr,
+                    fontSize: 14,
                     fontWeight: FontWeight.w600,
                   ),
                 )
@@ -508,7 +511,7 @@ class KeyboardScreen extends StatelessWidget {
                   key,
                   style: TextStyle(
                     color: textColor,
-                    fontSize: 25 / dpr,
+                    fontSize: 20,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -523,13 +526,13 @@ class KeyboardScreen extends StatelessWidget {
         children: [
           keyWidget,
           Positioned(
-            bottom: 15 / dpr,
+            bottom: 10,
             child: Container(
-              width: 12.5 / dpr,
-              height: 2.5 / dpr,
+              width: 10,
+              height: 2,
               decoration: BoxDecoration(
                 color: Colors.black54,
-                borderRadius: BorderRadius.circular(12.5 / dpr),
+                borderRadius: BorderRadius.circular(10),
               ),
             ),
           ),
