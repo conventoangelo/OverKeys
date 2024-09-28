@@ -78,8 +78,8 @@ void main(List<String> args) async {
     runApp(windows[arguments["name"]]);
   } else {
     await windowManager.ensureInitialized();
-    double windowWidth = 720;
-    double windowHeight = 240;
+    double windowWidth = 800;
+    double windowHeight = 270;
 
     WindowOptions windowOptions = const WindowOptions(
       backgroundColor: Colors.transparent,
@@ -138,7 +138,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
   @override
   void initState() {
     super.initState();
-    asyncPrefs.clear();
+    // asyncPrefs.clear();
     _loadPreferences();
     trayManager.addListener(this);
     _setupTray();
@@ -456,37 +456,36 @@ class _MainAppState extends State<MainApp> with TrayListener {
       title: 'OverKeys',
       theme: ThemeData(fontFamily: 'Geist Mono'),
       home: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: AnimatedOpacity(
-          opacity: _opacity,
-          duration: const Duration(milliseconds: 200),
-          child: GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onPanStart: (details) {
-              windowManager.startDragging();
-            },
-            child: Container(
-              color: Colors.transparent,
-              child: Center(
-                child: KeyboardScreen(
-                  keyPressStates: _keyPressStates,
-                  layout: _keyboardLayout,
-                  fontStyle: _fontStyle,
-                  keyFontSize: _keyFontSize,
-                  spaceFontSize: _spaceFontSize,
-                  fontWeight: _fontWeight,
-                  keyTextColor: _keyTextColor,
-                  keyTextColorNotPressed: _keyTextColorNotPressed,
-                  keyColorPressed: _keyColorPressed,
-                  keyColorNotPressed: _keyColorNotPressed,
-                  keySize: _keySize,
-                  spaceWidth: _spaceWidth,
+          backgroundColor: Colors.transparent,
+          body: AnimatedOpacity(
+            opacity: _opacity,
+            duration: const Duration(milliseconds: 200),
+            child: GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onPanStart: (details) {
+                windowManager.startDragging();
+              },
+              child: Container(
+                color: Colors.transparent,
+                child: Center(
+                  child: KeyboardScreen(
+                    keyPressStates: _keyPressStates,
+                    layout: _keyboardLayout,
+                    fontStyle: _fontStyle,
+                    keyFontSize: _keyFontSize,
+                    spaceFontSize: _spaceFontSize,
+                    fontWeight: _fontWeight,
+                    keyTextColor: _keyTextColor,
+                    keyTextColorNotPressed: _keyTextColorNotPressed,
+                    keyColorPressed: _keyColorPressed,
+                    keyColorNotPressed: _keyColorNotPressed,
+                    keySize: _keySize,
+                    spaceWidth: _spaceWidth,
+                  ),
                 ),
               ),
             ),
-          ),
-        ),
-      ),
+          )),
       debugShowCheckedModeBanner: false,
     );
   }

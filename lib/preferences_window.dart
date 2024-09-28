@@ -39,7 +39,7 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
   @override
   void initState() {
     super.initState();
-    asyncPrefs.clear();
+    // asyncPrefs.clear();
     _loadPreferences();
   }
 
@@ -300,11 +300,11 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
           setState(() => _keyColorNotPressed = color);
           _updateMainWindow('updateKeyColorPressed', color);
         }),
-        _buildSliderOption('Key size', _keySize, 40, 80, 80, (value) {
+        _buildSliderOption('Key size', _keySize, 40, 60, 40, (value) {
           setState(() => _keySize = value);
           _updateMainWindow('updateKeySize', value);
         }),
-        _buildSliderOption('Space width', _spaceWidth, 200, 400, 40, (value) {
+        _buildSliderOption('Space width', _spaceWidth, 200, 600, 400, (value) {
           setState(() => _spaceWidth = value);
           _updateMainWindow('updateSpaceWidth', value);
         }),
