@@ -1,6 +1,10 @@
-import 'package:desktop_multi_window/desktop_multi_window.dart';
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:desktop_multi_window/desktop_multi_window.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:overkeys/keyboard_layouts.dart';
 
 class PreferencesWindow extends StatefulWidget {
@@ -13,21 +17,97 @@ class PreferencesWindow extends StatefulWidget {
 }
 
 class _PreferencesWindowState extends State<PreferencesWindow> {
-  @override
-  void initState() {
-    super.initState();
-  }
+  final SharedPreferencesAsync asyncPrefs = SharedPreferencesAsync();
 
   String _currentTab = 'General';
+
   bool _openOnStartup = false;
-  String _layout = 'Canary';
+  String _keyboardLayoutName = 'QWERTY';
   String _fontStyle = 'Geist Mono';
-  double _fontSize = 18;
-  FontWeight _fontWeight = FontWeight.normal;
-  Color _fontColor = Colors.white;
+  double _keyFontSize = 20;
+  double _spaceFontSize = 14;
+  FontWeight _fontWeight = FontWeight.w600;
+  Color _keyTextColor = Colors.white;
+  Color _keyTextColorNotPressed = Colors.black;
   Color _keyColorPressed = const Color.fromARGB(255, 30, 30, 30);
   Color _keyColorNotPressed = const Color.fromARGB(255, 119, 171, 255);
   double _keySize = 60;
+  double _spaceWidth = 40;
+  double _opacity = 0.6;
+  int _autoHideDuration = 2;
+
+  @override
+  void initState() {
+    super.initState();
+    asyncPrefs.clear();
+    _loadPreferences();
+  }
+
+  @override
+  void dispose() {
+    _savePreferences();
+    super.dispose();
+  }
+
+  Future<void> _loadPreferences() async {
+    String keyboardLayoutName =
+        await asyncPrefs.getString('layout') ?? 'QWERTY';
+    String fontStyle = await asyncPrefs.getString('fontStyle') ?? 'Geist Mono';
+    double keyFontSize = await asyncPrefs.getDouble('keyFontSize') ?? 20;
+    double spaceFontSize = await asyncPrefs.getDouble('spaceFontSize') ?? 14;
+    FontWeight fontWeight = FontWeight
+        .values[await asyncPrefs.getInt('fontWeight') ?? FontWeight.w600.index];
+    Color keyTextColor =
+        Color(await asyncPrefs.getInt('keyTextColor') ?? 0xFFFFFFFF);
+    Color keyTextColorNotPressed =
+        Color(await asyncPrefs.getInt('keyTextColorNotPressed') ?? 0xFF000000);
+    Color keyColorPressed =
+        Color(await asyncPrefs.getInt('keyColorPressed') ?? 0xFF1E1E1E);
+    Color keyColorNotPressed =
+        Color(await asyncPrefs.getInt('keyColorNotPressed') ?? 0xFF77ABFF);
+    double keySize = await asyncPrefs.getDouble('keySize') ?? 48;
+    double spaceWidth = await asyncPrefs.getDouble('spaceWidth') ?? 320;
+    double opacity = await asyncPrefs.getDouble('opacity') ?? 0.6;
+    int autoHideDuration = await asyncPrefs.getInt('autoHideDuration') ?? 2;
+
+    setState(() {
+      _keyboardLayoutName = keyboardLayoutName;
+      _fontStyle = fontStyle;
+      _keyFontSize = keyFontSize;
+      _spaceFontSize = spaceFontSize;
+      _fontWeight = fontWeight;
+      _keyTextColor = keyTextColor;
+      _keyTextColorNotPressed = keyTextColorNotPressed;
+      _keyColorPressed = keyColorPressed;
+      _keyColorNotPressed = keyColorNotPressed;
+      _keySize = keySize;
+      _spaceWidth = spaceWidth;
+      _opacity = opacity;
+      _autoHideDuration = autoHideDuration;
+    });
+  }
+
+  Future<void> _savePreferences() async {
+    await asyncPrefs.setString('layout', _keyboardLayoutName);
+    await asyncPrefs.setString('fontStyle', _fontStyle);
+    await asyncPrefs.setDouble('keyFontSize', _keyFontSize);
+    await asyncPrefs.setDouble('spaceFontSize', _spaceFontSize);
+    await asyncPrefs.setInt('fontWeight', _fontWeight.index);
+    await asyncPrefs.setInt('keyTextColor', _keyTextColor.value);
+    await asyncPrefs.setInt(
+        'keyTextColorNotPressed', _keyTextColorNotPressed.value);
+    await asyncPrefs.setInt('keyColorPressed', _keyColorPressed.value);
+    await asyncPrefs.setInt('keyColorNotPressed', _keyColorNotPressed.value);
+    await asyncPrefs.setDouble('keySize', _keySize);
+    await asyncPrefs.setDouble('spaceWidth', _spaceWidth);
+    await asyncPrefs.setDouble('opacity', _opacity);
+    await asyncPrefs.setInt('autoHideDuration', _autoHideDuration);
+  }
+
+  void _updateMainWindow(dynamic method, dynamic value) async {
+    await DesktopMultiWindow.invokeMethod(0, method, value);
+    _savePreferences();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -122,13 +202,25 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildSectionTitle('General Settings'),
-        _buildToggleOption('Open on system startup', _openOnStartup,
-            (value) => setState(() => _openOnStartup = value)),
-        _buildDropdownOption(
-            'Layout',
-            _layout,
-            availableLayouts.map((layout) => (layout.name)).toList(),
-            (value) => setState(() => _layout = value!)),
+        _buildToggleOption('Open on system startup', _openOnStartup, (value) {
+          setState(() => _openOnStartup = value);
+          _savePreferences();
+        }),
+        _buildDropdownOption('Layout', _keyboardLayoutName,
+            availableLayouts.map((layout) => (layout.name)).toList(), (value) {
+          setState(() => _keyboardLayoutName = value!);
+          _updateMainWindow('updateLayout', value);
+        }),
+        _buildSliderOption('Opacity', _opacity, 0.1, 1.0, 18, (value) {
+          setState(() => _opacity = value);
+          _updateMainWindow('updateOpacity', value);
+        }),
+        _buildSliderOption(
+            'Auto-hide duration', _autoHideDuration.toDouble(), 1.0, 10.0, 9,
+            (value) {
+          setState(() => _autoHideDuration = value.round());
+          _updateMainWindow('updateAutoHideDuration', value.round());
+        }),
       ],
     );
   }
@@ -139,20 +231,57 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
       children: [
         _buildSectionTitle('Text Settings'),
         _buildDropdownOption(
-            'Font style',
-            _fontStyle,
-            ['GeistMono', 'Arial', 'Manrope'],
-            (value) => setState(() => _fontStyle = value!)),
-        _buildSliderOption('Font size', _fontSize, 12, 32,
-            (value) => setState(() => _fontSize = value)),
+            'Font style', _fontStyle, ['Geist Mono', 'Arial', 'Manrope'],
+            (value) {
+          setState(() => _fontStyle = value!);
+          _updateMainWindow('updateFontStyle', value);
+        }),
+        _buildSliderOption('Font size', _keyFontSize, 12, 32, 40, (value) {
+          setState(() => _keyFontSize = value);
+          _updateMainWindow('updateKeyFontSize', value);
+        }),
+        _buildSliderOption('Space font size', _spaceFontSize, 12, 32, 40,
+            (value) {
+          setState(() => _spaceFontSize = value);
+          _updateMainWindow('updateSpaceFontSize', value);
+        }),
         _buildDropdownOption(
             'Font weight',
-            _fontWeight == FontWeight.normal ? 'Normal' : 'Bold',
-            ['Normal', 'Bold'],
-            (value) => setState(() => _fontWeight =
-                value == 'Normal' ? FontWeight.normal : FontWeight.bold)),
-        _buildColorPicker('Font color', _fontColor,
-            (color) => setState(() => _fontColor = color)),
+            _fontWeight == FontWeight.normal
+                ? 'Normal'
+                : _fontWeight == FontWeight.w500
+                    ? 'Medium'
+                    : _fontWeight == FontWeight.w600
+                        ? 'SemiBold'
+                        : 'Bold',
+            ['Normal', 'Medium', 'SemiBold', 'Bold'], (value) {
+          setState(() {
+            switch (value) {
+              case 'Normal':
+                _fontWeight = FontWeight.normal;
+                break;
+              case 'Medium':
+                _fontWeight = FontWeight.w500;
+                break;
+              case 'SemiBold':
+                _fontWeight = FontWeight.w600;
+                break;
+              case 'Bold':
+                _fontWeight = FontWeight.bold;
+                break;
+            }
+          });
+          _updateMainWindow('updateFontWeight', _fontWeight);
+        }),
+        _buildColorPicker('Text color (pressed)', _keyTextColor, (color) {
+          setState(() => _keyTextColor = color);
+          _updateMainWindow('updateKeyTextColor', color);
+        }),
+        _buildColorPicker('Text color (not pressed)', _keyTextColorNotPressed,
+            (color) {
+          setState(() => _keyTextColorNotPressed = color);
+          _updateMainWindow('updateKeyTextColorNotPressed', color);
+        }),
       ],
     );
   }
@@ -162,12 +291,23 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildSectionTitle('Keyboard Settings'),
-        _buildColorPicker('Key color (pressed)', _keyColorPressed,
-            (color) => setState(() => _keyColorPressed = color)),
+        _buildColorPicker('Key color (pressed)', _keyColorPressed, (color) {
+          setState(() => _keyColorPressed = color);
+          _updateMainWindow('updateKeyColorPressed', color);
+        }),
         _buildColorPicker('Key color (not pressed)', _keyColorNotPressed,
-            (color) => setState(() => _keyColorNotPressed = color)),
-        _buildSliderOption('Key size', _keySize, 40, 80,
-            (value) => setState(() => _keySize = value)),
+            (color) {
+          setState(() => _keyColorNotPressed = color);
+          _updateMainWindow('updateKeyColorPressed', color);
+        }),
+        _buildSliderOption('Key size', _keySize, 40, 80, 80, (value) {
+          setState(() => _keySize = value);
+          _updateMainWindow('updateKeySize', value);
+        }),
+        _buildSliderOption('Space width', _spaceWidth, 200, 400, 40, (value) {
+          setState(() => _spaceWidth = value);
+          _updateMainWindow('updateSpaceWidth', value);
+        }),
       ],
     );
   }
@@ -244,7 +384,7 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
   }
 
   Widget _buildSliderOption(String label, double value, double min, double max,
-      Function(double) onChanged) {
+      int divisions, Function(double) onChanged) {
     return _buildOptionContainer(
       Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -253,12 +393,13 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
           Slider(
             value: value,
             min: min,
+            divisions: divisions,
+            label: value.toStringAsFixed(2),
             max: max,
             onChanged: onChanged,
             activeColor: Colors.green,
           ),
-          Text(value.round().toString(),
-              style: const TextStyle(color: Colors.grey)),
+          // Text(value.toString(), style: const TextStyle(color: Colors.grey)),
         ],
       ),
     );

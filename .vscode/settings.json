@@ -12,7 +12,8 @@
 		"KEYDOWN",
 		"KEYUP",
 		"nerps",
-		"nullptr"
+		"nullptr",
+		"prefs"
 	],
 	"dart.openDevTools": "never"
 }

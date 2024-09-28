@@ -11,6 +11,7 @@ import 'package:tray_manager/tray_manager.dart';
 import 'package:win32/win32.dart';
 import 'package:ffi/ffi.dart';
 import 'package:desktop_multi_window/desktop_multi_window.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'keyboard_layouts.dart';
 import 'preferences_window.dart';
@@ -75,37 +76,33 @@ void main(List<String> args) async {
       ),
     };
     runApp(windows[arguments["name"]]);
-    return;
+  } else {
+    await windowManager.ensureInitialized();
+    double windowWidth = 720;
+    double windowHeight = 240;
+
+    WindowOptions windowOptions = const WindowOptions(
+      backgroundColor: Colors.transparent,
+      skipTaskbar: true,
+      title: "OverKeys",
+      titleBarStyle: TitleBarStyle.hidden,
+    );
+
+    windowManager.waitUntilReadyToShow(windowOptions, () async {
+      await windowManager.setAlwaysOnTop(true);
+      await windowManager.setAsFrameless();
+      await windowManager.setSize(Size(windowWidth, windowHeight));
+      await windowManager.setIgnoreMouseEvents(true);
+      await windowManager.setAlignment(Alignment.bottomCenter);
+      Offset position = await windowManager.getPosition();
+      if (kDebugMode) {
+        print('Window Position: $position');
+      }
+      await windowManager.setPosition(Offset(position.dx, position.dy - 40));
+      await windowManager.show();
+    });
+    runApp(const MainApp());
   }
-
-  await windowManager.ensureInitialized();
-  double windowWidth = 720;
-  double windowHeight = 240;
-
-  WindowOptions windowOptions = const WindowOptions(
-    backgroundColor: Colors.transparent,
-    skipTaskbar: true,
-    title: "OverKeys",
-    titleBarStyle: TitleBarStyle.hidden,
-  );
-
-  windowManager.waitUntilReadyToShow(windowOptions, () async {
-    await windowManager.setAlwaysOnTop(true);
-    await windowManager.setAsFrameless();
-    await windowManager.setSize(Size(windowWidth, windowHeight));
-    await windowManager.setIgnoreMouseEvents(true);
-    await windowManager.setAlignment(Alignment.bottomCenter);
-
-    Offset position = await windowManager.getPosition();
-    if (kDebugMode) {
-      print('Window Position: $position');
-    }
-    await windowManager.setPosition(Offset(position.dx, position.dy - 40));
-
-    await windowManager.show();
-  });
-
-  runApp(const MainApp());
 }
 
 class MainApp extends StatefulWidget {
@@ -116,20 +113,37 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> with TrayListener {
-  bool _ignoreMouseEvents = true;
-  bool _isWindowVisible = true;
-  bool _autoHideEnabled = false;
-  Timer? _autoHideTimer;
-  double _opacity = 0.6;
   final Map<int, bool> _keyPressStates = {};
-  KeyboardLayout _keyboardLayout = canary;
+  KeyboardLayout _keyboardLayout = qwerty;
+  Timer? _autoHideTimer;
+  bool _isWindowVisible = true;
+  bool _ignoreMouseEvents = true;
+
+  final SharedPreferencesAsync asyncPrefs = SharedPreferencesAsync();
+
+  String _fontStyle = 'Geist Mono';
+  double _keyFontSize = 20;
+  double _spaceFontSize = 14;
+  FontWeight _fontWeight = FontWeight.w600;
+  Color _keyTextColor = Colors.white;
+  Color _keyTextColorNotPressed = Colors.black;
+  Color _keyColorPressed = const Color.fromARGB(255, 30, 30, 30);
+  Color _keyColorNotPressed = const Color.fromARGB(255, 119, 171, 255);
+  double _keySize = 48;
+  double _spaceWidth = 320;
+  double _opacity = 0.6;
+  int _autoHideDuration = 2;
+  bool _autoHideEnabled = false;
 
   @override
   void initState() {
     super.initState();
+    asyncPrefs.clear();
+    _loadPreferences();
     trayManager.addListener(this);
     _setupTray();
     _setupKeyListener();
+    _setupMethodHandler();
   }
 
   @override
@@ -137,7 +151,119 @@ class _MainAppState extends State<MainApp> with TrayListener {
     trayManager.removeListener(this);
     unhook();
     _autoHideTimer?.cancel();
+    _savePreferences();
     super.dispose();
+  }
+
+  Future<void> _loadPreferences() async {
+    String keyboardLayoutName =
+        await asyncPrefs.getString('layout') ?? 'QWERTY';
+    String fontStyle = await asyncPrefs.getString('fontStyle') ?? 'Geist Mono';
+    double keyFontSize = await asyncPrefs.getDouble('keyFontSize') ?? 20;
+    double spaceFontSize = await asyncPrefs.getDouble('spaceFontSize') ?? 14;
+    FontWeight fontWeight = FontWeight
+        .values[await asyncPrefs.getInt('fontWeight') ?? FontWeight.w600.index];
+    Color keyTextColor =
+        Color(await asyncPrefs.getInt('keyTextColor') ?? 0xFFFFFFFF);
+    Color keyTextColorNotPressed =
+        Color(await asyncPrefs.getInt('keyTextColorNotPressed') ?? 0xFF000000);
+    Color keyColorPressed =
+        Color(await asyncPrefs.getInt('keyColorPressed') ?? 0xFF1E1E1E);
+    Color keyColorNotPressed =
+        Color(await asyncPrefs.getInt('keyColorNotPressed') ?? 0xFF77ABFF);
+    double keySize = await asyncPrefs.getDouble('keySize') ?? 48;
+    double spaceWidth = await asyncPrefs.getDouble('spaceWidth') ?? 320;
+    double opacity = await asyncPrefs.getDouble('opacity') ?? 0.6;
+    int autoHideDuration = await asyncPrefs.getInt('autoHideDuration') ?? 2;
+
+    setState(() {
+      _keyboardLayout = availableLayouts
+          .firstWhere((layout) => layout.name == keyboardLayoutName);
+      _fontStyle = fontStyle;
+      _keyFontSize = keyFontSize;
+      _spaceFontSize = spaceFontSize;
+      _fontWeight = fontWeight;
+      _keyTextColor = keyTextColor;
+      _keyTextColorNotPressed = keyTextColorNotPressed;
+      _keyColorPressed = keyColorPressed;
+      _keyColorNotPressed = keyColorNotPressed;
+      _keySize = keySize;
+      _spaceWidth = spaceWidth;
+      _opacity = opacity;
+      _autoHideDuration = autoHideDuration;
+    });
+  }
+
+  Future<void> _savePreferences() async {
+    await asyncPrefs.setString('layout', _keyboardLayout.name);
+    await asyncPrefs.setString('fontStyle', _fontStyle);
+    await asyncPrefs.setDouble('keyFontSize', _keyFontSize);
+    await asyncPrefs.setDouble('spaceFontSize', _spaceFontSize);
+    await asyncPrefs.setInt('fontWeight', _fontWeight.index);
+    await asyncPrefs.setInt('keyTextColor', _keyTextColor.value);
+    await asyncPrefs.setInt(
+        'keyTextColorNotPressed', _keyTextColorNotPressed.value);
+    await asyncPrefs.setInt('keyColorPressed', _keyColorPressed.value);
+    await asyncPrefs.setInt('keyColorNotPressed', _keyColorNotPressed.value);
+    await asyncPrefs.setDouble('keySize', _keySize);
+    await asyncPrefs.setDouble('spaceWidth', _spaceWidth);
+    await asyncPrefs.setDouble('opacity', _opacity);
+    await asyncPrefs.setInt('autoHideDuration', _autoHideDuration);
+    await asyncPrefs.setBool('autoHideEnabled', _autoHideEnabled);
+  }
+
+  void _setupMethodHandler() {
+    DesktopMultiWindow.setMethodHandler((call, fromWindowId) async {
+      switch (call.method) {
+        case 'updateLayout':
+          final layoutName = call.arguments as String;
+          setState(() {
+            _keyboardLayout = availableLayouts
+                .firstWhere((layout) => layout.name == layoutName);
+          });
+        case 'updateFontStyle':
+          final fontStyle = call.arguments as String;
+          setState(() => _fontStyle = fontStyle);
+        case 'updateKeyFontSize':
+          final keyFontSize = call.arguments as double;
+          setState(() => _keyFontSize = keyFontSize);
+        case 'updateSpaceFontSize':
+          final spaceFontSize = call.arguments as double;
+          setState(() => _spaceFontSize = spaceFontSize);
+        case 'updateFontWeight':
+          final fontWeight = call.arguments as FontWeight;
+          setState(() => _fontWeight = fontWeight);
+        case 'updateKeyTextColor':
+          final keyTextColor = call.arguments as int;
+          setState(() => _keyTextColor = Color(keyTextColor));
+        case 'updateKeyTextColorNotPressed':
+          final keyTextColorNotPressed = call.arguments as int;
+          setState(
+              () => _keyTextColorNotPressed = Color(keyTextColorNotPressed));
+        case 'updateKeyColorPressed':
+          final keyColorPressed = call.arguments as int;
+          setState(() => _keyColorPressed = Color(keyColorPressed));
+        case 'updateKeyColorNotPressed':
+          final keyColorNotPressed = call.arguments as int;
+          setState(() => _keyColorNotPressed = Color(keyColorNotPressed));
+        case 'updateKeySize':
+          final keySize = call.arguments as double;
+          setState(() => _keySize = keySize);
+        case 'updateSpaceWidth':
+          final spaceWidth = call.arguments as double;
+          setState(() => _spaceWidth = spaceWidth);
+        case 'updateOpacity':
+          final opacity = call.arguments as double;
+          setState(() => _opacity = opacity);
+        case 'updateAutoHideDuration':
+          final autoHideDuration = call.arguments as int;
+          setState(() => _autoHideDuration = autoHideDuration);
+        default:
+          throw UnimplementedError('Unimplemented method ${call.method}');
+      }
+      // _savePreferences();
+      return null;
+    });
   }
 
   void _setupKeyListener() {
@@ -180,7 +306,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
   void _resetAutoHideTimer() {
     _autoHideTimer?.cancel();
     if (_autoHideEnabled) {
-      _autoHideTimer = Timer(const Duration(seconds: 2), () {
+      _autoHideTimer = Timer(Duration(seconds: _autoHideDuration), () {
         if (_autoHideEnabled && _isWindowVisible) {
           _fadeOut();
         }
@@ -208,12 +334,6 @@ class _MainAppState extends State<MainApp> with TrayListener {
       });
     });
     _resetAutoHideTimer();
-  }
-
-  void _changeLayout(KeyboardLayout newLayout) {
-    setState(() {
-      _keyboardLayout = newLayout;
-    });
   }
 
   Future<void> _setupTray() async {
@@ -270,7 +390,9 @@ class _MainAppState extends State<MainApp> with TrayListener {
                     label: layout.name,
                     checked: layout == _keyboardLayout ? true : false,
                     onClick: (menuItem) {
-                      _changeLayout(layout);
+                      setState(() {
+                        _keyboardLayout = layout;
+                      });
                       _fadeIn();
                     },
                   ))
@@ -347,7 +469,19 @@ class _MainAppState extends State<MainApp> with TrayListener {
               color: Colors.transparent,
               child: Center(
                 child: KeyboardScreen(
-                    keyPressStates: _keyPressStates, layout: _keyboardLayout),
+                  keyPressStates: _keyPressStates,
+                  layout: _keyboardLayout,
+                  fontStyle: _fontStyle,
+                  keyFontSize: _keyFontSize,
+                  spaceFontSize: _spaceFontSize,
+                  fontWeight: _fontWeight,
+                  keyTextColor: _keyTextColor,
+                  keyTextColorNotPressed: _keyTextColorNotPressed,
+                  keyColorPressed: _keyColorPressed,
+                  keyColorNotPressed: _keyColorNotPressed,
+                  keySize: _keySize,
+                  spaceWidth: _spaceWidth,
+                ),
               ),
             ),
           ),
@@ -361,9 +495,31 @@ class _MainAppState extends State<MainApp> with TrayListener {
 class KeyboardScreen extends StatelessWidget {
   final Map<int, bool> keyPressStates;
   final KeyboardLayout layout;
+  final String fontStyle;
+  final double keyFontSize;
+  final double spaceFontSize;
+  final FontWeight fontWeight;
+  final Color keyTextColor;
+  final Color keyTextColorNotPressed;
+  final Color keyColorPressed;
+  final Color keyColorNotPressed;
+  final double keySize;
+  final double spaceWidth;
 
   const KeyboardScreen(
-      {super.key, required this.keyPressStates, required this.layout});
+      {super.key,
+      required this.keyPressStates,
+      required this.layout,
+      required this.keyColorPressed,
+      required this.keyColorNotPressed,
+      required this.fontStyle,
+      required this.keyFontSize,
+      required this.spaceFontSize,
+      required this.fontWeight,
+      required this.keyTextColor,
+      required this.keyTextColorNotPressed,
+      required this.keySize,
+      required this.spaceWidth});
 
   @override
   Widget build(BuildContext context) {
@@ -481,18 +637,14 @@ class KeyboardScreen extends StatelessWidget {
     int virtualKeyCode = getVirtualKeyCode(key);
     bool isPressed = keyPressStates[virtualKeyCode] ?? false;
 
-    Color keyColor = isPressed
-        ? const Color.fromARGB(255, 30, 30, 30)
-        : const Color.fromARGB(255, 119, 171, 255);
-    Color textColor = isPressed
-        ? const Color.fromARGB(255, 255, 255, 255)
-        : const Color.fromARGB(255, 0, 0, 0);
+    Color keyColor = isPressed ? keyColorPressed : keyColorNotPressed;
+    Color textColor = isPressed ? keyTextColor : keyTextColorNotPressed;
 
     Widget keyWidget = Padding(
       padding: const EdgeInsets.all(3.0),
       child: Container(
-        width: key == " " ? 320 : 48,
-        height: 48,
+        width: key == " " ? spaceWidth : keySize,
+        height: keySize,
         decoration: BoxDecoration(
           color: keyColor,
           borderRadius: BorderRadius.circular(12),
@@ -503,16 +655,16 @@ class KeyboardScreen extends StatelessWidget {
                   layout.name.toLowerCase(),
                   style: TextStyle(
                     color: textColor,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
+                    fontSize: spaceFontSize,
+                    fontWeight: fontWeight,
                   ),
                 )
               : Text(
                   key,
                   style: TextStyle(
                     color: textColor,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
+                    fontSize: keyFontSize,
+                    fontWeight: fontWeight,
                   ),
                 ),
         ),
