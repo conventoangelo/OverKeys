@@ -260,7 +260,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
           final spaceFontSize = call.arguments as double;
           setState(() => _spaceFontSize = spaceFontSize);
         case 'updateFontWeight':
-          final fontWeightIndex= call.arguments as int;
+          final fontWeightIndex = call.arguments as int;
           setState(() => _fontWeight = FontWeight.values[fontWeightIndex]);
         case 'updateKeyTextColor':
           final keyTextColor = call.arguments as int;
@@ -505,7 +505,9 @@ class _MainAppState extends State<MainApp> with TrayListener {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'OverKeys',
-      theme: ThemeData(fontFamily: _fontStyle),
+      theme: ThemeData(
+          fontFamily: _fontStyle,
+          fontFamilyFallback: const ['GeistMono', 'sans-serif']),
       home: Scaffold(
           backgroundColor: Colors.transparent,
           body: AnimatedOpacity(

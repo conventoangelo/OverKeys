@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
@@ -280,9 +279,33 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildSectionTitle('Text Settings'),
-        _buildDropdownOption(
-            'Font style', _fontStyle, ['GeistMono', 'Inter', 'Manrope'],
-            (value) {
+        _buildDropdownOption('Font style', _fontStyle, [
+          'Cascadia Mono',
+          'CommitMono',
+          'Consolas',
+          'Courier',
+          'Droid Sans Mono',
+          'Fira Code',
+          'Fira Mono',
+          'Geist',
+          'Geist Mono',
+          'Google Sans',
+          'Hack',
+          'IBM Plex Mono',
+          'Inter',
+          'Iosevka',
+          'JetBrains Mono',
+          'Manrope',
+          'Montserrat',
+          'Nunito',
+          'Poppins',
+          'Roboto',
+          'Roboto Mono',
+          'Source Code Pro',
+          'Source Sans Pro',
+          'Ubuntu',
+          'Ubuntu Mono',
+        ], (value) {
           setState(() => _fontStyle = value!);
           _updateMainWindow('updateFontStyle', value);
         }),
