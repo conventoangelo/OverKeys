@@ -78,8 +78,8 @@ void main(List<String> args) async {
     runApp(windows[arguments["name"]]);
   } else {
     await windowManager.ensureInitialized();
-    double windowWidth = 800;
-    double windowHeight = 270;
+    double windowWidth = 960;
+    double windowHeight = 320;
 
     WindowOptions windowOptions = const WindowOptions(
       backgroundColor: Colors.transparent,
@@ -94,11 +94,6 @@ void main(List<String> args) async {
       await windowManager.setSize(Size(windowWidth, windowHeight));
       await windowManager.setIgnoreMouseEvents(true);
       await windowManager.setAlignment(Alignment.bottomCenter);
-      Offset position = await windowManager.getPosition();
-      if (kDebugMode) {
-        print('Window Position: $position');
-      }
-      await windowManager.setPosition(Offset(position.dx, position.dy - 40));
       await windowManager.show();
     });
     runApp(const MainApp());
@@ -130,6 +125,13 @@ class _MainAppState extends State<MainApp> with TrayListener {
   Color _keyColorPressed = const Color.fromARGB(255, 30, 30, 30);
   Color _keyColorNotPressed = const Color.fromARGB(255, 119, 171, 255);
   double _keySize = 48;
+  double _keyBorderRadius = 12;
+  double _keyPadding = 3;
+  Color _markerColor = Colors.black54;
+  double _markerOffset = 10;
+  double _markerWidth = 10;
+  double _markerHeight = 2;
+  double _markerBorderRadius = 10;
   double _spaceWidth = 320;
   double _opacity = 0.6;
   double _lastOpacity = 0.6;
@@ -173,6 +175,16 @@ class _MainAppState extends State<MainApp> with TrayListener {
     Color keyColorNotPressed =
         Color(await asyncPrefs.getInt('keyColorNotPressed') ?? 0xFF77ABFF);
     double keySize = await asyncPrefs.getDouble('keySize') ?? 48;
+    double keyBorderRadius =
+        await asyncPrefs.getDouble('keyBorderRadius') ?? 12;
+    double keyPadding = await asyncPrefs.getDouble('keyPadding') ?? 3;
+    Color markerColor =
+        Color(await asyncPrefs.getInt('markerColor') ?? 0xFF000000);
+    double markerOffset = await asyncPrefs.getDouble('markerOffset') ?? 10;
+    double markerWidth = await asyncPrefs.getDouble('markerWidth') ?? 10;
+    double markerHeight = await asyncPrefs.getDouble('markerHeight') ?? 2;
+    double markerBorderRadius =
+        await asyncPrefs.getDouble('markerBorderRadius') ?? 10;
     double spaceWidth = await asyncPrefs.getDouble('spaceWidth') ?? 320;
     double opacity = await asyncPrefs.getDouble('opacity') ?? 0.6;
     int autoHideDuration = await asyncPrefs.getInt('autoHideDuration') ?? 2;
@@ -190,6 +202,13 @@ class _MainAppState extends State<MainApp> with TrayListener {
       _keyColorPressed = keyColorPressed;
       _keyColorNotPressed = keyColorNotPressed;
       _keySize = keySize;
+      _keyBorderRadius = keyBorderRadius;
+      _keyPadding = keyPadding;
+      _markerColor = markerColor;
+      _markerOffset = markerOffset;
+      _markerWidth = markerWidth;
+      _markerHeight = markerHeight;
+      _markerBorderRadius = markerBorderRadius;
       _spaceWidth = spaceWidth;
       _opacity = opacity;
       _autoHideDuration = autoHideDuration;
@@ -209,6 +228,13 @@ class _MainAppState extends State<MainApp> with TrayListener {
     await asyncPrefs.setInt('keyColorPressed', _keyColorPressed.value);
     await asyncPrefs.setInt('keyColorNotPressed', _keyColorNotPressed.value);
     await asyncPrefs.setDouble('keySize', _keySize);
+    await asyncPrefs.setDouble('keyBorderRadius', _keyBorderRadius);
+    await asyncPrefs.setDouble('keyPadding', _keyPadding);
+    await asyncPrefs.setInt('markerColor', _markerColor.value);
+    await asyncPrefs.setDouble('markerOffset', _markerOffset);
+    await asyncPrefs.setDouble('markerWidth', _markerWidth);
+    await asyncPrefs.setDouble('markerHeight', _markerHeight);
+    await asyncPrefs.setDouble('markerBorderRadius', _markerBorderRadius);
     await asyncPrefs.setDouble('spaceWidth', _spaceWidth);
     await asyncPrefs.setDouble('opacity', _opacity);
     await asyncPrefs.setInt('autoHideDuration', _autoHideDuration);
@@ -252,6 +278,27 @@ class _MainAppState extends State<MainApp> with TrayListener {
         case 'updateKeySize':
           final keySize = call.arguments as double;
           setState(() => _keySize = keySize);
+        case 'updateKeyBorderRadius':
+          final keyBorderRadius = call.arguments as double;
+          setState(() => _keyBorderRadius = keyBorderRadius);
+        case 'updateKeyPadding':
+          final keyPadding = call.arguments as double;
+          setState(() => _keyPadding = keyPadding);
+        case 'updateMarkerColor':
+          final markerColor = call.arguments as int;
+          setState(() => _markerColor = Color(markerColor));
+        case 'updateMarkerOffset':
+          final markerOffset = call.arguments as double;
+          setState(() => _markerOffset = markerOffset);
+        case 'updateMarkerWidth':
+          final markerWidth = call.arguments as double;
+          setState(() => _markerWidth = markerWidth);
+        case 'updateMarkerHeight':
+          final markerHeight = call.arguments as double;
+          setState(() => _markerHeight = markerHeight);
+        case 'updateMarkerBorderRadius':
+          final markerBorderRadius = call.arguments as double;
+          setState(() => _markerBorderRadius = markerBorderRadius);
         case 'updateSpaceWidth':
           final spaceWidth = call.arguments as double;
           setState(() => _spaceWidth = spaceWidth);
@@ -484,6 +531,13 @@ class _MainAppState extends State<MainApp> with TrayListener {
                     keyColorPressed: _keyColorPressed,
                     keyColorNotPressed: _keyColorNotPressed,
                     keySize: _keySize,
+                    keyBorderRadius: _keyBorderRadius,
+                    keyPadding: _keyPadding,
+                    markerColor: _markerColor,
+                    markerOffset: _markerOffset,
+                    markerWidth: _markerWidth,
+                    markerHeight: _markerHeight,
+                    markerBorderRadius: _markerBorderRadius,
                     spaceWidth: _spaceWidth,
                   ),
                 ),
@@ -507,21 +561,35 @@ class KeyboardScreen extends StatelessWidget {
   final Color keyColorPressed;
   final Color keyColorNotPressed;
   final double keySize;
+  final double keyBorderRadius;
+  final double keyPadding;
+  final Color markerColor;
+  final double markerOffset;
+  final double markerWidth;
+  final double markerHeight;
+  final double markerBorderRadius;
   final double spaceWidth;
 
   const KeyboardScreen(
       {super.key,
       required this.keyPressStates,
       required this.layout,
-      required this.keyColorPressed,
-      required this.keyColorNotPressed,
       required this.fontStyle,
       required this.keyFontSize,
       required this.spaceFontSize,
       required this.fontWeight,
       required this.keyTextColor,
       required this.keyTextColorNotPressed,
+      required this.keyColorPressed,
+      required this.keyColorNotPressed,
       required this.keySize,
+      required this.keyBorderRadius,
+      required this.keyPadding,
+      required this.markerColor,
+      required this.markerOffset,
+      required this.markerWidth,
+      required this.markerHeight,
+      required this.markerBorderRadius,
       required this.spaceWidth});
 
   @override
@@ -644,13 +712,13 @@ class KeyboardScreen extends StatelessWidget {
     Color textColor = isPressed ? keyTextColor : keyTextColorNotPressed;
 
     Widget keyWidget = Padding(
-      padding: const EdgeInsets.all(3.0),
+      padding: EdgeInsets.all(keyPadding),
       child: Container(
         width: key == " " ? spaceWidth : keySize,
         height: keySize,
         decoration: BoxDecoration(
           color: keyColor,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(keyBorderRadius),
         ),
         child: Center(
           child: key == " "
@@ -681,13 +749,13 @@ class KeyboardScreen extends StatelessWidget {
         children: [
           keyWidget,
           Positioned(
-            bottom: 10,
+            bottom: markerOffset,
             child: Container(
-              width: 10,
-              height: 2,
+              width: markerWidth,
+              height: markerHeight,
               decoration: BoxDecoration(
-                color: Colors.black54,
-                borderRadius: BorderRadius.circular(10),
+                color: markerColor,
+                borderRadius: BorderRadius.circular(markerBorderRadius),
               ),
             ),
           ),

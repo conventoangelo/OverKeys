@@ -32,8 +32,15 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
   Color _keyTextColorNotPressed = Colors.black;
   Color _keyColorPressed = const Color.fromARGB(255, 30, 30, 30);
   Color _keyColorNotPressed = const Color.fromARGB(255, 119, 171, 255);
-  double _keySize = 60;
-  double _spaceWidth = 40;
+  double _keySize = 48;
+  double _keyBorderRadius = 12;
+  double _keyPadding = 3;
+  Color _markerColor = Colors.black54;
+  double _markerOffset = 10;
+  double _markerWidth = 10;
+  double _markerHeight = 2;
+  double _markerBorderRadius = 10;
+  double _spaceWidth = 320;
   double _opacity = 0.6;
   int _autoHideDuration = 2;
 
@@ -67,6 +74,16 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
     Color keyColorNotPressed =
         Color(await asyncPrefs.getInt('keyColorNotPressed') ?? 0xFF77ABFF);
     double keySize = await asyncPrefs.getDouble('keySize') ?? 48;
+    double keyBorderRadius =
+        await asyncPrefs.getDouble('keyBorderRadius') ?? 12;
+    double keyPadding = await asyncPrefs.getDouble('keyPadding') ?? 3;
+    Color markerColor =
+        Color(await asyncPrefs.getInt('markerColor') ?? 0xFF000000);
+    double markerOffset = await asyncPrefs.getDouble('markerOffset') ?? 10;
+    double markerWidth = await asyncPrefs.getDouble('markerWidth') ?? 10;
+    double markerHeight = await asyncPrefs.getDouble('markerHeight') ?? 2;
+    double markerBorderRadius =
+        await asyncPrefs.getDouble('markerBorderRadius') ?? 10;
     double spaceWidth = await asyncPrefs.getDouble('spaceWidth') ?? 320;
     double opacity = await asyncPrefs.getDouble('opacity') ?? 0.6;
     int autoHideDuration = await asyncPrefs.getInt('autoHideDuration') ?? 2;
@@ -82,6 +99,13 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
       _keyColorPressed = keyColorPressed;
       _keyColorNotPressed = keyColorNotPressed;
       _keySize = keySize;
+      _keyBorderRadius = keyBorderRadius;
+      _keyPadding = keyPadding;
+      _markerColor = markerColor;
+      _markerOffset = markerOffset;
+      _markerWidth = markerWidth;
+      _markerHeight = markerHeight;
+      _markerBorderRadius = markerBorderRadius;
       _spaceWidth = spaceWidth;
       _opacity = opacity;
       _autoHideDuration = autoHideDuration;
@@ -100,6 +124,13 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
     await asyncPrefs.setInt('keyColorPressed', _keyColorPressed.value);
     await asyncPrefs.setInt('keyColorNotPressed', _keyColorNotPressed.value);
     await asyncPrefs.setDouble('keySize', _keySize);
+    await asyncPrefs.setDouble('keyBorderRadius', _keyBorderRadius);
+    await asyncPrefs.setDouble('keyPadding', _keyPadding);
+    await asyncPrefs.setInt('markerColor', _markerColor.value);
+    await asyncPrefs.setDouble('markerOffset', _markerOffset);
+    await asyncPrefs.setDouble('markerWidth', _markerWidth);
+    await asyncPrefs.setDouble('markerHeight', _markerHeight);
+    await asyncPrefs.setDouble('markerBorderRadius', _markerBorderRadius);
     await asyncPrefs.setDouble('spaceWidth', _spaceWidth);
     await asyncPrefs.setDouble('opacity', _opacity);
     await asyncPrefs.setInt('autoHideDuration', _autoHideDuration);
@@ -166,7 +197,7 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
     return Container(
       padding: const EdgeInsets.all(8),
       child: Row(
-        children: ['General', 'Text', 'Keyboard', 'About']
+        children: ['General', 'Text', 'Keyboard', 'Tactile Markers', 'About']
             .map((tab) => _buildTabButton(tab))
             .toList(),
       ),
@@ -204,6 +235,8 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
         return _buildTextTab();
       case 'Keyboard':
         return _buildKeyboardTab();
+      case 'Tactile Markers':
+        return _buildTactileMarkersTab();
       case 'About':
         return _buildAboutTab();
       default:
@@ -309,7 +342,16 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
           setState(() => _keySize = value);
           _updateMainWindow('updateKeySize', value);
         }),
-        _buildSliderOption('Space width', _spaceWidth, 200, 600, 400, (value) {
+        _buildSliderOption('Key border radius', _keyBorderRadius, 0, 30, 30,
+            (value) {
+          setState(() => _keyBorderRadius = value);
+          _updateMainWindow('updateKeyBorderRadius', value);
+        }),
+        _buildSliderOption('Key padding', _keyPadding, 0, 10, 20, (value) {
+          setState(() => _keyPadding = value);
+          _updateMainWindow('updateKeyPadding', value);
+        }),
+        _buildSliderOption('Space width', _spaceWidth, 200, 500, 300, (value) {
           setState(() => _spaceWidth = value);
           _updateMainWindow('updateSpaceWidth', value);
         }),
@@ -321,6 +363,36 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
             (color) {
           setState(() => _keyColorNotPressed = color);
           _updateMainWindow('updateKeyColorNotPressed', color);
+        }),
+      ],
+    );
+  }
+
+  Widget _buildTactileMarkersTab() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildSectionTitle('Tactile Markers Settings'),
+        _buildColorOption('Marker color', _markerColor, (color) {
+          setState(() => _markerColor = color);
+          _updateMainWindow('updateMarkerColor', color);
+        }),
+        _buildSliderOption('Marker offset', _markerOffset, 0, 20, 20, (value) {
+          setState(() => _markerOffset = value);
+          _updateMainWindow('updateMarkerOffset', value);
+        }),
+        _buildSliderOption('Marker width', _markerWidth, 0, 20, 20, (value) {
+          setState(() => _markerWidth = value);
+          _updateMainWindow('updateMarkerWidth', value);
+        }),
+        _buildSliderOption('Marker height', _markerHeight, 0, 10, 10, (value) {
+          setState(() => _markerHeight = value);
+          _updateMainWindow('updateMarkerHeight', value);
+        }),
+        _buildSliderOption(
+            'Marker border radius', _markerBorderRadius, 0, 10, 10, (value) {
+          setState(() => _markerBorderRadius = value);
+          _updateMainWindow('updateMarkerBorderRadius', value);
         }),
       ],
     );
