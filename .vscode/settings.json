@@ -3,18 +3,24 @@
 	"cSpell.words": [
 		"ARGB",
 		"calloc",
+		"Cascadia",
 		"colemak",
 		"colemakdh",
 		"colorpicker",
+		"Consolas",
 		"Cupertino",
+		"Fira",
 		"halmak",
 		"HOOKPROC",
+		"Iosevka",
 		"KBDLLHOOKSTRUCT",
 		"KEYDOWN",
 		"KEYUP",
 		"nerps",
 		"nullptr",
-		"prefs"
+		"Nunito",
+		"prefs",
+		"Roboto"
 	],
 	"dart.openDevTools": "never"
 }

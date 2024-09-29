@@ -31,10 +31,6 @@ int lowLevelKeyboardProc(
     bool isKeyDown = (wParam == WM_KEYDOWN);
 
     sendPort?.send([key, isKeyDown]);
-    // if (kDebugMode) {
-    //   print('Key Pressed: $key');
-    //   print('Key State: $isKeyDown');
-    // }
   }
   return CallNextHookEx(hookId, nCode, wParam, lParam);
 }
@@ -250,6 +246,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
             _keyboardLayout = availableLayouts
                 .firstWhere((layout) => layout.name == layoutName);
           });
+          _fadeIn();
         case 'updateFontStyle':
           final fontStyle = call.arguments as String;
           setState(() => _fontStyle = fontStyle);
@@ -311,7 +308,6 @@ class _MainAppState extends State<MainApp> with TrayListener {
         default:
           throw UnimplementedError('Unimplemented method ${call.method}');
       }
-      // _savePreferences();
       return null;
     });
   }
@@ -346,9 +342,6 @@ class _MainAppState extends State<MainApp> with TrayListener {
             _fadeIn();
           }
         }
-        // if (kDebugMode) {
-        //   print('Key press state updated: $_keyPressStates');
-        // }
       });
     });
   }
@@ -430,25 +423,6 @@ class _MainAppState extends State<MainApp> with TrayListener {
             }
           });
         },
-      ),
-      MenuItem.separator(),
-      MenuItem.submenu(
-        label: 'Layout',
-        submenu: Menu(
-          items: availableLayouts
-              .map((layout) => MenuItem.checkbox(
-                    key: layout.name.toLowerCase(),
-                    label: layout.name,
-                    checked: layout == _keyboardLayout ? true : false,
-                    onClick: (menuItem) {
-                      setState(() {
-                        _keyboardLayout = layout;
-                      });
-                      _fadeIn();
-                    },
-                  ))
-              .toList(),
-        ),
       ),
       MenuItem.separator(),
       MenuItem(
