@@ -132,6 +132,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
   double _keySize = 48;
   double _spaceWidth = 320;
   double _opacity = 0.6;
+  double _lastOpacity = 0.6;
   int _autoHideDuration = 2;
   bool _autoHideEnabled = false;
 
@@ -318,6 +319,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
 
   void _fadeOut() {
     setState(() {
+      _lastOpacity = _opacity;
       _opacity = 0.0;
     });
     Timer(const Duration(milliseconds: 300), () {
@@ -332,7 +334,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
     windowManager.show().then((_) {
       setState(() {
         _isWindowVisible = true;
-        _opacity = 0.6;
+        _opacity = _lastOpacity;
       });
     });
     _resetAutoHideTimer();
