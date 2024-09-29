@@ -22,7 +22,6 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
 
   String _currentTab = 'General';
 
-  bool _openOnStartup = false;
   String _keyboardLayoutName = 'QWERTY';
   String _fontStyle = 'GeistMono';
   double _keyFontSize = 20;
@@ -43,6 +42,7 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
   double _spaceWidth = 320;
   double _opacity = 0.6;
   int _autoHideDuration = 2;
+  bool _launchAtStartup = false;
 
   @override
   void initState() {
@@ -87,6 +87,7 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
     double spaceWidth = await asyncPrefs.getDouble('spaceWidth') ?? 320;
     double opacity = await asyncPrefs.getDouble('opacity') ?? 0.6;
     int autoHideDuration = await asyncPrefs.getInt('autoHideDuration') ?? 2;
+    bool launchAtStartup = await asyncPrefs.getBool('launchAtStartup') ?? false;
 
     setState(() {
       _keyboardLayoutName = keyboardLayoutName;
@@ -109,6 +110,7 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
       _spaceWidth = spaceWidth;
       _opacity = opacity;
       _autoHideDuration = autoHideDuration;
+      _launchAtStartup = launchAtStartup;
     });
   }
 
@@ -134,6 +136,7 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
     await asyncPrefs.setDouble('spaceWidth', _spaceWidth);
     await asyncPrefs.setDouble('opacity', _opacity);
     await asyncPrefs.setInt('autoHideDuration', _autoHideDuration);
+    await asyncPrefs.setBool('launchAtStartup', _launchAtStartup);
   }
 
   void _updateMainWindow(dynamic method, dynamic value) async {
@@ -251,9 +254,9 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildSectionTitle('General Settings'),
-        _buildToggleOption('Open on system startup', _openOnStartup, (value) {
-          setState(() => _openOnStartup = value);
-          _savePreferences();
+        _buildToggleOption('Open on system startup', _launchAtStartup, (value) {
+          setState(() => _launchAtStartup = value);
+          _updateMainWindow('updateLaunchAtStartup', value);
         }),
         _buildDropdownOption('Layout', _keyboardLayoutName,
             availableLayouts.map((layout) => (layout.name)).toList(), (value) {

@@ -12,6 +12,8 @@ import 'package:win32/win32.dart';
 import 'package:ffi/ffi.dart';
 import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:launch_at_startup/launch_at_startup.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import 'keyboard_layouts.dart';
 import 'preferences_window.dart';
@@ -73,6 +75,12 @@ void main(List<String> args) async {
     };
     runApp(windows[arguments["name"]]);
   } else {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    launchAtStartup.setup(
+      appName: packageInfo.appName,
+      appPath: Platform.resolvedExecutable,
+      packageName: packageInfo.packageName,
+    );
     await windowManager.ensureInitialized();
     double windowWidth = 960;
     double windowHeight = 320;
@@ -133,6 +141,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
   double _lastOpacity = 0.6;
   int _autoHideDuration = 2;
   bool _autoHideEnabled = false;
+  bool _launchAtStartup = false;
 
   @override
   void initState() {
@@ -143,6 +152,28 @@ class _MainAppState extends State<MainApp> with TrayListener {
     _setupTray();
     _setupKeyListener();
     _setupMethodHandler();
+    _init();
+  }
+
+  _init() async {
+    _launchAtStartup = await launchAtStartup.isEnabled();
+    setState(() {});
+  }
+
+  _handleEnable() async {
+    await launchAtStartup.enable();
+    if (kDebugMode) {
+      print('On system startup: Enabled');
+    }
+    await _init();
+  }
+
+  _handleDisable() async {
+    await launchAtStartup.disable();
+    if (kDebugMode) {
+      print('On system startup: Disabled');
+    }
+    await _init();
   }
 
   @override
@@ -305,6 +336,16 @@ class _MainAppState extends State<MainApp> with TrayListener {
         case 'updateAutoHideDuration':
           final autoHideDuration = call.arguments as int;
           setState(() => _autoHideDuration = autoHideDuration);
+        case 'updateLaunchAtStartup':
+          final launchAtStartupRet = call.arguments as bool;
+          setState(() {
+            _launchAtStartup = launchAtStartupRet;
+            if (launchAtStartupRet) {
+              _handleEnable();
+            } else {
+              _handleDisable();
+            }
+          });
         default:
           throw UnimplementedError('Unimplemented method ${call.method}');
       }
