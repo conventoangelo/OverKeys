@@ -507,7 +507,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
       title: 'OverKeys',
       theme: ThemeData(
           fontFamily: _fontStyle,
-          fontFamilyFallback: const ['GeistMono', 'sans-serif']),
+          fontFamilyFallback: const ['Geist Mono', 'sans-serif']),
       home: Scaffold(
           backgroundColor: Colors.transparent,
           body: AnimatedOpacity(
