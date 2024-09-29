@@ -16,6 +16,10 @@ dependencies:
   desktop_multi_window: ^0.2.0
   flutter_colorpicker: ^1.1.0
   shared_preferences: ^2.3.2
+  flex_color_picker: ^3.6.0
+  flutter_localizations:
+    sdk: flutter
+  intl: any
 
 dev_dependencies:
   flutter_test:

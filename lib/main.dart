@@ -175,6 +175,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
     double spaceWidth = await asyncPrefs.getDouble('spaceWidth') ?? 320;
     double opacity = await asyncPrefs.getDouble('opacity') ?? 0.6;
     int autoHideDuration = await asyncPrefs.getInt('autoHideDuration') ?? 2;
+    bool autoHideEnabled = await asyncPrefs.getBool('autoHideEnabled') ?? false;
 
     setState(() {
       _keyboardLayout = availableLayouts
@@ -191,6 +192,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
       _spaceWidth = spaceWidth;
       _opacity = opacity;
       _autoHideDuration = autoHideDuration;
+      _autoHideEnabled = autoHideEnabled;
     });
   }
 
@@ -445,7 +447,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
       'name': 'preferences',
     }));
     window
-      ..setFrame(const Offset(0, 0) & const Size(1280, 720))
+      ..setFrame(const Offset(0, 0) & const Size(1280, 760))
       ..center()
       ..show();
   }

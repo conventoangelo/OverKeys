@@ -1,7 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -105,6 +106,9 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
   }
 
   void _updateMainWindow(dynamic method, dynamic value) async {
+    if (value is Color) {
+      value = value.value;
+    }
     await DesktopMultiWindow.invokeMethod(0, method, value);
     _savePreferences();
   }
@@ -115,35 +119,45 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
       theme: ThemeData(
         fontFamily: 'Manrope',
       ),
-      home: Scaffold(
-        backgroundColor: const Color(0xFF1E1E2E),
-        appBar: AppBar(
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en', ''), // English, no country code
+      ],
+      home: Builder(builder: (context) {
+        return Scaffold(
           backgroundColor: const Color(0xFF1E1E2E),
-          toolbarHeight: 100,
-          title: const Padding(
-            padding: EdgeInsets.all(80),
-            child: Text('Preferences',
-                style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white)),
+          appBar: AppBar(
+            backgroundColor: const Color(0xFF1E1E2E),
+            toolbarHeight: 100,
+            title: const Padding(
+              padding: EdgeInsets.all(100),
+              child: Text('Preferences',
+                  style: TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white)),
+            ),
           ),
-        ),
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 80.0),
-          child: Column(
-            children: [
-              _buildTabBar(),
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 16.0),
-                  child: _buildCurrentTabContent(),
+          body: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 100.0),
+            child: Column(
+              children: [
+                _buildTabBar(),
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 16.0),
+                    child: _buildCurrentTabContent(),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ),
+        );
+      }),
       debugShowCheckedModeBanner: false,
     );
   }
@@ -273,11 +287,11 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
           });
           _updateMainWindow('updateFontWeight', _fontWeight);
         }),
-        _buildColorPicker('Text color (pressed)', _keyTextColor, (color) {
+        _buildColorOption('Text color (pressed)', _keyTextColor, (color) {
           setState(() => _keyTextColor = color);
           _updateMainWindow('updateKeyTextColor', color);
         }),
-        _buildColorPicker('Text color (not pressed)', _keyTextColorNotPressed,
+        _buildColorOption('Text color (not pressed)', _keyTextColorNotPressed,
             (color) {
           setState(() => _keyTextColorNotPressed = color);
           _updateMainWindow('updateKeyTextColorNotPressed', color);
@@ -291,15 +305,6 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildSectionTitle('Keyboard Settings'),
-        _buildColorPicker('Key color (pressed)', _keyColorPressed, (color) {
-          setState(() => _keyColorPressed = color);
-          _updateMainWindow('updateKeyColorPressed', color);
-        }),
-        _buildColorPicker('Key color (not pressed)', _keyColorNotPressed,
-            (color) {
-          setState(() => _keyColorNotPressed = color);
-          _updateMainWindow('updateKeyColorPressed', color);
-        }),
         _buildSliderOption('Key size', _keySize, 40, 60, 40, (value) {
           setState(() => _keySize = value);
           _updateMainWindow('updateKeySize', value);
@@ -307,6 +312,15 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
         _buildSliderOption('Space width', _spaceWidth, 200, 600, 400, (value) {
           setState(() => _spaceWidth = value);
           _updateMainWindow('updateSpaceWidth', value);
+        }),
+        _buildColorOption('Key color (pressed)', _keyColorPressed, (color) {
+          setState(() => _keyColorPressed = color);
+          _updateMainWindow('updateKeyColorPressed', color);
+        }),
+        _buildColorOption('Key color (not pressed)', _keyColorNotPressed,
+            (color) {
+          setState(() => _keyColorNotPressed = color);
+          _updateMainWindow('updateKeyColorNotPressed', color);
         }),
       ],
     );
@@ -376,7 +390,7 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
                 .toList(),
             onChanged: onChanged,
             dropdownColor: const Color(0xFF2A2A3C),
-            style: const TextStyle(color: Colors.white),
+            style: const TextStyle(color: Colors.white, fontFamily: 'Manrope'),
           ),
         ],
       ),
@@ -405,31 +419,6 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
     );
   }
 
-  Widget _buildColorPicker(
-      String label, Color currentColor, Function(Color) onColorChanged) {
-    return _buildOptionContainer(
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label, style: const TextStyle(color: Colors.white)),
-          GestureDetector(
-            onTap: () =>
-                _showColorPicker(context, currentColor, onColorChanged),
-            child: Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: currentColor,
-                border: Border.all(color: Colors.grey),
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildOptionContainer(Widget child) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -442,30 +431,92 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
     );
   }
 
-  void _showColorPicker(BuildContext context, Color currentColor,
-      Function(Color) onColorChanged) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Pick a color'),
-          content: SingleChildScrollView(
-            child: ColorPicker(
-              pickerColor: currentColor,
-              onColorChanged: onColorChanged,
-              pickerAreaHeightPercent: 0.8,
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Done'),
-              onPressed: () {
-                Navigator.of(context).pop();
+  Widget _buildColorOption(
+      String label, Color currentColor, Function(Color) onColorChanged) {
+    return _buildOptionContainer(
+      Builder(builder: (context) {
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(label, style: const TextStyle(color: Colors.white)),
+            ColorIndicator(
+              width: 44,
+              height: 44,
+              borderRadius: 11,
+              borderColor: Colors.white,
+              hasBorder: true,
+              color: currentColor,
+              onSelectFocus: false,
+              onSelect: () async {
+                final Color? newColor = await showDialog<Color>(
+                  context: context,
+                  builder: (BuildContext context) {
+                    Color pickerColor = currentColor;
+                    return AlertDialog(
+                      content: SingleChildScrollView(
+                        child: ColorPicker(
+                          wheelDiameter: 250,
+                          wheelWidth: 22,
+                          wheelSquarePadding: 4,
+                          wheelSquareBorderRadius: 16,
+                          wheelHasBorder: true,
+                          color: pickerColor,
+                          onColorChanged: (Color color) {
+                            pickerColor = color;
+                          },
+                          heading: Text(
+                            'Select color',
+                            style: Theme.of(context).textTheme.titleSmall,
+                          ),
+                          showColorName: true,
+                          showColorCode: true,
+                          copyPasteBehavior: const ColorPickerCopyPasteBehavior(
+                            copyButton: true,
+                            pasteButton: true,
+                            ctrlC: true,
+                            ctrlV: true,
+                          ),
+                          colorNameTextStyle:
+                              Theme.of(context).textTheme.bodySmall,
+                          colorCodeTextStyle:
+                              Theme.of(context).textTheme.bodySmall,
+                          pickersEnabled: const <ColorPickerType, bool>{
+                            ColorPickerType.primary: false,
+                            ColorPickerType.accent: false,
+                            ColorPickerType.wheel: true,
+                          },
+                          // ... other ColorPicker properties ...
+                        ),
+                      ),
+                      actions: <Widget>[
+                        TextButton(
+                          child: const Text('Cancel',
+                              style: TextStyle(color: Colors.black)),
+                          onPressed: () {
+                            // Revert to original color
+                            onColorChanged(currentColor);
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        TextButton(
+                          child: const Text('OK',
+                              style: TextStyle(color: Colors.black)),
+                          onPressed: () {
+                            Navigator.of(context).pop(pickerColor);
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
+                if (newColor != null) {
+                  onColorChanged(newColor);
+                }
               },
             ),
           ],
         );
-      },
+      }),
     );
   }
 }
