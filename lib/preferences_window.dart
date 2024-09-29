@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
@@ -24,7 +25,7 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
 
   bool _openOnStartup = false;
   String _keyboardLayoutName = 'QWERTY';
-  String _fontStyle = 'Geist Mono';
+  String _fontStyle = 'GeistMono';
   double _keyFontSize = 20;
   double _spaceFontSize = 14;
   FontWeight _fontWeight = FontWeight.w600;
@@ -60,7 +61,7 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
   Future<void> _loadPreferences() async {
     String keyboardLayoutName =
         await asyncPrefs.getString('layout') ?? 'QWERTY';
-    String fontStyle = await asyncPrefs.getString('fontStyle') ?? 'Geist Mono';
+    String fontStyle = await asyncPrefs.getString('fontStyle') ?? 'GeistMono';
     double keyFontSize = await asyncPrefs.getDouble('keyFontSize') ?? 20;
     double spaceFontSize = await asyncPrefs.getDouble('spaceFontSize') ?? 14;
     FontWeight fontWeight = FontWeight
@@ -139,6 +140,8 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
   void _updateMainWindow(dynamic method, dynamic value) async {
     if (value is Color) {
       value = value.value;
+    } else if (value is FontWeight) {
+      value = value.index;
     }
     await DesktopMultiWindow.invokeMethod(0, method, value);
     _savePreferences();
@@ -156,7 +159,7 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: const [
-        Locale('en', ''), // English, no country code
+        Locale('en', ''),
       ],
       home: Builder(builder: (context) {
         return Scaffold(
@@ -218,8 +221,8 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           side: const BorderSide(
-            color: Color(0xFF3A3A4C), // Border color
-            width: 2.0, // Border width
+            color: Color(0xFF3A3A4C),
+            width: 2.0,
           ),
         ),
         child: Text(tabName),
@@ -278,7 +281,7 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
       children: [
         _buildSectionTitle('Text Settings'),
         _buildDropdownOption(
-            'Font style', _fontStyle, ['Geist Mono', 'Arial', 'Manrope'],
+            'Font style', _fontStyle, ['GeistMono', 'Inter', 'Manrope'],
             (value) {
           setState(() => _fontStyle = value!);
           _updateMainWindow('updateFontStyle', value);
@@ -318,7 +321,7 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
                 break;
             }
           });
-          _updateMainWindow('updateFontWeight', _fontWeight);
+          _updateMainWindow('updateFontWeight', _fontWeight.index);
         }),
         _buildColorOption('Text color (pressed)', _keyTextColor, (color) {
           setState(() => _keyTextColor = color);
@@ -485,7 +488,6 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
             onChanged: onChanged,
             activeColor: Colors.green,
           ),
-          // Text(value.toString(), style: const TextStyle(color: Colors.grey)),
         ],
       ),
     );
@@ -557,7 +559,6 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
                             ColorPickerType.accent: false,
                             ColorPickerType.wheel: true,
                           },
-                          // ... other ColorPicker properties ...
                         ),
                       ),
                       actions: <Widget>[
@@ -565,7 +566,6 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
                           child: const Text('Cancel',
                               style: TextStyle(color: Colors.black)),
                           onPressed: () {
-                            // Revert to original color
                             onColorChanged(currentColor);
                             Navigator.of(context).pop();
                           },

@@ -116,7 +116,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
 
   final SharedPreferencesAsync asyncPrefs = SharedPreferencesAsync();
 
-  String _fontStyle = 'Geist Mono';
+  String _fontStyle = 'GeistMono';
   double _keyFontSize = 20;
   double _spaceFontSize = 14;
   FontWeight _fontWeight = FontWeight.w600;
@@ -161,7 +161,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
   Future<void> _loadPreferences() async {
     String keyboardLayoutName =
         await asyncPrefs.getString('layout') ?? 'QWERTY';
-    String fontStyle = await asyncPrefs.getString('fontStyle') ?? 'Geist Mono';
+    String fontStyle = await asyncPrefs.getString('fontStyle') ?? 'GeistMono';
     double keyFontSize = await asyncPrefs.getDouble('keyFontSize') ?? 20;
     double spaceFontSize = await asyncPrefs.getDouble('spaceFontSize') ?? 14;
     FontWeight fontWeight = FontWeight
@@ -260,8 +260,8 @@ class _MainAppState extends State<MainApp> with TrayListener {
           final spaceFontSize = call.arguments as double;
           setState(() => _spaceFontSize = spaceFontSize);
         case 'updateFontWeight':
-          final fontWeight = call.arguments as FontWeight;
-          setState(() => _fontWeight = fontWeight);
+          final fontWeightIndex= call.arguments as int;
+          setState(() => _fontWeight = FontWeight.values[fontWeightIndex]);
         case 'updateKeyTextColor':
           final keyTextColor = call.arguments as int;
           setState(() => _keyTextColor = Color(keyTextColor));
@@ -505,7 +505,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'OverKeys',
-      theme: ThemeData(fontFamily: 'Geist Mono'),
+      theme: ThemeData(fontFamily: _fontStyle),
       home: Scaffold(
           backgroundColor: Colors.transparent,
           body: AnimatedOpacity(
