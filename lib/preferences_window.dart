@@ -435,13 +435,13 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
                 fontSize: 24,
                 fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
-        const Text('Version 0.1.0', style: TextStyle(color: Colors.grey)),
+        const Text('Version 1.0.0', style: TextStyle(color: Colors.grey)),
         const SizedBox(height: 16),
         const Text(
-            'OverKeys is an open-source on-screen keyboard overlay for Windows designed to help you learn your next keyboard layout.',
+            'OverKeys is an open-source, customizable on-screen keyboard for Windows. Learn and practice alternative layouts, personalize appearance, and improve your typing.',
             style: TextStyle(color: Colors.white)),
         const SizedBox(height: 16),
-        const Text('© 2024 Angelo Convento',
+        const Text('© 2024 Angelo Convento. All rights reserved.',
             style: TextStyle(color: Colors.grey)),
       ],
     );
