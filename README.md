@@ -104,6 +104,10 @@ Follow these instructions to set up OverKeys on your local machine.
 2. Run the installer and follow the on-screen instructions.
 3. Once installed, OverKeys will be available for use immediately.
 
+### Configuration
+
+To change the app settings, right-click the OverKeys icon in the system tray and select **Preferences**. A separate window will open, displaying the available settings.
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Contributing
