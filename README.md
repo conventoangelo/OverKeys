@@ -37,7 +37,7 @@
 
 ## About The Project
 
-![OverKeys Demo](assets\images\OverKeysDemo.gif)
+![OverKeys Demo](https://github.com/conventoangelo/OverKeys/blob/main/assets/images/OverKeysDemo.gif)
 
 OverKeys is an open-source on-screen keyboard designed for users to practice alternative keyboard layouts, such as **Canary**, **Colemak**, **Dvorak**, and many more. Built in Flutter, it allows full customizability, making it perfect for users learning or working with non-traditional layouts.
 
