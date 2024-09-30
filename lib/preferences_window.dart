@@ -258,7 +258,7 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
           setState(() => _launchAtStartup = value);
           _updateMainWindow('updateLaunchAtStartup', value);
         }),
-        _buildDropdownOption('Layout', _keyboardLayoutName,
+        _buildDropdownOption('Layout', '', _keyboardLayoutName,
             availableLayouts.map((layout) => (layout.name)).toList(), (value) {
           setState(() => _keyboardLayoutName = value!);
           _updateMainWindow('updateLayout', value);
@@ -282,23 +282,42 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildSectionTitle('Text Settings'),
-        _buildDropdownOption('Font style', _fontStyle, [
+        _buildDropdownOption(
+            'Font style',
+            'Make sure that the font is installed in your system. Falls back to Geist Mono',
+            _fontStyle, [
+          'Berkeley Mono',
           'Cascadia Mono',
+          'Comic Mono',
           'CommitMono',
           'Consolas',
           'Courier',
+          'Cousine',
+          'Dank Mono',
+          'DM Mono',
           'Droid Sans Mono',
           'Fira Code',
           'Fira Mono',
           'Geist',
-          'Geist Mono',
+          'GeistMono',
           'Google Sans',
           'Hack',
           'IBM Plex Mono',
+          'Inconsolata',
+          'Input',
           'Inter',
           'Iosevka',
           'JetBrains Mono',
           'Manrope',
+          'Meslo',
+          'Monaspace Argon',
+          'Monaspace Krypton',
+          'Monaspace Neon',
+          'Monaspace Radon',
+          'Monaspace Xenon',
+          'Monocraft',
+          'MonoLisa',
+          'mononoki',
           'Montserrat',
           'Nunito',
           'Poppins',
@@ -308,6 +327,7 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
           'Source Sans Pro',
           'Ubuntu',
           'Ubuntu Mono',
+          'Victor Mono',
         ], (value) {
           setState(() => _fontStyle = value!);
           _updateMainWindow('updateFontStyle', value);
@@ -323,16 +343,46 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
         }),
         _buildDropdownOption(
             'Font weight',
-            _fontWeight == FontWeight.normal
-                ? 'Normal'
-                : _fontWeight == FontWeight.w500
-                    ? 'Medium'
-                    : _fontWeight == FontWeight.w600
-                        ? 'SemiBold'
-                        : 'Bold',
-            ['Normal', 'Medium', 'SemiBold', 'Bold'], (value) {
+            '',
+            _fontWeight == FontWeight.w100
+                ? 'Thin'
+                : _fontWeight == FontWeight.w200
+                    ? 'ExtraLight'
+                    : _fontWeight == FontWeight.w300
+                        ? 'Light'
+                        : _fontWeight == FontWeight.normal
+                            ? 'Normal'
+                            : _fontWeight == FontWeight.w500
+                                ? 'Medium'
+                                : _fontWeight == FontWeight.w600
+                                    ? 'SemiBold'
+                                    : _fontWeight == FontWeight.bold
+                                        ? 'Bold'
+                                        : _fontWeight == FontWeight.w800
+                                            ? 'ExtraBold'
+                                            : 'Black',
+            [
+              'Thin',
+              'ExtraLight',
+              'Light',
+              'Normal',
+              'Medium',
+              'SemiBold',
+              'Bold',
+              'ExtraBold',
+              'Black'
+            ], (value) {
           setState(() {
             switch (value) {
+              case 'Thin':
+                _fontWeight = FontWeight.w100;
+                break;
+              case 'ExtraLight':
+                _fontWeight = FontWeight.w200;
+                break;
+              case 'Light':
+                _fontWeight = FontWeight.w300;
+                break;
               case 'Normal':
                 _fontWeight = FontWeight.normal;
                 break;
@@ -344,6 +394,12 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
                 break;
               case 'Bold':
                 _fontWeight = FontWeight.bold;
+                break;
+              case 'ExtraBold':
+                _fontWeight = FontWeight.w800;
+                break;
+              case 'Black':
+                _fontWeight = FontWeight.w900;
                 break;
             }
           });
@@ -476,13 +532,20 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
     );
   }
 
-  Widget _buildDropdownOption(String label, String value, List<String> options,
-      Function(String?) onChanged) {
+  Widget _buildDropdownOption(String label, String subtitle, String value,
+      List<String> options, Function(String?) onChanged) {
     return _buildOptionContainer(
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: const TextStyle(color: Colors.white)),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(label, style: const TextStyle(color: Colors.white)),
+              Text(subtitle,
+                  style: const TextStyle(color: Colors.grey, fontSize: 13.0)),
+            ],
+          ),
           DropdownButton<String>(
             value: value,
             items: options

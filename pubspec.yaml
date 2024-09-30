@@ -32,7 +32,7 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   fonts:
-    - family: Geist Mono
+    - family: GeistMono
       fonts:
         - asset: assets/fonts/GeistMono-Regular.ttf
         - asset: assets/fonts/GeistMono-Medium.ttf
@@ -40,6 +40,15 @@ flutter:
         - asset: assets/fonts/GeistMono-SemiBold.ttf
           weight: 600
         - asset: assets/fonts/GeistMono-Bold.ttf
+          weight: 700
+    - family: Manrope
+      fonts:
+        - asset: assets/fonts/Manrope-Regular.ttf
+        - asset: assets/fonts/Manrope-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Manrope-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Manrope-Bold.ttf
           weight: 700
 
   assets:
