@@ -145,5 +145,6 @@ Project Link: [https://github.com/conventoangelo/OverKeys](https://github.com/co
 - [desktop_multi_window](https://pub.dev/packages/desktop_multi_window) - A flutter plugin that create and manager multi window in desktop.
 - [flex_color_picker](https://github.com/rydmike/flex_color_picker) - A highly customizable Flutter color picker.
 - [Best-README-Template](https://github.com/othneildrew/Best-README-Template) - An awesome README template to jumpstart your projects!
+- Alaine - for the OverKeys logo.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
