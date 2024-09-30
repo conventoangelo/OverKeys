@@ -1,7 +1,8 @@
 name: overkeys
-description: "A new Flutter project."
+description: "An open-source, customizable on-screen keyboard for Windows. Learn and practice alternative layouts, personalize appearance, and improve your typing."
 publish_to: "none"
 version: 0.1.0
+repository: https://github.com/conventoangelo/OverKeys
 
 environment:
   sdk: ^3.5.3

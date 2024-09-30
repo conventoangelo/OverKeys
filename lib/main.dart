@@ -141,6 +141,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
   double _lastOpacity = 0.6;
   int _autoHideDuration = 2;
   bool _autoHideEnabled = false;
+  // ignore: unused_field
   bool _launchAtStartup = false;
 
   @override
