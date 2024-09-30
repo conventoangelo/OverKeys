@@ -3,8 +3,8 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <img src="assets/images/OK.png" alt="OverKeys Logo" width="80" height="80">
-  <h3 align="center">OverKeys</h3>
+  <img src="assets/images/OK.png" alt="OverKeys Logo" width="160" height="160">
+  <h1 align="center">OverKeys</h1>
   <p align="center">
     A customizable, open-source on-screen keyboard for alternative layouts!
     <br />
