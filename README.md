@@ -119,7 +119,3 @@ Project Link: [https://github.com/conventoangelo/OverKeys](https://github.com/co
 - [Best-README-Template](https://github.com/othneildrew/Best-README-Template)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
----
-
-This structure will make your project more approachable and user-friendly for developers looking to use or contribute to OverKeys!
