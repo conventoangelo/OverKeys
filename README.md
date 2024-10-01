@@ -39,7 +39,7 @@
 
 ![OverKeys Demo](https://github.com/conventoangelo/OverKeys/blob/main/assets/images/OverKeysDemo.gif)
 
-OverKeys is an open-source on-screen keyboard designed for users to practice alternative keyboard layouts, such as **Canary**, **Colemak**, **Dvorak**, and many more. Built in Flutter, it allows full customizability, making it perfect for users learning or working with non-traditional layouts.
+OverKeys is an open-source on-screen keyboard designed for users to practice alternative keyboard layouts, such as **Canary**, **Colemak**, **Dvorak**, and many more. Built in [**Flutter**](https://flutter.dev/), it allows full customizability, making it perfect for users learning or working with non-traditional layouts.
 
 This project was initially developed to help with system-wide practice of the **Canary layout**, but has since evolved to support multiple layouts and customization options.
 
@@ -107,6 +107,35 @@ Follow these instructions to set up OverKeys on your local machine.
 ### Configuration
 
 To change the app settings, right-click the OverKeys icon in the system tray and select **Preferences**. A separate window will open, displaying the available settings.
+
+### Loading Your Own Layout
+
+To load your own keyboard layout, follow these steps:
+
+1. **Install Flutter**:
+   - Follow the official [Flutter installation guide](https://flutter.dev/docs/get-started/install) to set up Flutter on your machine.
+
+2. **Make Changes to `keyboard_layout.dart`**:
+   - Navigate to the `lib` directory in the project.
+   - Open the `keyboard_layout.dart` file.
+   - Modify the file to define your custom keyboard layout.
+   - Make sure to add your new custom keyboard layout to the `availableLayouts` list at the bottom of the file.
+
+3. **Build the Project Locally**:
+   - Open a terminal and navigate to the root directory of the project.
+   - Run the following command to get the Flutter dependencies:
+  
+     ```sh
+     flutter pub get
+     ```
+
+   - Build the project by running:
+
+     ```sh
+     flutter build windows
+     ```
+
+   - Once the build is complete, you can find the executable file in `OverKeys\build\windows\x64\runner\Release`.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
