@@ -115,6 +115,36 @@ const graphite = KeyboardLayout(
   ],
 );
 
+const galliumV2 = KeyboardLayout(
+  name: 'Gallium V2',
+  keys: [
+    ['B', 'L', 'D', 'W', 'Z', "'", 'F', 'O', 'U', 'J', ';', '='],
+    ['N', 'R', 'T', 'S', 'G', 'Y', 'H', 'A', 'E', 'I', ','],
+    ['Q', 'X', 'M', 'C', 'V', 'K', 'P', '.', '-', '/'],
+    [' '],
+  ],
+);
+
+const sturdy = KeyboardLayout(
+  name: 'Sturdy',
+  keys: [
+    ['V', 'M', 'L', 'C', 'P', "X", 'F', 'O', 'U', '-', '[', ']'],
+    ['S', 'T', 'R', 'D', 'Y', '.', 'N', 'A', 'E', 'I', '/'],
+    ['Z', 'K', 'Q', 'G', 'W', 'B', 'H', "'", ';', ','],
+    [' '],
+  ],
+);
+
+const canaria = KeyboardLayout(
+  name: 'Canaria',
+  keys: [
+    ["W", "L", "Y", "P", "K", "Z", "J", "O", "U", ";", "[", "]"],
+    ["C", "R", "S", "T", "B", "F", "N", "E", "I", "A", "'"],
+    ["X", "V", "D", "G", "Q", "M", "H", "/", ",", "."],
+    [" "],
+  ],
+);
+
 final List<KeyboardLayout> availableLayouts = [
   qwerty,
   colemak,
@@ -127,4 +157,7 @@ final List<KeyboardLayout> availableLayouts = [
   halmak,
   engram,
   graphite,
+  galliumV2,
+  sturdy,
+  canaria,
 ];
