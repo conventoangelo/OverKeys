@@ -118,9 +118,9 @@ const graphite = KeyboardLayout(
 const galliumV2 = KeyboardLayout(
   name: 'Gallium V2',
   keys: [
-    ['B', 'L', 'D', 'W', 'Z', "'", 'F', 'O', 'U', 'J', ';', '='],
-    ['N', 'R', 'T', 'S', 'G', 'Y', 'H', 'A', 'E', 'I', ','],
-    ['Q', 'X', 'M', 'C', 'V', 'K', 'P', '.', '-', '/'],
+    ['B', 'L', 'D', 'C', 'V', 'J', 'F', 'O', 'U', ',', '[', ']'],
+    ['N', 'R', 'T', 'S', 'G', 'Y', 'H', 'A', 'E', 'I', '/'],
+    ['X', 'Q', 'M', 'W', 'Z', 'K', 'P', "'", ';', '.'],
     [' '],
   ],
 );
@@ -128,9 +128,9 @@ const galliumV2 = KeyboardLayout(
 const sturdy = KeyboardLayout(
   name: 'Sturdy',
   keys: [
-    ['V', 'M', 'L', 'C', 'P', "X", 'F', 'O', 'U', '-', '[', ']'],
+    ['V', 'M', 'L', 'C', 'P', "X", 'F', 'O', 'U', 'J', '[', ']'],
     ['S', 'T', 'R', 'D', 'Y', '.', 'N', 'A', 'E', 'I', '/'],
-    ['Z', 'K', 'Q', 'G', 'W', 'B', 'H', "'", ';', ','],
+    ['K', 'Q', 'G', 'W', 'Z', 'B', 'H', "'", ';', ','],
     [' '],
   ],
 );
@@ -144,6 +144,16 @@ const canaria = KeyboardLayout(
     [" "],
   ],
 );
+
+const handsDown = KeyboardLayout(
+  name: 'Hands Down',
+  keys: [
+    ['Q', 'C', 'H', 'P', 'V', 'K', 'Y', 'O', 'J', '/', '[', ']'],
+    ['R', 'S', 'N', 'T', 'G', 'W', 'U', 'E', 'I', 'A', ';'],
+    ['X', 'M', 'L', 'D', 'B', 'Z', 'F', "'", ',', '.'],
+    [' '],
+  ]
+)
 
 final List<KeyboardLayout> availableLayouts = [
   qwerty,
@@ -160,4 +170,5 @@ final List<KeyboardLayout> availableLayouts = [
   galliumV2,
   sturdy,
   canaria,
+  handsDown,
 ];
