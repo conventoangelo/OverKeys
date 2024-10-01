@@ -275,6 +275,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
         case 'updateLayout':
           final layoutName = call.arguments as String;
           setState(() {
+            _lastOpacity = _opacity;
             _keyboardLayout = availableLayouts
                 .firstWhere((layout) => layout.name == layoutName);
           });
