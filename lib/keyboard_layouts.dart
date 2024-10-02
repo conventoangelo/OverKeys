@@ -153,7 +153,7 @@ const handsDown = KeyboardLayout(
     ['X', 'M', 'L', 'D', 'B', 'Z', 'F', "'", ',', '.'],
     [' '],
   ]
-)
+);
 
 final List<KeyboardLayout> availableLayouts = [
   qwerty,
