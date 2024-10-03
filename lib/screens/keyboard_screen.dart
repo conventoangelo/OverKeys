@@ -22,6 +22,8 @@ class KeyboardScreen extends StatelessWidget {
   final double markerHeight;
   final double markerBorderRadius;
   final double spaceWidth;
+  final String keymapStyle;
+  final double splitWidth;
 
   const KeyboardScreen(
       {super.key,
@@ -43,7 +45,9 @@ class KeyboardScreen extends StatelessWidget {
       required this.markerWidth,
       required this.markerHeight,
       required this.markerBorderRadius,
-      required this.spaceWidth});
+      required this.spaceWidth,
+      required this.keymapStyle,
+      required this.splitWidth});
 
   @override
   Widget build(BuildContext context) {
@@ -60,13 +64,29 @@ class KeyboardScreen extends StatelessWidget {
   }
 
   Widget buildRow(int rowIndex, List<String> keys) {
+    List<Widget> rowWidgets = [];
+
+    for (int i = 0; i < keys.length; i++) {
+      if (i == 5 && keymapStyle == 'Split Matrix') {
+        rowWidgets.add(SizedBox(width: splitWidth));
+      }
+
+      if (keymapStyle == 'Matrix' || keymapStyle == 'Split Matrix') {
+        if (keymapStyle == 'Split Matrix' && rowIndex == 3) {
+          rowWidgets.add(buildKeys(rowIndex, keys[i], i));
+          rowWidgets.add(SizedBox(width: splitWidth));
+          rowWidgets.add(buildKeys(rowIndex, keys[i], i));
+        } else if (i < 10) {
+          rowWidgets.add(buildKeys(rowIndex, keys[i], i));
+        }
+      } else {
+        rowWidgets.add(buildKeys(rowIndex, keys[i], i));
+      }
+    }
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: keys.asMap().entries.map((entry) {
-        int keyIndex = entry.key;
-        String key = entry.value;
-        return buildKeys(rowIndex, key, keyIndex);
-      }).toList(),
+      children: rowWidgets,
     );
   }
 

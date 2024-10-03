@@ -30,7 +30,7 @@ void main(List<String> args) async {
       packageName: packageInfo.packageName,
     );
     await windowManager.ensureInitialized();
-    double windowWidth = 960;
+    double windowWidth = 1000;
     double windowHeight = 320;
 
     WindowOptions windowOptions = const WindowOptions(
