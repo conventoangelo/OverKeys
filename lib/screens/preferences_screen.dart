@@ -6,18 +6,18 @@ import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:overkeys/keyboard_layouts.dart';
+import 'package:overkeys/utils/keyboard_layouts.dart';
 
-class PreferencesWindow extends StatefulWidget {
-  const PreferencesWindow({super.key, required this.windowController});
+class PreferencesScreen extends StatefulWidget {
+  const PreferencesScreen({super.key, required this.windowController});
 
   final WindowController windowController;
 
   @override
-  State<PreferencesWindow> createState() => _PreferencesWindowState();
+  State<PreferencesScreen> createState() => _PreferencesScreenState();
 }
 
-class _PreferencesWindowState extends State<PreferencesWindow> {
+class _PreferencesScreenState extends State<PreferencesScreen> {
   final SharedPreferencesAsync asyncPrefs = SharedPreferencesAsync();
 
   String _currentTab = 'General';
