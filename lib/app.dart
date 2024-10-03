@@ -14,8 +14,6 @@ import 'utils/keyboard_layouts.dart';
 import 'screens/keyboard_screen.dart';
 import 'utils/hooks.dart';
 
-
-
 class MainApp extends StatefulWidget {
   const MainApp({super.key});
 
@@ -49,6 +47,8 @@ class _MainAppState extends State<MainApp> with TrayListener {
   double _markerHeight = 2;
   double _markerBorderRadius = 10;
   double _spaceWidth = 320;
+  String _keymapStyle = 'ANSI';
+  double _splitWidth = 100;
   double _opacity = 0.6;
   double _lastOpacity = 0.6;
   int _autoHideDuration = 2;
@@ -126,6 +126,8 @@ class _MainAppState extends State<MainApp> with TrayListener {
     double markerBorderRadius =
         await asyncPrefs.getDouble('markerBorderRadius') ?? 10;
     double spaceWidth = await asyncPrefs.getDouble('spaceWidth') ?? 320;
+    String keymapStyle = await asyncPrefs.getString('keymapStyle') ?? 'ANSI';
+    double splitWidth = await asyncPrefs.getDouble('splitWidth') ?? 100;
     double opacity = await asyncPrefs.getDouble('opacity') ?? 0.6;
     int autoHideDuration = await asyncPrefs.getInt('autoHideDuration') ?? 2;
     bool autoHideEnabled = await asyncPrefs.getBool('autoHideEnabled') ?? false;
@@ -150,6 +152,8 @@ class _MainAppState extends State<MainApp> with TrayListener {
       _markerHeight = markerHeight;
       _markerBorderRadius = markerBorderRadius;
       _spaceWidth = spaceWidth;
+      _keymapStyle = keymapStyle;
+      _splitWidth = splitWidth;
       _opacity = opacity;
       _autoHideDuration = autoHideDuration;
       _autoHideEnabled = autoHideEnabled;
@@ -176,6 +180,8 @@ class _MainAppState extends State<MainApp> with TrayListener {
     await asyncPrefs.setDouble('markerHeight', _markerHeight);
     await asyncPrefs.setDouble('markerBorderRadius', _markerBorderRadius);
     await asyncPrefs.setDouble('spaceWidth', _spaceWidth);
+    await asyncPrefs.setString('keymapStyle', _keymapStyle);
+    await asyncPrefs.setDouble('splitWidth', _splitWidth);
     await asyncPrefs.setDouble('opacity', _opacity);
     await asyncPrefs.setInt('autoHideDuration', _autoHideDuration);
     await asyncPrefs.setBool('autoHideEnabled', _autoHideEnabled);
@@ -244,6 +250,12 @@ class _MainAppState extends State<MainApp> with TrayListener {
         case 'updateSpaceWidth':
           final spaceWidth = call.arguments as double;
           setState(() => _spaceWidth = spaceWidth);
+        case 'updateKeymapStyle':
+          final keymapStyle = call.arguments as String;
+          setState(() => _keymapStyle = keymapStyle);
+        case 'updateSplitWidth':
+          final splitWidth = call.arguments as double;
+          setState(() => _splitWidth = splitWidth);
         case 'updateOpacity':
           final opacity = call.arguments as double;
           setState(() => _opacity = opacity);
@@ -465,6 +477,8 @@ class _MainAppState extends State<MainApp> with TrayListener {
                     markerHeight: _markerHeight,
                     markerBorderRadius: _markerBorderRadius,
                     spaceWidth: _spaceWidth,
+                    keymapStyle: _keymapStyle,
+                    splitWidth: _splitWidth,
                   ),
                 ),
               ),
