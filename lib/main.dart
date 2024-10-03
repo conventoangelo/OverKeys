@@ -17,6 +17,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 
 import 'keyboard_layouts.dart';
 import 'preferences_window.dart';
+import 'matrix_keyboard_layouts.dart';
 
 final keyboardProc = Pointer.fromFunction<HOOKPROC>(lowLevelKeyboardProc, 0);
 late int hookId;
@@ -114,6 +115,7 @@ class MainApp extends StatefulWidget {
 class _MainAppState extends State<MainApp> with TrayListener {
   final Map<int, bool> _keyPressStates = {};
   KeyboardLayout _keyboardLayout = qwerty;
+  MatrixLayout _matrixLayout = matrixQwerty;
   Timer? _autoHideTimer;
   bool _isWindowVisible = true;
   bool _ignoreMouseEvents = true;
@@ -143,6 +145,8 @@ class _MainAppState extends State<MainApp> with TrayListener {
   bool _autoHideEnabled = false;
   // ignore: unused_field
   bool _launchAtStartup = false;
+  bool _isMatrix = false;
+  bool _isSplit = false;
 
   @override
   void initState() {
@@ -189,6 +193,8 @@ class _MainAppState extends State<MainApp> with TrayListener {
   Future<void> _loadPreferences() async {
     String keyboardLayoutName =
         await asyncPrefs.getString('layout') ?? 'QWERTY';
+    String matrixKeyboardLayoutName = 
+        await asyncPrefs.getString('layout') ?? 'matrixQwerty';
     String fontStyle = await asyncPrefs.getString('fontStyle') ?? 'GeistMono';
     double keyFontSize = await asyncPrefs.getDouble('keyFontSize') ?? 20;
     double spaceFontSize = await asyncPrefs.getDouble('spaceFontSize') ?? 14;
@@ -217,10 +223,14 @@ class _MainAppState extends State<MainApp> with TrayListener {
     double opacity = await asyncPrefs.getDouble('opacity') ?? 0.6;
     int autoHideDuration = await asyncPrefs.getInt('autoHideDuration') ?? 2;
     bool autoHideEnabled = await asyncPrefs.getBool('autoHideEnabled') ?? false;
+    bool isMatrix = await asyncPrefs.getBool('isMatrix') ?? false;
+    bool isSplit = await asyncPrefs.getBool('isSplit') ?? false;
 
     setState(() {
       _keyboardLayout = availableLayouts
           .firstWhere((layout) => layout.name == keyboardLayoutName);
+      _matrixLayout = availableMatrixLayout
+          .firstWhere((layout) => layout.name == matrixKeyboardLayoutName);
       _fontStyle = fontStyle;
       _keyFontSize = keyFontSize;
       _spaceFontSize = spaceFontSize;
@@ -241,11 +251,14 @@ class _MainAppState extends State<MainApp> with TrayListener {
       _opacity = opacity;
       _autoHideDuration = autoHideDuration;
       _autoHideEnabled = autoHideEnabled;
+      _isMatrix = isMatrix;
+      _isSplit = isSplit;
     });
   }
 
   Future<void> _savePreferences() async {
     await asyncPrefs.setString('layout', _keyboardLayout.name);
+    await asyncPrefs.setString('layout', _matrixLayout.name);
     await asyncPrefs.setString('fontStyle', _fontStyle);
     await asyncPrefs.setDouble('keyFontSize', _keyFontSize);
     await asyncPrefs.setDouble('spaceFontSize', _spaceFontSize);
@@ -267,6 +280,8 @@ class _MainAppState extends State<MainApp> with TrayListener {
     await asyncPrefs.setDouble('opacity', _opacity);
     await asyncPrefs.setInt('autoHideDuration', _autoHideDuration);
     await asyncPrefs.setBool('autoHideEnabled', _autoHideEnabled);
+    await asyncPrefs.setBool('isMatrix', _isMatrix);
+    await asyncPrefs.setBool('isSplit', _isSplit);
   }
 
   void _setupMethodHandler() {
@@ -280,6 +295,13 @@ class _MainAppState extends State<MainApp> with TrayListener {
                 .firstWhere((layout) => layout.name == layoutName);
           });
           _fadeIn();
+        case 'updateMatrixLayout':
+          final matrixLayoutName = call.arguments as String;
+          setState(() {
+            _lastOpacity = _opacity;
+            _matrixLayout = availableMatrixLayout
+              .firstWhere((layout) => layout.name == matrixLayoutName);
+          });
         case 'updateFontStyle':
           final fontStyle = call.arguments as String;
           setState(() => _fontStyle = fontStyle);
@@ -338,6 +360,14 @@ class _MainAppState extends State<MainApp> with TrayListener {
         case 'updateAutoHideDuration':
           final autoHideDuration = call.arguments as int;
           setState(() => _autoHideDuration = autoHideDuration);
+        case 'isMatrix':
+          final isMatrix = call.arguments as bool;
+          setState(() => _isMatrix = isMatrix);
+          break;
+        case 'isSplit':
+          final isSplit = call.arguments as bool;
+          setState(() => _isSplit = isSplit);
+          break;
         case 'updateLaunchAtStartup':
           final launchAtStartupRet = call.arguments as bool;
           setState(() {
@@ -541,6 +571,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
                   child: KeyboardScreen(
                     keyPressStates: _keyPressStates,
                     layout: _keyboardLayout,
+                    matrixLayout: _matrixLayout,
                     fontStyle: _fontStyle,
                     keyFontSize: _keyFontSize,
                     spaceFontSize: _spaceFontSize,
@@ -558,6 +589,8 @@ class _MainAppState extends State<MainApp> with TrayListener {
                     markerHeight: _markerHeight,
                     markerBorderRadius: _markerBorderRadius,
                     spaceWidth: _spaceWidth,
+                    isMatrix: _isMatrix,
+                    isSplit: _isSplit,
                   ),
                 ),
               ),
@@ -571,6 +604,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
 class KeyboardScreen extends StatelessWidget {
   final Map<int, bool> keyPressStates;
   final KeyboardLayout layout;
+  final MatrixLayout matrixLayout;
   final String fontStyle;
   final double keyFontSize;
   final double spaceFontSize;
@@ -588,9 +622,11 @@ class KeyboardScreen extends StatelessWidget {
   final double markerHeight;
   final double markerBorderRadius;
   final double spaceWidth;
+  final bool isMatrix;
+  final bool isSplit;
 
-  const KeyboardScreen(
-      {super.key,
+  const KeyboardScreen({
+    super.key,
       required this.keyPressStates,
       required this.layout,
       required this.fontStyle,
@@ -609,10 +645,58 @@ class KeyboardScreen extends StatelessWidget {
       required this.markerWidth,
       required this.markerHeight,
       required this.markerBorderRadius,
-      required this.spaceWidth});
+      required this.spaceWidth, 
+      required this.matrixLayout,
+      required this.isMatrix,
+      required this.isSplit,
+      }
+    );
 
-  @override
-  Widget build(BuildContext context) {
+@override
+Widget build(BuildContext context) {
+  if (isMatrix) {
+    // Render the matrix layout when isMatrix is true
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        // Build the GridView for keys except the space key
+        Expanded(
+          child: GridView.builder(
+            // Disable scrolling because we don't want the keyboard to scroll
+            physics: NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 12, // Number of columns in the matrix layout
+            ),
+            itemCount: _adjustKeyboardLayout(layout.keys.expand((row) => row).toList()).length + 1,
+            itemBuilder: (context, index) {
+              List<String> adjustedKeys = _adjustKeyboardLayout(
+                  layout.keys.expand((row) => row).toList());
+              int rowIndex = index ~/ 12;
+              int keyIndex = index % 12;
+
+              // Add a gap for the 5th column
+              if (keyIndex == 5) {
+                return Container(width: 20); // Adjust width for separation
+              }
+
+              // Build each key widget
+              return buildKeys(rowIndex, adjustedKeys[index - (keyIndex > 5 ? 1 : 0)], keyIndex);
+            },
+          ),
+        ),
+
+        // Build the space key below the matrix, occupying the entire width
+        Padding(
+          padding: const EdgeInsets.only(top: 20.0),
+          child: Container(
+            width: double.infinity,
+            child: buildKeys(-1, " ", -1),
+          ),
+        ),
+      ],
+    );
+  } else {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -624,6 +708,22 @@ class KeyboardScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+List<String> _adjustKeyboardLayout(List<String> allKeys) {
+  List<String> adjustedKeys = [];
+  List<String> firstRow = allKeys.sublist(0, 12); // Q W E R T Y U I O P [ ]
+  List<String> secondRow = allKeys.sublist(12, 23); // A S D F G H J K L ; '
+  String zKey = 'Z'; // The Z key
+  List<String> remainingKeys = allKeys.sublist(23); // X C V B N M , . /
+
+  adjustedKeys.addAll(firstRow);
+  adjustedKeys.addAll(secondRow);
+  adjustedKeys.add(zKey);
+  adjustedKeys.addAll(remainingKeys);
+
+  return adjustedKeys;
+}
 
   Widget buildRow(int rowIndex, List<String> keys) {
     return Row(
@@ -733,8 +833,6 @@ class KeyboardScreen extends StatelessWidget {
     Widget keyWidget = Padding(
       padding: EdgeInsets.all(keyPadding),
       child: Container(
-        width: key == " " ? spaceWidth : keySize,
-        height: keySize,
         decoration: BoxDecoration(
           color: keyColor,
           borderRadius: BorderRadius.circular(keyBorderRadius),
@@ -784,4 +882,5 @@ class KeyboardScreen extends StatelessWidget {
 
     return keyWidget;
   }
+
 }

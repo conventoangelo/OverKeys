@@ -7,6 +7,7 @@ import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:overkeys/keyboard_layouts.dart';
+import 'package:overkeys/matrix_keyboard_layouts.dart';
 
 class PreferencesWindow extends StatefulWidget {
   const PreferencesWindow({super.key, required this.windowController});
@@ -23,6 +24,7 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
   String _currentTab = 'General';
 
   String _keyboardLayoutName = 'QWERTY';
+  String _matrixKeyboardLayoutName = 'QWERTY';
   String _fontStyle = 'GeistMono';
   double _keyFontSize = 20;
   double _spaceFontSize = 14;
@@ -43,6 +45,8 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
   double _opacity = 0.6;
   int _autoHideDuration = 2;
   bool _launchAtStartup = false;
+  bool _isMatrix = false;
+  bool _isSplit = false;
 
   @override
   void initState() {
@@ -60,6 +64,8 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
   Future<void> _loadPreferences() async {
     String keyboardLayoutName =
         await asyncPrefs.getString('layout') ?? 'QWERTY';
+    String matrixKeyboardLayoutName = 
+        await asyncPrefs.getString('matrix_layout') ?? 'QWERTY';
     String fontStyle = await asyncPrefs.getString('fontStyle') ?? 'GeistMono';
     double keyFontSize = await asyncPrefs.getDouble('keyFontSize') ?? 20;
     double spaceFontSize = await asyncPrefs.getDouble('spaceFontSize') ?? 14;
@@ -88,9 +94,12 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
     double opacity = await asyncPrefs.getDouble('opacity') ?? 0.6;
     int autoHideDuration = await asyncPrefs.getInt('autoHideDuration') ?? 2;
     bool launchAtStartup = await asyncPrefs.getBool('launchAtStartup') ?? false;
+    bool isMatrix = await asyncPrefs.getBool('isMatrix') ?? false;
+    bool isSplit = await asyncPrefs.getBool('isSplit') ?? false;
 
     setState(() {
       _keyboardLayoutName = keyboardLayoutName;
+      _matrixKeyboardLayoutName = matrixKeyboardLayoutName;
       _fontStyle = fontStyle;
       _keyFontSize = keyFontSize;
       _spaceFontSize = spaceFontSize;
@@ -111,11 +120,14 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
       _opacity = opacity;
       _autoHideDuration = autoHideDuration;
       _launchAtStartup = launchAtStartup;
+      _isMatrix = isMatrix;
+      _isSplit = isSplit;
     });
   }
 
   Future<void> _savePreferences() async {
     await asyncPrefs.setString('layout', _keyboardLayoutName);
+    await asyncPrefs.setString('matrix_layout', _matrixKeyboardLayoutName);
     await asyncPrefs.setString('fontStyle', _fontStyle);
     await asyncPrefs.setDouble('keyFontSize', _keyFontSize);
     await asyncPrefs.setDouble('spaceFontSize', _spaceFontSize);
@@ -137,6 +149,8 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
     await asyncPrefs.setDouble('opacity', _opacity);
     await asyncPrefs.setInt('autoHideDuration', _autoHideDuration);
     await asyncPrefs.setBool('launchAtStartup', _launchAtStartup);
+    await asyncPrefs.setBool('isMatrix', _isMatrix);
+    await asyncPrefs.setBool('isSplit', _isSplit);
   }
 
   void _updateMainWindow(dynamic method, dynamic value) async {
@@ -262,6 +276,19 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
             availableLayouts.map((layout) => (layout.name)).toList(), (value) {
           setState(() => _keyboardLayoutName = value!);
           _updateMainWindow('updateLayout', value);
+        }),
+        _buildDropdownOption('Matrix layout', '', _matrixKeyboardLayoutName,
+            availableMatrixLayout.map((layout) => (layout.name)).toList(), (value) {
+          setState(() => _matrixKeyboardLayoutName = value!);
+          _updateMainWindow('updateLayout', value);
+        }),
+        _buildToggleMatrixKeyboard('Use matrix layout', _isMatrix, (value) {
+          setState(() => _isMatrix = value);
+          _updateMainWindow('updateIsMatrix', value);
+        }),
+        _buildToggleSplitKeyboard('Split layout', _isSplit, (value) {
+          setState(() => _isSplit = value);
+          _updateMainWindow('updateIsSplit', value);
         }),
         _buildSliderOption('Opacity', _opacity, 0.1, 1.0, 18, (value) {
           setState(() => _opacity = value);
@@ -531,6 +558,40 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
       ),
     );
   }
+
+  Widget _buildToggleMatrixKeyboard(
+    String label, bool value, Function(bool) onChanged) {
+      return _buildOptionContainer(
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(label, style: const TextStyle(color: Colors.white)),
+            Switch(
+              value: value, 
+              onChanged: onChanged,
+              activeColor: Colors.green,
+              ),
+          ],
+        )
+      );
+    }
+    
+  Widget _buildToggleSplitKeyboard(
+    String label, bool value, Function(bool) onChanged) {
+      return _buildOptionContainer(
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(label, style: const TextStyle(color: Colors.white)),
+            Switch(
+              value: value, 
+              onChanged: onChanged,
+              activeColor: Colors.green,
+              ),
+          ],
+        )
+      );
+    }
 
   Widget _buildDropdownOption(String label, String subtitle, String value,
       List<String> options, Function(String?) onChanged) {
