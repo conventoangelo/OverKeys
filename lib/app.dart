@@ -433,7 +433,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
       'name': 'preferences',
     }));
     window
-      ..setFrame(const Offset(0, 0) & const Size(1280, 760))
+      ..setFrame(const Offset(0, 0) & const Size(1280, 900))
       ..center()
       ..show();
   }
