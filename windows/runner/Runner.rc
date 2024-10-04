@@ -90,7 +90,7 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "Angelo Convento" "\0"
-            VALUE "FileDescription", "OverKeys is an open-source, customizable on-screen keyboard for Windows. Learn and practice alternative layouts, personalize appearance, and improve your typing." "\0"
+            VALUE "FileDescription", "OverKeys" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "OverKeys" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2024 Angelo Convento. All rights reserved." "\0"
@@ -119,3 +119,4 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED
+
