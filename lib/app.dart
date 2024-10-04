@@ -47,7 +47,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
   double _markerHeight = 2;
   double _markerBorderRadius = 10;
   double _spaceWidth = 320;
-  String _keymapStyle = 'ANSI';
+  String _keymapStyle = 'Staggered';
   double _splitWidth = 100;
   double _opacity = 0.6;
   double _lastOpacity = 0.6;
@@ -126,7 +126,8 @@ class _MainAppState extends State<MainApp> with TrayListener {
     double markerBorderRadius =
         await asyncPrefs.getDouble('markerBorderRadius') ?? 10;
     double spaceWidth = await asyncPrefs.getDouble('spaceWidth') ?? 320;
-    String keymapStyle = await asyncPrefs.getString('keymapStyle') ?? 'ANSI';
+    String keymapStyle =
+        await asyncPrefs.getString('keymapStyle') ?? 'Staggered';
     double splitWidth = await asyncPrefs.getDouble('splitWidth') ?? 100;
     double opacity = await asyncPrefs.getDouble('opacity') ?? 0.6;
     int autoHideDuration = await asyncPrefs.getInt('autoHideDuration') ?? 2;

@@ -40,7 +40,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
   double _markerHeight = 2;
   double _markerBorderRadius = 10;
   double _spaceWidth = 320;
-  String _keymapStyle = 'ANSI';
+  String _keymapStyle = 'Staggered';
   double _splitWidth = 100;
   double _opacity = 0.6;
   int _autoHideDuration = 2;
@@ -87,7 +87,8 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
     double markerBorderRadius =
         await asyncPrefs.getDouble('markerBorderRadius') ?? 10;
     double spaceWidth = await asyncPrefs.getDouble('spaceWidth') ?? 320;
-    String keymapStyle = await asyncPrefs.getString('keymapStyle') ?? 'ANSI';
+    String keymapStyle =
+        await asyncPrefs.getString('keymapStyle') ?? 'Staggered';
     double splitWidth = await asyncPrefs.getDouble('splitWidth') ?? 100;
     double opacity = await asyncPrefs.getDouble('opacity') ?? 0.6;
     int autoHideDuration = await asyncPrefs.getInt('autoHideDuration') ?? 2;
@@ -271,9 +272,8 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
           setState(() => _keyboardLayoutName = value!);
           _updateMainWindow('updateLayout', value);
         }),
-        _buildDropdownOption(
-            'Keymap style', _keymapStyle, ['ANSI', 'Matrix', 'Split Matrix'],
-            (value) {
+        _buildDropdownOption('Keymap style', _keymapStyle,
+            ['Staggered', 'Matrix', 'Split Matrix'], (value) {
           if (value == 'Split Matrix' && _spaceWidth > 300) {
             _updateMainWindow('updateSpaceWidth', 220.0);
             setState(() => _spaceWidth = 220);

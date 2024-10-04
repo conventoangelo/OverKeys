@@ -110,6 +110,7 @@ class KeyboardScreen extends StatelessWidget {
           child: key == " "
               ? Text(
                   layout.name.toLowerCase(),
+                  textAlign: TextAlign.center,
                   style: TextStyle(
                     color: textColor,
                     fontSize: spaceFontSize,
