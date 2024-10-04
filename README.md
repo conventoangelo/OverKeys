@@ -58,11 +58,11 @@ This project was initially developed to help with system-wide practice of the **
   </tr>
   <tr>
     <td>
-      <img src="assets/images/eyco1.png" alt="custom dark bg">
+      <img src="assets/images/eyco1.png" alt="custom dark background">
       <p align="center">Custom (On Dark Background)</p>
     </td>
     <td>
-      <img src="assets/images/eyco2.png" alt="custom light bg">
+      <img src="assets/images/eyco2.png" alt="custom light background">
       <p align="center">Custom (On Light Background)</p>
     </td>
   </tr>
@@ -72,21 +72,51 @@ This project was initially developed to help with system-wide practice of the **
       <p align="center">Catppuccin</p>
     </td>
     <td>
-      <img src="assets/images/redsamurai.png" alt="red samurai">
+      <img src="assets/images/redsamurai.png" alt="split matrix">
       <p align="center">Red Samurai</p>
+    </td>
+    </tr>
+    <tr>
+    <td>
+      <img src="assets/images/splitmatrix.png" alt="red samurai">
+      <p align="center">Split Matrix Style</p>
+    </td>
+    <td>
+      <img src="assets/images/matrix.png" alt="matrix">
+      <p align="center">Matrix Style</p>
     </td>
   </tr>
 </table>
-<sub>*Note: These themes are not provided by default and were manually configured.</sub>
+<sub>Note: The themes are not provided by default and were instead manually configured. Colors were based on the MonkeyType themes of the same name.</sub>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Features
 
-- **Multi-layout support**: Switch between layouts like Canary, Colemak, Dvorak, Nerps, Graphite, and more.
-- **Customizable styles**: Change colors, fonts, and key styles to fit your preference.
+- **Multi-layout support**: The following layouts are currently supported:
+  - QWERTY
+  - Colemak
+  - Dvorak
+  - Canaria
+  - Canary
+  - Canary Matrix
+  - Colemak DH
+  - Colemak DH Matrix
+  - Engram
+  - Gallium (Col-Stag)
+  - Gallium V2 (Row-Stag)
+  - Graphite
+  - Halmak
+  - Hands Down
+  - NERPS
+  - Norman
+  - Sturdy
+  - Sturdy Angle (Staggered)
+  - Workman
+- **Customizable styles**: Change colors, fonts, sizes, offsets, and key styles to fit your preference.
 - **Always on top**: Keep the keyboard on top of all windows for constant access.
 - **Auto-hide**: The keyboard hides automatically when not in use.
+- **Keymap layouts**: Supports keymap layouts such as staggered, matrix, and split matrix.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -102,9 +132,9 @@ Follow these instructions to set up OverKeys on your local machine.
 
 1. Download the latest [EXE installer](https://github.com/conventoangelo/OverKeys/releases).
 2. Run the installer and follow the on-screen instructions.
-3. Once installed, OverKeys will be available for use immediately.
+3. Once installed, OverKeys will be available for use.
 
-### Configuration
+## Configuration
 
 To change the app settings, right-click the OverKeys icon in the system tray and select **Preferences**. A separate window will open, displaying the available settings.
 
@@ -113,29 +143,54 @@ To change the app settings, right-click the OverKeys icon in the system tray and
 To load your own keyboard layout, follow these steps:
 
 1. **Install Flutter**:
+
    - Follow the official [Flutter installation guide](https://flutter.dev/docs/get-started/install) to set up Flutter on your machine.
 
-2. **Make Changes to `keyboard_layout.dart`**:
-   - Navigate to the `lib` directory in the project.
-   - Open the `keyboard_layout.dart` file.
-   - Modify the file to define your custom keyboard layout.
-   - Make sure to add your new custom keyboard layout to the `availableLayouts` list at the bottom of the file.
+2. **Install Git**:
 
-3. **Build the Project Locally**:
+   - Download and install using the installer from the [Git website](https://git-scm.com/downloads/win).
+   - Alternatively, if you have `winget` installed, you can use the following command in your terminal:
+
+     ```sh
+     winget install --id Git.Git -e --source winget
+     ```
+
+3. **Clone the Repository**:
+
+   - Open a terminal and navigate to the folder where you want to clone the repository using the `cd` command. For example:
+
+     ```sh
+     cd path/to/your/folder
+     ```
+
+   - With Git installed, use the following command in your terminal:
+
+     ```sh
+     git clone https://github.com/conventoangelo/OverKeys.git
+     ```
+
+4. **Build the Project Locally**:
+
    - Open a terminal and navigate to the root directory of the project.
    - Run the following command to get the Flutter dependencies:
-  
+
      ```sh
      flutter pub get
      ```
 
-   - Build the project by running:
+   - Run the app with the terminal open:
+
+     ```sh
+     flutter run
+     ```
+
+   - Alternatively, build the project by running:
 
      ```sh
      flutter build windows
      ```
 
-   - Once the build is complete, you can find the executable file in `OverKeys\build\windows\x64\runner\Release`.
+   - Once the build is complete, you can find the executable file in `..\OverKeys\build\windows\x64\runner\Release`.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

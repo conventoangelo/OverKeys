@@ -45,12 +45,42 @@ const colemakdh = KeyboardLayout(
   ],
 );
 
+const colemakdhMatrix = KeyboardLayout(
+  name: 'Colemak-DH Matrix',
+  keys: [
+    ['Q', 'W', 'F', 'P', 'B', 'J', 'L', 'U', 'Y', ';', '[', ']'],
+    ['A', 'R', 'S', 'T', 'G', 'M', 'N', 'E', 'I', 'O', "'"],
+    ['Z', 'X', 'C', 'D', 'V', 'K', 'H', ',', '.', '/'],
+    [' '],
+  ],
+);
+
 const canary = KeyboardLayout(
   name: 'Canary',
   keys: [
     ["W", "L", "Y", "P", "K", "Z", "X", "O", "U", ";", "[", "]"],
     ["C", "R", "S", "T", "B", "F", "N", "E", "I", "A", "'"],
     ["J", "V", "D", "G", "Q", "M", "H", "/", ",", "."],
+    [" "],
+  ],
+);
+
+const canaryMatrix = KeyboardLayout(
+  name: 'Canary Matrix',
+  keys: [
+    ["W", "L", "Y", "P", "B", "Z", "F", "O", "U", "'", "[", "]"],
+    ["C", "R", "S", "T", "G", "M", "N", "E", "I", "A", ";"],
+    ["Q", "J", "V", "D", "K", "X", "H", "/", ",", "."],
+    [" "],
+  ],
+);
+
+const canaria = KeyboardLayout(
+  name: 'Canaria',
+  keys: [
+    ["W", "L", "Y", "P", "K", "Z", "J", "O", "U", ";", "[", "]"],
+    ["C", "R", "S", "T", "B", "F", "N", "E", "I", "A", "'"],
+    ["X", "V", "D", "G", "Q", "M", "H", "/", ",", "."],
     [" "],
   ],
 );
@@ -115,6 +145,16 @@ const graphite = KeyboardLayout(
   ],
 );
 
+const gallium = KeyboardLayout(
+  name: 'Gallium',
+  keys: [
+    ['B', 'L', 'D', 'C', 'V', 'J', 'Y', 'O', 'U', ',', '[', ']'],
+    ['N', 'R', 'T', 'S', 'G', 'P', 'H', 'A', 'E', 'I', '/'],
+    ['X', 'Q', 'M', 'W', 'Z', 'K', "F", "'", ';', '.'],
+    [' '],
+  ],
+);
+
 const galliumV2 = KeyboardLayout(
   name: 'Gallium V2',
   keys: [
@@ -130,18 +170,18 @@ const sturdy = KeyboardLayout(
   keys: [
     ['V', 'M', 'L', 'C', 'P', "X", 'F', 'O', 'U', 'J', '[', ']'],
     ['S', 'T', 'R', 'D', 'Y', '.', 'N', 'A', 'E', 'I', '/'],
-    ['K', 'Q', 'G', 'W', 'Z', 'B', 'H', "'", ';', ','],
+    ['Z', 'K', 'Q', 'G', 'W', 'B', 'H', "'", ';', ','],
     [' '],
   ],
 );
 
-const canaria = KeyboardLayout(
-  name: 'Canaria',
+const sturdyAngle = KeyboardLayout(
+  name: 'Sturdy Angle',
   keys: [
-    ["W", "L", "Y", "P", "K", "Z", "J", "O", "U", ";", "[", "]"],
-    ["C", "R", "S", "T", "B", "F", "N", "E", "I", "A", "'"],
-    ["X", "V", "D", "G", "Q", "M", "H", "/", ",", "."],
-    [" "],
+    ['V', 'M', 'L', 'C', 'P', "X", 'F', 'O', 'U', 'J', '[', ']'],
+    ['S', 'T', 'R', 'D', 'Y', '.', 'N', 'A', 'E', 'I', '/'],
+    ['K', 'Q', 'G', 'W', 'Z', 'B', 'H', "'", ';', ','],
+    [' '],
   ],
 );
 
@@ -159,16 +199,20 @@ final List<KeyboardLayout> availableLayouts = [
   qwerty,
   colemak,
   dvorak,
-  colemakdh,
+  canaria,
   canary,
-  workman,
+  canaryMatrix,
+  colemakdh,
+  colemakdhMatrix,
+  engram,
+  gallium,
+  galliumV2,
+  graphite,
+  halmak,
+  handsDown,
   nerps,
   norman,
-  halmak,
-  engram,
-  graphite,
-  galliumV2,
   sturdy,
-  canaria,
-  handsDown,
+  sturdyAngle,
+  workman,
 ];

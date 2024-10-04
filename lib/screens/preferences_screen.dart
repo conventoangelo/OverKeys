@@ -6,18 +6,18 @@ import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:overkeys/keyboard_layouts.dart';
+import 'package:overkeys/utils/keyboard_layouts.dart';
 
-class PreferencesWindow extends StatefulWidget {
-  const PreferencesWindow({super.key, required this.windowController});
+class PreferencesScreen extends StatefulWidget {
+  const PreferencesScreen({super.key, required this.windowController});
 
   final WindowController windowController;
 
   @override
-  State<PreferencesWindow> createState() => _PreferencesWindowState();
+  State<PreferencesScreen> createState() => _PreferencesScreenState();
 }
 
-class _PreferencesWindowState extends State<PreferencesWindow> {
+class _PreferencesScreenState extends State<PreferencesScreen> {
   final SharedPreferencesAsync asyncPrefs = SharedPreferencesAsync();
 
   String _currentTab = 'General';
@@ -40,6 +40,8 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
   double _markerHeight = 2;
   double _markerBorderRadius = 10;
   double _spaceWidth = 320;
+  String _keymapStyle = 'Staggered';
+  double _splitWidth = 100;
   double _opacity = 0.6;
   int _autoHideDuration = 2;
   bool _launchAtStartup = false;
@@ -85,6 +87,9 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
     double markerBorderRadius =
         await asyncPrefs.getDouble('markerBorderRadius') ?? 10;
     double spaceWidth = await asyncPrefs.getDouble('spaceWidth') ?? 320;
+    String keymapStyle =
+        await asyncPrefs.getString('keymapStyle') ?? 'Staggered';
+    double splitWidth = await asyncPrefs.getDouble('splitWidth') ?? 100;
     double opacity = await asyncPrefs.getDouble('opacity') ?? 0.6;
     int autoHideDuration = await asyncPrefs.getInt('autoHideDuration') ?? 2;
     bool launchAtStartup = await asyncPrefs.getBool('launchAtStartup') ?? false;
@@ -108,6 +113,8 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
       _markerHeight = markerHeight;
       _markerBorderRadius = markerBorderRadius;
       _spaceWidth = spaceWidth;
+      _keymapStyle = keymapStyle;
+      _splitWidth = splitWidth;
       _opacity = opacity;
       _autoHideDuration = autoHideDuration;
       _launchAtStartup = launchAtStartup;
@@ -134,6 +141,8 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
     await asyncPrefs.setDouble('markerHeight', _markerHeight);
     await asyncPrefs.setDouble('markerBorderRadius', _markerBorderRadius);
     await asyncPrefs.setDouble('spaceWidth', _spaceWidth);
+    await asyncPrefs.setString('keymapStyle', _keymapStyle);
+    await asyncPrefs.setDouble('splitWidth', _splitWidth);
     await asyncPrefs.setDouble('opacity', _opacity);
     await asyncPrefs.setInt('autoHideDuration', _autoHideDuration);
     await asyncPrefs.setBool('launchAtStartup', _launchAtStartup);
@@ -258,10 +267,19 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
           setState(() => _launchAtStartup = value);
           _updateMainWindow('updateLaunchAtStartup', value);
         }),
-        _buildDropdownOption('Layout', '', _keyboardLayoutName,
+        _buildDropdownOption('Layout', _keyboardLayoutName,
             availableLayouts.map((layout) => (layout.name)).toList(), (value) {
           setState(() => _keyboardLayoutName = value!);
           _updateMainWindow('updateLayout', value);
+        }),
+        _buildDropdownOption('Keymap style', _keymapStyle,
+            ['Staggered', 'Matrix', 'Split Matrix'], (value) {
+          if (value == 'Split Matrix' && _spaceWidth > 300) {
+            _updateMainWindow('updateSpaceWidth', 220.0);
+            setState(() => _spaceWidth = 220);
+          }
+          setState(() => _keymapStyle = value!);
+          _updateMainWindow('updateKeymapStyle', value);
         }),
         _buildSliderOption('Opacity', _opacity, 0.1, 1.0, 18, (value) {
           setState(() => _opacity = value);
@@ -282,7 +300,7 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildSectionTitle('Text Settings'),
-        _buildDropdownOption(
+        _buildDropdownOptionWithSubtitle(
             'Font style',
             'Make sure that the font is installed in your system. Falls back to Geist Mono',
             _fontStyle, [
@@ -343,7 +361,6 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
         }),
         _buildDropdownOption(
             'Font weight',
-            '',
             _fontWeight == FontWeight.w100
                 ? 'Thin'
                 : _fontWeight == FontWeight.w200
@@ -436,10 +453,20 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
           setState(() => _keyPadding = value);
           _updateMainWindow('updateKeyPadding', value);
         }),
-        _buildSliderOption('Space width', _spaceWidth, 200, 500, 300, (value) {
+        _buildSliderOption(
+            'Space width',
+            _spaceWidth,
+            120,
+            (_keymapStyle == 'Split Matrix') ? 300 : 500,
+            (_keymapStyle == 'Split Matrix') ? 90 : 190, (value) {
           setState(() => _spaceWidth = value);
           _updateMainWindow('updateSpaceWidth', value);
         }),
+        if (_keymapStyle == 'Split Matrix')
+          _buildSliderOption('Split width', _splitWidth, 30, 200, 34, (value) {
+            setState(() => _splitWidth = value);
+            _updateMainWindow('updateSplitWidth', value);
+          }),
         _buildColorOption('Key color (pressed)', _keyColorPressed, (color) {
           setState(() => _keyColorPressed = color);
           _updateMainWindow('updateKeyColorPressed', color);
@@ -532,8 +559,8 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
     );
   }
 
-  Widget _buildDropdownOption(String label, String subtitle, String value,
-      List<String> options, Function(String?) onChanged) {
+  Widget _buildDropdownOptionWithSubtitle(String label, String subtitle,
+      String value, List<String> options, Function(String?) onChanged) {
     return _buildOptionContainer(
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -544,6 +571,33 @@ class _PreferencesWindowState extends State<PreferencesWindow> {
               Text(label, style: const TextStyle(color: Colors.white)),
               Text(subtitle,
                   style: const TextStyle(color: Colors.grey, fontSize: 13.0)),
+            ],
+          ),
+          DropdownButton<String>(
+            value: value,
+            items: options
+                .map((String option) => DropdownMenuItem<String>(
+                    value: option, child: Text(option)))
+                .toList(),
+            onChanged: onChanged,
+            dropdownColor: const Color(0xFF2A2A3C),
+            style: const TextStyle(color: Colors.white, fontFamily: 'Manrope'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDropdownOption(String label, String value, List<String> options,
+      Function(String?) onChanged) {
+    return _buildOptionContainer(
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(label, style: const TextStyle(color: Colors.white)),
             ],
           ),
           DropdownButton<String>(
