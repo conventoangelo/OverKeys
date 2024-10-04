@@ -132,9 +132,9 @@ Follow these instructions to set up OverKeys on your local machine.
 
 1. Download the latest [EXE installer](https://github.com/conventoangelo/OverKeys/releases).
 2. Run the installer and follow the on-screen instructions.
-3. Once installed, OverKeys will be available for use immediately.
+3. Once installed, OverKeys will be available for use.
 
-### Configuration
+## Configuration
 
 To change the app settings, right-click the OverKeys icon in the system tray and select **Preferences**. A separate window will open, displaying the available settings.
 
@@ -146,14 +146,30 @@ To load your own keyboard layout, follow these steps:
 
    - Follow the official [Flutter installation guide](https://flutter.dev/docs/get-started/install) to set up Flutter on your machine.
 
-2. **Make Changes to `keyboard_layout.dart`**:
+2. **Install Git**:
 
-   - Navigate to the `lib\utils` directory in the project.
-   - Open the `keyboard_layout.dart` file.
-   - Modify the file to define your custom keyboard layout.
-   - Make sure to add your new custom keyboard layout to the `availableLayouts` list at the bottom of the file.
+   - Download and install using the installer from the [Git website](https://git-scm.com/downloads/win).
+   - Alternatively, if you have `winget` installed, you can use the following command in your terminal:
 
-3. **Build the Project Locally**:
+     ```sh
+     winget install --id Git.Git -e --source winget
+     ```
+
+3. **Clone the Repository**:
+
+   - Open a terminal and navigate to the folder where you want to clone the repository using the `cd` command. For example:
+
+     ```sh
+     cd path/to/your/folder
+     ```
+
+   - With Git installed, use the following command in your terminal:
+
+     ```sh
+     git clone https://github.com/conventoangelo/OverKeys.git
+     ```
+
+4. **Build the Project Locally**:
 
    - Open a terminal and navigate to the root directory of the project.
    - Run the following command to get the Flutter dependencies:
@@ -162,13 +178,19 @@ To load your own keyboard layout, follow these steps:
      flutter pub get
      ```
 
-   - Build the project by running:
+   - Run the app with the terminal open:
+
+     ```sh
+     flutter run
+     ```
+
+   - Alternatively, build the project by running:
 
      ```sh
      flutter build windows
      ```
 
-   - Once the build is complete, you can find the executable file in `OverKeys\build\windows\x64\runner\Release`.
+   - Once the build is complete, you can find the executable file in `..\OverKeys\build\windows\x64\runner\Release`.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
