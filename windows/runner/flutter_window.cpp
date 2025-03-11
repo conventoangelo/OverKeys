@@ -3,6 +3,9 @@
 #include <optional>
 
 #include "flutter/generated_plugin_registrant.h"
+#include "desktop_multi_window/desktop_multi_window_plugin.h"
+#include <window_manager/window_manager_plugin.h>
+#include <screen_retriever/screen_retriever_plugin.h>
 
 FlutterWindow::FlutterWindow(const flutter::DartProject& project)
     : project_(project) {}
@@ -25,6 +28,24 @@ bool FlutterWindow::OnCreate() {
     return false;
   }
   RegisterPlugins(flutter_controller_->engine());
+
+  // Set up callback for new windows created by DesktopMultiWindow
+  DesktopMultiWindowSetWindowCreatedCallback([](void* controller) {
+    // Get view controller and engine of new window
+    auto* flutter_view_controller = 
+        reinterpret_cast<flutter::FlutterViewController*>(controller);
+    auto* registry = flutter_view_controller->engine();
+
+    // Register individual plugins with the new window (don't use RegisterPlugins here)
+    WindowManagerPluginRegisterWithRegistrar(
+        registry->GetRegistrarForPlugin("WindowManagerPlugin"));
+        
+    ScreenRetrieverPluginRegisterWithRegistrar(
+        registry->GetRegistrarForPlugin("ScreenRetrieverPlugin"));
+
+    // Don't register DesktopMultiWindow with itself
+  });
+  
   SetChildContent(flutter_controller_->view()->GetNativeWindow());
 
   flutter_controller_->engine()->SetNextFrameCallback([&]() {
