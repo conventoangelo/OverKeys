@@ -51,7 +51,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
   double _splitWidth = 100;
   double _opacity = 0.6;
   double _lastOpacity = 0.6;
-  int _autoHideDuration = 2;
+  double _autoHideDuration = 2.0;
   bool _autoHideEnabled = false;
   // ignore: unused_field
   bool _launchAtStartup = false;
@@ -130,7 +130,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
         await asyncPrefs.getString('keymapStyle') ?? 'Staggered';
     double splitWidth = await asyncPrefs.getDouble('splitWidth') ?? 100;
     double opacity = await asyncPrefs.getDouble('opacity') ?? 0.6;
-    int autoHideDuration = await asyncPrefs.getInt('autoHideDuration') ?? 2;
+    double autoHideDuration = await asyncPrefs.getDouble('autoHideDuration') ?? 2.0;
     bool autoHideEnabled = await asyncPrefs.getBool('autoHideEnabled') ?? false;
 
     setState(() {
@@ -184,7 +184,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
     await asyncPrefs.setString('keymapStyle', _keymapStyle);
     await asyncPrefs.setDouble('splitWidth', _splitWidth);
     await asyncPrefs.setDouble('opacity', _opacity);
-    await asyncPrefs.setInt('autoHideDuration', _autoHideDuration);
+    await asyncPrefs.setDouble('autoHideDuration', _autoHideDuration);
     await asyncPrefs.setBool('autoHideEnabled', _autoHideEnabled);
   }
 
@@ -261,7 +261,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
           final opacity = call.arguments as double;
           setState(() => _opacity = opacity);
         case 'updateAutoHideDuration':
-          final autoHideDuration = call.arguments as int;
+          final autoHideDuration = call.arguments as double;
           setState(() => _autoHideDuration = autoHideDuration);
         case 'updateLaunchAtStartup':
           final launchAtStartupRet = call.arguments as bool;
@@ -327,7 +327,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
   void _resetAutoHideTimer() {
     _autoHideTimer?.cancel();
     if (_autoHideEnabled) {
-      _autoHideTimer = Timer(Duration(seconds: _autoHideDuration), () {
+      _autoHideTimer = Timer(Duration(milliseconds: (_autoHideDuration * 1000).round()), () {
         if (_autoHideEnabled && _isWindowVisible) {
           _fadeOut();
         }

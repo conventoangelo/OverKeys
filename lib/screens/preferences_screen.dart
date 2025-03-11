@@ -47,7 +47,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
   String _keymapStyle = 'Staggered';
   double _splitWidth = 100;
   double _opacity = 0.6;
-  int _autoHideDuration = 2;
+  double _autoHideDuration = 2.0;
   bool _launchAtStartup = false;
   bool _autoHideEnabled = false;
 
@@ -123,7 +123,8 @@ class _PreferencesScreenState extends State<PreferencesScreen>
         await asyncPrefs.getString('keymapStyle') ?? 'Staggered';
     double splitWidth = await asyncPrefs.getDouble('splitWidth') ?? 100;
     double opacity = await asyncPrefs.getDouble('opacity') ?? 0.6;
-    int autoHideDuration = await asyncPrefs.getInt('autoHideDuration') ?? 2;
+    double autoHideDuration =
+        await asyncPrefs.getDouble('autoHideDuration') ?? 2.0;
     bool launchAtStartup = await asyncPrefs.getBool('launchAtStartup') ?? false;
     bool autoHideEnabled = await asyncPrefs.getBool('autoHideEnabled') ?? false;
 
@@ -178,7 +179,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     await asyncPrefs.setString('keymapStyle', _keymapStyle);
     await asyncPrefs.setDouble('splitWidth', _splitWidth);
     await asyncPrefs.setDouble('opacity', _opacity);
-    await asyncPrefs.setInt('autoHideDuration', _autoHideDuration);
+    await asyncPrefs.setDouble('autoHideDuration', _autoHideDuration);
     await asyncPrefs.setBool('launchAtStartup', _launchAtStartup);
     await asyncPrefs.setBool('autoHideEnabled', _autoHideEnabled);
   }
@@ -309,6 +310,13 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           setState(() => _autoHideEnabled = value);
           _updateMainWindow('updateAutoHideEnabled', value);
         }),
+        _buildSliderOption(
+            'Auto-hide duration (seconds)', _autoHideDuration, 0.5, 5.0, 9,
+            (value) {
+          double roundedValue = (value * 2).round() / 2;
+          setState(() => _autoHideDuration = roundedValue);
+          _updateMainWindow('updateAutoHideDuration', roundedValue);
+        }, valueDisplayFormatter: (value) => value.toStringAsFixed(1)),
         _buildDropdownOption('Layout', _keyboardLayoutName,
             availableLayouts.map((layout) => (layout.name)).toList(), (value) {
           setState(() => _keyboardLayoutName = value!);
@@ -326,12 +334,6 @@ class _PreferencesScreenState extends State<PreferencesScreen>
         _buildSliderOption('Opacity', _opacity, 0.1, 1.0, 18, (value) {
           setState(() => _opacity = value);
           _updateMainWindow('updateOpacity', value);
-        }),
-        _buildSliderOption(
-            'Auto-hide duration', _autoHideDuration.toDouble(), 1.0, 10.0, 9,
-            (value) {
-          setState(() => _autoHideDuration = value.round());
-          _updateMainWindow('updateAutoHideDuration', value.round());
         }),
       ],
     );
@@ -628,50 +630,50 @@ class _PreferencesScreenState extends State<PreferencesScreen>
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Expanded(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(label,
-            style: TextStyle(
-            color: colorScheme.onSurface,
-            fontWeight: FontWeight.w600,
-            fontSize: 16)),
-            Text(
-          subtitle,
-          style: TextStyle(
-              color: colorScheme.onSurface.withOpacity(0.6),
-              fontSize: 14.0),
-          softWrap: true,
-          overflow: TextOverflow.visible,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(label,
+                    style: TextStyle(
+                        color: colorScheme.onSurface,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16)),
+                Text(
+                  subtitle,
+                  style: TextStyle(
+                      color: colorScheme.onSurface.withOpacity(0.6),
+                      fontSize: 14.0),
+                  softWrap: true,
+                  overflow: TextOverflow.visible,
+                ),
+              ],
             ),
-          ],
-        ),
           ),
           const SizedBox(width: 16),
           DropdownButton<String>(
-        value: value,
-        items: options
-            .map((String option) => DropdownMenuItem<String>(
-            value: option, 
-            child: Text(
-              option,
-              style: TextStyle(
-            fontFamily: option,
-            fontFamilyFallback: const ['Manrope'],
-            color: colorScheme.onSurface,
-            fontSize: 15,
-              ),
+            value: value,
+            items: options
+                .map((String option) => DropdownMenuItem<String>(
+                      value: option,
+                      child: Text(
+                        option,
+                        style: TextStyle(
+                          fontFamily: option,
+                          fontFamilyFallback: const ['Manrope'],
+                          color: colorScheme.onSurface,
+                          fontSize: 15,
+                        ),
+                      ),
+                    ))
+                .toList(),
+            onChanged: onChanged,
+            dropdownColor: colorScheme.surface,
+            style: TextStyle(
+              fontFamily: value,
+              fontFamilyFallback: const ['Manrope'],
+              color: colorScheme.onSurface,
+              fontSize: 15,
             ),
-          ))
-            .toList(),
-        onChanged: onChanged,
-        dropdownColor: colorScheme.surface,
-        style: TextStyle(
-          fontFamily: value,
-          fontFamilyFallback: const ['Manrope'],
-          color: colorScheme.onSurface, 
-          fontSize: 15,
-        ),
           ),
         ],
       ),
@@ -713,7 +715,8 @@ class _PreferencesScreenState extends State<PreferencesScreen>
   }
 
   Widget _buildSliderOption(String label, double value, double min, double max,
-      int divisions, Function(double) onChanged) {
+      int divisions, Function(double) onChanged,
+      {String Function(double)? valueDisplayFormatter}) {
     final colorScheme = ThemeManager.getTheme(_brightness).colorScheme;
     return _buildOptionContainer(
       Column(
@@ -724,11 +727,13 @@ class _PreferencesScreenState extends State<PreferencesScreen>
                   color: colorScheme.onSurface,
                   fontWeight: FontWeight.w600,
                   fontSize: 16)),
-            Slider(
+          Slider(
             value: value,
             min: min,
             divisions: divisions,
-            label: value.toStringAsFixed(2),
+            label: valueDisplayFormatter != null
+                ? valueDisplayFormatter(value)
+                : value.toStringAsFixed(2),
             max: max,
             onChanged: onChanged,
             activeColor: colorScheme.primary,
