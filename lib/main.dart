@@ -9,27 +9,44 @@ import 'app.dart';
 import 'screens/preferences_screen.dart';
 
 void main(List<String> args) async {
+  final isSubWindow = args.firstOrNull == 'multi_window';
   WidgetsFlutterBinding.ensureInitialized();
-  if (args.firstOrNull == 'multi_window') {
+  await windowManager.ensureInitialized();
+
+  if (isSubWindow) {
     final windowId = int.parse(args[1]);
     final arguments = args[2].isEmpty
         ? const {}
         : jsonDecode(args[2]) as Map<String, dynamic>;
 
-    Map windows = {
-      "preferences": PreferencesScreen(
+    if (arguments["name"] == "preferences") {
+      WindowOptions windowOptions = const WindowOptions(
+        title: "Preferences",
+        titleBarStyle: TitleBarStyle.normal,
+        size: Size(1280, 720),
+      );
+
+      windowManager.waitUntilReadyToShow(windowOptions, () async {
+        await windowManager.setTitle("Preferences");
+        await windowManager.setIcon("assets/images/app_icon.ico");
+        await windowManager.center();
+        await windowManager.show();
+        await windowManager.focus();
+      });
+
+      runApp(PreferencesScreen(
         windowController: WindowController.fromWindowId(windowId),
-      ),
-    };
-    runApp(windows[arguments["name"]]);
+      ));
+    }
   } else {
+    // Main window
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     launchAtStartup.setup(
       appName: packageInfo.appName,
       appPath: Platform.resolvedExecutable,
       packageName: packageInfo.packageName,
     );
-    await windowManager.ensureInitialized();
+
     double windowWidth = 1000;
     double windowHeight = 320;
 
@@ -48,6 +65,7 @@ void main(List<String> args) async {
       await windowManager.setAlignment(Alignment.bottomCenter);
       await windowManager.show();
     });
+
     runApp(const MainApp());
   }
 }

@@ -5,6 +5,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:window_manager/window_manager.dart';
 
 import 'package:overkeys/utils/keyboard_layouts.dart';
 
@@ -17,7 +18,8 @@ class PreferencesScreen extends StatefulWidget {
   State<PreferencesScreen> createState() => _PreferencesScreenState();
 }
 
-class _PreferencesScreenState extends State<PreferencesScreen> {
+class _PreferencesScreenState extends State<PreferencesScreen>
+    with WindowListener {
   final SharedPreferencesAsync asyncPrefs = SharedPreferencesAsync();
 
   String _currentTab = 'General';
@@ -50,9 +52,17 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
   @override
   void initState() {
     super.initState();
+    windowManager.addListener(this);
     // asyncPrefs.clear();
     _loadPreferences();
     _setupMethodHandler();
+  }
+
+  @override
+  void dispose() {
+    windowManager.removeListener(this);
+    _savePreferences();
+    super.dispose();
   }
 
   void _setupMethodHandler() {
@@ -66,9 +76,8 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
   }
 
   @override
-  void dispose() {
-    _savePreferences();
-    super.dispose();
+  void onWindowClose() {
+    widget.windowController.close();
   }
 
   Future<void> _loadPreferences() async {
