@@ -273,6 +273,21 @@ class _MainAppState extends State<MainApp> with TrayListener {
               _handleDisable();
             }
           });
+        case 'updateAutoHideEnabled':
+          final autoHideEnabled = call.arguments as bool;
+          setState(() {
+            _autoHideEnabled = autoHideEnabled;
+            if (_autoHideEnabled) {
+              _resetAutoHideTimer();
+            } else {
+              _autoHideTimer?.cancel();
+              if (!_isWindowVisible) {
+                _fadeIn();
+              }
+            }
+          });
+          _setupTray();
+
         default:
           throw UnimplementedError('Unimplemented method ${call.method}');
       }
@@ -402,15 +417,28 @@ class _MainAppState extends State<MainApp> with TrayListener {
       MenuItem(
         key: 'exit',
         label: 'Exit',
-        onClick: (menuItem) {
-          windowManager.close();
-        },
       ),
     ]));
   }
 
   @override
   void onTrayMenuItemClick(MenuItem menuItem) {
+    if (menuItem.key == 'toggle_auto_hide') {
+      DesktopMultiWindow.getAllSubWindowIds().then((windowIds) {
+        for (final id in windowIds) {
+          DesktopMultiWindow.invokeMethod(
+              id, 'updateAutoHideFromMainWindow', _autoHideEnabled);
+        }
+      });
+    } else if (menuItem.key == 'exit') {
+      DesktopMultiWindow.getAllSubWindowIds().then((windowIds) {
+        for (final id in windowIds) {
+          WindowController.fromWindowId(id).close();
+        }
+      });
+      windowManager.close();
+      return;
+    }
     _setupTray();
   }
 

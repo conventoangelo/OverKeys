@@ -45,12 +45,24 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
   double _opacity = 0.6;
   int _autoHideDuration = 2;
   bool _launchAtStartup = false;
+  bool _autoHideEnabled = false;
 
   @override
   void initState() {
     super.initState();
     // asyncPrefs.clear();
     _loadPreferences();
+    _setupMethodHandler();
+  }
+
+  void _setupMethodHandler() {
+    DesktopMultiWindow.setMethodHandler((call, fromWindowId) async {
+      if (call.method == 'updateAutoHideFromMainWindow' && mounted) {
+        setState(() => _autoHideEnabled = call.arguments as bool);
+        await asyncPrefs.setBool('autoHideEnabled', _autoHideEnabled);
+      }
+      return null;
+    });
   }
 
   @override
@@ -93,6 +105,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
     double opacity = await asyncPrefs.getDouble('opacity') ?? 0.6;
     int autoHideDuration = await asyncPrefs.getInt('autoHideDuration') ?? 2;
     bool launchAtStartup = await asyncPrefs.getBool('launchAtStartup') ?? false;
+    bool autoHideEnabled = await asyncPrefs.getBool('autoHideEnabled') ?? false;
 
     setState(() {
       _keyboardLayoutName = keyboardLayoutName;
@@ -118,6 +131,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
       _opacity = opacity;
       _autoHideDuration = autoHideDuration;
       _launchAtStartup = launchAtStartup;
+      _autoHideEnabled = autoHideEnabled;
     });
   }
 
@@ -146,6 +160,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
     await asyncPrefs.setDouble('opacity', _opacity);
     await asyncPrefs.setInt('autoHideDuration', _autoHideDuration);
     await asyncPrefs.setBool('launchAtStartup', _launchAtStartup);
+    await asyncPrefs.setBool('autoHideEnabled', _autoHideEnabled);
   }
 
   void _updateMainWindow(dynamic method, dynamic value) async {
@@ -266,6 +281,10 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
         _buildToggleOption('Open on system startup', _launchAtStartup, (value) {
           setState(() => _launchAtStartup = value);
           _updateMainWindow('updateLaunchAtStartup', value);
+        }),
+        _buildToggleOption('Auto-hide keyboard', _autoHideEnabled, (value) {
+          setState(() => _autoHideEnabled = value);
+          _updateMainWindow('updateAutoHideEnabled', value);
         }),
         _buildDropdownOption('Layout', _keyboardLayoutName,
             availableLayouts.map((layout) => (layout.name)).toList(), (value) {
