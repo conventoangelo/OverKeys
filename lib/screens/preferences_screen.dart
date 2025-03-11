@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:window_manager/window_manager.dart';
 
 import 'package:overkeys/utils/keyboard_layouts.dart';
+import 'package:overkeys/utils/theme_manager.dart';
 
 class PreferencesScreen extends StatefulWidget {
   const PreferencesScreen({super.key, required this.windowController});
@@ -22,6 +23,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     with WindowListener {
   final SharedPreferencesAsync asyncPrefs = SharedPreferencesAsync();
 
+  Brightness _brightness = Brightness.dark;
   String _currentTab = 'General';
 
   String _keyboardLayoutName = 'QWERTY';
@@ -56,6 +58,20 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     // asyncPrefs.clear();
     _loadPreferences();
     _setupMethodHandler();
+    _detectSystemTheme();
+  }
+
+  void _detectSystemTheme() {
+    final platformDispatcher = WidgetsBinding.instance.platformDispatcher;
+    _brightness = platformDispatcher.platformBrightness;
+
+    platformDispatcher.onPlatformBrightnessChanged = () {
+      if (mounted) {
+        setState(() {
+          _brightness = platformDispatcher.platformBrightness;
+        });
+      }
+    };
   }
 
   @override
