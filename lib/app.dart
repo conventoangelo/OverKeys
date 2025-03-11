@@ -458,10 +458,9 @@ class _MainAppState extends State<MainApp> with TrayListener {
 
   Future<void> _showPreferences() async {
     try {
-      final window = await DesktopMultiWindow.createWindow(jsonEncode({
+      await DesktopMultiWindow.createWindow(jsonEncode({
         'name': 'preferences',
       }));
-      window.show();
     } catch (e) {
       if (kDebugMode) {
         print('Error creating preferences window: $e');
