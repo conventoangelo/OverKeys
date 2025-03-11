@@ -431,12 +431,19 @@ class _MainAppState extends State<MainApp> with TrayListener {
         }
       });
     } else if (menuItem.key == 'exit') {
-      DesktopMultiWindow.getAllSubWindowIds().then((windowIds) {
+      DesktopMultiWindow.getAllSubWindowIds().then((windowIds) async {
         for (final id in windowIds) {
-          WindowController.fromWindowId(id).close();
+          await WindowController.fromWindowId(id).close();
         }
+        await windowManager.close();
+        exit(0);
+      }).catchError((error) {
+        if (kDebugMode) {
+          print('Error closing windows: $error');
+        }
+        windowManager.close();
+        exit(0);
       });
-      windowManager.close();
       return;
     }
     _setupTray();

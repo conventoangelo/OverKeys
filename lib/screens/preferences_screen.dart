@@ -76,8 +76,8 @@ class _PreferencesScreenState extends State<PreferencesScreen>
 
   @override
   void dispose() {
-    windowManager.removeListener(this);
     _savePreferences();
+    windowManager.removeListener(this);
     super.dispose();
   }
 
@@ -89,11 +89,6 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       }
       return null;
     });
-  }
-
-  @override
-  void onWindowClose() {
-    widget.windowController.close();
   }
 
   Future<void> _loadPreferences() async {
