@@ -130,7 +130,8 @@ class _MainAppState extends State<MainApp> with TrayListener {
         await asyncPrefs.getString('keymapStyle') ?? 'Staggered';
     double splitWidth = await asyncPrefs.getDouble('splitWidth') ?? 100;
     double opacity = await asyncPrefs.getDouble('opacity') ?? 0.6;
-    double autoHideDuration = await asyncPrefs.getDouble('autoHideDuration') ?? 2.0;
+    double autoHideDuration =
+        await asyncPrefs.getDouble('autoHideDuration') ?? 2.0;
     bool autoHideEnabled = await asyncPrefs.getBool('autoHideEnabled') ?? false;
 
     setState(() {
@@ -259,7 +260,10 @@ class _MainAppState extends State<MainApp> with TrayListener {
           setState(() => _splitWidth = splitWidth);
         case 'updateOpacity':
           final opacity = call.arguments as double;
-          setState(() => _opacity = opacity);
+          setState(() {
+            _opacity = opacity;
+            _lastOpacity = opacity;
+          });
         case 'updateAutoHideDuration':
           final autoHideDuration = call.arguments as double;
           setState(() => _autoHideDuration = autoHideDuration);
@@ -327,7 +331,8 @@ class _MainAppState extends State<MainApp> with TrayListener {
   void _resetAutoHideTimer() {
     _autoHideTimer?.cancel();
     if (_autoHideEnabled) {
-      _autoHideTimer = Timer(Duration(milliseconds: (_autoHideDuration * 1000).round()), () {
+      _autoHideTimer =
+          Timer(Duration(milliseconds: (_autoHideDuration * 1000).round()), () {
         if (_autoHideEnabled && _isWindowVisible) {
           _fadeOut();
         }
