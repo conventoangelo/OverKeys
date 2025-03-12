@@ -425,6 +425,13 @@ class _MainAppState extends State<MainApp> with TrayListener {
       ),
       MenuItem.separator(),
       MenuItem(
+          key: 'reset_position',
+          label: 'Reset Position',
+          onClick: (menuItem) {
+            windowManager.setAlignment(Alignment.bottomCenter);
+          }),
+      MenuItem.separator(),
+      MenuItem(
         key: 'preferences',
         label: 'Preferences',
         onClick: (menuItem) {
