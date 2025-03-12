@@ -405,6 +405,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
         key: 'toggle_auto_hide',
         label: 'Auto Hide',
         checked: _autoHideEnabled,
+        disabled: !_ignoreMouseEvents,
         onClick: (menuItem) {
           setState(() {
             if (kDebugMode) {
