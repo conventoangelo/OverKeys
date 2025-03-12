@@ -382,6 +382,13 @@ class _MainAppState extends State<MainApp> with TrayListener {
             }
             _ignoreMouseEvents = !_ignoreMouseEvents;
             windowManager.setIgnoreMouseEvents(_ignoreMouseEvents);
+            if (!_ignoreMouseEvents) {
+              _autoHideEnabled = false;
+              _autoHideTimer?.cancel();
+              if (!_isWindowVisible) {
+                _fadeIn();
+              }
+            }
           });
           _fadeIn();
         },
