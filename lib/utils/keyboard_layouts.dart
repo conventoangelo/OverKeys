@@ -185,15 +185,12 @@ const sturdyAngle = KeyboardLayout(
   ],
 );
 
-const handsDown = KeyboardLayout(
-  name: 'Hands Down',
-  keys: [
-    ['Q', 'C', 'H', 'P', 'V', 'K', 'Y', 'O', 'J', '/', '[', ']'],
-    ['R', 'S', 'N', 'T', 'G', 'W', 'U', 'E', 'I', 'A', ';'],
-    ['X', 'M', 'L', 'D', 'B', 'Z', 'F', "'", ',', '.'],
-    [' '],
-  ]
-);
+const handsDown = KeyboardLayout(name: 'Hands Down', keys: [
+  ['Q', 'C', 'H', 'P', 'V', 'K', 'Y', 'O', 'J', '/', '[', ']'],
+  ['R', 'S', 'N', 'T', 'G', 'W', 'U', 'E', 'I', 'A', ';'],
+  ['X', 'M', 'L', 'D', 'B', 'Z', 'F', "'", ',', '.'],
+  [' '],
+]);
 
 const focal = KeyboardLayout(
   name: 'Focal',
@@ -204,6 +201,21 @@ const focal = KeyboardLayout(
     [' '],
   ],
 );
+
+const symbol = KeyboardLayout(
+  name: 'Symbol',
+  keys: [
+    ["'", '<', '>', ':', '@', '~', '"', '{', '}', '%', '[', ']'],
+    ['!', '-', '+', '=', '`', '|', '.', '(', ')', '?', "'"],
+    ['^', '/', '*', '_', '\\', '&', '\$', '[', ']', '#'],
+    [' '],
+  ],
+);
+
+// Update this file to include all layouts you want to support with Kanata
+
+// Add additional layouts here as needed to match the ones from Kanata
+// For example, if Kanata sends "layout:COLEMAK", make sure you have a colemak layout defined
 
 final List<KeyboardLayout> availableLayouts = [
   qwerty,
@@ -226,4 +238,5 @@ final List<KeyboardLayout> availableLayouts = [
   sturdy,
   sturdyAngle,
   workman,
+  symbol,
 ];
