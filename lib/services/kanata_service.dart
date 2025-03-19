@@ -5,7 +5,8 @@ import 'package:flutter/foundation.dart';
 import 'package:overkeys/services/config_service.dart';
 import 'package:overkeys/utils/keyboard_layouts.dart';
 
-typedef LayerChangeCallback = void Function(KeyboardLayout layout);
+typedef LayerChangeCallback = void Function(
+    KeyboardLayout layout, bool isDefaultLayer);
 
 class KanataService {
   final ConfigService _configService = ConfigService();
@@ -17,6 +18,7 @@ class KanataService {
   LayerChangeCallback? onLayerChange;
   bool _reconnectEnabled = true;
   List<KeyboardLayout> _kanataLayers = [];
+  String _defaultLayer = 'QWERTY';
 
   bool get isConnected => _isConnected;
 
@@ -25,6 +27,7 @@ class KanataService {
     _host = config.kanataHost;
     _port = config.kanataPort;
     _kanataLayers = config.kanataLayers;
+    _defaultLayer = config.defaultLayer;
 
     connect();
   }
@@ -42,10 +45,11 @@ class KanataService {
       _host = config.kanataHost;
       _port = config.kanataPort;
       _kanataLayers = config.kanataLayers;
+      _defaultLayer = config.defaultLayer;
 
       if (kDebugMode) {
         print(
-            'Connecting to Kanata at $_host:$_port with ${_kanataLayers.length} layers');
+            'Connecting to Kanata at $_host:$_port with ${_kanataLayers.length} layers. Default layer: $_defaultLayer');
       }
 
       _kanataSocket = await Socket.connect(_host, _port);
@@ -110,12 +114,16 @@ class KanataService {
             KeyboardLayout? newLayout = _kanataLayers.firstWhere(
               (layout) => layout.name.toUpperCase() == layoutName,
               orElse: () => availableLayouts.firstWhere(
-              (layout) => layout.name.toUpperCase() == layoutName,
-              orElse: () => throw Exception('Layout not found in Kanata layers or available layouts'),
+                (layout) => layout.name.toUpperCase() == layoutName,
+                orElse: () => throw Exception(
+                    'Layout not found in Kanata layers or available layouts'),
               ),
             );
 
-            onLayerChange!(newLayout);
+            bool isDefaultLayer =
+                newLayout.name.toUpperCase() == _defaultLayer.toUpperCase();
+
+            onLayerChange!(newLayout, isDefaultLayer);
 
             if (kDebugMode) {
               print('Switched to layout: ${newLayout.name}');

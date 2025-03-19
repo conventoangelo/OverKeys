@@ -76,9 +76,20 @@ class _MainAppState extends State<MainApp> with TrayListener {
     _setupMethodHandler();
     _init();
     _loadKanataConfig();
-    _kanataService.onLayerChange = (newLayout) {
+    _kanataService.onLayerChange = (newLayout, isDefaultLayer) {
       setState(() {
         _keyboardLayout = newLayout;
+        if (!isDefaultLayer && _autoHideEnabled) {
+          // Disable auto-hide for non-default layers
+          _autoHideEnabled = false;
+          _autoHideTimer?.cancel();
+          autoHideBeforeMove = true;
+        } else if (isDefaultLayer && autoHideBeforeMove) {
+          // Re-enable auto-hide when returning to default layer if it was enabled before
+          _autoHideEnabled = true;
+          _resetAutoHideTimer();
+          autoHideBeforeMove = false;
+        }
       });
       _fadeIn();
     };
@@ -354,7 +365,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
               _kanataService.disconnect();
               if (_preKanataLayout != null) {
                 _keyboardLayout = _preKanataLayout!;
-                _fadeIn(); 
+                _fadeIn();
               }
             }
           });
