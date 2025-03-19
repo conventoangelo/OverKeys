@@ -14,20 +14,35 @@ int lowLevelKeyboardProc(
   int wParam,
   int lParam,
 ) {
-  if (nCode >= 0 && (wParam == WM_KEYDOWN || wParam == WM_KEYUP || wParam == WM_SYSKEYDOWN || wParam == WM_SYSKEYUP)) {
+  if (nCode >= 0 &&
+      (wParam == WM_KEYDOWN ||
+          wParam == WM_KEYUP ||
+          wParam == WM_SYSKEYDOWN ||
+          wParam == WM_SYSKEYUP)) {
     final keyStruct = Pointer<KBDLLHOOKSTRUCT>.fromAddress(lParam).ref;
+    if (kDebugMode) {
+      print('KBDLLHOOKSTRUCT: {');
+      print('  vkCode: ${keyStruct.vkCode},');
+      print('  LLKHF_INJECTED: ${(keyStruct.flags & LLKHF_INJECTED) != 0},');
+      print('  LLKHF_UP: ${(keyStruct.flags & LLKHF_UP) != 0},');
+      print('}');
+    }
     int key = keyStruct.vkCode;
-    bool isKeyDown = (wParam == WM_KEYDOWN || wParam == WM_SYSKEYDOWN);
+    bool isKeyDown = !((keyStruct.flags & LLKHF_UP) != 0);
 
+    // Pros: Would fix behavior when OK opened after Kanata
+    // Cons: Would make app non-responsive when not using Kanata
+    // if ((keyStruct.flags & LLKHF_INJECTED) != 0) {
     sendPort?.send([key, isKeyDown]);
+    // }
   }
   return CallNextHookEx(hookId, nCode, wParam, lParam);
 }
 
 void setHook(SendPort port) {
   sendPort = port;
-  hookId = SetWindowsHookEx(WH_KEYBOARD_LL, keyboardProc,
-      GetModuleHandle(nullptr), 0);
+  hookId = SetWindowsHookEx(
+      WH_KEYBOARD_LL, keyboardProc, GetModuleHandle(nullptr), 0);
   if (hookId == 0) {
     if (kDebugMode) {
       print('Failed to install hook.');

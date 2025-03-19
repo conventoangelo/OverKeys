@@ -431,7 +431,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
           int key = message[0];
           bool isPressed = message[1];
           if (kDebugMode) {
-            print('Received message: $message');
+            print('Received message: Key:$key, isPressed:$isPressed \n');
           }
 
           _keyPressStates[key] = isPressed;
