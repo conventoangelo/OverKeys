@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../utils/keyboard_layouts.dart';
-import '../models/symbol_mappings.dart';
+import '../models/mappings.dart';
 
 class KeyboardScreen extends StatelessWidget {
   final Map<String, bool> keyPressStates;
@@ -91,7 +91,7 @@ class KeyboardScreen extends StatelessWidget {
   }
 
   Widget buildKeys(int rowIndex, String key, int keyIndex) {
-    String keyStateKey = SymbolMappings.getKeyForSymbol(key);
+    String keyStateKey = Mappings.getKeyForSymbol(key);
     bool isPressed = keyPressStates[keyStateKey] ?? false;
 
     Color keyColor = isPressed ? keyColorPressed : keyColorNotPressed;
