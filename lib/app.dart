@@ -57,6 +57,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
   double _autoHideDuration = 2.0;
   bool _autoHideEnabled = false;
   bool _kanataEnabled = false;
+  KeyboardLayout? _preKanataLayout;
   // ignore: unused_field
   bool _launchAtStartup = false;
 
@@ -177,6 +178,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
     setState(() {
       _keyboardLayout = availableLayouts
           .firstWhere((layout) => layout.name == keyboardLayoutName);
+      _preKanataLayout = _keyboardLayout;
       _fontStyle = fontStyle;
       _keyFontSize = keyFontSize;
       _spaceFontSize = spaceFontSize;
@@ -204,7 +206,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
   }
 
   Future<void> _savePreferences() async {
-    await asyncPrefs.setString('layout', _keyboardLayout.name);
+    await asyncPrefs.setString('layout', _preKanataLayout!.name);
     await asyncPrefs.setString('fontStyle', _fontStyle);
     await asyncPrefs.setDouble('keyFontSize', _keyFontSize);
     await asyncPrefs.setDouble('spaceFontSize', _spaceFontSize);
@@ -237,9 +239,14 @@ class _MainAppState extends State<MainApp> with TrayListener {
         case 'updateLayout':
           final layoutName = call.arguments as String;
           setState(() {
-            _lastOpacity = _opacity;
-            _keyboardLayout = availableLayouts
-                .firstWhere((layout) => layout.name == layoutName);
+            if (_kanataEnabled) {
+              _preKanataLayout = availableLayouts
+                  .firstWhere((layout) => layout.name == layoutName);
+            } else {
+              _keyboardLayout = availableLayouts
+                  .firstWhere((layout) => layout.name == layoutName);
+              _preKanataLayout = _keyboardLayout;
+            }
           });
           _fadeIn();
         case 'updateFontStyle':
@@ -336,13 +343,19 @@ class _MainAppState extends State<MainApp> with TrayListener {
         case 'updateKanataEnabled':
           final kanataEnabled = call.arguments as bool;
           setState(() {
-            _kanataEnabled = kanataEnabled;
-            if (_kanataEnabled) {
+            if (kanataEnabled && !_kanataEnabled) {
+              _preKanataLayout = _keyboardLayout;
+              _kanataEnabled = true;
               _loadKanataConfig().then((_) {
                 _kanataService.connect();
               });
-            } else {
+            } else if (!kanataEnabled && _kanataEnabled) {
+              _kanataEnabled = false;
               _kanataService.disconnect();
+              if (_preKanataLayout != null) {
+                _keyboardLayout = _preKanataLayout!;
+                _fadeIn(); 
+              }
             }
           });
         default:
