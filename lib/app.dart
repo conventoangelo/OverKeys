@@ -54,6 +54,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
   double _lastOpacity = 0.6;
   double _autoHideDuration = 2.0;
   bool _autoHideEnabled = false;
+  bool _kanataEnabled = false;
   // ignore: unused_field
   bool _launchAtStartup = false;
 
@@ -62,7 +63,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
   bool _isConnected = false;
   String _kanataHost = '127.0.0.1';
   int _kanataPort = 7891;
-  Timer? _reconnectTimer;
+  Timer? _kanataTimer;
 
   @override
   void initState() {
@@ -74,7 +75,9 @@ class _MainAppState extends State<MainApp> with TrayListener {
     _setupKeyListener();
     _setupMethodHandler();
     _init();
-    _connectToKanata();
+    Future.delayed(const Duration(seconds: 3), () {
+      _connectToKanata();
+    });
   }
 
   _init() async {
@@ -103,7 +106,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
     trayManager.removeListener(this);
     unhook();
     _autoHideTimer?.cancel();
-    _reconnectTimer?.cancel();
+    _kanataTimer?.cancel();
     _kanataSocket?.destroy();
     _savePreferences();
     super.dispose();
@@ -144,6 +147,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
     double autoHideDuration =
         await asyncPrefs.getDouble('autoHideDuration') ?? 2.0;
     bool autoHideEnabled = await asyncPrefs.getBool('autoHideEnabled') ?? false;
+    bool kanataEnabled = await asyncPrefs.getBool('kanataEnabled') ?? false;
     String kanataHost = await asyncPrefs.getString('kanataHost') ?? '127.0.0.1';
     int kanataPort = await asyncPrefs.getInt('kanataPort') ?? 4039;
 
@@ -172,6 +176,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
       _opacity = opacity;
       _autoHideDuration = autoHideDuration;
       _autoHideEnabled = autoHideEnabled;
+      _kanataEnabled = kanataEnabled;
       _kanataHost = kanataHost;
       _kanataPort = kanataPort;
     });
@@ -208,11 +213,11 @@ class _MainAppState extends State<MainApp> with TrayListener {
   }
 
   Future<void> _connectToKanata() async {
-    if (_isConnected) {
+    if (!_kanataEnabled || _isConnected) {
       return;
     }
 
-    _reconnectTimer?.cancel();
+    _kanataTimer?.cancel();
 
     try {
       _kanataSocket = await Socket.connect(_kanataHost, _kanataPort);
@@ -261,8 +266,8 @@ class _MainAppState extends State<MainApp> with TrayListener {
   }
 
   void _scheduleReconnect() {
-    _reconnectTimer?.cancel();
-    _reconnectTimer = Timer(const Duration(seconds: 5), _connectToKanata);
+    _kanataTimer?.cancel();
+    _kanataTimer = Timer(const Duration(seconds: 5), _connectToKanata);
   }
 
   void _handleKanataMessage(String message) {
@@ -404,7 +409,18 @@ class _MainAppState extends State<MainApp> with TrayListener {
             }
           });
           _setupTray();
-
+        case 'updateKanataEnabled':
+          final kanataEnabled = call.arguments as bool;
+          setState(() {
+            _kanataEnabled = kanataEnabled;
+            if (_kanataEnabled) {
+              _connectToKanata();
+            } else {
+              _kanataTimer?.cancel();
+              _kanataSocket?.destroy();
+              _isConnected = false;
+            }
+          });
         default:
           throw UnimplementedError('Unimplemented method ${call.method}');
       }

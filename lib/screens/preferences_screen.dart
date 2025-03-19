@@ -50,6 +50,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
   double _autoHideDuration = 2.0;
   bool _launchAtStartup = false;
   bool _autoHideEnabled = false;
+  bool _kanataEnabled = false;
 
   @override
   void initState() {
@@ -127,6 +128,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
         await asyncPrefs.getDouble('autoHideDuration') ?? 2.0;
     bool launchAtStartup = await asyncPrefs.getBool('launchAtStartup') ?? false;
     bool autoHideEnabled = await asyncPrefs.getBool('autoHideEnabled') ?? false;
+    bool kanataEnabled = await asyncPrefs.getBool('kanataEnabled') ?? false;
 
     setState(() {
       _keyboardLayoutName = keyboardLayoutName;
@@ -153,6 +155,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       _autoHideDuration = autoHideDuration;
       _launchAtStartup = launchAtStartup;
       _autoHideEnabled = autoHideEnabled;
+      _kanataEnabled = kanataEnabled;
     });
   }
 
@@ -183,6 +186,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     await asyncPrefs.setDouble('autoHideDuration', _autoHideDuration);
     await asyncPrefs.setBool('launchAtStartup', _launchAtStartup);
     await asyncPrefs.setBool('autoHideEnabled', _autoHideEnabled);
+    await asyncPrefs.setBool('kanataEnabled', _kanataEnabled);
   }
 
   void _updateMainWindow(dynamic method, dynamic value) async {
@@ -335,6 +339,10 @@ class _PreferencesScreenState extends State<PreferencesScreen>
         _buildSliderOption('Opacity', _opacity, 0.1, 1.0, 18, (value) {
           setState(() => _opacity = value);
           _updateMainWindow('updateOpacity', value);
+        }),
+        _buildToggleOption('Connect to Kanata', _kanataEnabled, (value) {
+          setState(() => _kanataEnabled = value);
+          _updateMainWindow('updateKanataEnabled', value);
         }),
       ],
     );
