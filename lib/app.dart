@@ -6,6 +6,7 @@ import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:launch_at_startup/launch_at_startup.dart';
+import 'package:overkeys/services/kanata_service.dart';
 import 'package:overkeys/utils/key_code.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tray_manager/tray_manager.dart';
@@ -59,11 +60,8 @@ class _MainAppState extends State<MainApp> with TrayListener {
   bool _launchAtStartup = false;
 
   // Kanata TCP client
-  Socket? _kanataSocket;
-  bool _isConnected = false;
-  String _kanataHost = '127.0.0.1';
-  int _kanataPort = 7891;
-  Timer? _kanataTimer;
+
+  final KanataService _kanataService = KanataService();
 
   @override
   void initState() {
@@ -75,8 +73,17 @@ class _MainAppState extends State<MainApp> with TrayListener {
     _setupKeyListener();
     _setupMethodHandler();
     _init();
+    _kanataService.onLayerChange = (newLayout) {
+      setState(() {
+        _keyboardLayout = newLayout;
+      });
+      _fadeIn();
+    };
+
     Future.delayed(const Duration(seconds: 3), () {
-      _connectToKanata();
+      if (_kanataEnabled) {
+        _kanataService.connect();
+      }
     });
   }
 
@@ -106,8 +113,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
     trayManager.removeListener(this);
     unhook();
     _autoHideTimer?.cancel();
-    _kanataTimer?.cancel();
-    _kanataSocket?.destroy();
+    _kanataService.dispose();
     _savePreferences();
     super.dispose();
   }
@@ -148,8 +154,6 @@ class _MainAppState extends State<MainApp> with TrayListener {
         await asyncPrefs.getDouble('autoHideDuration') ?? 2.0;
     bool autoHideEnabled = await asyncPrefs.getBool('autoHideEnabled') ?? false;
     bool kanataEnabled = await asyncPrefs.getBool('kanataEnabled') ?? false;
-    String kanataHost = await asyncPrefs.getString('kanataHost') ?? '127.0.0.1';
-    int kanataPort = await asyncPrefs.getInt('kanataPort') ?? 4039;
 
     setState(() {
       _keyboardLayout = availableLayouts
@@ -177,8 +181,6 @@ class _MainAppState extends State<MainApp> with TrayListener {
       _autoHideDuration = autoHideDuration;
       _autoHideEnabled = autoHideEnabled;
       _kanataEnabled = kanataEnabled;
-      _kanataHost = kanataHost;
-      _kanataPort = kanataPort;
     });
   }
 
@@ -208,103 +210,6 @@ class _MainAppState extends State<MainApp> with TrayListener {
     await asyncPrefs.setDouble('opacity', _opacity);
     await asyncPrefs.setDouble('autoHideDuration', _autoHideDuration);
     await asyncPrefs.setBool('autoHideEnabled', _autoHideEnabled);
-    await asyncPrefs.setString('kanataHost', _kanataHost);
-    await asyncPrefs.setInt('kanataPort', _kanataPort);
-  }
-
-  Future<void> _connectToKanata() async {
-    if (!_kanataEnabled || _isConnected) {
-      return;
-    }
-
-    _kanataTimer?.cancel();
-
-    try {
-      _kanataSocket = await Socket.connect(_kanataHost, _kanataPort);
-      if (kDebugMode) {
-        print('Connected to Kanata server at $_kanataHost:$_kanataPort');
-      }
-
-      setState(() {
-        _isConnected = true;
-      });
-
-      _kanataSocket!.listen(
-        (data) {
-          String message = String.fromCharCodes(data).trim();
-          _handleKanataMessage(message);
-        },
-        onDone: _onDisconnected,
-        onError: (error) {
-          if (kDebugMode) {
-            print('Socket error: $error');
-          }
-          _onDisconnected();
-        },
-      );
-    } catch (e) {
-      if (kDebugMode) {
-        print('Failed to connect to Kanata server: $e');
-      }
-      _scheduleReconnect();
-    }
-  }
-
-  void _onDisconnected() {
-    if (!mounted) return;
-
-    setState(() {
-      _isConnected = false;
-      _kanataSocket = null;
-    });
-
-    if (kDebugMode) {
-      print('Disconnected from Kanata server');
-    }
-
-    _scheduleReconnect();
-  }
-
-  void _scheduleReconnect() {
-    _kanataTimer?.cancel();
-    _kanataTimer = Timer(const Duration(seconds: 5), _connectToKanata);
-  }
-
-  void _handleKanataMessage(String message) {
-    try {
-      Map<String, dynamic> jsonData = jsonDecode(message);
-
-      if (jsonData.containsKey('LayerChange')) {
-        String layoutName =
-            jsonData['LayerChange']['new']?.toString().trim().toUpperCase() ??
-                '';
-
-        if (layoutName.isNotEmpty) {
-          try {
-            KeyboardLayout newLayout = availableLayouts.firstWhere(
-                (layout) => layout.name.toUpperCase() == layoutName,
-                orElse: () => throw Exception('Layout not found'));
-
-            setState(() {
-              _keyboardLayout = newLayout;
-            });
-
-            _fadeIn();
-            if (kDebugMode) {
-              print('Switched to layout: ${newLayout.name}');
-            }
-          } catch (e) {
-            if (kDebugMode) {
-              print('Unknown layout: $layoutName');
-            }
-          }
-        }
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        print('Failed to parse Kanata message: $e');
-      }
-    }
   }
 
   void _setupMethodHandler() {
@@ -414,11 +319,9 @@ class _MainAppState extends State<MainApp> with TrayListener {
           setState(() {
             _kanataEnabled = kanataEnabled;
             if (_kanataEnabled) {
-              _connectToKanata();
+              _kanataService.connect();
             } else {
-              _kanataTimer?.cancel();
-              _kanataSocket?.destroy();
-              _isConnected = false;
+              _kanataService.disconnect();
             }
           });
         default:
