@@ -4,248 +4,121 @@ import 'package:win32/win32.dart';
 int getVirtualKeyCode(String key) {
   switch (key) {
     // Alphabetic keys
-    case 'A':
-      return VK_A;
-    case 'B':
-      return VK_B;
-    case 'C':
-      return VK_C;
-    case 'D':
-      return VK_D;
-    case 'E':
-      return VK_E;
-    case 'F':
-      return VK_F;
-    case 'G':
-      return VK_G;
-    case 'H':
-      return VK_H;
-    case 'I':
-      return VK_I;
-    case 'J':
-      return VK_J;
-    case 'K':
-      return VK_K;
-    case 'L':
-      return VK_L;
-    case 'M':
-      return VK_M;
-    case 'N':
-      return VK_N;
-    case 'O':
-      return VK_O;
-    case 'P':
-      return VK_P;
-    case 'Q':
-      return VK_Q;
-    case 'R':
-      return VK_R;
-    case 'S':
-      return VK_S;
-    case 'T':
-      return VK_T;
-    case 'U':
-      return VK_U;
-    case 'V':
-      return VK_V;
-    case 'W':
-      return VK_W;
-    case 'X':
-      return VK_X;
-    case 'Y':
-      return VK_Y;
-    case 'Z':
-      return VK_Z;
+    case 'A': return VK_A;
+    case 'B': return VK_B;
+    case 'C': return VK_C;
+    case 'D': return VK_D;
+    case 'E': return VK_E;
+    case 'F': return VK_F;
+    case 'G': return VK_G;
+    case 'H': return VK_H;
+    case 'I': return VK_I;
+    case 'J': return VK_J;
+    case 'K': return VK_K;
+    case 'L': return VK_L;
+    case 'M': return VK_M;
+    case 'N': return VK_N;
+    case 'O': return VK_O;
+    case 'P': return VK_P;
+    case 'Q': return VK_Q;
+    case 'R': return VK_R;
+    case 'S': return VK_S;
+    case 'T': return VK_T;
+    case 'U': return VK_U;
+    case 'V': return VK_V;
+    case 'W': return VK_W;
+    case 'X': return VK_X;
+    case 'Y': return VK_Y;
+    case 'Z': return VK_Z;
 
     // Numeric keys
-    case '0':
-      return 0x30;
-    case '1':
-      return 0x31;
-    case '2':
-      return 0x32;
-    case '3':
-      return 0x33;
-    case '4':
-      return 0x34;
-    case '5':
-      return 0x35;
-    case '6':
-      return 0x36;
-    case '7':
-      return 0x37;
-    case '8':
-      return 0x38;
-    case '9':
-      return 0x39;
+    case '0': return 0x30;
+    case '1': return 0x31;
+    case '2': return 0x32;
+    case '3': return 0x33;
+    case '4': return 0x34;
+    case '5': return 0x35;
+    case '6': return 0x36;
+    case '7': return 0x37;
+    case '8': return 0x38;
+    case '9': return 0x39;
 
     // Function keys
-    case 'F1':
-      return VK_F1;
-    case 'F2':
-      return VK_F2;
-    case 'F3':
-      return VK_F3;
-    case 'F4':
-      return VK_F4;
-    case 'F5':
-      return VK_F5;
-    case 'F6':
-      return VK_F6;
-    case 'F7':
-      return VK_F7;
-    case 'F8':
-      return VK_F8;
-    case 'F9':
-      return VK_F9;
-    case 'F10':
-      return VK_F10;
-    case 'F11':
-      return VK_F11;
-    case 'F12':
-      return VK_F12;
+    case 'F1': return VK_F1;
+    case 'F2': return VK_F2;
+    case 'F3': return VK_F3;
+    case 'F4': return VK_F4;
+    case 'F5': return VK_F5;
+    case 'F6': return VK_F6;
+    case 'F7': return VK_F7;
+    case 'F8': return VK_F8;
+    case 'F9': return VK_F9;
+    case 'F10': return VK_F10;
+    case 'F11': return VK_F11;
+    case 'F12': return VK_F12;
 
     // Special keys
-    case 'Enter':
-    case 'Return':
-      return VK_RETURN;
-    case 'Tab':
-      return VK_TAB;
-    case 'Backspace':
-      return VK_BACK;
-    case 'Escape':
-    case 'Esc':
-      return VK_ESCAPE;
-    case 'Delete':
-    case 'Del':
-      return VK_DELETE;
-    case 'Insert':
-    case 'Ins':
-      return VK_INSERT;
-    case 'Home':
-      return VK_HOME;
-    case 'End':
-      return VK_END;
-    case 'PageUp':
-    case 'PgUp':
-      return VK_PRIOR;
-    case 'PageDown':
-    case 'PgDn':
-      return VK_NEXT;
-    case 'Left':
-      return VK_LEFT;
-    case 'Right':
-      return VK_RIGHT;
-    case 'Up':
-      return VK_UP;
-    case 'Down':
-      return VK_DOWN;
-    case 'Shift':
-      return VK_SHIFT;
-    case 'LShift':
-      return VK_LSHIFT;
-    case 'RShift':
-      return VK_RSHIFT;
-    case 'Control':
-    case 'Ctrl':
-      return VK_CONTROL;
-    case 'LControl':
-    case 'LCtrl':
-      return VK_LCONTROL;
-    case 'RControl':
-    case 'RCtrl':
-      return VK_RCONTROL;
-    case 'Alt':
-      return VK_MENU;
-    case 'LAlt':
-      return VK_LMENU;
-    case 'RAlt':
-      return VK_RMENU;
-    case 'Win':
-    case 'Windows':
-      return VK_LWIN;
-    case 'RWin':
-    case 'RWindows':
-      return VK_RWIN;
-    case 'CapsLock':
-      return VK_CAPITAL;
-    case 'NumLock':
-      return VK_NUMLOCK;
-    case 'ScrollLock':
-      return VK_SCROLL;
+    case 'Enter' || 'Return': return VK_RETURN;
+    case 'Tab': return VK_TAB;
+    case 'Backspace': return VK_BACK;
+    case 'Escape' || 'Esc': return VK_ESCAPE;
+    case 'Delete' || 'Del': return VK_DELETE;
+    case 'Insert' || 'Ins': return VK_INSERT;
+    case 'Home': return VK_HOME;
+    case 'End': return VK_END;
+    case 'PageUp' || 'PgUp': return VK_PRIOR;
+    case 'PageDown' || 'PgDn': return VK_NEXT;
+    case 'Left' || '◄': return VK_LEFT;
+    case 'Right' || '►': return VK_RIGHT;
+    case 'Up' || '▲': return VK_UP;
+    case 'Down' || '▼': return VK_DOWN;
+    case 'Shift': return VK_SHIFT;
+    case 'LShift': return VK_LSHIFT;
+    case 'RShift': return VK_RSHIFT;
+    case 'Control' || 'Ctrl': return VK_CONTROL;
+    case 'LControl' || 'LCtrl': return VK_LCONTROL;
+    case 'RControl' || 'RCtrl': return VK_RCONTROL;
+    case 'Alt': return VK_MENU;
+    case 'LAlt': return VK_LMENU;
+    case 'RAlt': return VK_RMENU;
+    case 'Win' || 'Windows': return VK_LWIN;
+    case 'RWin' || 'RWindows': return VK_RWIN;
+    case 'CapsLock': return VK_CAPITAL;
+    case 'NumLock': return VK_NUMLOCK;
+    case 'ScrollLock': return VK_SCROLL;
 
     // Punctuation and symbols
-    case ' ':
-      return VK_SPACE;
-    case ',':
-      return VK_OEM_COMMA;
-    case '.':
-      return VK_OEM_PERIOD;
-    case ';':
-      return VK_OEM_1;
-    case '/':
-      return VK_OEM_2;
-    case '?':
-      return VK_OEM_2;
-    case '#':
-      return VK_3;
-    case '[':
-      return VK_OEM_4;
-    case ']':
-      return VK_OEM_6;
-    case '\\':
-      return VK_OEM_5;
-    case '`':
-    case '~':
-      return VK_OEM_3;
-    case "'":
-    case '"':
-      return VK_OEM_7;
-    case '=':
-    case '+':
-      return VK_OEM_PLUS;
-    case '-':
-    case '_':
-      return VK_OEM_MINUS;
+    case ' ': return VK_SPACE;
+    case ',': return VK_OEM_COMMA;
+    case '.': return VK_OEM_PERIOD;
+    case ';': return VK_OEM_1;
+    case '/' || '?': return VK_OEM_2;
+    case '#': return VK_3;
+    case '[': return VK_OEM_4;
+    case ']': return VK_OEM_6;
+    case '\\': return VK_OEM_5;
+    case '`' || '~': return VK_OEM_3;
+    case "'" || '"': return VK_OEM_7;
+    case '=' || '+': return VK_OEM_PLUS;
+    case '-' || '_': return VK_OEM_MINUS;
 
     // Numpad keys
-    case 'Num0':
-      return VK_NUMPAD0;
-    case 'Num1':
-      return VK_NUMPAD1;
-    case 'Num2':
-      return VK_NUMPAD2;
-    case 'Num3':
-      return VK_NUMPAD3;
-    case 'Num4':
-      return VK_NUMPAD4;
-    case 'Num5':
-      return VK_NUMPAD5;
-    case 'Num6':
-      return VK_NUMPAD6;
-    case 'Num7':
-      return VK_NUMPAD7;
-    case 'Num8':
-      return VK_NUMPAD8;
-    case 'Num9':
-      return VK_NUMPAD9;
-    case 'NumMultiply':
-    case 'Num*':
-      return VK_MULTIPLY;
-    case 'NumAdd':
-    case 'Num+':
-      return VK_ADD;
-    case 'NumSubtract':
-    case 'Num-':
-      return VK_SUBTRACT;
-    case 'NumDecimal':
-    case 'Num.':
-      return VK_DECIMAL;
-    case 'NumDivide':
-    case 'Num/':
-      return VK_DIVIDE;
+    case 'Num0': return VK_NUMPAD0;
+    case 'Num1': return VK_NUMPAD1;
+    case 'Num2': return VK_NUMPAD2;
+    case 'Num3': return VK_NUMPAD3;
+    case 'Num4': return VK_NUMPAD4;
+    case 'Num5': return VK_NUMPAD5;
+    case 'Num6': return VK_NUMPAD6;
+    case 'Num7': return VK_NUMPAD7;
+    case 'Num8': return VK_NUMPAD8;
+    case 'Num9': return VK_NUMPAD9;
+    case 'NumMultiply' || 'Num*': return VK_MULTIPLY;
+    case 'NumAdd' || 'Num+': return VK_ADD;
+    case 'NumSubtract' || 'Num-': return VK_SUBTRACT;
+    case 'NumDecimal' || 'Num.': return VK_DECIMAL;
+    case 'NumDivide' || 'Num/': return VK_DIVIDE;
 
-    default:
-      return 0;
+    default: return 0;
   }
 }
