@@ -202,31 +202,6 @@ const focal = KeyboardLayout(
   ],
 );
 
-const symbol = KeyboardLayout(
-  name: 'Symbol',
-  keys: [
-    ["'", '<', '>', ':', '@', '~', '"', '{', '}', '%', '[', ']'],
-    ['!', '-', '+', '=', '`', '|', '.', '(', ')', '?', "'"],
-    ['^', '/', '*', '_', '\\', '&', '\$', '[', ']', '#'],
-    [' '],
-  ],
-);
-
-const extend = KeyboardLayout(
-  name: 'Extend',
-  keys: [
-    ['?', '<', '>', '/', ',', '.', '', '▲', '', '', '', ''],
-    ['1', '2', '3', '4', '5', '', '◄', '▼', '►', '', ''],
-    ['6', '7', '8', '9', '0', '', '', '', '', ''],
-    [' '],
-  ],
-);
-
-// Update this file to include all layouts you want to support with Kanata
-
-// Add additional layouts here as needed to match the ones from Kanata
-// For example, if Kanata sends "layout:COLEMAK", make sure you have a colemak layout defined
-
 final List<KeyboardLayout> availableLayouts = [
   qwerty,
   colemak,
@@ -248,6 +223,4 @@ final List<KeyboardLayout> availableLayouts = [
   sturdy,
   sturdyAngle,
   workman,
-  symbol,
-  extend,
 ];
