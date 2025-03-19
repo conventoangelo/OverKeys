@@ -14,10 +14,10 @@ int lowLevelKeyboardProc(
   int wParam,
   int lParam,
 ) {
-  if (nCode >= 0 && wParam == WM_KEYDOWN || wParam == WM_KEYUP) {
+  if (nCode >= 0 && (wParam == WM_KEYDOWN || wParam == WM_KEYUP || wParam == WM_SYSKEYDOWN || wParam == WM_SYSKEYUP)) {
     final keyStruct = Pointer<KBDLLHOOKSTRUCT>.fromAddress(lParam).ref;
     int key = keyStruct.vkCode;
-    bool isKeyDown = (wParam == WM_KEYDOWN);
+    bool isKeyDown = (wParam == WM_KEYDOWN || wParam == WM_SYSKEYDOWN);
 
     sendPort?.send([key, isKeyDown]);
   }
