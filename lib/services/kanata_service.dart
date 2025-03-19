@@ -16,18 +16,17 @@ class KanataService {
   int _port = 4039;
   LayerChangeCallback? onLayerChange;
   bool _reconnectEnabled = true;
+  List<KeyboardLayout> _kanataLayers = [];
 
   bool get isConnected => _isConnected;
 
   Future<void> initializeIfEnabled() async {
-    final kanataConfig = await _configService.getKanataConfig();
+    final config = await _configService.loadConfig();
+    _host = config.kanataHost;
+    _port = config.kanataPort;
+    _kanataLayers = config.kanataLayers;
 
-    if (kanataConfig != null) {
-      _host = kanataConfig['host'];
-      _port = kanataConfig['port'];
-
-      connect();
-    }
+    connect();
   }
 
   Future<void> connect() async {
@@ -39,13 +38,14 @@ class KanataService {
     _reconnectEnabled = true;
 
     try {
-      final kanataConfig = await _configService.getKanataConfig();
-      if (kanataConfig != null) {
-        _host = kanataConfig['host'];
-        _port = kanataConfig['port'];
-      }
+      final config = await _configService.loadConfig();
+      _host = config.kanataHost;
+      _port = config.kanataPort;
+      _kanataLayers = config.kanataLayers;
+
       if (kDebugMode) {
-        print(kanataConfig);
+        print(
+            'Connecting to Kanata at $_host:$_port with ${_kanataLayers.length} layers');
       }
 
       _kanataSocket = await Socket.connect(_host, _port);
@@ -107,9 +107,13 @@ class KanataService {
 
         if (layoutName.isNotEmpty && onLayerChange != null) {
           try {
-            KeyboardLayout newLayout = availableLayouts.firstWhere(
-                (layout) => layout.name.toUpperCase() == layoutName,
-                orElse: () => throw Exception('Layout not found'));
+            KeyboardLayout? newLayout = _kanataLayers.firstWhere(
+              (layout) => layout.name.toUpperCase() == layoutName,
+              orElse: () => availableLayouts.firstWhere(
+              (layout) => layout.name.toUpperCase() == layoutName,
+              orElse: () => throw Exception('Layout not found in Kanata layers or available layouts'),
+              ),
+            );
 
             onLayerChange!(newLayout);
 
@@ -137,18 +141,32 @@ class KanataService {
     _isConnected = false;
   }
 
-  void updateSettings(String host, int port) {
+  void updateSettings(String host, int port, List<KeyboardLayout> layers) {
     bool shouldReconnect = _isConnected;
 
     disconnect();
     _host = host;
     _port = port;
+    _kanataLayers = layers;
 
     if (shouldReconnect) {
       _reconnectEnabled = true;
       connect();
     }
   }
+
+  KeyboardLayout? getLayoutByName(String name) {
+    try {
+      return _kanataLayers.firstWhere(
+        (layout) => layout.name.toUpperCase() == name.toUpperCase(),
+        orElse: () => throw Exception(),
+      );
+    } catch (_) {
+      return null;
+    }
+  }
+
+  List<KeyboardLayout> get kanataLayers => _kanataLayers;
 
   void dispose() {
     disconnect();

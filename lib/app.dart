@@ -6,6 +6,7 @@ import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:launch_at_startup/launch_at_startup.dart';
+import 'package:overkeys/services/config_service.dart';
 import 'package:overkeys/services/kanata_service.dart';
 import 'package:overkeys/utils/key_code.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -73,6 +74,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
     _setupKeyListener();
     _setupMethodHandler();
     _init();
+    _loadKanataConfig();
     _kanataService.onLayerChange = (newLayout) {
       setState(() {
         _keyboardLayout = newLayout;
@@ -106,6 +108,23 @@ class _MainAppState extends State<MainApp> with TrayListener {
       print('On system startup: Disabled');
     }
     await _init();
+  }
+
+  Future<void> _loadKanataConfig() async {
+    final configService = ConfigService();
+    final config = await configService.loadConfig();
+
+    if (_kanataEnabled) {
+      _kanataService.updateSettings(
+          config.kanataHost, config.kanataPort, config.kanataLayers);
+
+      final defaultLayout = _kanataService.getLayoutByName(config.defaultLayer);
+      if (defaultLayout != null) {
+        setState(() {
+          _keyboardLayout = defaultLayout;
+        });
+      }
+    }
   }
 
   @override
@@ -319,7 +338,9 @@ class _MainAppState extends State<MainApp> with TrayListener {
           setState(() {
             _kanataEnabled = kanataEnabled;
             if (_kanataEnabled) {
-              _kanataService.connect();
+              _loadKanataConfig().then((_) {
+                _kanataService.connect();
+              });
             } else {
               _kanataService.disconnect();
             }
