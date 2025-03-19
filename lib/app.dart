@@ -266,10 +266,6 @@ class _MainAppState extends State<MainApp> with TrayListener {
   }
 
   void _handleKanataMessage(String message) {
-    if (kDebugMode) {
-      print('Received from Kanata: $message');
-    }
-
     try {
       Map<String, dynamic> jsonData = jsonDecode(message);
 
@@ -434,7 +430,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
           bool isShiftDown = message[2];
           if (kDebugMode) {
             print(
-                'Received message: Key:${getKeyFromKeyCodeShift(keyCode, isShiftDown)}, KeyCode:$keyCode, isPressed:$isPressed, isShiftDown:$isShiftDown \n');
+                'Key: ${getKeyFromKeyCodeShift(keyCode, isShiftDown).padRight(10)}\tKeyCode: ${keyCode.toString().padRight(5)}\tPressed: ${isPressed.toString().padRight(5)}\tShift: $isShiftDown');
           }
 
           _keyPressStates[getKeyFromKeyCodeShift(keyCode, isShiftDown)] =
