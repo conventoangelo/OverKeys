@@ -119,9 +119,10 @@ class KeyboardScreen extends StatelessWidget {
                 )
               : Text(
                   key,
+                  textAlign: TextAlign.center,
                   style: TextStyle(
                     color: textColor,
-                    fontSize: keyFontSize,
+                    fontSize: key.length > 2 ? keyFontSize * 0.7 : keyFontSize,
                     fontWeight: fontWeight,
                   ),
                 ),
