@@ -212,6 +212,16 @@ const symbol = KeyboardLayout(
   ],
 );
 
+const extend = KeyboardLayout(
+  name: 'Extend',
+  keys: [
+    ['?', '<', '>', '/', ',', '.', '', '', '', '', '', ''],
+    ['1', '2', '3', '4', '5', '', '', '', '', '', ''],
+    ['6', '7', '8', '9', '0', '', '', '', '', ''],
+    [' '],
+  ],
+);
+
 // Update this file to include all layouts you want to support with Kanata
 
 // Add additional layouts here as needed to match the ones from Kanata
@@ -239,4 +249,5 @@ final List<KeyboardLayout> availableLayouts = [
   sturdyAngle,
   workman,
   symbol,
+  extend,
 ];
