@@ -6,6 +6,7 @@ import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:launch_at_startup/launch_at_startup.dart';
+import 'package:overkeys/utils/key_code.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tray_manager/tray_manager.dart';
 import 'package:window_manager/window_manager.dart';
@@ -22,7 +23,7 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> with TrayListener {
-  final Map<int, bool> _keyPressStates = {};
+  final Map<String, bool> _keyPressStates = {};
   KeyboardLayout _keyboardLayout = qwerty;
   Timer? _autoHideTimer;
   bool _isWindowVisible = true;
@@ -428,13 +429,16 @@ class _MainAppState extends State<MainApp> with TrayListener {
     receivePort.listen((message) {
       setState(() {
         if (message[0] is int) {
-          int key = message[0];
+          int keyCode = message[0];
           bool isPressed = message[1];
+          bool isShiftDown = message[2];
           if (kDebugMode) {
-            print('Received message: Key:$key, isPressed:$isPressed \n');
+            print(
+                'Received message: Key:${getKeyFromKeyCodeShift(keyCode, isShiftDown)}, KeyCode:$keyCode, isPressed:$isPressed, isShiftDown:$isShiftDown \n');
           }
 
-          _keyPressStates[key] = isPressed;
+          _keyPressStates[getKeyFromKeyCodeShift(keyCode, isShiftDown)] =
+              isPressed;
           _resetAutoHideTimer();
           if (_autoHideEnabled && !_isWindowVisible) {
             _fadeIn();

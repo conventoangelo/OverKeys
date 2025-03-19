@@ -27,13 +27,14 @@ int lowLevelKeyboardProc(
       print('  LLKHF_UP: ${(keyStruct.flags & LLKHF_UP) != 0},');
       print('}');
     }
-    int key = keyStruct.vkCode;
-    bool isKeyDown = !((keyStruct.flags & LLKHF_UP) != 0);
+    int keyCode = keyStruct.vkCode;
+    bool isPressed = !((keyStruct.flags & LLKHF_UP) != 0);
+    bool isShiftDown = GetKeyState(VK_SHIFT) & 0x8000 != 0;
 
     // Pros: Would fix behavior when OK opened after Kanata
     // Cons: Would make app non-responsive when not using Kanata
     // if ((keyStruct.flags & LLKHF_INJECTED) != 0) {
-    sendPort?.send([key, isKeyDown]);
+    sendPort?.send([keyCode, isPressed, isShiftDown]);
     // }
   }
   return CallNextHookEx(hookId, nCode, wParam, lParam);

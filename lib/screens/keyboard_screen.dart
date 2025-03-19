@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import '../utils/keyboard_layouts.dart';
-import '../utils/key_code.dart';
 
 class KeyboardScreen extends StatelessWidget {
-  final Map<int, bool> keyPressStates;
+  final Map<String, bool> keyPressStates;
   final KeyboardLayout layout;
   final String fontStyle;
   final double keyFontSize;
@@ -91,8 +90,7 @@ class KeyboardScreen extends StatelessWidget {
   }
 
   Widget buildKeys(int rowIndex, String key, int keyIndex) {
-    int virtualKeyCode = getVirtualKeyCode(key);
-    bool isPressed = keyPressStates[virtualKeyCode] ?? false;
+    bool isPressed = keyPressStates[keyStateKey] ?? false;
 
     Color keyColor = isPressed ? keyColorPressed : keyColorNotPressed;
     Color textColor = isPressed ? keyTextColor : keyTextColorNotPressed;
