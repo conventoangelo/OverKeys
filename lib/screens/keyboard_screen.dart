@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../utils/keyboard_layouts.dart';
-import '../utils/symbol_mappings.dart';
+import '../models/symbol_mappings.dart';
 
 class KeyboardScreen extends StatelessWidget {
   final Map<String, bool> keyPressStates;
