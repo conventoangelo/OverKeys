@@ -14,6 +14,9 @@ class ConfigService {
     return '${directory.path}\\$_configFileName';
   }
 
+  // Public accessor for config path
+  Future<String> get configPath => _configPath;
+
   // Load configuration from file
   Future<UserConfig> loadConfig() async {
     if (_cachedConfig != null) {
