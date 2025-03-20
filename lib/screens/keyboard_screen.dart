@@ -25,6 +25,7 @@ class KeyboardScreen extends StatelessWidget {
   final double spaceWidth;
   final String keymapStyle;
   final double splitWidth;
+  final bool showTopRow;
 
   const KeyboardScreen(
       {super.key,
@@ -49,14 +50,17 @@ class KeyboardScreen extends StatelessWidget {
       required this.markerBorderRadius,
       required this.spaceWidth,
       required this.keymapStyle,
-      required this.splitWidth});
+      required this.splitWidth,
+      required this.showTopRow});
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: layout.keys.asMap().entries.map((entry) {
+        children: layout.keys.asMap().entries.where((entry) {
+          return showTopRow || entry.key > 0;
+        }).map((entry) {
           int rowIndex = entry.key;
           List<String> row = entry.value;
           return buildRow(rowIndex, row);
@@ -74,7 +78,7 @@ class KeyboardScreen extends StatelessWidget {
       }
 
       if (keymapStyle == 'Matrix' || keymapStyle == 'Split Matrix') {
-        if (keymapStyle == 'Split Matrix' && rowIndex == 3) {
+        if (keymapStyle == 'Split Matrix' && rowIndex == 4) {
           rowWidgets.add(buildKeys(rowIndex, keys[i], i));
           rowWidgets.add(SizedBox(width: splitWidth));
           rowWidgets.add(buildKeys(rowIndex, keys[i], i));
@@ -134,7 +138,7 @@ class KeyboardScreen extends StatelessWidget {
     );
 
     // Tactile Markers
-    if (rowIndex == 1 && (keyIndex == 3 || keyIndex == 6)) {
+    if (rowIndex == 2 && (keyIndex == 3 || keyIndex == 6)) {
       keyWidget = Stack(
         alignment: Alignment.bottomCenter,
         children: [

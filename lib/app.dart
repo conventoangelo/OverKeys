@@ -59,6 +59,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
   bool _autoHideEnabled = false;
   bool _useUserLayout = false;
   bool _kanataEnabled = false;
+  bool _showTopRow = false;
   KeyboardLayout? _initialKeyboardLayout;
   // ignore: unused_field
   bool _launchAtStartup = false;
@@ -209,6 +210,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
     bool autoHideEnabled = await asyncPrefs.getBool('autoHideEnabled') ?? false;
     bool useUserLayout = await asyncPrefs.getBool('useUserLayout') ?? false;
     bool kanataEnabled = await asyncPrefs.getBool('kanataEnabled') ?? false;
+    bool showTopRow = await asyncPrefs.getBool('showTopRow') ?? false;
 
     setState(() {
       _keyboardLayout = availableLayouts
@@ -239,6 +241,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
       _autoHideEnabled = autoHideEnabled;
       _useUserLayout = useUserLayout;
       _kanataEnabled = kanataEnabled;
+      _showTopRow = showTopRow;
     });
   }
 
@@ -271,6 +274,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
     await asyncPrefs.setDouble('autoHideDuration', _autoHideDuration);
     await asyncPrefs.setBool('autoHideEnabled', _autoHideEnabled);
     await asyncPrefs.setBool('useUserLayout', _useUserLayout);
+    await asyncPrefs.setBool('showTopRow', _showTopRow);
   }
 
   void _setupMethodHandler() {
@@ -421,6 +425,9 @@ class _MainAppState extends State<MainApp> with TrayListener {
               }
             }
           });
+        case 'updateShowTopRow':
+          final showTopRow = call.arguments as bool;
+          setState(() => _showTopRow = showTopRow);
         default:
           throw UnimplementedError('Unimplemented method ${call.method}');
       }
@@ -677,6 +684,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
                     spaceWidth: _spaceWidth,
                     keymapStyle: _keymapStyle,
                     splitWidth: _splitWidth,
+                    showTopRow: _showTopRow,
                   ),
                 ),
               ),

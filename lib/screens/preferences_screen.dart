@@ -56,6 +56,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
   bool _autoHideEnabled = false;
   bool _useUserLayout = false;
   bool _kanataEnabled = false;
+  bool _showTopRow = false;
 
   @override
   void initState() {
@@ -136,6 +137,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     bool autoHideEnabled = await asyncPrefs.getBool('autoHideEnabled') ?? false;
     bool useUserLayout = await asyncPrefs.getBool('useUserLayout') ?? false;
     bool kanataEnabled = await asyncPrefs.getBool('kanataEnabled') ?? false;
+    bool showTopRow = await asyncPrefs.getBool('showTopRow') ?? false;
 
     setState(() {
       _keyboardLayoutName = keyboardLayoutName;
@@ -165,6 +167,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       _autoHideEnabled = autoHideEnabled;
       _useUserLayout = useUserLayout;
       _kanataEnabled = kanataEnabled;
+      _showTopRow = showTopRow;
     });
   }
 
@@ -199,6 +202,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     await asyncPrefs.setBool('autoHideEnabled', _autoHideEnabled);
     await asyncPrefs.setBool('useUserLayout', _useUserLayout);
     await asyncPrefs.setBool('kanataEnabled', _kanataEnabled);
+    await asyncPrefs.setBool('showTopRow', _showTopRow);
   }
 
   void _updateMainWindow(dynamic method, dynamic value) async {
@@ -541,6 +545,10 @@ class _PreferencesScreenState extends State<PreferencesScreen>
         _buildSliderOption('Key padding', _keyPadding, 0, 10, 20, (value) {
           setState(() => _keyPadding = value);
           _updateMainWindow('updateKeyPadding', value);
+        }),
+        _buildToggleOption('Show top row', _showTopRow, (value) {
+          setState(() => _showTopRow = value);
+          _updateMainWindow('updateShowTopRow', value);
         }),
         _buildSliderOption(
             'Space width',
