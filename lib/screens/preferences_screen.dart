@@ -26,6 +26,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
 
   Brightness _brightness = Brightness.dark;
   String _currentTab = 'General';
+  bool _showAdvancedSettings = false;
 
   String _keyboardLayoutName = 'QWERTY';
   String _fontStyle = 'GeistMono';
@@ -136,6 +137,8 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     bool useUserLayout = await asyncPrefs.getBool('useUserLayout') ?? false;
     bool kanataEnabled = await asyncPrefs.getBool('kanataEnabled') ?? false;
     bool showTopRow = await asyncPrefs.getBool('showTopRow') ?? false;
+    bool showAdvancedSettings =
+        await asyncPrefs.getBool('showAdvancedSettings') ?? false;
 
     setState(() {
       _keyboardLayoutName = keyboardLayoutName;
@@ -166,6 +169,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       _useUserLayout = useUserLayout;
       _kanataEnabled = kanataEnabled;
       _showTopRow = showTopRow;
+      _showAdvancedSettings = showAdvancedSettings;
     });
   }
 
@@ -201,6 +205,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     await asyncPrefs.setBool('useUserLayout', _useUserLayout);
     await asyncPrefs.setBool('kanataEnabled', _kanataEnabled);
     await asyncPrefs.setBool('showTopRow', _showTopRow);
+    await asyncPrefs.setBool('showAdvancedSettings', _showAdvancedSettings);
   }
 
   void _updateMainWindow(dynamic method, dynamic value) async {
@@ -268,7 +273,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     return Container(
       padding: const EdgeInsets.all(8),
       child: Row(
-        children: ['General', 'Text', 'Keyboard', 'Tactile Markers', 'About']
+        children: ['General', 'Appearance', 'Keyboard', 'Text', 'About']
             .map((tab) => _buildTabButton(tab))
             .toList(),
       ),
@@ -303,12 +308,12 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     switch (_currentTab) {
       case 'General':
         return _buildGeneralTab();
+      case 'Appearance':
+        return _buildAppearanceTab();
       case 'Text':
         return _buildTextTab();
       case 'Keyboard':
         return _buildKeyboardTab();
-      case 'Tactile Markers':
-        return _buildTactileMarkersTab();
       case 'About':
         return _buildAboutTab();
       default:
@@ -329,18 +334,117 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           setState(() => _autoHideEnabled = value);
           _updateMainWindow('updateAutoHideEnabled', value);
         }),
-        _buildSliderOption(
-            'Auto-hide duration (seconds)', _autoHideDuration, 0.5, 5.0, 9,
-            (value) {
-          double roundedValue = (value * 2).round() / 2;
-          setState(() => _autoHideDuration = roundedValue);
-          _updateMainWindow('updateAutoHideDuration', roundedValue);
-        }, valueDisplayFormatter: (value) => value.toStringAsFixed(1)),
+        if (_autoHideEnabled)
+          _buildSliderOption(
+              'Auto-hide duration (seconds)', _autoHideDuration, 0.5, 5.0, 9,
+              (value) {
+            double roundedValue = (value * 2).round() / 2;
+            setState(() => _autoHideDuration = roundedValue);
+            _updateMainWindow('updateAutoHideDuration', roundedValue);
+          }, valueDisplayFormatter: (value) => value.toStringAsFixed(1)),
         _buildDropdownOption('Layout', _keyboardLayoutName,
             availableLayouts.map((layout) => (layout.name)).toList(), (value) {
           setState(() => _keyboardLayoutName = value!);
           _updateMainWindow('updateLayout', value);
         }),
+        _buildToggleOption('Show advanced settings', _showAdvancedSettings,
+            (value) {
+          setState(() => _showAdvancedSettings = value);
+          _savePreferences();
+        }),
+        if (_showAdvancedSettings) ...[
+          _buildToggleOption('Use custom layout from config', _useUserLayout,
+              subtitle:
+                  'Sets layout to user-defined defaultUserLayout. Make sure that the layout is saved in the config file.',
+              (value) {
+            if (value && _kanataEnabled) {
+              // If turning on useUserLayout, turn off kanataEnabled
+              setState(() {
+                _useUserLayout = value;
+                _kanataEnabled = false;
+              });
+              _updateMainWindow('updateKanataEnabled', false);
+            } else {
+              setState(() => _useUserLayout = value);
+            }
+            _updateMainWindow('updateUseUserLayout', value);
+          }),
+          _buildToggleOption('Connect to Kanata', _kanataEnabled,
+              subtitle:
+                  'Make sure that Kanata and OverKeys are using the same port.',
+              (value) {
+            if (value && _useUserLayout) {
+              // If turning on kanataEnabled, turn off useUserLayout
+              setState(() {
+                _kanataEnabled = value;
+                _useUserLayout = false;
+              });
+              _updateMainWindow('updateUseUserLayout', false);
+            } else {
+              setState(() => _kanataEnabled = value);
+            }
+            _updateMainWindow('updateKanataEnabled', value);
+          }),
+          _buildOpenConfigButton(),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildAppearanceTab() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildSectionTitle('Appearance Settings'),
+        _buildSliderOption('Opacity', _opacity, 0.1, 1.0, 18, (value) {
+          setState(() => _opacity = value);
+          _updateMainWindow('updateOpacity', value);
+        }),
+        _buildColorOption('Key color (pressed)', _keyColorPressed, (color) {
+          setState(() => _keyColorPressed = color);
+          _updateMainWindow('updateKeyColorPressed', color);
+        }),
+        _buildColorOption('Key color (not pressed)', _keyColorNotPressed,
+            (color) {
+          setState(() => _keyColorNotPressed = color);
+          _updateMainWindow('updateKeyColorNotPressed', color);
+        }),
+        _buildSectionTitle('Tactile Markers'),
+        _buildColorOption('Marker color (pressed)', _markerColor, (color) {
+          setState(() => _markerColor = color);
+          _updateMainWindow('updateMarkerColor', color);
+        }),
+        _buildColorOption('Marker color (not pressed)', _markerColorNotPressed,
+            (color) {
+          setState(() => _markerColorNotPressed = color);
+          _updateMainWindow('updateMarkerColorNotPressed', color);
+        }),
+        _buildSliderOption('Marker offset', _markerOffset, 0, 20, 20, (value) {
+          setState(() => _markerOffset = value);
+          _updateMainWindow('updateMarkerOffset', value);
+        }),
+        _buildSliderOption('Marker width', _markerWidth, 0, 20, 20, (value) {
+          setState(() => _markerWidth = value);
+          _updateMainWindow('updateMarkerWidth', value);
+        }),
+        _buildSliderOption('Marker height', _markerHeight, 0, 10, 10, (value) {
+          setState(() => _markerHeight = value);
+          _updateMainWindow('updateMarkerHeight', value);
+        }),
+        _buildSliderOption(
+            'Marker border radius', _markerBorderRadius, 0, 10, 10, (value) {
+          setState(() => _markerBorderRadius = value);
+          _updateMainWindow('updateMarkerBorderRadius', value);
+        }),
+      ],
+    );
+  }
+
+  Widget _buildKeyboardTab() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildSectionTitle('Keyboard Layout'),
         _buildDropdownOption('Keymap style', _keymapStyle,
             ['Staggered', 'Matrix', 'Split Matrix'], (value) {
           if (value == 'Split Matrix' && _spaceWidth > 300) {
@@ -350,43 +454,41 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           setState(() => _keymapStyle = value!);
           _updateMainWindow('updateKeymapStyle', value);
         }),
-        _buildSliderOption('Opacity', _opacity, 0.1, 1.0, 18, (value) {
-          setState(() => _opacity = value);
-          _updateMainWindow('updateOpacity', value);
-        }),
-        _buildToggleOption('Use custom layout from config', _useUserLayout,
+        _buildToggleOption('Show top row', _showTopRow,
             subtitle:
-                'Sets layout to user-defined defaultUserLayout. Make sure that the layout is saved in the config file.',
+                'Recommended to toggle when keyboard is visible or auto-hide is off. Toggling while hidden may cause rendering errors.',
             (value) {
-          if (value && _kanataEnabled) {
-            // If turning on useUserLayout, turn off kanataEnabled
-            setState(() {
-              _useUserLayout = value;
-              _kanataEnabled = false;
-            });
-            _updateMainWindow('updateKanataEnabled', false);
-          } else {
-            setState(() => _useUserLayout = value);
-          }
-          _updateMainWindow('updateUseUserLayout', value);
+          setState(() => _showTopRow = value);
+          _updateMainWindow('updateShowTopRow', value);
         }),
-        _buildToggleOption('Connect to Kanata', _kanataEnabled,
-            subtitle:
-                'Make sure that Kanata and OverKeys are using the same port.',
+        _buildSectionTitle('Key Dimensions'),
+        _buildSliderOption('Key size', _keySize, 40, 60, 40, (value) {
+          setState(() => _keySize = value);
+          _updateMainWindow('updateKeySize', value);
+        }),
+        _buildSliderOption('Key border radius', _keyBorderRadius, 0, 30, 30,
             (value) {
-          if (value && _useUserLayout) {
-            // If turning on kanataEnabled, turn off useUserLayout
-            setState(() {
-              _kanataEnabled = value;
-              _useUserLayout = false;
-            });
-            _updateMainWindow('updateUseUserLayout', false);
-          } else {
-            setState(() => _kanataEnabled = value);
-          }
-          _updateMainWindow('updateKanataEnabled', value);
+          setState(() => _keyBorderRadius = value);
+          _updateMainWindow('updateKeyBorderRadius', value);
         }),
-        _buildOpenConfigButton(),
+        _buildSliderOption('Key padding', _keyPadding, 0, 10, 20, (value) {
+          setState(() => _keyPadding = value);
+          _updateMainWindow('updateKeyPadding', value);
+        }),
+        _buildSliderOption(
+            'Space width',
+            _spaceWidth,
+            120,
+            (_keymapStyle == 'Split Matrix') ? 300 : 500,
+            (_keymapStyle == 'Split Matrix') ? 90 : 190, (value) {
+          setState(() => _spaceWidth = value);
+          _updateMainWindow('updateSpaceWidth', value);
+        }),
+        if (_keymapStyle == 'Split Matrix')
+          _buildSliderOption('Split width', _splitWidth, 30, 200, 34, (value) {
+            setState(() => _splitWidth = value);
+            _updateMainWindow('updateSplitWidth', value);
+          }),
       ],
     );
   }
@@ -445,7 +547,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
         },
             subtitle:
                 'Make sure that the font is installed in your system. Falls back to Geist Mono'),
-        _buildSliderOption('Font size', _keyFontSize, 12, 32, 40, (value) {
+        _buildSliderOption('Key font size', _keyFontSize, 12, 32, 40, (value) {
           setState(() => _keyFontSize = value);
           _updateMainWindow('updateKeyFontSize', value);
         }),
@@ -525,93 +627,6 @@ class _PreferencesScreenState extends State<PreferencesScreen>
             (color) {
           setState(() => _keyTextColorNotPressed = color);
           _updateMainWindow('updateKeyTextColorNotPressed', color);
-        }),
-      ],
-    );
-  }
-
-  Widget _buildKeyboardTab() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildSectionTitle('Keyboard Settings'),
-        _buildSliderOption('Key size', _keySize, 40, 60, 40, (value) {
-          setState(() => _keySize = value);
-          _updateMainWindow('updateKeySize', value);
-        }),
-        _buildSliderOption('Key border radius', _keyBorderRadius, 0, 30, 30,
-            (value) {
-          setState(() => _keyBorderRadius = value);
-          _updateMainWindow('updateKeyBorderRadius', value);
-        }),
-        _buildSliderOption('Key padding', _keyPadding, 0, 10, 20, (value) {
-          setState(() => _keyPadding = value);
-          _updateMainWindow('updateKeyPadding', value);
-        }),
-        _buildToggleOption('Show top row', _showTopRow,
-            subtitle:
-                'Recommended to toggle when keyboard is visible or auto-hide is off. Toggling while hidden may cause rendering errors.',
-            (value) {
-          setState(() => _showTopRow = value);
-          _updateMainWindow('updateShowTopRow', value);
-        }),
-        _buildSliderOption(
-            'Space width',
-            _spaceWidth,
-            120,
-            (_keymapStyle == 'Split Matrix') ? 300 : 500,
-            (_keymapStyle == 'Split Matrix') ? 90 : 190, (value) {
-          setState(() => _spaceWidth = value);
-          _updateMainWindow('updateSpaceWidth', value);
-        }),
-        if (_keymapStyle == 'Split Matrix')
-          _buildSliderOption('Split width', _splitWidth, 30, 200, 34, (value) {
-            setState(() => _splitWidth = value);
-            _updateMainWindow('updateSplitWidth', value);
-          }),
-        _buildColorOption('Key color (pressed)', _keyColorPressed, (color) {
-          setState(() => _keyColorPressed = color);
-          _updateMainWindow('updateKeyColorPressed', color);
-        }),
-        _buildColorOption('Key color (not pressed)', _keyColorNotPressed,
-            (color) {
-          setState(() => _keyColorNotPressed = color);
-          _updateMainWindow('updateKeyColorNotPressed', color);
-        }),
-      ],
-    );
-  }
-
-  Widget _buildTactileMarkersTab() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildSectionTitle('Tactile Markers Settings'),
-        _buildColorOption('Marker color (presed)', _markerColor, (color) {
-          setState(() => _markerColor = color);
-          _updateMainWindow('updateMarkerColor', color);
-        }),
-        _buildColorOption('Marker color (not pressed)', _markerColorNotPressed,
-            (color) {
-          setState(() => _markerColorNotPressed = color);
-          _updateMainWindow('updateMarkerColorNotPressed', color);
-        }),
-        _buildSliderOption('Marker offset', _markerOffset, 0, 20, 20, (value) {
-          setState(() => _markerOffset = value);
-          _updateMainWindow('updateMarkerOffset', value);
-        }),
-        _buildSliderOption('Marker width', _markerWidth, 0, 20, 20, (value) {
-          setState(() => _markerWidth = value);
-          _updateMainWindow('updateMarkerWidth', value);
-        }),
-        _buildSliderOption('Marker height', _markerHeight, 0, 10, 10, (value) {
-          setState(() => _markerHeight = value);
-          _updateMainWindow('updateMarkerHeight', value);
-        }),
-        _buildSliderOption(
-            'Marker border radius', _markerBorderRadius, 0, 10, 10, (value) {
-          setState(() => _markerBorderRadius = value);
-          _updateMainWindow('updateMarkerBorderRadius', value);
         }),
       ],
     );
