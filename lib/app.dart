@@ -2,17 +2,16 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
-import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:launch_at_startup/launch_at_startup.dart';
-import 'package:overkeys/services/config_service.dart';
-import 'package:overkeys/services/kanata_service.dart';
-import 'package:overkeys/utils/key_code.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tray_manager/tray_manager.dart';
 import 'package:window_manager/window_manager.dart';
-
+import 'package:overkeys/services/config_service.dart';
+import 'package:overkeys/services/kanata_service.dart';
+import 'package:overkeys/utils/key_code.dart';
 import 'utils/keyboard_layouts.dart';
 import 'screens/keyboard_screen.dart';
 import 'utils/hooks.dart';
@@ -25,16 +24,23 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> with TrayListener {
-  final Map<String, bool> _keyPressStates = {};
-  Timer? _autoHideTimer;
-  bool _isWindowVisible = true;
-  bool _ignoreMouseEvents = true;
-  final double _windowWidth = 1000;
-  final double _windowHeight = 330;
-  final double _topRowExtraHeight = 80;
-  final double _topRowExtraWidth = 160;
+  static const double _defaultWindowWidth = 1000;
+  static const double _defaultWindowHeight = 330;
+  static const double _defaultTopRowExtraHeight = 80;
+  static const double _defaultTopRowExtraWidth = 160;
+  static const Duration _fadeDuration = Duration(milliseconds: 200);
+  static const Duration _hideDelay = Duration(milliseconds: 300);
+
+  // Services
   final SharedPreferencesAsync asyncPrefs = SharedPreferencesAsync();
   final KanataService _kanataService = KanataService();
+  final Map<String, bool> _keyPressStates = {};
+
+  // Window state
+  bool _isWindowVisible = true;
+  bool _ignoreMouseEvents = true;
+  Timer? _autoHideTimer;
+  bool autoHideBeforeMove = false;
 
   // General settings
   // ignore: unused_field
@@ -78,30 +84,20 @@ class _MainAppState extends State<MainApp> with TrayListener {
   @override
   void initState() {
     super.initState();
-    _loadPreferences();
+    _initialize();
+  }
+
+  Future<void> _initialize() async {
+    await _loadPreferences();
     trayManager.addListener(this);
     _setupTray();
     _setupKeyListener();
     _setupMethodHandler();
-    _init();
-    _loadKanataConfig();
-    _kanataService.onLayerChange = (newLayout, isDefaultUserLayout) {
-      setState(() {
-        _keyboardLayout = newLayout;
-        if (!isDefaultUserLayout && _autoHideEnabled) {
-          // Disable auto-hide for non-default layers
-          _autoHideEnabled = false;
-          _autoHideTimer?.cancel();
-          autoHideBeforeMove = true;
-        } else if (isDefaultUserLayout && autoHideBeforeMove) {
-          // Re-enable auto-hide when returning to default layer if it was enabled before
-          _autoHideEnabled = true;
-          _resetAutoHideTimer();
-          autoHideBeforeMove = false;
-        }
-      });
-      _fadeIn();
-    };
+    _initStartupSetting();
+    await _loadKanataConfig();
+    _setupKanataLayerChangeHandler();
+
+    // Delayed initialization tasks
     Future.delayed(const Duration(seconds: 2), () {
       if (_useUserLayout) {
         _loadUserLayout();
@@ -115,25 +111,48 @@ class _MainAppState extends State<MainApp> with TrayListener {
     });
   }
 
-  _init() async {
+  void _setupKanataLayerChangeHandler() {
+    _kanataService.onLayerChange = (newLayout, isDefaultUserLayout) {
+      setState(() {
+        _keyboardLayout = newLayout;
+        _updateAutoHideBasedOnLayer(isDefaultUserLayout);
+      });
+      _fadeIn();
+    };
+  }
+
+  void _updateAutoHideBasedOnLayer(bool isDefaultUserLayout) {
+    if (!isDefaultUserLayout && _autoHideEnabled) {
+      // Disable auto-hide for non-default layers
+      _autoHideEnabled = false;
+      _autoHideTimer?.cancel();
+      autoHideBeforeMove = true;
+    } else if (isDefaultUserLayout && autoHideBeforeMove) {
+      // Re-enable auto-hide when returning to default layer if it was enabled before
+      _autoHideEnabled = true;
+      _resetAutoHideTimer();
+      autoHideBeforeMove = false;
+    }
+  }
+
+  Future<void> _initStartupSetting() async {
     _launchAtStartup = await launchAtStartup.isEnabled();
     setState(() {});
   }
 
-  _handleEnable() async {
-    await launchAtStartup.enable();
-    if (kDebugMode) {
-      print('On system startup: Enabled');
+  Future<void> _handleStartupToggle(bool enable) async {
+    if (enable) {
+      await launchAtStartup.enable();
+      if (kDebugMode) {
+        print('On system startup: Enabled');
+      }
+    } else {
+      await launchAtStartup.disable();
+      if (kDebugMode) {
+        print('On system startup: Disabled');
+      }
     }
-    await _init();
-  }
-
-  _handleDisable() async {
-    await launchAtStartup.disable();
-    if (kDebugMode) {
-      print('On system startup: Disabled');
-    }
-    await _init();
+    await _initStartupSetting();
   }
 
   Future<void> _loadUserLayout() async {
@@ -175,10 +194,12 @@ class _MainAppState extends State<MainApp> with TrayListener {
 
   Future<void> _adjustWindowSize() async {
     _fadeIn();
-    double height =
-        _showTopRow ? _windowHeight + _topRowExtraHeight : _windowHeight;
-    double width =
-        _showTopRow ? _windowWidth + _topRowExtraWidth : _windowWidth;
+    double height = _showTopRow
+      ? _defaultWindowHeight + _defaultTopRowExtraHeight
+      : _defaultWindowHeight;
+    double width = _showTopRow
+      ? _defaultWindowWidth + _defaultTopRowExtraWidth
+      : _defaultWindowWidth;
     await windowManager.setSize(Size(width, height));
     await windowManager.setAlignment(Alignment.bottomCenter);
   }
@@ -329,11 +350,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
           final launchAtStartupRet = call.arguments as bool;
           setState(() {
             _launchAtStartup = launchAtStartupRet;
-            if (launchAtStartupRet) {
-              _handleEnable();
-            } else {
-              _handleDisable();
-            }
+            _handleStartupToggle(launchAtStartupRet);
           });
         case 'updateAutoHideEnabled':
           final autoHideEnabled = call.arguments as bool;
@@ -498,37 +515,43 @@ class _MainAppState extends State<MainApp> with TrayListener {
       }
     });
 
-    receivePort.listen((message) {
-      setState(() {
-        if (message[0] is int) {
-          int keyCode = message[0];
-          bool isPressed = message[1];
-          bool isShiftDown = message[2];
-          if (kDebugMode) {
-            print(
-                'Key: ${getKeyFromKeyCodeShift(keyCode, isShiftDown).padRight(10)}\tKeyCode: ${keyCode.toString().padRight(5)}\tPressed: ${isPressed.toString().padRight(5)}\tShift: $isShiftDown');
-          }
+    receivePort.listen(_handleKeyEvent);
+  }
 
-          _keyPressStates[getKeyFromKeyCodeShift(keyCode, isShiftDown)] =
-              isPressed;
-          _resetAutoHideTimer();
-          if (_autoHideEnabled && !_isWindowVisible) {
-            _fadeIn();
-          }
-        }
-      });
+  void _handleKeyEvent(dynamic message) {
+    if (message[0] is! int) return;
+
+    setState(() {
+      int keyCode = message[0];
+      bool isPressed = message[1];
+      bool isShiftDown = message[2];
+
+      if (kDebugMode) {
+        print(
+            'Key: ${getKeyFromKeyCodeShift(keyCode, isShiftDown).padRight(10)}\tKeyCode: ${keyCode.toString().padRight(5)}\tPressed: ${isPressed.toString().padRight(5)}\tShift: $isShiftDown');
+      }
+
+      _keyPressStates[getKeyFromKeyCodeShift(keyCode, isShiftDown)] = isPressed;
+      _resetAutoHideTimer();
+
+      if (_autoHideEnabled && !_isWindowVisible) {
+        _fadeIn();
+      }
     });
   }
 
   void _resetAutoHideTimer() {
     _autoHideTimer?.cancel();
     if (_autoHideEnabled) {
-      _autoHideTimer =
-          Timer(Duration(milliseconds: (_autoHideDuration * 1000).round()), () {
-        if (_autoHideEnabled && _isWindowVisible) {
-          _fadeOut();
-        }
-      });
+      _autoHideTimer = Timer(
+          Duration(milliseconds: (_autoHideDuration * 1000).round()),
+          _handleAutoHide);
+    }
+  }
+
+  void _handleAutoHide() {
+    if (_autoHideEnabled && _isWindowVisible) {
+      _fadeOut();
     }
   }
 
@@ -537,7 +560,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
       _lastOpacity = _opacity;
       _opacity = 0.0;
     });
-    Timer(const Duration(milliseconds: 300), () {
+    Timer(_hideDelay, () {
       setState(() {
         _isWindowVisible = false;
       });
@@ -555,7 +578,6 @@ class _MainAppState extends State<MainApp> with TrayListener {
     _resetAutoHideTimer();
   }
 
-  bool autoHideBeforeMove = false;
   Future<void> _setupTray() async {
     String iconPath = Platform.isWindows
         ? 'assets/images/app_icon.ico'
@@ -700,12 +722,12 @@ class _MainAppState extends State<MainApp> with TrayListener {
       title: 'OverKeys',
       theme: ThemeData(
           fontFamily: _fontStyle,
-          fontFamilyFallback: const ['GeistMono', 'Manrope' 'sans-serif']),
+          fontFamilyFallback: const ['GeistMono', 'Manrope', 'sans-serif']),
       home: Scaffold(
           backgroundColor: Colors.transparent,
           body: AnimatedOpacity(
             opacity: _opacity,
-            duration: const Duration(milliseconds: 200),
+            duration: _fadeDuration,
             child: GestureDetector(
               behavior: HitTestBehavior.translucent,
               onPanStart: (details) {
