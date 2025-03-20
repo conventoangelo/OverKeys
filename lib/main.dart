@@ -49,7 +49,7 @@ void main(List<String> args) async {
     );
 
     double windowWidth = 1000;
-    double windowHeight = 320;
+    double windowHeight = 330;
 
     WindowOptions windowOptions = const WindowOptions(
       backgroundColor: Colors.transparent,

@@ -60,6 +60,10 @@ class _MainAppState extends State<MainApp> with TrayListener {
   bool _useUserLayout = false;
   bool _kanataEnabled = false;
   bool _showTopRow = false;
+  final double _windowWidth = 1000;
+  final double _windowHeight = 330;
+  final double _topRowExtraHeight = 80;
+  final double _topRowExtraWidth = 160;
   KeyboardLayout? _initialKeyboardLayout;
   // ignore: unused_field
   bool _launchAtStartup = false;
@@ -92,13 +96,15 @@ class _MainAppState extends State<MainApp> with TrayListener {
       });
       _fadeIn();
     };
-
-    Future.delayed(const Duration(seconds: 3), () {
+    Future.delayed(const Duration(seconds: 2), () {
       if (_useUserLayout) {
         _loadUserLayout();
       }
       if (_kanataEnabled) {
         _kanataService.connect();
+      }
+      if (_showTopRow) {
+        _adjustWindowSize();
       }
     });
   }
@@ -159,6 +165,16 @@ class _MainAppState extends State<MainApp> with TrayListener {
         });
       }
     }
+  }
+
+  Future<void> _adjustWindowSize() async {
+    _fadeIn();
+    double height =
+        _showTopRow ? _windowHeight + _topRowExtraHeight : _windowHeight;
+    double width =
+        _showTopRow ? _windowWidth + _topRowExtraWidth : _windowWidth;
+    await windowManager.setSize(Size(width, height));
+    await windowManager.setAlignment(Alignment.bottomCenter);
   }
 
   @override
@@ -428,6 +444,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
         case 'updateShowTopRow':
           final showTopRow = call.arguments as bool;
           setState(() => _showTopRow = showTopRow);
+          _adjustWindowSize();
         default:
           throw UnimplementedError('Unimplemented method ${call.method}');
       }
