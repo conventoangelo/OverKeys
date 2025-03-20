@@ -1,17 +1,15 @@
 import 'dart:async';
 import 'dart:io';
-
+import 'package:desktop_multi_window/desktop_multi_window.dart';
+import 'package:window_manager/window_manager.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
-import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:overkeys/models/user_config.dart';
-import 'package:overkeys/services/config_service.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:window_manager/window_manager.dart';
-
 import 'package:overkeys/utils/keyboard_layouts.dart';
 import 'package:overkeys/utils/theme_manager.dart';
+import 'package:overkeys/services/config_service.dart';
 
 class PreferencesScreen extends StatefulWidget {
   const PreferencesScreen({super.key, required this.windowController});
@@ -357,6 +355,8 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           _updateMainWindow('updateOpacity', value);
         }),
         _buildToggleOption('Use custom layout from config', _useUserLayout,
+            subtitle:
+                'Sets layout to user-defined defaultUserLayout. Make sure that the layout is saved in the config file.',
             (value) {
           if (value && _kanataEnabled) {
             // If turning on useUserLayout, turn off kanataEnabled
@@ -370,7 +370,10 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           }
           _updateMainWindow('updateUseUserLayout', value);
         }),
-        _buildToggleOption('Connect to Kanata', _kanataEnabled, (value) {
+        _buildToggleOption('Connect to Kanata', _kanataEnabled,
+            subtitle:
+                'Make sure that Kanata and OverKeys are using the same port.',
+            (value) {
           if (value && _useUserLayout) {
             // If turning on kanataEnabled, turn off useUserLayout
             setState(() {
@@ -393,10 +396,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildSectionTitle('Text Settings'),
-        _buildDropdownOptionWithSubtitle(
-            'Font style',
-            'Make sure that the font is installed in your system. Falls back to Geist Mono',
-            _fontStyle, [
+        _buildDropdownOption('Font style', _fontStyle, [
           'Berkeley Mono',
           'Cascadia Mono',
           'Comic Mono',
@@ -442,7 +442,9 @@ class _PreferencesScreenState extends State<PreferencesScreen>
         ], (value) {
           setState(() => _fontStyle = value!);
           _updateMainWindow('updateFontStyle', value);
-        }),
+        },
+            subtitle:
+                'Make sure that the font is installed in your system. Falls back to Geist Mono'),
         _buildSliderOption('Font size', _keyFontSize, 12, 32, 40, (value) {
           setState(() => _keyFontSize = value);
           _updateMainWindow('updateKeyFontSize', value);
@@ -546,7 +548,10 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           setState(() => _keyPadding = value);
           _updateMainWindow('updateKeyPadding', value);
         }),
-        _buildToggleOption('Show top row', _showTopRow, (value) {
+        _buildToggleOption('Show top row', _showTopRow,
+            subtitle:
+                'Recommended to toggle when keyboard is visible or auto-hide is off. Toggling while hidden may cause rendering errors.',
+            (value) {
           setState(() => _showTopRow = value);
           _updateMainWindow('updateShowTopRow', value);
         }),
@@ -652,18 +657,35 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     );
   }
 
-  Widget _buildToggleOption(
-      String label, bool value, Function(bool) onChanged) {
+  Widget _buildToggleOption(String label, bool value, Function(bool) onChanged,
+      {String? subtitle}) {
     final colorScheme = ThemeManager.getTheme(_brightness).colorScheme;
     return _buildOptionContainer(
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label,
-              style: TextStyle(
-                  color: colorScheme.onSurface,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 16)),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(label,
+                    style: TextStyle(
+                        color: colorScheme.onSurface,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16)),
+                if (subtitle != null)
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                        color: colorScheme.onSurface.withAlpha(153),
+                        fontSize: 14.0),
+                    softWrap: true,
+                    overflow: TextOverflow.visible,
+                  ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 16),
           Switch(
             value: value,
             onChanged: onChanged,
@@ -679,8 +701,9 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     );
   }
 
-  Widget _buildDropdownOptionWithSubtitle(String label, String subtitle,
-      String value, List<String> options, Function(String?) onChanged) {
+  Widget _buildDropdownOption(String label, String value, List<String> options,
+      Function(String?) onChanged,
+      {String? subtitle}) {
     final colorScheme = ThemeManager.getTheme(_brightness).colorScheme;
 
     return _buildOptionContainer(
@@ -696,14 +719,15 @@ class _PreferencesScreenState extends State<PreferencesScreen>
                         color: colorScheme.onSurface,
                         fontWeight: FontWeight.w600,
                         fontSize: 16)),
-                Text(
-                  subtitle,
-                  style: TextStyle(
-                      color: colorScheme.onSurface.withAlpha(153),
-                      fontSize: 14.0),
-                  softWrap: true,
-                  overflow: TextOverflow.visible,
-                ),
+                if (subtitle != null)
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                        color: colorScheme.onSurface.withAlpha(153),
+                        fontSize: 14.0),
+                    softWrap: true,
+                    overflow: TextOverflow.visible,
+                  ),
               ],
             ),
           ),
@@ -712,26 +736,12 @@ class _PreferencesScreenState extends State<PreferencesScreen>
             value: value,
             items: options
                 .map((String option) => DropdownMenuItem<String>(
-                      value: option,
-                      child: Text(
-                        option,
-                        style: TextStyle(
-                          fontFamily: option,
-                          fontFamilyFallback: const ['Manrope'],
-                          color: colorScheme.onSurface,
-                          fontSize: 15,
-                        ),
-                      ),
-                    ))
+                    value: option, child: Text(option)))
                 .toList(),
             onChanged: onChanged,
             dropdownColor: colorScheme.surface,
-            style: TextStyle(
-              fontFamily: value,
-              fontFamilyFallback: const ['Manrope'],
-              color: colorScheme.onSurface,
-              fontSize: 15,
-            ),
+            style:
+                TextStyle(color: colorScheme.onSurface, fontFamily: 'Manrope'),
           ),
         ],
       ),
@@ -796,40 +806,6 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     );
   }
 
-  Widget _buildDropdownOption(String label, String value, List<String> options,
-      Function(String?) onChanged) {
-    final colorScheme = ThemeManager.getTheme(_brightness).colorScheme;
-
-    return _buildOptionContainer(
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(label,
-                  style: TextStyle(
-                      color: colorScheme.onSurface,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16)),
-            ],
-          ),
-          DropdownButton<String>(
-            value: value,
-            items: options
-                .map((String option) => DropdownMenuItem<String>(
-                    value: option, child: Text(option)))
-                .toList(),
-            onChanged: onChanged,
-            dropdownColor: colorScheme.surface,
-            style:
-                TextStyle(color: colorScheme.onSurface, fontFamily: 'Manrope'),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildSliderOption(String label, double value, double min, double max,
       int divisions, Function(double) onChanged,
       {String Function(double)? valueDisplayFormatter}) {
@@ -878,19 +854,6 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildOptionContainer(Widget child) {
-    final colorScheme = ThemeManager.getTheme(_brightness).colorScheme;
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: child,
     );
   }
 
@@ -985,6 +948,19 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           ],
         );
       }),
+    );
+  }
+
+  Widget _buildOptionContainer(Widget child) {
+    final colorScheme = ThemeManager.getTheme(_brightness).colorScheme;
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: child,
     );
   }
 }
