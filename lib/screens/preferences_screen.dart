@@ -24,38 +24,46 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     with WindowListener {
   final SharedPreferencesAsync asyncPrefs = SharedPreferencesAsync();
 
+  // UI state
   Brightness _brightness = Brightness.dark;
   String _currentTab = 'General';
-  bool _showAdvancedSettings = false;
 
+  // General settings
+  bool _launchAtStartup = false;
+  bool _autoHideEnabled = false;
+  double _autoHideDuration = 2.0;
   String _keyboardLayoutName = 'QWERTY';
-  String _fontStyle = 'GeistMono';
-  double _keyFontSize = 20;
-  double _spaceFontSize = 14;
-  FontWeight _fontWeight = FontWeight.w600;
-  Color _keyTextColor = Colors.white;
-  Color _keyTextColorNotPressed = Colors.black;
+  bool _showAdvancedSettings = false;
+  bool _useUserLayout = false;
+  bool _kanataEnabled = false;
+
+  // Appearance settings
+  double _opacity = 0.6;
   Color _keyColorPressed = const Color.fromARGB(255, 30, 30, 30);
   Color _keyColorNotPressed = const Color.fromARGB(255, 119, 171, 255);
-  double _keySize = 48;
-  double _keyBorderRadius = 12;
-  double _keyPadding = 3;
   Color _markerColor = Colors.white;
   Color _markerColorNotPressed = Colors.black;
   double _markerOffset = 10;
   double _markerWidth = 10;
   double _markerHeight = 2;
   double _markerBorderRadius = 10;
-  double _spaceWidth = 320;
+
+  // Keyboard settings
   String _keymapStyle = 'Staggered';
-  double _splitWidth = 100;
-  double _opacity = 0.6;
-  double _autoHideDuration = 2.0;
-  bool _launchAtStartup = false;
-  bool _autoHideEnabled = false;
-  bool _useUserLayout = false;
-  bool _kanataEnabled = false;
   bool _showTopRow = false;
+  double _keySize = 48;
+  double _keyBorderRadius = 12;
+  double _keyPadding = 3;
+  double _spaceWidth = 320;
+  double _splitWidth = 100;
+
+  // Text settings
+  String _fontStyle = 'GeistMono';
+  double _keyFontSize = 20;
+  double _spaceFontSize = 14;
+  FontWeight _fontWeight = FontWeight.w600;
+  Color _keyTextColor = Colors.white;
+  Color _keyTextColorNotPressed = Colors.black;
 
   @override
   void initState() {
@@ -97,25 +105,24 @@ class _PreferencesScreenState extends State<PreferencesScreen>
   }
 
   Future<void> _loadPreferences() async {
+    // General settings
+    bool launchAtStartup = await asyncPrefs.getBool('launchAtStartup') ?? false;
+    bool autoHideEnabled = await asyncPrefs.getBool('autoHideEnabled') ?? false;
+    double autoHideDuration =
+        await asyncPrefs.getDouble('autoHideDuration') ?? 2.0;
     String keyboardLayoutName =
         await asyncPrefs.getString('layout') ?? 'QWERTY';
-    String fontStyle = await asyncPrefs.getString('fontStyle') ?? 'GeistMono';
-    double keyFontSize = await asyncPrefs.getDouble('keyFontSize') ?? 20;
-    double spaceFontSize = await asyncPrefs.getDouble('spaceFontSize') ?? 14;
-    FontWeight fontWeight = FontWeight
-        .values[await asyncPrefs.getInt('fontWeight') ?? FontWeight.w500.index];
-    Color keyTextColor =
-        Color(await asyncPrefs.getInt('keyTextColor') ?? 0xFFFFFFFF);
-    Color keyTextColorNotPressed =
-        Color(await asyncPrefs.getInt('keyTextColorNotPressed') ?? 0xFF000000);
+    bool showAdvancedSettings =
+        await asyncPrefs.getBool('showAdvancedSettings') ?? false;
+    bool useUserLayout = await asyncPrefs.getBool('useUserLayout') ?? false;
+    bool kanataEnabled = await asyncPrefs.getBool('kanataEnabled') ?? false;
+
+    // Appearance settings
+    double opacity = await asyncPrefs.getDouble('opacity') ?? 0.6;
     Color keyColorPressed =
         Color(await asyncPrefs.getInt('keyColorPressed') ?? 0xFF1E1E1E);
     Color keyColorNotPressed =
         Color(await asyncPrefs.getInt('keyColorNotPressed') ?? 0xFF77ABFF);
-    double keySize = await asyncPrefs.getDouble('keySize') ?? 48;
-    double keyBorderRadius =
-        await asyncPrefs.getDouble('keyBorderRadius') ?? 12;
-    double keyPadding = await asyncPrefs.getDouble('keyPadding') ?? 3;
     Color markerColor =
         Color(await asyncPrefs.getInt('markerColor') ?? 0xFFFFFFFF);
     Color markerColorNotPressed =
@@ -125,69 +132,84 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     double markerHeight = await asyncPrefs.getDouble('markerHeight') ?? 2;
     double markerBorderRadius =
         await asyncPrefs.getDouble('markerBorderRadius') ?? 10;
-    double spaceWidth = await asyncPrefs.getDouble('spaceWidth') ?? 320;
+
+    // Keyboard settings
     String keymapStyle =
         await asyncPrefs.getString('keymapStyle') ?? 'Staggered';
-    double splitWidth = await asyncPrefs.getDouble('splitWidth') ?? 100;
-    double opacity = await asyncPrefs.getDouble('opacity') ?? 0.6;
-    double autoHideDuration =
-        await asyncPrefs.getDouble('autoHideDuration') ?? 2.0;
-    bool launchAtStartup = await asyncPrefs.getBool('launchAtStartup') ?? false;
-    bool autoHideEnabled = await asyncPrefs.getBool('autoHideEnabled') ?? false;
-    bool useUserLayout = await asyncPrefs.getBool('useUserLayout') ?? false;
-    bool kanataEnabled = await asyncPrefs.getBool('kanataEnabled') ?? false;
     bool showTopRow = await asyncPrefs.getBool('showTopRow') ?? false;
-    bool showAdvancedSettings =
-        await asyncPrefs.getBool('showAdvancedSettings') ?? false;
+    double keySize = await asyncPrefs.getDouble('keySize') ?? 48;
+    double keyBorderRadius =
+        await asyncPrefs.getDouble('keyBorderRadius') ?? 12;
+    double keyPadding = await asyncPrefs.getDouble('keyPadding') ?? 3;
+    double spaceWidth = await asyncPrefs.getDouble('spaceWidth') ?? 320;
+    double splitWidth = await asyncPrefs.getDouble('splitWidth') ?? 100;
+
+    // Text settings
+    String fontStyle = await asyncPrefs.getString('fontStyle') ?? 'GeistMono';
+    double keyFontSize = await asyncPrefs.getDouble('keyFontSize') ?? 20;
+    double spaceFontSize = await asyncPrefs.getDouble('spaceFontSize') ?? 14;
+    FontWeight fontWeight = FontWeight
+        .values[await asyncPrefs.getInt('fontWeight') ?? FontWeight.w500.index];
+    Color keyTextColor =
+        Color(await asyncPrefs.getInt('keyTextColor') ?? 0xFFFFFFFF);
+    Color keyTextColorNotPressed =
+        Color(await asyncPrefs.getInt('keyTextColorNotPressed') ?? 0xFF000000);
 
     setState(() {
+      // General settings
+      _launchAtStartup = launchAtStartup;
+      _autoHideEnabled = autoHideEnabled;
+      _autoHideDuration = autoHideDuration;
       _keyboardLayoutName = keyboardLayoutName;
-      _fontStyle = fontStyle;
-      _keyFontSize = keyFontSize;
-      _spaceFontSize = spaceFontSize;
-      _fontWeight = fontWeight;
-      _keyTextColor = keyTextColor;
-      _keyTextColorNotPressed = keyTextColorNotPressed;
+      _showAdvancedSettings = showAdvancedSettings;
+      _useUserLayout = useUserLayout;
+      _kanataEnabled = kanataEnabled;
+
+      // Appearance settings
+      _opacity = opacity;
       _keyColorPressed = keyColorPressed;
       _keyColorNotPressed = keyColorNotPressed;
-      _keySize = keySize;
-      _keyBorderRadius = keyBorderRadius;
-      _keyPadding = keyPadding;
       _markerColor = markerColor;
       _markerColorNotPressed = markerColorNotPressed;
       _markerOffset = markerOffset;
       _markerWidth = markerWidth;
       _markerHeight = markerHeight;
       _markerBorderRadius = markerBorderRadius;
-      _spaceWidth = spaceWidth;
+
+      // Keyboard settings
       _keymapStyle = keymapStyle;
-      _splitWidth = splitWidth;
-      _opacity = opacity;
-      _autoHideDuration = autoHideDuration;
-      _launchAtStartup = launchAtStartup;
-      _autoHideEnabled = autoHideEnabled;
-      _useUserLayout = useUserLayout;
-      _kanataEnabled = kanataEnabled;
       _showTopRow = showTopRow;
-      _showAdvancedSettings = showAdvancedSettings;
+      _keySize = keySize;
+      _keyBorderRadius = keyBorderRadius;
+      _keyPadding = keyPadding;
+      _spaceWidth = spaceWidth;
+      _splitWidth = splitWidth;
+
+      // Text settings
+      _fontStyle = fontStyle;
+      _keyFontSize = keyFontSize;
+      _spaceFontSize = spaceFontSize;
+      _fontWeight = fontWeight;
+      _keyTextColor = keyTextColor;
+      _keyTextColorNotPressed = keyTextColorNotPressed;
     });
   }
 
   Future<void> _savePreferences() async {
+    // General settings
+    await asyncPrefs.setBool('launchAtStartup', _launchAtStartup);
+    await asyncPrefs.setBool('autoHideEnabled', _autoHideEnabled);
+    await asyncPrefs.setDouble('autoHideDuration', _autoHideDuration);
     await asyncPrefs.setString('layout', _keyboardLayoutName);
-    await asyncPrefs.setString('fontStyle', _fontStyle);
-    await asyncPrefs.setDouble('keyFontSize', _keyFontSize);
-    await asyncPrefs.setDouble('spaceFontSize', _spaceFontSize);
-    await asyncPrefs.setInt('fontWeight', _fontWeight.index);
-    await asyncPrefs.setInt('keyTextColor', _keyTextColor.toARGB32());
-    await asyncPrefs.setInt(
-        'keyTextColorNotPressed', _keyTextColorNotPressed.toARGB32());
+    await asyncPrefs.setBool('showAdvancedSettings', _showAdvancedSettings);
+    await asyncPrefs.setBool('useUserLayout', _useUserLayout);
+    await asyncPrefs.setBool('kanataEnabled', _kanataEnabled);
+
+    // Appearance settings
+    await asyncPrefs.setDouble('opacity', _opacity);
     await asyncPrefs.setInt('keyColorPressed', _keyColorPressed.toARGB32());
     await asyncPrefs.setInt(
         'keyColorNotPressed', _keyColorNotPressed.toARGB32());
-    await asyncPrefs.setDouble('keySize', _keySize);
-    await asyncPrefs.setDouble('keyBorderRadius', _keyBorderRadius);
-    await asyncPrefs.setDouble('keyPadding', _keyPadding);
     await asyncPrefs.setInt('markerColor', _markerColor.toARGB32());
     await asyncPrefs.setInt(
         'markerColorNotPressed', _markerColorNotPressed.toARGB32());
@@ -195,17 +217,24 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     await asyncPrefs.setDouble('markerWidth', _markerWidth);
     await asyncPrefs.setDouble('markerHeight', _markerHeight);
     await asyncPrefs.setDouble('markerBorderRadius', _markerBorderRadius);
-    await asyncPrefs.setDouble('spaceWidth', _spaceWidth);
+
+    // Keyboard settings
     await asyncPrefs.setString('keymapStyle', _keymapStyle);
-    await asyncPrefs.setDouble('splitWidth', _splitWidth);
-    await asyncPrefs.setDouble('opacity', _opacity);
-    await asyncPrefs.setDouble('autoHideDuration', _autoHideDuration);
-    await asyncPrefs.setBool('launchAtStartup', _launchAtStartup);
-    await asyncPrefs.setBool('autoHideEnabled', _autoHideEnabled);
-    await asyncPrefs.setBool('useUserLayout', _useUserLayout);
-    await asyncPrefs.setBool('kanataEnabled', _kanataEnabled);
     await asyncPrefs.setBool('showTopRow', _showTopRow);
-    await asyncPrefs.setBool('showAdvancedSettings', _showAdvancedSettings);
+    await asyncPrefs.setDouble('keySize', _keySize);
+    await asyncPrefs.setDouble('keyBorderRadius', _keyBorderRadius);
+    await asyncPrefs.setDouble('keyPadding', _keyPadding);
+    await asyncPrefs.setDouble('spaceWidth', _spaceWidth);
+    await asyncPrefs.setDouble('splitWidth', _splitWidth);
+
+    // Text settings
+    await asyncPrefs.setString('fontStyle', _fontStyle);
+    await asyncPrefs.setDouble('keyFontSize', _keyFontSize);
+    await asyncPrefs.setDouble('spaceFontSize', _spaceFontSize);
+    await asyncPrefs.setInt('fontWeight', _fontWeight.index);
+    await asyncPrefs.setInt('keyTextColor', _keyTextColor.toARGB32());
+    await asyncPrefs.setInt(
+        'keyTextColorNotPressed', _keyTextColorNotPressed.toARGB32());
   }
 
   void _updateMainWindow(dynamic method, dynamic value) async {
@@ -751,12 +780,26 @@ class _PreferencesScreenState extends State<PreferencesScreen>
             value: value,
             items: options
                 .map((String option) => DropdownMenuItem<String>(
-                    value: option, child: Text(option)))
+                      value: option,
+                      child: Text(
+                        option,
+                        style: TextStyle(
+                          fontFamily: option,
+                          fontFamilyFallback: const ['Manrope'],
+                          color: colorScheme.onSurface,
+                          fontSize: 15,
+                        ),
+                      ),
+                    ))
                 .toList(),
             onChanged: onChanged,
             dropdownColor: colorScheme.surface,
-            style:
-                TextStyle(color: colorScheme.onSurface, fontFamily: 'Manrope'),
+            style: TextStyle(
+              fontFamily: value,
+              fontFamilyFallback: const ['Manrope'],
+              color: colorScheme.onSurface,
+              fontSize: 15,
+            ),
           ),
         ],
       ),

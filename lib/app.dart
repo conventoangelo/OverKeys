@@ -26,48 +26,54 @@ class MainApp extends StatefulWidget {
 
 class _MainAppState extends State<MainApp> with TrayListener {
   final Map<String, bool> _keyPressStates = {};
-  KeyboardLayout _keyboardLayout = qwerty;
   Timer? _autoHideTimer;
   bool _isWindowVisible = true;
   bool _ignoreMouseEvents = true;
-
+  final double _windowWidth = 1000;
+  final double _windowHeight = 330;
+  final double _topRowExtraHeight = 80;
+  final double _topRowExtraWidth = 160;
   final SharedPreferencesAsync asyncPrefs = SharedPreferencesAsync();
+  final KanataService _kanataService = KanataService();
 
-  String _fontStyle = 'GeistMono';
-  double _keyFontSize = 20;
-  double _spaceFontSize = 14;
-  FontWeight _fontWeight = FontWeight.w600;
-  Color _keyTextColor = Colors.white;
-  Color _keyTextColorNotPressed = Colors.black;
+  // General settings
+  // ignore: unused_field
+  bool _launchAtStartup = false;
+  bool _autoHideEnabled = false;
+  double _autoHideDuration = 2.0;
+  KeyboardLayout _keyboardLayout = qwerty;
+  KeyboardLayout? _initialKeyboardLayout;
+  bool _useUserLayout = false;
+  bool _kanataEnabled = false;
+
+  // Appearance settings
+  double _opacity = 0.6;
+  double _lastOpacity = 0.6;
   Color _keyColorPressed = const Color.fromARGB(255, 30, 30, 30);
   Color _keyColorNotPressed = const Color.fromARGB(255, 119, 171, 255);
-  double _keySize = 48;
-  double _keyBorderRadius = 12;
-  double _keyPadding = 3;
   Color _markerColor = Colors.white;
   Color _markerColorNotPressed = Colors.black;
   double _markerOffset = 10;
   double _markerWidth = 10;
   double _markerHeight = 2;
   double _markerBorderRadius = 10;
-  double _spaceWidth = 320;
+
+  // Keyboard settings
   String _keymapStyle = 'Staggered';
-  double _splitWidth = 100;
-  double _opacity = 0.6;
-  double _lastOpacity = 0.6;
-  double _autoHideDuration = 2.0;
-  bool _autoHideEnabled = false;
-  bool _useUserLayout = false;
-  bool _kanataEnabled = false;
   bool _showTopRow = false;
-  final double _windowWidth = 1000;
-  final double _windowHeight = 330;
-  final double _topRowExtraHeight = 80;
-  final double _topRowExtraWidth = 160;
-  KeyboardLayout? _initialKeyboardLayout;
-  // ignore: unused_field
-  bool _launchAtStartup = false;
-  final KanataService _kanataService = KanataService();
+  double _keySize = 48;
+  double _keyBorderRadius = 12;
+  double _keyPadding = 3;
+  double _spaceWidth = 320;
+  double _splitWidth = 100;
+
+  // Text settings
+  String _fontStyle = 'GeistMono';
+  double _keyFontSize = 20;
+  double _spaceFontSize = 14;
+  FontWeight _fontWeight = FontWeight.w600;
+  Color _keyTextColor = Colors.white;
+  Color _keyTextColorNotPressed = Colors.black;
 
   @override
   void initState() {
@@ -188,25 +194,21 @@ class _MainAppState extends State<MainApp> with TrayListener {
   }
 
   Future<void> _loadPreferences() async {
+    // General settings
+    bool autoHideEnabled = await asyncPrefs.getBool('autoHideEnabled') ?? false;
+    double autoHideDuration =
+        await asyncPrefs.getDouble('autoHideDuration') ?? 2.0;
     String keyboardLayoutName =
         await asyncPrefs.getString('layout') ?? 'QWERTY';
-    String fontStyle = await asyncPrefs.getString('fontStyle') ?? 'GeistMono';
-    double keyFontSize = await asyncPrefs.getDouble('keyFontSize') ?? 20;
-    double spaceFontSize = await asyncPrefs.getDouble('spaceFontSize') ?? 14;
-    FontWeight fontWeight = FontWeight
-        .values[await asyncPrefs.getInt('fontWeight') ?? FontWeight.w600.index];
-    Color keyTextColor =
-        Color(await asyncPrefs.getInt('keyTextColor') ?? 0xFFFFFFFF);
-    Color keyTextColorNotPressed =
-        Color(await asyncPrefs.getInt('keyTextColorNotPressed') ?? 0xFF000000);
+    bool useUserLayout = await asyncPrefs.getBool('useUserLayout') ?? false;
+    bool kanataEnabled = await asyncPrefs.getBool('kanataEnabled') ?? false;
+
+    // Appearance settings
+    double opacity = await asyncPrefs.getDouble('opacity') ?? 0.6;
     Color keyColorPressed =
         Color(await asyncPrefs.getInt('keyColorPressed') ?? 0xFF1E1E1E);
     Color keyColorNotPressed =
         Color(await asyncPrefs.getInt('keyColorNotPressed') ?? 0xFF77ABFF);
-    double keySize = await asyncPrefs.getDouble('keySize') ?? 48;
-    double keyBorderRadius =
-        await asyncPrefs.getDouble('keyBorderRadius') ?? 12;
-    double keyPadding = await asyncPrefs.getDouble('keyPadding') ?? 3;
     Color markerColor =
         Color(await asyncPrefs.getInt('markerColor') ?? 0xFFFFFFFF);
     Color markerColorNotPressed =
@@ -216,66 +218,82 @@ class _MainAppState extends State<MainApp> with TrayListener {
     double markerHeight = await asyncPrefs.getDouble('markerHeight') ?? 2;
     double markerBorderRadius =
         await asyncPrefs.getDouble('markerBorderRadius') ?? 10;
-    double spaceWidth = await asyncPrefs.getDouble('spaceWidth') ?? 320;
+
+    // Keyboard settings
     String keymapStyle =
         await asyncPrefs.getString('keymapStyle') ?? 'Staggered';
-    double splitWidth = await asyncPrefs.getDouble('splitWidth') ?? 100;
-    double opacity = await asyncPrefs.getDouble('opacity') ?? 0.6;
-    double autoHideDuration =
-        await asyncPrefs.getDouble('autoHideDuration') ?? 2.0;
-    bool autoHideEnabled = await asyncPrefs.getBool('autoHideEnabled') ?? false;
-    bool useUserLayout = await asyncPrefs.getBool('useUserLayout') ?? false;
-    bool kanataEnabled = await asyncPrefs.getBool('kanataEnabled') ?? false;
     bool showTopRow = await asyncPrefs.getBool('showTopRow') ?? false;
+    double keySize = await asyncPrefs.getDouble('keySize') ?? 48;
+    double keyBorderRadius =
+        await asyncPrefs.getDouble('keyBorderRadius') ?? 12;
+    double keyPadding = await asyncPrefs.getDouble('keyPadding') ?? 3;
+    double spaceWidth = await asyncPrefs.getDouble('spaceWidth') ?? 320;
+    double splitWidth = await asyncPrefs.getDouble('splitWidth') ?? 100;
+
+    // Text settings
+    String fontStyle = await asyncPrefs.getString('fontStyle') ?? 'GeistMono';
+    double keyFontSize = await asyncPrefs.getDouble('keyFontSize') ?? 20;
+    double spaceFontSize = await asyncPrefs.getDouble('spaceFontSize') ?? 14;
+    FontWeight fontWeight = FontWeight
+        .values[await asyncPrefs.getInt('fontWeight') ?? FontWeight.w600.index];
+    Color keyTextColor =
+        Color(await asyncPrefs.getInt('keyTextColor') ?? 0xFFFFFFFF);
+    Color keyTextColorNotPressed =
+        Color(await asyncPrefs.getInt('keyTextColorNotPressed') ?? 0xFF000000);
 
     setState(() {
+      // General settings
+      _autoHideEnabled = autoHideEnabled;
+      _autoHideDuration = autoHideDuration;
       _keyboardLayout = availableLayouts
           .firstWhere((layout) => layout.name == keyboardLayoutName);
       _initialKeyboardLayout = _keyboardLayout;
-      _fontStyle = fontStyle;
-      _keyFontSize = keyFontSize;
-      _spaceFontSize = spaceFontSize;
-      _fontWeight = fontWeight;
-      _keyTextColor = keyTextColor;
-      _keyTextColorNotPressed = keyTextColorNotPressed;
+      _useUserLayout = useUserLayout;
+      _kanataEnabled = kanataEnabled;
+
+      // Appearance settings
+      _opacity = opacity;
       _keyColorPressed = keyColorPressed;
       _keyColorNotPressed = keyColorNotPressed;
-      _keySize = keySize;
-      _keyBorderRadius = keyBorderRadius;
-      _keyPadding = keyPadding;
       _markerColor = markerColor;
       _markerColorNotPressed = markerColorNotPressed;
       _markerOffset = markerOffset;
       _markerWidth = markerWidth;
       _markerHeight = markerHeight;
       _markerBorderRadius = markerBorderRadius;
-      _spaceWidth = spaceWidth;
+
+      // Keyboard settings
       _keymapStyle = keymapStyle;
-      _splitWidth = splitWidth;
-      _opacity = opacity;
-      _autoHideDuration = autoHideDuration;
-      _autoHideEnabled = autoHideEnabled;
-      _useUserLayout = useUserLayout;
-      _kanataEnabled = kanataEnabled;
       _showTopRow = showTopRow;
+      _keySize = keySize;
+      _keyBorderRadius = keyBorderRadius;
+      _keyPadding = keyPadding;
+      _spaceWidth = spaceWidth;
+      _splitWidth = splitWidth;
+
+      // Text settings
+      _fontStyle = fontStyle;
+      _keyFontSize = keyFontSize;
+      _spaceFontSize = spaceFontSize;
+      _fontWeight = fontWeight;
+      _keyTextColor = keyTextColor;
+      _keyTextColorNotPressed = keyTextColorNotPressed;
     });
   }
 
   Future<void> _savePreferences() async {
+    // General settings
+    await asyncPrefs.setBool('autoHideEnabled', _autoHideEnabled);
+    await asyncPrefs.setDouble('autoHideDuration', _autoHideDuration);
     await asyncPrefs.setString('layout', _initialKeyboardLayout!.name);
-    await asyncPrefs.setString('fontStyle', _fontStyle);
-    await asyncPrefs.setDouble('keyFontSize', _keyFontSize);
-    await asyncPrefs.setDouble('spaceFontSize', _spaceFontSize);
-    await asyncPrefs.setInt('fontWeight', _fontWeight.index);
-    await asyncPrefs.setInt('keyTextColor', _keyTextColor.toARGB32());
-    await asyncPrefs.setInt(
-        'keyTextColorNotPressed', _keyTextColorNotPressed.toARGB32());
+    await asyncPrefs.setBool('useUserLayout', _useUserLayout);
+    await asyncPrefs.setBool('kanataEnabled', _kanataEnabled);
+
+    // Appearance settings
+    await asyncPrefs.setDouble('opacity', _opacity);
     await asyncPrefs.setInt('keyColorPressed', _keyColorPressed.toARGB32());
     await asyncPrefs.setInt(
         'keyColorNotPressed', _keyColorNotPressed.toARGB32());
-    await asyncPrefs.setDouble('keySize', _keySize);
-    await asyncPrefs.setDouble('keyBorderRadius', _keyBorderRadius);
-    await asyncPrefs.setDouble('keyPadding', _keyPadding);
     await asyncPrefs.setInt('markerColor', _markerColor.toARGB32());
     await asyncPrefs.setInt(
         'markerColorNotPressed', _markerColorNotPressed.toARGB32());
@@ -283,102 +301,30 @@ class _MainAppState extends State<MainApp> with TrayListener {
     await asyncPrefs.setDouble('markerWidth', _markerWidth);
     await asyncPrefs.setDouble('markerHeight', _markerHeight);
     await asyncPrefs.setDouble('markerBorderRadius', _markerBorderRadius);
-    await asyncPrefs.setDouble('spaceWidth', _spaceWidth);
+
+    // Keyboard settings
     await asyncPrefs.setString('keymapStyle', _keymapStyle);
-    await asyncPrefs.setDouble('splitWidth', _splitWidth);
-    await asyncPrefs.setDouble('opacity', _opacity);
-    await asyncPrefs.setDouble('autoHideDuration', _autoHideDuration);
-    await asyncPrefs.setBool('autoHideEnabled', _autoHideEnabled);
-    await asyncPrefs.setBool('useUserLayout', _useUserLayout);
     await asyncPrefs.setBool('showTopRow', _showTopRow);
+    await asyncPrefs.setDouble('keySize', _keySize);
+    await asyncPrefs.setDouble('keyBorderRadius', _keyBorderRadius);
+    await asyncPrefs.setDouble('keyPadding', _keyPadding);
+    await asyncPrefs.setDouble('spaceWidth', _spaceWidth);
+    await asyncPrefs.setDouble('splitWidth', _splitWidth);
+
+    // Text settings
+    await asyncPrefs.setString('fontStyle', _fontStyle);
+    await asyncPrefs.setDouble('keyFontSize', _keyFontSize);
+    await asyncPrefs.setDouble('spaceFontSize', _spaceFontSize);
+    await asyncPrefs.setInt('fontWeight', _fontWeight.index);
+    await asyncPrefs.setInt('keyTextColor', _keyTextColor.toARGB32());
+    await asyncPrefs.setInt(
+        'keyTextColorNotPressed', _keyTextColorNotPressed.toARGB32());
   }
 
   void _setupMethodHandler() {
     DesktopMultiWindow.setMethodHandler((call, fromWindowId) async {
       switch (call.method) {
-        case 'updateLayout':
-          final layoutName = call.arguments as String;
-          setState(() {
-            if (_kanataEnabled) {
-              _initialKeyboardLayout = availableLayouts
-                  .firstWhere((layout) => layout.name == layoutName);
-            } else {
-              _keyboardLayout = availableLayouts
-                  .firstWhere((layout) => layout.name == layoutName);
-              _initialKeyboardLayout = _keyboardLayout;
-            }
-          });
-          _fadeIn();
-        case 'updateFontStyle':
-          final fontStyle = call.arguments as String;
-          setState(() => _fontStyle = fontStyle);
-        case 'updateKeyFontSize':
-          final keyFontSize = call.arguments as double;
-          setState(() => _keyFontSize = keyFontSize);
-        case 'updateSpaceFontSize':
-          final spaceFontSize = call.arguments as double;
-          setState(() => _spaceFontSize = spaceFontSize);
-        case 'updateFontWeight':
-          final fontWeightIndex = call.arguments as int;
-          setState(() => _fontWeight = FontWeight.values[fontWeightIndex]);
-        case 'updateKeyTextColor':
-          final keyTextColor = call.arguments as int;
-          setState(() => _keyTextColor = Color(keyTextColor));
-        case 'updateKeyTextColorNotPressed':
-          final keyTextColorNotPressed = call.arguments as int;
-          setState(
-              () => _keyTextColorNotPressed = Color(keyTextColorNotPressed));
-        case 'updateKeyColorPressed':
-          final keyColorPressed = call.arguments as int;
-          setState(() => _keyColorPressed = Color(keyColorPressed));
-        case 'updateKeyColorNotPressed':
-          final keyColorNotPressed = call.arguments as int;
-          setState(() => _keyColorNotPressed = Color(keyColorNotPressed));
-        case 'updateKeySize':
-          final keySize = call.arguments as double;
-          setState(() => _keySize = keySize);
-        case 'updateKeyBorderRadius':
-          final keyBorderRadius = call.arguments as double;
-          setState(() => _keyBorderRadius = keyBorderRadius);
-        case 'updateKeyPadding':
-          final keyPadding = call.arguments as double;
-          setState(() => _keyPadding = keyPadding);
-        case 'updateMarkerColor':
-          final markerColor = call.arguments as int;
-          setState(() => _markerColor = Color(markerColor));
-        case 'updateMarkerColorNotPressed':
-          final markerColorNotPressed = call.arguments as int;
-          setState(() => _markerColorNotPressed = Color(markerColorNotPressed));
-        case 'updateMarkerOffset':
-          final markerOffset = call.arguments as double;
-          setState(() => _markerOffset = markerOffset);
-        case 'updateMarkerWidth':
-          final markerWidth = call.arguments as double;
-          setState(() => _markerWidth = markerWidth);
-        case 'updateMarkerHeight':
-          final markerHeight = call.arguments as double;
-          setState(() => _markerHeight = markerHeight);
-        case 'updateMarkerBorderRadius':
-          final markerBorderRadius = call.arguments as double;
-          setState(() => _markerBorderRadius = markerBorderRadius);
-        case 'updateSpaceWidth':
-          final spaceWidth = call.arguments as double;
-          setState(() => _spaceWidth = spaceWidth);
-        case 'updateKeymapStyle':
-          final keymapStyle = call.arguments as String;
-          setState(() => _keymapStyle = keymapStyle);
-        case 'updateSplitWidth':
-          final splitWidth = call.arguments as double;
-          setState(() => _splitWidth = splitWidth);
-        case 'updateOpacity':
-          final opacity = call.arguments as double;
-          setState(() {
-            _opacity = opacity;
-            _lastOpacity = opacity;
-          });
-        case 'updateAutoHideDuration':
-          final autoHideDuration = call.arguments as double;
-          setState(() => _autoHideDuration = autoHideDuration);
+        // General settings
         case 'updateLaunchAtStartup':
           final launchAtStartupRet = call.arguments as bool;
           setState(() {
@@ -403,6 +349,22 @@ class _MainAppState extends State<MainApp> with TrayListener {
             }
           });
           _setupTray();
+        case 'updateAutoHideDuration':
+          final autoHideDuration = call.arguments as double;
+          setState(() => _autoHideDuration = autoHideDuration);
+        case 'updateLayout':
+          final layoutName = call.arguments as String;
+          setState(() {
+            if (_kanataEnabled) {
+              _initialKeyboardLayout = availableLayouts
+                  .firstWhere((layout) => layout.name == layoutName);
+            } else {
+              _keyboardLayout = availableLayouts
+                  .firstWhere((layout) => layout.name == layoutName);
+              _initialKeyboardLayout = _keyboardLayout;
+            }
+          });
+          _fadeIn();
         case 'updateUseUserLayout':
           final useUserLayout = call.arguments as bool;
           setState(() {
@@ -441,10 +403,84 @@ class _MainAppState extends State<MainApp> with TrayListener {
               }
             }
           });
+
+        // Appearance settings
+        case 'updateOpacity':
+          final opacity = call.arguments as double;
+          setState(() {
+            _opacity = opacity;
+            _lastOpacity = opacity;
+          });
+        case 'updateKeyColorPressed':
+          final keyColorPressed = call.arguments as int;
+          setState(() => _keyColorPressed = Color(keyColorPressed));
+        case 'updateKeyColorNotPressed':
+          final keyColorNotPressed = call.arguments as int;
+          setState(() => _keyColorNotPressed = Color(keyColorNotPressed));
+        case 'updateMarkerColor':
+          final markerColor = call.arguments as int;
+          setState(() => _markerColor = Color(markerColor));
+        case 'updateMarkerColorNotPressed':
+          final markerColorNotPressed = call.arguments as int;
+          setState(() => _markerColorNotPressed = Color(markerColorNotPressed));
+        case 'updateMarkerOffset':
+          final markerOffset = call.arguments as double;
+          setState(() => _markerOffset = markerOffset);
+        case 'updateMarkerWidth':
+          final markerWidth = call.arguments as double;
+          setState(() => _markerWidth = markerWidth);
+        case 'updateMarkerHeight':
+          final markerHeight = call.arguments as double;
+          setState(() => _markerHeight = markerHeight);
+        case 'updateMarkerBorderRadius':
+          final markerBorderRadius = call.arguments as double;
+          setState(() => _markerBorderRadius = markerBorderRadius);
+
+        // Keyboard settings
+        case 'updateKeymapStyle':
+          final keymapStyle = call.arguments as String;
+          setState(() => _keymapStyle = keymapStyle);
         case 'updateShowTopRow':
           final showTopRow = call.arguments as bool;
           setState(() => _showTopRow = showTopRow);
           _adjustWindowSize();
+        case 'updateKeySize':
+          final keySize = call.arguments as double;
+          setState(() => _keySize = keySize);
+        case 'updateKeyBorderRadius':
+          final keyBorderRadius = call.arguments as double;
+          setState(() => _keyBorderRadius = keyBorderRadius);
+        case 'updateKeyPadding':
+          final keyPadding = call.arguments as double;
+          setState(() => _keyPadding = keyPadding);
+        case 'updateSpaceWidth':
+          final spaceWidth = call.arguments as double;
+          setState(() => _spaceWidth = spaceWidth);
+        case 'updateSplitWidth':
+          final splitWidth = call.arguments as double;
+          setState(() => _splitWidth = splitWidth);
+
+        // Text settings
+        case 'updateFontStyle':
+          final fontStyle = call.arguments as String;
+          setState(() => _fontStyle = fontStyle);
+        case 'updateKeyFontSize':
+          final keyFontSize = call.arguments as double;
+          setState(() => _keyFontSize = keyFontSize);
+        case 'updateSpaceFontSize':
+          final spaceFontSize = call.arguments as double;
+          setState(() => _spaceFontSize = spaceFontSize);
+        case 'updateFontWeight':
+          final fontWeightIndex = call.arguments as int;
+          setState(() => _fontWeight = FontWeight.values[fontWeightIndex]);
+        case 'updateKeyTextColor':
+          final keyTextColor = call.arguments as int;
+          setState(() => _keyTextColor = Color(keyTextColor));
+        case 'updateKeyTextColorNotPressed':
+          final keyTextColorNotPressed = call.arguments as int;
+          setState(
+              () => _keyTextColorNotPressed = Color(keyTextColorNotPressed));
+
         default:
           throw UnimplementedError('Unimplemented method ${call.method}');
       }
