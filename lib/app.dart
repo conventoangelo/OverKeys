@@ -50,6 +50,8 @@ class _MainAppState extends State<MainApp> with TrayListener {
   KeyboardLayout _keyboardLayout = qwerty;
   KeyboardLayout? _initialKeyboardLayout;
   bool _useUserLayout = false;
+  KeyboardLayout? _altLayout;
+  bool _showAltLayout = false;
   bool _kanataEnabled = false;
 
   // Appearance settings
@@ -102,6 +104,9 @@ class _MainAppState extends State<MainApp> with TrayListener {
       if (_useUserLayout) {
         _loadUserLayout();
       }
+      if (_showAltLayout) {
+        _loadAltLayout();
+      }   
       if (_kanataEnabled) {
         _kanataService.connect();
       }
@@ -174,6 +179,21 @@ class _MainAppState extends State<MainApp> with TrayListener {
     }
   }
 
+  Future<void> _loadAltLayout() async {
+    if (!_showAltLayout) return;
+    final configService = ConfigService();
+    final altLayout = await configService.getAltLayout();
+
+    if (altLayout != null) {
+      setState(() {
+        _altLayout = altLayout;
+      });
+      if (kDebugMode) {
+        print('Loaded alt layout: ${altLayout.name}');
+      }
+    }
+  }
+
   Future<void> _loadKanataConfig() async {
     final configService = ConfigService();
     final config = await configService.loadConfig();
@@ -182,24 +202,23 @@ class _MainAppState extends State<MainApp> with TrayListener {
       _kanataService.updateSettings(
           config.kanataHost, config.kanataPort, config.userLayouts);
 
-      final defaultLayout =
-          _kanataService.getLayoutByName(config.defaultUserLayout);
-      if (defaultLayout != null) {
-        setState(() {
+      final defaultLayout = await configService.getUserLayout();
+      setState(() {
+        if (defaultLayout != null) {
           _keyboardLayout = defaultLayout;
-        });
-      }
+        }
+      });
     }
   }
 
   Future<void> _adjustWindowSize() async {
     _fadeIn();
     double height = _showTopRow
-      ? _defaultWindowHeight + _defaultTopRowExtraHeight
-      : _defaultWindowHeight;
+        ? _defaultWindowHeight + _defaultTopRowExtraHeight
+        : _defaultWindowHeight;
     double width = _showTopRow
-      ? _defaultWindowWidth + _defaultTopRowExtraWidth
-      : _defaultWindowWidth;
+        ? _defaultWindowWidth + _defaultTopRowExtraWidth
+        : _defaultWindowWidth;
     await windowManager.setSize(Size(width, height));
     await windowManager.setAlignment(Alignment.bottomCenter);
   }
@@ -222,6 +241,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
     String keyboardLayoutName =
         await asyncPrefs.getString('layout') ?? 'QWERTY';
     bool useUserLayout = await asyncPrefs.getBool('useUserLayout') ?? false;
+    bool showAltLayout = await asyncPrefs.getBool('showAltLayout') ?? false;
     bool kanataEnabled = await asyncPrefs.getBool('kanataEnabled') ?? false;
 
     // Appearance settings
@@ -270,6 +290,8 @@ class _MainAppState extends State<MainApp> with TrayListener {
           .firstWhere((layout) => layout.name == keyboardLayoutName);
       _initialKeyboardLayout = _keyboardLayout;
       _useUserLayout = useUserLayout;
+      _showAltLayout = showAltLayout;
+      _altLayout = _keyboardLayout;
       _kanataEnabled = kanataEnabled;
 
       // Appearance settings
@@ -308,6 +330,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
     await asyncPrefs.setDouble('autoHideDuration', _autoHideDuration);
     await asyncPrefs.setString('layout', _initialKeyboardLayout!.name);
     await asyncPrefs.setBool('useUserLayout', _useUserLayout);
+    await asyncPrefs.setBool('showAltLayout', _showAltLayout);
     await asyncPrefs.setBool('kanataEnabled', _kanataEnabled);
 
     // Appearance settings
@@ -402,6 +425,14 @@ class _MainAppState extends State<MainApp> with TrayListener {
               _fadeIn();
             }
           });
+        case 'updateShowAltLayout':
+          final showAltLayout = call.arguments as bool;
+          setState(() {
+            _showAltLayout = showAltLayout;
+          });
+          if (showAltLayout) {
+            _loadAltLayout();
+          }
         case 'updateKanataEnabled':
           final kanataEnabled = call.arguments as bool;
           setState(() {
@@ -739,27 +770,29 @@ class _MainAppState extends State<MainApp> with TrayListener {
                   child: KeyboardScreen(
                     keyPressStates: _keyPressStates,
                     layout: _keyboardLayout,
-                    fontStyle: _fontStyle,
-                    keyFontSize: _keyFontSize,
-                    spaceFontSize: _spaceFontSize,
-                    fontWeight: _fontWeight,
-                    keyTextColor: _keyTextColor,
-                    keyTextColorNotPressed: _keyTextColorNotPressed,
+                    showAltLayout: _showAltLayout,
+                    altLayout: _altLayout,
                     keyColorPressed: _keyColorPressed,
                     keyColorNotPressed: _keyColorNotPressed,
-                    keySize: _keySize,
-                    keyBorderRadius: _keyBorderRadius,
-                    keyPadding: _keyPadding,
                     markerColor: _markerColor,
                     markerColorNotPressed: _markerColorNotPressed,
                     markerOffset: _markerOffset,
                     markerWidth: _markerWidth,
                     markerHeight: _markerHeight,
                     markerBorderRadius: _markerBorderRadius,
-                    spaceWidth: _spaceWidth,
                     keymapStyle: _keymapStyle,
-                    splitWidth: _splitWidth,
                     showTopRow: _showTopRow,
+                    keySize: _keySize,
+                    keyBorderRadius: _keyBorderRadius,
+                    keyPadding: _keyPadding,
+                    spaceWidth: _spaceWidth,
+                    splitWidth: _splitWidth,
+                    fontStyle: _fontStyle,
+                    keyFontSize: _keyFontSize,
+                    spaceFontSize: _spaceFontSize,
+                    fontWeight: _fontWeight,
+                    keyTextColor: _keyTextColor,
+                    keyTextColorNotPressed: _keyTextColorNotPressed,
                   ),
                 ),
               ),
