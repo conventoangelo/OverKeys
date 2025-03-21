@@ -17,6 +17,7 @@ class KeyboardScreen extends StatelessWidget {
   final double markerBorderRadius;
   final String keymapStyle;
   final bool showTopRow;
+  final bool showGraveKey;
   final double keySize;
   final double keyBorderRadius;
   final double keyPadding;
@@ -44,6 +45,7 @@ class KeyboardScreen extends StatelessWidget {
       required this.markerBorderRadius,
       required this.keymapStyle,
       required this.showTopRow,
+      required this.showGraveKey,
       required this.keySize,
       required this.keyBorderRadius,
       required this.keyPadding,
@@ -74,21 +76,37 @@ class KeyboardScreen extends StatelessWidget {
   Widget buildRow(int rowIndex, List<String> keys) {
     List<Widget> rowWidgets = [];
 
-    for (int i = 0; i < keys.length; i++) {
-      if (i == 5 && keymapStyle == 'Split Matrix') {
-        rowWidgets.add(SizedBox(width: splitWidth));
-      }
+    if (keymapStyle != 'Matrix' && keymapStyle != 'Split Matrix') {
+      for (int i = 0; i < keys.length; i++) {
+        if (rowIndex == 0 && i == 0 && !showGraveKey) {
+          continue;
+        }
 
-      if (keymapStyle == 'Matrix' || keymapStyle == 'Split Matrix') {
+        if (rowIndex == 0 && i == keys.length - 1 && showGraveKey) {
+          rowWidgets
+              .add(buildKeys(rowIndex, keys[i], i, isLastKeyFirstRow: true));
+        } else {
+          rowWidgets.add(buildKeys(rowIndex, keys[i], i));
+        }
+      }
+    } else {
+      int startIndex = (rowIndex == 0) ? 1 : 0;
+      int endIndex = (rowIndex == 0) ? 11 : 10;
+
+      for (int i = startIndex; i < keys.length && i < endIndex; i++) {
+        if (keymapStyle == 'Split Matrix' && rowIndex == 0 && i == 6) {
+          rowWidgets.add(SizedBox(width: splitWidth));
+        } else if (i == 5 && keymapStyle == 'Split Matrix' && rowIndex > 0) {
+          rowWidgets.add(SizedBox(width: splitWidth));
+        }
+
         if (keymapStyle == 'Split Matrix' && rowIndex == 4) {
           rowWidgets.add(buildKeys(rowIndex, keys[i], i));
           rowWidgets.add(SizedBox(width: splitWidth));
           rowWidgets.add(buildKeys(rowIndex, keys[i], i));
-        } else if (i < 10) {
+        } else {
           rowWidgets.add(buildKeys(rowIndex, keys[i], i));
         }
-      } else {
-        rowWidgets.add(buildKeys(rowIndex, keys[i], i));
       }
     }
 
@@ -98,7 +116,8 @@ class KeyboardScreen extends StatelessWidget {
     );
   }
 
-  Widget buildKeys(int rowIndex, String key, int keyIndex) {
+  Widget buildKeys(int rowIndex, String key, int keyIndex,
+      {bool isLastKeyFirstRow = false}) {
     String keyStateKey = Mappings.getKeyForSymbol(key);
     bool isPressed = keyPressStates[keyStateKey] ?? false;
 
@@ -106,10 +125,14 @@ class KeyboardScreen extends StatelessWidget {
     Color textColor = isPressed ? keyTextColor : keyTextColorNotPressed;
     Color tactMarkerColor = isPressed ? markerColor : markerColorNotPressed;
 
+    double width = key == " "
+        ? spaceWidth
+        : (isLastKeyFirstRow ? keySize * 2 + keyPadding / 2 : keySize);
+
     Widget keyWidget = Padding(
       padding: EdgeInsets.all(keyPadding),
       child: Container(
-        width: key == " " ? spaceWidth : keySize,
+        width: width,
         height: keySize,
         decoration: BoxDecoration(
           color: keyColor,
@@ -191,8 +214,8 @@ class KeyboardScreen extends StatelessWidget {
           Positioned(
             bottom: showAltLayout ? null : markerOffset,
             child: Container(
-                width: markerWidth * (showAltLayout ? 0.5 : 1),
-                height: showAltLayout ? markerWidth * 0.5 : markerHeight,
+              width: markerWidth * (showAltLayout ? 0.5 : 1),
+              height: showAltLayout ? markerWidth * 0.5 : markerHeight,
               decoration: BoxDecoration(
                 color: tactMarkerColor,
                 borderRadius: BorderRadius.circular(markerBorderRadius),
