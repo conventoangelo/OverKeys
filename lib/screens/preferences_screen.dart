@@ -402,13 +402,14 @@ class _PreferencesScreenState extends State<PreferencesScreen>
             }
             _updateMainWindow('updateUseUserLayout', value);
           }),
-          _buildToggleOption('Show alternative layout', _showAltLayout, (value) {
+          _buildToggleOption('Show alternative layout', _showAltLayout,
+              (value) {
             setState(() => _showAltLayout = value);
             _updateMainWindow('updateShowAltLayout', value);
           }),
           _buildToggleOption('Connect to Kanata', _kanataEnabled,
               subtitle:
-                  'Make sure that Kanata and OverKeys are using the same port.',
+                  'Make sure that Kanata and OverKeys are using the same port. Restart OverKeys if config file changes were made to apply changes.',
               (value) {
             if (value && _useUserLayout) {
               // If turning on kanataEnabled, turn off useUserLayout
@@ -837,7 +838,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
                         fontWeight: FontWeight.w600,
                         fontSize: 16)),
                 Text(
-                  'Restart OverKeys to apply any changes made to this file',
+                  'Turn related advanced setting off then on again to apply changes',
                   style: TextStyle(
                       color: colorScheme.onSurface.withAlpha(153),
                       fontSize: 14.0),
