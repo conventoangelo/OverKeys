@@ -106,7 +106,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
       }
       if (_showAltLayout) {
         _loadAltLayout();
-      }   
+      }
       if (_kanataEnabled) {
         _kanataService.connect();
       }
@@ -433,6 +433,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
           if (showAltLayout) {
             _loadAltLayout();
           }
+          _fadeIn();
         case 'updateKanataEnabled':
           final kanataEnabled = call.arguments as bool;
           setState(() {
