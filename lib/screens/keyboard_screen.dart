@@ -117,27 +117,70 @@ class KeyboardScreen extends StatelessWidget {
           color: keyColor,
           borderRadius: BorderRadius.circular(keyBorderRadius),
         ),
-        child: Center(
-          child: key == " "
-              ? Text(
-                  layout.name.toLowerCase(),
+        child: key == " "
+            ? Center(
+                child: Text(
+                  showAltLayout && altLayout != null
+                      ? "${layout.name.toLowerCase()} (${altLayout!.name.toLowerCase()})"
+                      : layout.name.toLowerCase(),
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: textColor,
                     fontSize: spaceFontSize,
                     fontWeight: fontWeight,
                   ),
-                )
-              : Text(
-                  key,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: textColor,
-                    fontSize: key.length > 2 ? keyFontSize * 0.7 : keyFontSize,
-                    fontWeight: fontWeight,
-                  ),
                 ),
-        ),
+              )
+            : showAltLayout && altLayout != null
+                ? Stack(
+                    children: [
+                      // Primary layout key (top left)
+                      Positioned(
+                        top: 4,
+                        left: 4,
+                        child: Text(
+                          key,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: textColor,
+                            fontSize: key.length > 2
+                                ? keyFontSize * 0.6
+                                : keyFontSize * 0.85,
+                            fontWeight: fontWeight,
+                          ),
+                        ),
+                      ),
+                      // Alt layout key (bottom right)
+                      Positioned(
+                        bottom: 4,
+                        right: 4,
+                        child: Text(
+                          _getAltLayoutKey(rowIndex, keyIndex),
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: textColor,
+                            fontSize:
+                                _getAltLayoutKey(rowIndex, keyIndex).length > 2
+                                    ? keyFontSize * 0.6
+                                    : keyFontSize * 0.85,
+                            fontWeight: fontWeight,
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                : Center(
+                    child: Text(
+                      key,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: textColor,
+                        fontSize:
+                            key.length > 2 ? keyFontSize * 0.7 : keyFontSize,
+                        fontWeight: fontWeight,
+                      ),
+                    ),
+                  ),
       ),
     );
 
@@ -161,7 +204,19 @@ class KeyboardScreen extends StatelessWidget {
         ],
       );
     }
-
     return keyWidget;
+  }
+
+  String _getAltLayoutKey(int rowIndex, int keyIndex) {
+    if (altLayout == null || rowIndex >= altLayout!.keys.length) {
+      return "";
+    }
+
+    List<String> altRow = altLayout!.keys[rowIndex];
+    if (keyIndex >= altRow.length) {
+      return "";
+    }
+
+    return altRow[keyIndex];
   }
 }
