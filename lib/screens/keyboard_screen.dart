@@ -5,53 +5,57 @@ import '../models/mappings.dart';
 class KeyboardScreen extends StatelessWidget {
   final Map<String, bool> keyPressStates;
   final KeyboardLayout layout;
-  final String fontStyle;
-  final double keyFontSize;
-  final double spaceFontSize;
-  final FontWeight fontWeight;
-  final Color keyTextColor;
-  final Color keyTextColorNotPressed;
+  final bool showAltLayout;
+  final KeyboardLayout? altLayout;
   final Color keyColorPressed;
   final Color keyColorNotPressed;
-  final double keySize;
-  final double keyBorderRadius;
-  final double keyPadding;
   final Color markerColor;
   final Color markerColorNotPressed;
   final double markerOffset;
   final double markerWidth;
   final double markerHeight;
   final double markerBorderRadius;
-  final double spaceWidth;
   final String keymapStyle;
-  final double splitWidth;
   final bool showTopRow;
+  final double keySize;
+  final double keyBorderRadius;
+  final double keyPadding;
+  final double spaceWidth;
+  final double splitWidth;
+  final String fontStyle;
+  final double keyFontSize;
+  final double spaceFontSize;
+  final FontWeight fontWeight;
+  final Color keyTextColor;
+  final Color keyTextColorNotPressed;
 
   const KeyboardScreen(
       {super.key,
       required this.keyPressStates,
       required this.layout,
-      required this.fontStyle,
-      required this.keyFontSize,
-      required this.spaceFontSize,
-      required this.fontWeight,
-      required this.keyTextColor,
-      required this.keyTextColorNotPressed,
+      required this.showAltLayout,
+      required this.altLayout,
       required this.keyColorPressed,
       required this.keyColorNotPressed,
-      required this.keySize,
-      required this.keyBorderRadius,
-      required this.keyPadding,
       required this.markerColor,
       required this.markerColorNotPressed,
       required this.markerOffset,
       required this.markerWidth,
       required this.markerHeight,
       required this.markerBorderRadius,
-      required this.spaceWidth,
       required this.keymapStyle,
+      required this.showTopRow,
+      required this.keySize,
+      required this.keyBorderRadius,
+      required this.keyPadding,
+      required this.spaceWidth,
       required this.splitWidth,
-      required this.showTopRow});
+      required this.fontStyle,
+      required this.keyFontSize,
+      required this.spaceFontSize,
+      required this.fontWeight,
+      required this.keyTextColor,
+      required this.keyTextColorNotPressed});
 
   @override
   Widget build(BuildContext context) {
