@@ -402,7 +402,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
             }
             _updateMainWindow('updateUseUserLayout', value);
           }),
-          _buildToggleOption('Show alt layout', _showAltLayout, (value) {
+          _buildToggleOption('Show alternative layout', _showAltLayout, (value) {
             setState(() => _showAltLayout = value);
             _updateMainWindow('updateShowAltLayout', value);
           }),
@@ -460,11 +460,17 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           setState(() => _markerOffset = value);
           _updateMainWindow('updateMarkerOffset', value);
         }),
-        _buildSliderOption('Marker width', _markerWidth, 0, 20, 20, (value) {
+        _buildSliderOption('Marker width', _markerWidth, 0, 20, 20,
+            subtitle: _showAltLayout
+                ? 'When alternative layout is shown, marker width appear at half the size (width × 0.5)'
+                : null, (value) {
           setState(() => _markerWidth = value);
           _updateMainWindow('updateMarkerWidth', value);
         }),
-        _buildSliderOption('Marker height', _markerHeight, 0, 10, 10, (value) {
+        _buildSliderOption('Marker height', _markerHeight, 0, 10, 10,
+            subtitle: _showAltLayout
+                ? 'When alternative layout is shown, marker height is not used and instead equals the marker width after computation'
+                : null, (value) {
           setState(() => _markerHeight = value);
           _updateMainWindow('updateMarkerHeight', value);
         }),
@@ -874,7 +880,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
 
   Widget _buildSliderOption(String label, double value, double min, double max,
       int divisions, Function(double) onChanged,
-      {String Function(double)? valueDisplayFormatter}) {
+      {String Function(double)? valueDisplayFormatter, String? subtitle}) {
     final colorScheme = ThemeManager.getTheme(_brightness).colorScheme;
     return _buildOptionContainer(
       Column(
@@ -885,6 +891,14 @@ class _PreferencesScreenState extends State<PreferencesScreen>
                   color: colorScheme.onSurface,
                   fontWeight: FontWeight.w600,
                   fontSize: 16)),
+          if (subtitle != null)
+            Text(
+              subtitle,
+              style: TextStyle(
+                  color: colorScheme.onSurface.withAlpha(153), fontSize: 14.0),
+              softWrap: true,
+              overflow: TextOverflow.visible,
+            ),
           Slider(
             value: value,
             min: min,

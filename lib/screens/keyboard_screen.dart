@@ -187,14 +187,14 @@ class KeyboardScreen extends StatelessWidget {
     // Tactile Markers
     if (rowIndex == 2 && (keyIndex == 3 || keyIndex == 6)) {
       keyWidget = Stack(
-        alignment: Alignment.bottomCenter,
+        alignment: showAltLayout ? Alignment.center : Alignment.bottomCenter,
         children: [
           keyWidget,
           Positioned(
-            bottom: markerOffset,
+            bottom: showAltLayout ? null : markerOffset,
             child: Container(
-              width: markerWidth,
-              height: markerHeight,
+                width: markerWidth * (showAltLayout ? 0.5 : 1),
+                height: showAltLayout ? markerWidth * 0.5 : markerHeight,
               decoration: BoxDecoration(
                 color: tactMarkerColor,
                 borderRadius: BorderRadius.circular(markerBorderRadius),
