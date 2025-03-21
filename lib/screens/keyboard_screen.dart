@@ -135,10 +135,10 @@ class KeyboardScreen extends StatelessWidget {
                       // Primary layout key (top left)
                       Positioned(
                         top: 4,
-                        left: 4,
+                        left: 8,
                         child: Text(
                           key,
-                          textAlign: TextAlign.center,
+                          textAlign: TextAlign.left,
                           style: TextStyle(
                             color: textColor,
                             fontSize: key.length > 2
@@ -151,10 +151,10 @@ class KeyboardScreen extends StatelessWidget {
                       // Alt layout key (bottom right)
                       Positioned(
                         bottom: 4,
-                        right: 4,
+                        right: 8,
                         child: Text(
                           _getAltLayoutKey(rowIndex, keyIndex),
-                          textAlign: TextAlign.center,
+                          textAlign: TextAlign.right,
                           style: TextStyle(
                             color: textColor,
                             fontSize:
