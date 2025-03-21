@@ -35,6 +35,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
   String _keyboardLayoutName = 'QWERTY';
   bool _showAdvancedSettings = false;
   bool _useUserLayout = false;
+  bool _showAltLayout = false;
   bool _kanataEnabled = false;
 
   // Appearance settings
@@ -115,6 +116,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     bool showAdvancedSettings =
         await asyncPrefs.getBool('showAdvancedSettings') ?? false;
     bool useUserLayout = await asyncPrefs.getBool('useUserLayout') ?? false;
+    bool showAltLayout = await asyncPrefs.getBool('showAltLayout') ?? false;
     bool kanataEnabled = await asyncPrefs.getBool('kanataEnabled') ?? false;
 
     // Appearance settings
@@ -163,6 +165,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       _keyboardLayoutName = keyboardLayoutName;
       _showAdvancedSettings = showAdvancedSettings;
       _useUserLayout = useUserLayout;
+      _showAltLayout = showAltLayout;
       _kanataEnabled = kanataEnabled;
 
       // Appearance settings
@@ -397,6 +400,10 @@ class _PreferencesScreenState extends State<PreferencesScreen>
               setState(() => _useUserLayout = value);
             }
             _updateMainWindow('updateUseUserLayout', value);
+          }),
+          _buildToggleOption('Show alt layout', _showAltLayout, (value) {
+            setState(() => _showAltLayout = value);
+            _updateMainWindow('updateShowAltLayout', value);
           }),
           _buildToggleOption('Connect to Kanata', _kanataEnabled,
               subtitle:
