@@ -163,19 +163,6 @@ class KanataService {
     }
   }
 
-  KeyboardLayout? getLayoutByName(String name) {
-    try {
-      return _userLayouts.firstWhere(
-        (layout) => layout.name.toUpperCase() == name.toUpperCase(),
-        orElse: () => throw Exception(),
-      );
-    } catch (_) {
-      return null;
-    }
-  }
-
-  List<KeyboardLayout> get userLayouts => _userLayouts;
-
   void dispose() {
     disconnect();
   }

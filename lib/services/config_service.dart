@@ -34,6 +34,12 @@ class ConfigService {
         final contents = await file.readAsString();
         final json = jsonDecode(contents) as Map<String, dynamic>;
         _cachedConfig = UserConfig.fromJson(json);
+        if (kDebugMode) {
+          final configCopy = _cachedConfig!.toJson();
+          configCopy['userLayouts'] =
+              _cachedConfig!.userLayouts.map((layout) => layout.name).toList();
+          print('Config contents: ${jsonEncode(configCopy)}');
+        }
       } else {
         // Create default config if file doesn't exist
         _cachedConfig = UserConfig();
@@ -70,6 +76,7 @@ class ConfigService {
       'port': config.kanataPort,
       'userLayouts': config.userLayouts,
       'defaultUserLayout': config.defaultUserLayout,
+      'altLayout': config.altLayout,
     };
   }
 
@@ -89,6 +96,30 @@ class ConfigService {
     } catch (e) {
       if (kDebugMode) {
         print('Default user layout "$defaultLayoutName" not found');
+      }
+      return null;
+    }
+  }
+
+  Future<KeyboardLayout?> getAltLayout() async {
+    final config = await loadConfig();
+    final altLayoutName = config.altLayout;
+
+    for (final layout in config.userLayouts) {
+      if (layout.name == altLayoutName) {
+        if (kDebugMode) {
+          print('Alt layout found: $altLayoutName');
+        }
+        return layout;
+      }
+    }
+
+    try {
+      return availableLayouts
+          .firstWhere((layout) => layout.name == altLayoutName);
+    } catch (e) {
+      if (kDebugMode) {
+        print('Alt layout "$altLayoutName" not found');
       }
       return null;
     }
