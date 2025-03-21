@@ -206,6 +206,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     await asyncPrefs.setString('layout', _keyboardLayoutName);
     await asyncPrefs.setBool('showAdvancedSettings', _showAdvancedSettings);
     await asyncPrefs.setBool('useUserLayout', _useUserLayout);
+    await asyncPrefs.setBool('showAltLayout', _showAltLayout);
     await asyncPrefs.setBool('kanataEnabled', _kanataEnabled);
 
     // Appearance settings
