@@ -52,6 +52,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
   // Keyboard settings
   String _keymapStyle = 'Staggered';
   bool _showTopRow = false;
+  bool _showGraveKey = false;
   double _keySize = 48;
   double _keyBorderRadius = 12;
   double _keyPadding = 3;
@@ -139,6 +140,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     String keymapStyle =
         await asyncPrefs.getString('keymapStyle') ?? 'Staggered';
     bool showTopRow = await asyncPrefs.getBool('showTopRow') ?? false;
+    bool showGraveKey = await asyncPrefs.getBool('showGraveKey') ?? false;
     double keySize = await asyncPrefs.getDouble('keySize') ?? 48;
     double keyBorderRadius =
         await asyncPrefs.getDouble('keyBorderRadius') ?? 12;
@@ -182,6 +184,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       // Keyboard settings
       _keymapStyle = keymapStyle;
       _showTopRow = showTopRow;
+      _showGraveKey = showGraveKey;
       _keySize = keySize;
       _keyBorderRadius = keyBorderRadius;
       _keyPadding = keyPadding;
@@ -225,6 +228,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     // Keyboard settings
     await asyncPrefs.setString('keymapStyle', _keymapStyle);
     await asyncPrefs.setBool('showTopRow', _showTopRow);
+    await asyncPrefs.setBool('showGraveKey', _showGraveKey);
     await asyncPrefs.setDouble('keySize', _keySize);
     await asyncPrefs.setDouble('keyBorderRadius', _keyBorderRadius);
     await asyncPrefs.setDouble('keyPadding', _keyPadding);
@@ -504,6 +508,10 @@ class _PreferencesScreenState extends State<PreferencesScreen>
             (value) {
           setState(() => _showTopRow = value);
           _updateMainWindow('updateShowTopRow', value);
+        }),
+        _buildToggleOption('Show grave key', _showGraveKey, (value) {
+          setState(() => _showGraveKey = value);
+          _updateMainWindow('updateShowGraveKey', value);
         }),
         _buildSectionTitle('Key Dimensions'),
         _buildSliderOption('Key size', _keySize, 40, 60, 40, (value) {

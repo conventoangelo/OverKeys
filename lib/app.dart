@@ -69,6 +69,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
   // Keyboard settings
   String _keymapStyle = 'Staggered';
   bool _showTopRow = false;
+  bool _showGraveKey = false;
   double _keySize = 48;
   double _keyBorderRadius = 12;
   double _keyPadding = 3;
@@ -264,6 +265,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
     String keymapStyle =
         await asyncPrefs.getString('keymapStyle') ?? 'Staggered';
     bool showTopRow = await asyncPrefs.getBool('showTopRow') ?? false;
+    bool showGraveKey = await asyncPrefs.getBool('showGraveKey') ?? false;
     double keySize = await asyncPrefs.getDouble('keySize') ?? 48;
     double keyBorderRadius =
         await asyncPrefs.getDouble('keyBorderRadius') ?? 12;
@@ -308,6 +310,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
       // Keyboard settings
       _keymapStyle = keymapStyle;
       _showTopRow = showTopRow;
+      _showGraveKey = showGraveKey;
       _keySize = keySize;
       _keyBorderRadius = keyBorderRadius;
       _keyPadding = keyPadding;
@@ -349,6 +352,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
     // Keyboard settings
     await asyncPrefs.setString('keymapStyle', _keymapStyle);
     await asyncPrefs.setBool('showTopRow', _showTopRow);
+    await asyncPrefs.setBool('showGraveKey', _showGraveKey);
     await asyncPrefs.setDouble('keySize', _keySize);
     await asyncPrefs.setDouble('keyBorderRadius', _keyBorderRadius);
     await asyncPrefs.setDouble('keyPadding', _keyPadding);
@@ -493,6 +497,9 @@ class _MainAppState extends State<MainApp> with TrayListener {
           final showTopRow = call.arguments as bool;
           setState(() => _showTopRow = showTopRow);
           _adjustWindowSize();
+        case 'updateShowGraveKey':
+          final showGraveKey = call.arguments as bool;
+          setState(() => _showGraveKey = showGraveKey);
         case 'updateKeySize':
           final keySize = call.arguments as double;
           setState(() => _keySize = keySize);
@@ -783,6 +790,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
                     markerBorderRadius: _markerBorderRadius,
                     keymapStyle: _keymapStyle,
                     showTopRow: _showTopRow,
+                    showGraveKey: _showGraveKey,
                     keySize: _keySize,
                     keyBorderRadius: _keyBorderRadius,
                     keyPadding: _keyPadding,
