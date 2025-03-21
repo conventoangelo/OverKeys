@@ -5,6 +5,7 @@ class UserConfig {
   int kanataPort;
   List<KeyboardLayout> userLayouts;
   String defaultUserLayout;
+  String altLayout;
 
   UserConfig({
     this.kanataHost = '127.0.0.1',
@@ -32,6 +33,7 @@ class UserConfig {
       ),
     ],
     this.defaultUserLayout = 'Symbol',
+    this.altLayout = 'Symbol',
   });
 
   factory UserConfig.fromJson(Map<String, dynamic> json) {
@@ -52,6 +54,7 @@ class UserConfig {
       kanataPort: json['kanataPort'] ?? 4039,
       userLayouts: layers,
       defaultUserLayout: json['defaultUserLayout'] ?? 'QWERTY',
+      altLayout: json['altLayout'] ?? 'QWERTY',
     );
   }
 
@@ -68,6 +71,7 @@ class UserConfig {
       'kanataPort': kanataPort,
       'userLayouts': layersJson,
       'defaultUserLayout': defaultUserLayout,
+      'altLayout': altLayout,
     };
   }
 }
