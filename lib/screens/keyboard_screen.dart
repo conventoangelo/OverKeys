@@ -22,7 +22,6 @@ class KeyboardScreen extends StatelessWidget {
   final double keyPadding;
   final double spaceWidth;
   final double splitWidth;
-  final String fontStyle;
   final double keyFontSize;
   final double spaceFontSize;
   final FontWeight fontWeight;
@@ -50,7 +49,6 @@ class KeyboardScreen extends StatelessWidget {
       required this.keyPadding,
       required this.spaceWidth,
       required this.splitWidth,
-      required this.fontStyle,
       required this.keyFontSize,
       required this.spaceFontSize,
       required this.fontWeight,

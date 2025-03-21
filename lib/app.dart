@@ -76,7 +76,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
   double _splitWidth = 100;
 
   // Text settings
-  String _fontStyle = 'GeistMono';
+  String _fontFamily = 'GeistMono';
   double _keyFontSize = 20;
   double _spaceFontSize = 14;
   FontWeight _fontWeight = FontWeight.w600;
@@ -272,7 +272,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
     double splitWidth = await asyncPrefs.getDouble('splitWidth') ?? 100;
 
     // Text settings
-    String fontStyle = await asyncPrefs.getString('fontStyle') ?? 'GeistMono';
+    String fontFamily = await asyncPrefs.getString('fontFamily') ?? 'GeistMono';
     double keyFontSize = await asyncPrefs.getDouble('keyFontSize') ?? 20;
     double spaceFontSize = await asyncPrefs.getDouble('spaceFontSize') ?? 14;
     FontWeight fontWeight = FontWeight
@@ -315,7 +315,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
       _splitWidth = splitWidth;
 
       // Text settings
-      _fontStyle = fontStyle;
+      _fontFamily = fontFamily;
       _keyFontSize = keyFontSize;
       _spaceFontSize = spaceFontSize;
       _fontWeight = fontWeight;
@@ -356,7 +356,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
     await asyncPrefs.setDouble('splitWidth', _splitWidth);
 
     // Text settings
-    await asyncPrefs.setString('fontStyle', _fontStyle);
+    await asyncPrefs.setString('fontFamily', _fontFamily);
     await asyncPrefs.setDouble('keyFontSize', _keyFontSize);
     await asyncPrefs.setDouble('spaceFontSize', _spaceFontSize);
     await asyncPrefs.setInt('fontWeight', _fontWeight.index);
@@ -509,9 +509,9 @@ class _MainAppState extends State<MainApp> with TrayListener {
           setState(() => _splitWidth = splitWidth);
 
         // Text settings
-        case 'updateFontStyle':
-          final fontStyle = call.arguments as String;
-          setState(() => _fontStyle = fontStyle);
+        case 'updateFontFamily':
+          final fontFamily = call.arguments as String;
+          setState(() => _fontFamily = fontFamily);
         case 'updateKeyFontSize':
           final keyFontSize = call.arguments as double;
           setState(() => _keyFontSize = keyFontSize);
@@ -752,7 +752,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
     return MaterialApp(
       title: 'OverKeys',
       theme: ThemeData(
-          fontFamily: _fontStyle,
+          fontFamily: _fontFamily,
           fontFamilyFallback: const ['GeistMono', 'Manrope', 'sans-serif']),
       home: Scaffold(
           backgroundColor: Colors.transparent,
@@ -787,7 +787,6 @@ class _MainAppState extends State<MainApp> with TrayListener {
                     keyPadding: _keyPadding,
                     spaceWidth: _spaceWidth,
                     splitWidth: _splitWidth,
-                    fontStyle: _fontStyle,
                     keyFontSize: _keyFontSize,
                     spaceFontSize: _spaceFontSize,
                     fontWeight: _fontWeight,

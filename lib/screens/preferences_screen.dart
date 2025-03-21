@@ -59,7 +59,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
   double _splitWidth = 100;
 
   // Text settings
-  String _fontStyle = 'GeistMono';
+  String _fontFamily = 'GeistMono';
   double _keyFontSize = 20;
   double _spaceFontSize = 14;
   FontWeight _fontWeight = FontWeight.w600;
@@ -147,7 +147,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     double splitWidth = await asyncPrefs.getDouble('splitWidth') ?? 100;
 
     // Text settings
-    String fontStyle = await asyncPrefs.getString('fontStyle') ?? 'GeistMono';
+    String fontFamily = await asyncPrefs.getString('fontFamily') ?? 'GeistMono';
     double keyFontSize = await asyncPrefs.getDouble('keyFontSize') ?? 20;
     double spaceFontSize = await asyncPrefs.getDouble('spaceFontSize') ?? 14;
     FontWeight fontWeight = FontWeight
@@ -189,7 +189,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       _splitWidth = splitWidth;
 
       // Text settings
-      _fontStyle = fontStyle;
+      _fontFamily = fontFamily;
       _keyFontSize = keyFontSize;
       _spaceFontSize = spaceFontSize;
       _fontWeight = fontWeight;
@@ -232,7 +232,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     await asyncPrefs.setDouble('splitWidth', _splitWidth);
 
     // Text settings
-    await asyncPrefs.setString('fontStyle', _fontStyle);
+    await asyncPrefs.setString('fontFamily', _fontFamily);
     await asyncPrefs.setDouble('keyFontSize', _keyFontSize);
     await asyncPrefs.setDouble('spaceFontSize', _spaceFontSize);
     await asyncPrefs.setInt('fontWeight', _fontWeight.index);
@@ -541,7 +541,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildSectionTitle('Text Settings'),
-        _buildDropdownOption('Font style', _fontStyle, [
+        _buildDropdownOption('Font style', _fontFamily, [
           'Berkeley Mono',
           'Cascadia Mono',
           'Comic Mono',
@@ -585,8 +585,8 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           'Ubuntu Mono',
           'Victor Mono',
         ], (value) {
-          setState(() => _fontStyle = value!);
-          _updateMainWindow('updateFontStyle', value);
+          setState(() => _fontFamily = value!);
+          _updateMainWindow('updateFontFamily', value);
         },
             subtitle:
                 'Make sure that the font is installed in your system. Falls back to Geist Mono'),
