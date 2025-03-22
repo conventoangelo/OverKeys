@@ -753,6 +753,13 @@ class _PreferencesScreenState extends State<PreferencesScreen>
   Widget _buildToggleOption(String label, bool value, Function(bool) onChanged,
       {String? subtitle}) {
     final colorScheme = ThemeManager.getTheme(_brightness).colorScheme;
+    const WidgetStateProperty<Icon> thumbIcon =
+        WidgetStateProperty<Icon>.fromMap(
+      <WidgetStatesConstraint, Icon>{
+        WidgetState.selected: Icon(Icons.check),
+        WidgetState.any: Icon(Icons.close),
+      },
+    );
     return _buildOptionContainer(
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -780,14 +787,9 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           ),
           const SizedBox(width: 16),
           Switch(
+            thumbIcon: thumbIcon,
             value: value,
             onChanged: onChanged,
-            thumbColor: WidgetStateProperty.resolveWith<Color>((states) {
-              if (states.contains(WidgetState.selected)) {
-                return colorScheme.surface;
-              }
-              return colorScheme.outline;
-            }),
           ),
         ],
       ),
