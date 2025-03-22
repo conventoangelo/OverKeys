@@ -3,9 +3,10 @@
 #include <optional>
 
 #include "flutter/generated_plugin_registrant.h"
-#include "desktop_multi_window/desktop_multi_window_plugin.h"
+#include <desktop_multi_window/desktop_multi_window_plugin.h>
 #include <window_manager/window_manager_plugin.h>
 #include <screen_retriever_windows/screen_retriever_windows_plugin_c_api.h>
+#include <url_launcher_windows/url_launcher_windows.h>
 
 FlutterWindow::FlutterWindow(const flutter::DartProject& project)
     : project_(project) {}
@@ -40,8 +41,11 @@ bool FlutterWindow::OnCreate() {
     WindowManagerPluginRegisterWithRegistrar(
         registry->GetRegistrarForPlugin("WindowManagerPlugin"));
         
-  ScreenRetrieverWindowsPluginCApiRegisterWithRegistrar(
+    ScreenRetrieverWindowsPluginCApiRegisterWithRegistrar(
         registry->GetRegistrarForPlugin("ScreenRetrieverWindowsPluginCApi"));
+
+    UrlLauncherWindowsRegisterWithRegistrar(
+        registry->GetRegistrarForPlugin("UrlLauncherWindows"));
 
     // Don't register DesktopMultiWindow with itself
   });
