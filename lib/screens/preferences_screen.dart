@@ -313,18 +313,24 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       child: ElevatedButton(
         onPressed: () => setState(() => _currentTab = tabName),
         style: ElevatedButton.styleFrom(
-          backgroundColor: isActive ? colorScheme.primary : Colors.transparent,
+          backgroundColor: isActive ? colorScheme.primary : colorScheme.surface,
           foregroundColor:
               isActive ? colorScheme.onPrimary : colorScheme.primary,
-          elevation: 0,
+          elevation: 1,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           side: BorderSide(
             color: colorScheme.primary,
-            width: 2.0,
+            width: 2,
           ),
         ),
-        child: Text(tabName),
+        child: Text(
+          tabName,
+          style: TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w400,
+          ),
+        ),
       ),
     );
   }
