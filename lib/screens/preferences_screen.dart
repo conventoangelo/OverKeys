@@ -893,11 +893,17 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           ),
           const SizedBox(width: 16),
           ElevatedButton.icon(
-            icon: Icon(Icons.folder_open, color: colorScheme.primary),
-            label: Text('Open', style: TextStyle(color: colorScheme.primary)),
+            icon: Icon(Icons.file_open, color: colorScheme.primary),
+            label: Text('Open',
+                style: TextStyle(
+                  color: colorScheme.primary,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 16,
+                )),
             style: ElevatedButton.styleFrom(
               backgroundColor: colorScheme.surfaceContainerHighest,
-              elevation: 0,
+              elevation: 2,
+              minimumSize: const Size(100, 45),
               side: BorderSide(color: colorScheme.primary),
             ),
             onPressed: () async {
@@ -907,10 +913,10 @@ class _PreferencesScreenState extends State<PreferencesScreen>
                 final file = File(configPath);
 
                 if (await file.exists()) {
-                  Process.start('explorer.exe', ['/select,', configPath]);
+                  Process.start('cmd.exe', ['/c', 'start', '', configPath]);
                 } else {
                   await configService.saveConfig(UserConfig());
-                  Process.start('explorer.exe', ['/select,', configPath]);
+                  Process.start('cmd.exe', ['/c', 'start', '', configPath]);
                 }
               } catch (e) {
                 debugPrint('Error opening config file: $e');
