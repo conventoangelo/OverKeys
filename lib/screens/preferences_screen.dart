@@ -942,13 +942,19 @@ class _PreferencesScreenState extends State<PreferencesScreen>
                   fontWeight: FontWeight.w600,
                   fontSize: 16)),
           if (subtitle != null)
-            Text(
-              subtitle,
-              style: TextStyle(
-                  color: colorScheme.onSurface.withAlpha(153), fontSize: 14.0),
-              softWrap: true,
-              overflow: TextOverflow.visible,
-            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 4.0, bottom: 8.0),
+              child: Text(
+                subtitle,
+                style: TextStyle(
+                    color: colorScheme.onSurface.withAlpha(153),
+                    fontSize: 14.0),
+                softWrap: true,
+                overflow: TextOverflow.visible,
+              ),
+            )
+          else
+            const SizedBox(height: 8.0),
           Slider(
             value: value,
             min: min,
@@ -979,8 +985,8 @@ class _PreferencesScreenState extends State<PreferencesScreen>
               });
             },
             onChangeEnd: onChanged,
-            activeColor: colorScheme.primary,
-            inactiveColor: colorScheme.outline,
+            // ignore: deprecated_member_use
+            year2023: false,
           ),
         ],
       ),
