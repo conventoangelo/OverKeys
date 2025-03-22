@@ -1,11 +1,12 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:desktop_multi_window/desktop_multi_window.dart';
-import 'package:window_manager/window_manager.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:window_manager/window_manager.dart';
 import 'package:overkeys/models/user_config.dart';
 import 'package:overkeys/models/keyboard_layouts.dart';
 import 'package:overkeys/utils/theme_manager.dart';
@@ -274,30 +275,16 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           appBar: AppBar(
             toolbarHeight: 100,
             title: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 80, vertical: 100),
-              child: Text(
-                'Preferences',
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
-              ),
+              padding: const EdgeInsets.symmetric(vertical: 100),
+              child: _buildTabBar(),
             ),
+            automaticallyImplyLeading: false,
           ),
           body: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 80.0),
-            child: Column(
-              children: [
-                _buildTabBar(),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 16.0),
-                    child: _buildCurrentTabContent(),
-                  ),
-                ),
-              ],
+            padding: const EdgeInsets.symmetric(horizontal: 60.0),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(20.0, 0, 16.0, 20.0),
+              child: _buildCurrentTabContent(),
             ),
           ),
         );
