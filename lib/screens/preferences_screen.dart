@@ -297,6 +297,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     return Container(
       padding: const EdgeInsets.all(8),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: ['General', 'Appearance', 'Keyboard', 'Text', 'About']
             .map((tab) => _buildTabButton(tab))
             .toList(),
@@ -347,7 +348,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
 
   Widget _buildGeneralTab() {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         _buildSectionTitle('General Settings'),
         _buildToggleOption('Open on system startup', _launchAtStartup, (value) {
@@ -422,7 +423,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
 
   Widget _buildAppearanceTab() {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         _buildSectionTitle('Appearance Settings'),
         _buildSliderOption('Opacity', _opacity, 0.1, 1.0, 18, (value) {
@@ -477,7 +478,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
 
   Widget _buildKeyboardTab() {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         _buildSectionTitle('Keyboard Layout'),
         _buildDropdownOption('Keymap style', _keymapStyle,
@@ -534,7 +535,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
 
   Widget _buildTextTab() {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         _buildSectionTitle('Text Settings'),
         _buildDropdownOption('Font style', _fontFamily, [
