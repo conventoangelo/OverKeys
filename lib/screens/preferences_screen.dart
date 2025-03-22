@@ -975,8 +975,8 @@ class _PreferencesScreenState extends State<PreferencesScreen>
                           heading: Text(
                             'Select color',
                             style: TextStyle(
-                                color: colorScheme.onSurface,
-                                fontWeight: FontWeight.bold),
+                              color: colorScheme.onSurface,
+                            ),
                           ),
                           showColorName: true,
                           showColorCode: true,
