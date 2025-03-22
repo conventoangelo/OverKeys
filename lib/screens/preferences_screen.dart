@@ -800,6 +800,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       Function(String?) onChanged,
       {String? subtitle}) {
     final colorScheme = ThemeManager.getTheme(_brightness).colorScheme;
+    final TextEditingController controller = TextEditingController(text: value);
 
     return _buildOptionContainer(
       Row(
@@ -827,28 +828,34 @@ class _PreferencesScreenState extends State<PreferencesScreen>
             ),
           ),
           const SizedBox(width: 16),
-          DropdownButton<String>(
-            value: value,
-            items: options
-                .map((String option) => DropdownMenuItem<String>(
+          DropdownMenu<String>(
+            controller: controller,
+            initialSelection: value,
+            requestFocusOnTap: true,
+            enableFilter: true,
+            width: 210,
+            menuHeight: 300,
+            dropdownMenuEntries: options
+                .map((String option) => DropdownMenuEntry<String>(
                       value: option,
-                      child: Text(
-                        option,
-                        style: TextStyle(
+                      label: option,
+                      style: MenuItemButton.styleFrom(
+                        textStyle: TextStyle(
                           fontFamily: option,
                           fontFamilyFallback: const ['Manrope'],
-                          color: colorScheme.onSurface,
                           fontSize: 15,
                         ),
                       ),
                     ))
                 .toList(),
-            onChanged: onChanged,
-            dropdownColor: colorScheme.surface,
-            style: TextStyle(
+            onSelected: (String? newValue) {
+              if (newValue != null) {
+                onChanged(newValue);
+              }
+            },
+            textStyle: TextStyle(
               fontFamily: value,
               fontFamilyFallback: const ['Manrope'],
-              color: colorScheme.onSurface,
               fontSize: 15,
             ),
           ),
