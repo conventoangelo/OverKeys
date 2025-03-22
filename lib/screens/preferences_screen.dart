@@ -710,7 +710,8 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           const SizedBox(height: 20),
           ElevatedButton.icon(
             onPressed: () async {
-              await launchUrl(Uri.parse('https://github.com/conventoangelo/overkeys'),
+              await launchUrl(
+                  Uri.parse('https://github.com/conventoangelo/overkeys'),
                   mode: LaunchMode.externalApplication);
             },
             icon: ImageIcon(
@@ -965,7 +966,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
             max: max,
             onChanged: (value) {
               final Map<String, Function(double)> updates = {
-                'Font size': (v) => _keyFontSize = v,
+                'Key font size': (v) => _keyFontSize = v,
                 'Space font size': (v) => _spaceFontSize = v,
                 'Key size': (v) => _keySize = v,
                 'Key border radius': (v) => _keyBorderRadius = v,
