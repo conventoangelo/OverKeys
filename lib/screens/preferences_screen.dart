@@ -381,7 +381,10 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           sizeCurve: Curves.easeInOut,
         ),
         _buildDropdownOption('Layout', _keyboardLayoutName,
-            availableLayouts.map((layout) => (layout.name)).toList(), (value) {
+            availableLayouts.map((layout) => (layout.name)).toList(),
+            subtitle: _autoHideEnabled
+                ? 'OverKeys must remain visible to avoid losing focus when typing in the dropdown. You may turn off auto-hide under General settings.'
+                : null, (value) {
           setState(() => _keyboardLayoutName = value!);
           _updateMainWindow('updateLayout', value);
         }),
@@ -627,7 +630,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           _updateMainWindow('updateFontFamily', value);
         },
             subtitle:
-                'Make sure that the font is installed in your system. Falls back to Geist Mono'),
+                'Make sure that the font is installed in your system. Falls back to Geist Mono.${_autoHideEnabled ? ' OverKeys must remain visible to avoid losing focus when typing in the dropdown. You may turn off auto-hide under General settings.' : ''}'),
         _buildSliderOption('Key font size', _keyFontSize, 12, 32, 40, (value) {
           setState(() => _keyFontSize = value);
           _updateMainWindow('updateKeyFontSize', value);
@@ -666,7 +669,10 @@ class _PreferencesScreenState extends State<PreferencesScreen>
               'Bold',
               'ExtraBold',
               'Black'
-            ], (value) {
+            ],
+            subtitle: _autoHideEnabled
+                ? 'OverKeys must remain visible to avoid losing focus when typing in the dropdown. You may turn off auto-hide under General settings.'
+                : null, (value) {
           setState(() {
             switch (value) {
               case 'Thin':
@@ -863,7 +869,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
               ],
             ),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: 40),
           DropdownMenu<String>(
             controller: controller,
             initialSelection: value,
