@@ -681,26 +681,58 @@ class _PreferencesScreenState extends State<PreferencesScreen>
   Widget _buildAboutTab() {
     final colorScheme = ThemeManager.getTheme(_brightness).colorScheme;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildSectionTitle('About'),
-        Text('OverKeys',
-            style: TextStyle(
-                color: colorScheme.onSurface,
-                fontSize: 24,
-                fontWeight: FontWeight.bold)),
-        const SizedBox(height: 8),
-        Text('Version 0.2.3-alpha.1',
-            style: TextStyle(color: colorScheme.onSurface.withAlpha(153))),
-        const SizedBox(height: 16),
-        Text(
-            'OverKeys is an open-source, customizable on-screen keyboard for Windows. Learn and practice alternative layouts, personalize appearance, and improve your typing.',
-            style: TextStyle(color: colorScheme.onSurface)),
-        const SizedBox(height: 16),
-        Text('© 2024 Angelo Convento. All rights reserved.',
-            style: TextStyle(color: colorScheme.onSurface.withAlpha(153))),
-      ],
+    return SizedBox(
+      width: double.infinity,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          _buildSectionTitle('About'),
+          const SizedBox(height: 20),
+          Image.asset('assets/images/app_icon.png', width: 120),
+          const SizedBox(height: 20),
+          Text('OverKeys',
+              style: TextStyle(
+                  color: colorScheme.onSurface,
+                  fontSize: 28,
+                  fontWeight: FontWeight.w900)),
+          const SizedBox(height: 20),
+          Text('Version: 0.2.3-alpha.1',
+              style: TextStyle(
+                  color: colorScheme.onSurface,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600)),
+          const SizedBox(height: 10),
+          Text('© 2024 Angelo Convento',
+              style: TextStyle(
+                  color: colorScheme.onSurface.withAlpha(153),
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500)),
+          const SizedBox(height: 20),
+          ElevatedButton.icon(
+            onPressed: () async {
+              await launchUrl(Uri.parse('https://github.com/conventoangelo/overkeys'),
+                  mode: LaunchMode.externalApplication);
+            },
+            icon: ImageIcon(
+              AssetImage('assets/images/github-mark.png'),
+              size: 20,
+            ),
+            label: Text(
+              'View on GitHub',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            style: ElevatedButton.styleFrom(
+              minimumSize: const Size(200, 50),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
