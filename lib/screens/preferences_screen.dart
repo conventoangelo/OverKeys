@@ -365,14 +365,21 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           setState(() => _autoHideEnabled = value);
           _updateMainWindow('updateAutoHideEnabled', value);
         }),
-        if (_autoHideEnabled)
-          _buildSliderOption(
+        AnimatedCrossFade(
+          duration: const Duration(milliseconds: 300),
+          firstChild: const SizedBox.shrink(),
+          secondChild: _buildSliderOption(
               'Auto-hide duration (seconds)', _autoHideDuration, 0.5, 5.0, 9,
               (value) {
             double roundedValue = (value * 2).round() / 2;
             setState(() => _autoHideDuration = roundedValue);
             _updateMainWindow('updateAutoHideDuration', roundedValue);
           }, valueDisplayFormatter: (value) => value.toStringAsFixed(1)),
+          crossFadeState: _autoHideEnabled
+              ? CrossFadeState.showSecond
+              : CrossFadeState.showFirst,
+          sizeCurve: Curves.easeInOut,
+        ),
         _buildDropdownOption('Layout', _keyboardLayoutName,
             availableLayouts.map((layout) => (layout.name)).toList(), (value) {
           setState(() => _keyboardLayoutName = value!);
@@ -383,46 +390,57 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           setState(() => _showAdvancedSettings = value);
           _savePreferences();
         }),
-        if (_showAdvancedSettings) ...[
-          _buildToggleOption('Use custom layout from config', _useUserLayout,
-              subtitle:
-                  'Sets layout to user-defined defaultUserLayout. Make sure that the layout is saved in the config file.',
-              (value) {
-            if (value && _kanataEnabled) {
-              // If turning on useUserLayout, turn off kanataEnabled
-              setState(() {
-                _useUserLayout = value;
-                _kanataEnabled = false;
-              });
-              _updateMainWindow('updateKanataEnabled', false);
-            } else {
-              setState(() => _useUserLayout = value);
-            }
-            _updateMainWindow('updateUseUserLayout', value);
-          }),
-          _buildToggleOption('Show alternative layout', _showAltLayout,
-              (value) {
-            setState(() => _showAltLayout = value);
-            _updateMainWindow('updateShowAltLayout', value);
-          }),
-          _buildToggleOption('Connect to Kanata', _kanataEnabled,
-              subtitle:
-                  'Make sure that Kanata and OverKeys are using the same port. Restart OverKeys if config file changes were made to apply changes.',
-              (value) {
-            if (value && _useUserLayout) {
-              // If turning on kanataEnabled, turn off useUserLayout
-              setState(() {
-                _kanataEnabled = value;
-                _useUserLayout = false;
-              });
-              _updateMainWindow('updateUseUserLayout', false);
-            } else {
-              setState(() => _kanataEnabled = value);
-            }
-            _updateMainWindow('updateKanataEnabled', value);
-          }),
-          _buildOpenConfigButton(),
-        ],
+        AnimatedCrossFade(
+          duration: const Duration(milliseconds: 300),
+          firstChild: const SizedBox.shrink(),
+          secondChild: Column(
+            children: [
+              _buildToggleOption(
+                  'Use custom layout from config', _useUserLayout,
+                  subtitle:
+                      'Sets layout to user-defined defaultUserLayout. Make sure that the layout is saved in the config file.',
+                  (value) {
+                if (value && _kanataEnabled) {
+                  // If turning on useUserLayout, turn off kanataEnabled
+                  setState(() {
+                    _useUserLayout = value;
+                    _kanataEnabled = false;
+                  });
+                  _updateMainWindow('updateKanataEnabled', false);
+                } else {
+                  setState(() => _useUserLayout = value);
+                }
+                _updateMainWindow('updateUseUserLayout', value);
+              }),
+              _buildToggleOption('Show alternative layout', _showAltLayout,
+                  (value) {
+                setState(() => _showAltLayout = value);
+                _updateMainWindow('updateShowAltLayout', value);
+              }),
+              _buildToggleOption('Connect to Kanata', _kanataEnabled,
+                  subtitle:
+                      'Make sure that Kanata and OverKeys are using the same port. Restart OverKeys if config file changes were made to apply changes.',
+                  (value) {
+                if (value && _useUserLayout) {
+                  // If turning on kanataEnabled, turn off useUserLayout
+                  setState(() {
+                    _kanataEnabled = value;
+                    _useUserLayout = false;
+                  });
+                  _updateMainWindow('updateUseUserLayout', false);
+                } else {
+                  setState(() => _kanataEnabled = value);
+                }
+                _updateMainWindow('updateKanataEnabled', value);
+              }),
+              _buildOpenConfigButton(),
+            ],
+          ),
+          crossFadeState: _showAdvancedSettings
+              ? CrossFadeState.showSecond
+              : CrossFadeState.showFirst,
+          sizeCurve: Curves.easeInOut,
+        ),
       ],
     );
   }
@@ -503,11 +521,33 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           setState(() => _showTopRow = value);
           _updateMainWindow('updateShowTopRow', value);
         }),
-        _buildToggleOption('Show grave key', _showGraveKey, (value) {
-          setState(() => _showGraveKey = value);
-          _updateMainWindow('updateShowGraveKey', value);
-        }),
+        AnimatedCrossFade(
+          duration: const Duration(milliseconds: 300),
+          firstChild: const SizedBox.shrink(),
+          secondChild:
+              _buildToggleOption('Show grave key', _showGraveKey, (value) {
+            setState(() => _showGraveKey = value);
+            _updateMainWindow('updateShowGraveKey', value);
+          }),
+          crossFadeState: _showTopRow
+              ? CrossFadeState.showSecond
+              : CrossFadeState.showFirst,
+          sizeCurve: Curves.easeInOut,
+        ),
         _buildSectionTitle('Key Dimensions'),
+        AnimatedCrossFade(
+          duration: const Duration(milliseconds: 300),
+          firstChild: const SizedBox.shrink(),
+          secondChild: _buildSliderOption(
+              'Split width', _splitWidth, 30, 200, 34, (value) {
+            setState(() => _splitWidth = value);
+            _updateMainWindow('updateSplitWidth', value);
+          }),
+          crossFadeState: _keymapStyle == 'Split Matrix'
+              ? CrossFadeState.showSecond
+              : CrossFadeState.showFirst,
+          sizeCurve: Curves.easeInOut,
+        ),
         _buildSliderOption('Key size', _keySize, 40, 60, 40, (value) {
           setState(() => _keySize = value);
           _updateMainWindow('updateKeySize', value);
@@ -530,11 +570,6 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           setState(() => _spaceWidth = value);
           _updateMainWindow('updateSpaceWidth', value);
         }),
-        if (_keymapStyle == 'Split Matrix')
-          _buildSliderOption('Split width', _splitWidth, 30, 200, 34, (value) {
-            setState(() => _splitWidth = value);
-            _updateMainWindow('updateSplitWidth', value);
-          }),
       ],
     );
   }
