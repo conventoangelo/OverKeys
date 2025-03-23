@@ -69,7 +69,7 @@ IDI_APP_ICON            ICON                    "resources\\app_icon.ico"
 #if defined(FLUTTER_VERSION)
 #define VERSION_AS_STRING FLUTTER_VERSION
 #else
-#define VERSION_AS_STRING "0.2.3-alpha.1"
+#define VERSION_AS_STRING "1.0.0"
 #endif
 
 VS_VERSION_INFO VERSIONINFO
@@ -93,7 +93,7 @@ BEGIN
             VALUE "FileDescription", "OverKeys" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "OverKeys" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2024 Angelo Convento. All rights reserved." "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2024 Angelo Convento" "\0"
             VALUE "OriginalFilename", "OverKeys.exe" "\0"
             VALUE "ProductName", "OverKeys" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
