@@ -10,6 +10,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:overkeys/models/user_config.dart';
 import 'package:overkeys/models/keyboard_layouts.dart';
+import 'package:overkeys/models/mouse_layout.dart';
 import 'package:overkeys/utils/theme_manager.dart';
 import 'package:overkeys/services/config_service.dart';
 
@@ -70,6 +71,16 @@ class _PreferencesScreenState extends State<PreferencesScreen>
   Color _keyTextColor = Colors.white;
   Color _keyTextColorNotPressed = Colors.black;
 
+  // Mouse settings
+  bool _enableMouse = false;
+  double _mouseWidth = 130;
+  double _mouseHeight = 200;
+  double _mouseBorderRadius = 20;
+  bool _lockAspectRatio = true;
+  double _aspectRatio = 0.67;
+  String _mouseLayoutName = 'Simple Mouse';
+  double _mouseGap = 40;
+
   @override
   void initState() {
     super.initState();
@@ -78,6 +89,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     _setupMethodHandler();
     _detectSystemTheme();
     _loadAppVersion();
+    _aspectRatio = _mouseWidth / _mouseHeight;
   }
 
   void _detectSystemTheme() {
@@ -172,6 +184,16 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     Color keyTextColorNotPressed =
         Color(await asyncPrefs.getInt('keyTextColorNotPressed') ?? 0xFF000000);
 
+    // Mouse settings
+    bool enableMouse = await asyncPrefs.getBool('enableMouse') ?? false;
+    String mouseLayoutName =
+        await asyncPrefs.getString('mouseLayoutName') ?? 'Simple Mouse';
+    double mouseWidth = await asyncPrefs.getDouble('mouseWidth') ?? 130;
+    double mouseHeight = await asyncPrefs.getDouble('mouseHeight') ?? 200;
+    double mouseBorderRadius =
+        await asyncPrefs.getDouble('mouseBorderRadius') ?? 20;
+    double mouseGap = await asyncPrefs.getDouble('mouseGap') ?? 40;
+
     setState(() {
       // General settings
       _launchAtStartup = launchAtStartup;
@@ -211,6 +233,14 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       _fontWeight = fontWeight;
       _keyTextColor = keyTextColor;
       _keyTextColorNotPressed = keyTextColorNotPressed;
+
+      // Mouse settings
+      _enableMouse = enableMouse;
+      _mouseLayoutName = mouseLayoutName;
+      _mouseWidth = mouseWidth;
+      _mouseHeight = mouseHeight;
+      _mouseBorderRadius = mouseBorderRadius;
+      _mouseGap = mouseGap;
     });
   }
 
@@ -256,6 +286,14 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     await asyncPrefs.setInt('keyTextColor', _keyTextColor.toARGB32());
     await asyncPrefs.setInt(
         'keyTextColorNotPressed', _keyTextColorNotPressed.toARGB32());
+
+    // Mouse settings
+    await asyncPrefs.setBool('enableMouse', _enableMouse);
+    await asyncPrefs.setString('mouseLayoutName', _mouseLayoutName);
+    await asyncPrefs.setDouble('mouseWidth', _mouseWidth);
+    await asyncPrefs.setDouble('mouseHeight', _mouseHeight);
+    await asyncPrefs.setDouble('mouseBorderRadius', _mouseBorderRadius);
+    await asyncPrefs.setDouble('mouseGap', _mouseGap);
   }
 
   void _updateMainWindow(dynamic method, dynamic value) async {
@@ -310,9 +348,14 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       padding: const EdgeInsets.all(8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: ['General', 'Appearance', 'Keyboard', 'Text', 'About']
-            .map((tab) => _buildTabButton(tab))
-            .toList(),
+        children: [
+          'General',
+          'Appearance',
+          'Keyboard',
+          'Mouse',
+          'Text',
+          'About'
+        ].map((tab) => _buildTabButton(tab)).toList(),
       ),
     );
   }
@@ -357,6 +400,8 @@ class _PreferencesScreenState extends State<PreferencesScreen>
         return _buildTextTab();
       case 'Keyboard':
         return _buildKeyboardTab();
+      case 'Mouse':
+        return _buildMouseTab();
       case 'About':
         return _buildAboutTab();
       default:
@@ -731,6 +776,110 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     );
   }
 
+  Widget _buildMouseTab() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        _buildSectionTitle('Mouse Settings'),
+        _buildToggleOption('Enable Mouse', _enableMouse, (value) {
+          setState(() => _enableMouse = value);
+          _updateMainWindow('updateEnableMouse', value);
+        }),
+        AnimatedCrossFade(
+          duration: const Duration(milliseconds: 300),
+          firstChild: const SizedBox.shrink(),
+          secondChild: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        _mouseWidth = 130;
+                        _mouseHeight = 200;
+                        _mouseBorderRadius = 20;
+                        _aspectRatio = _mouseWidth / _mouseHeight;
+                        _updateMainWindow('updateMouseWidth', _mouseWidth);
+                        _updateMainWindow('updateMouseHeight', _mouseHeight);
+                        _updateMainWindow(
+                            'updateMouseBorderRadius', _mouseBorderRadius);
+                      });
+                    },
+                    child: const Text('Reset to defaults'),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              _buildDropdownOption(
+                'Mouse Layout',
+                _mouseLayoutName,
+                availableMouseLayouts.map((layout) => layout.name).toList(),
+                (value) {
+                  setState(() => _mouseLayoutName = value!);
+                  _updateMainWindow('updateMouseLayout', value);
+                },
+              ),
+              _buildToggleOption('Lock aspect ratio', _lockAspectRatio,
+                  (value) {
+                setState(() {
+                  _lockAspectRatio = value;
+                  if (value) {
+                    _aspectRatio = _mouseWidth / _mouseHeight;
+                  }
+                });
+              }),
+              _buildSliderOption('Mouse width', _mouseWidth, 100, 350, 50,
+                  (value) {
+                setState(() {
+                  _mouseWidth = value;
+                  if (_lockAspectRatio) {
+                    // Clamp the width first, then calculate height
+                    double clampedWidth = value.clamp(100.0, 350.0);
+                    _mouseHeight =
+                        (clampedWidth / _aspectRatio).clamp(100.0, 300.0);
+                    _updateMainWindow('updateMouseHeight', _mouseHeight);
+                  }
+                  _updateMainWindow('updateMouseWidth', value);
+                });
+              }),
+              _buildSliderOption('Mouse height', _mouseHeight, 100, 300, 40,
+                  (value) {
+                setState(() {
+                  _mouseHeight = value;
+                  if (_lockAspectRatio) {
+                    // Clamp the height first, then calculate width
+                    double clampedHeight = value.clamp(100.0, 300.0);
+                    _mouseWidth =
+                        (clampedHeight * _aspectRatio).clamp(100.0, 350.0);
+                    _updateMainWindow('updateMouseWidth', _mouseWidth);
+                  }
+                  _updateMainWindow('updateMouseHeight', value);
+                });
+              }),
+              _buildSliderOption(
+                  'Mouse border radius', _mouseBorderRadius, 0, 50, 50,
+                  (value) {
+                setState(() => _mouseBorderRadius = value);
+                _updateMainWindow('updateMouseBorderRadius', value);
+              }),
+              _buildSliderOption(
+                  'Gap between mouse and keyboard', _mouseGap, 0, 100, 20,
+                  (value) {
+                setState(() => _mouseGap = value);
+                _updateMainWindow('updateMouseGap', value);
+              }),
+            ],
+          ),
+          crossFadeState: _enableMouse
+              ? CrossFadeState.showSecond
+              : CrossFadeState.showFirst,
+          sizeCurve: Curves.easeInOut,
+        ),
+      ],
+    );
+  }
+
   Widget _buildAboutTab() {
     final colorScheme = ThemeManager.getTheme(_brightness).colorScheme;
 
@@ -1033,6 +1182,13 @@ class _PreferencesScreenState extends State<PreferencesScreen>
                 'Marker width': (v) => _markerWidth = v,
                 'Marker height': (v) => _markerHeight = v,
                 'Marker border radius': (v) => _markerBorderRadius = v,
+                'Mouse enabled': (v) => _enableMouse = v == 1,
+                'Mouse layout': (v) => _mouseLayoutName =
+                    v == 0 ? 'Simple Mouse' : 'Standard Mouse',
+                'Mouse width': (v) => _mouseWidth = v,
+                'Mouse height': (v) => _mouseHeight = v,
+                'Mouse border radius': (v) => _mouseBorderRadius = v,
+                'Gap between mouse and keyboard': (v) => _mouseGap = v,
               };
               setState(() {
                 updates[label]?.call(value);

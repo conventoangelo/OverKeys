@@ -14,6 +14,7 @@ import 'package:overkeys/services/kanata_service.dart';
 import 'package:overkeys/utils/key_code.dart';
 import 'models/keyboard_layouts.dart';
 import 'screens/keyboard_screen.dart';
+import 'screens/mouse_screen.dart';
 import 'utils/hooks.dart';
 
 class MainApp extends StatefulWidget {
@@ -65,6 +66,21 @@ class _MainAppState extends State<MainApp> with TrayListener {
   double _markerWidth = 10;
   double _markerHeight = 2;
   double _markerBorderRadius = 10;
+
+  // Mouse settings
+  final Map<int, bool> _mouseButtonStates = {
+    0: false, // Left button
+    1: false, // Right button
+    2: false, // Middle button
+    3: false, // Back button
+    4: false, // Forward button
+  };
+  bool _enableMouse = false;
+  double _mouseWidth = 130;
+  double _mouseHeight = 200;
+  double _mouseBorderRadius = 20;
+  String _mouseLayoutName = 'Simple Mouse';
+  double _mouseGap = 40;
 
   // Keyboard settings
   String _keymapStyle = 'Staggered';
@@ -245,6 +261,16 @@ class _MainAppState extends State<MainApp> with TrayListener {
     bool showAltLayout = await asyncPrefs.getBool('showAltLayout') ?? false;
     bool kanataEnabled = await asyncPrefs.getBool('kanataEnabled') ?? false;
 
+    // Mouse settings
+    bool enableMouse = await asyncPrefs.getBool('enableMouse') ?? false;
+    double mouseWidth = await asyncPrefs.getDouble('mouseWidth') ?? 130;
+    double mouseHeight = await asyncPrefs.getDouble('mouseHeight') ?? 200;
+    double mouseBorderRadius =
+        await asyncPrefs.getDouble('mouseBorderRadius') ?? 20;
+    String mouseLayoutName =
+        await asyncPrefs.getString('mouseLayoutName') ?? 'Simple Mouse';
+    double mouseGap = await asyncPrefs.getDouble('mouseGap') ?? 40;
+
     // Appearance settings
     double opacity = await asyncPrefs.getDouble('opacity') ?? 0.6;
     Color keyColorPressed =
@@ -296,6 +322,14 @@ class _MainAppState extends State<MainApp> with TrayListener {
       _altLayout = _keyboardLayout;
       _kanataEnabled = kanataEnabled;
 
+      // Mouse settings
+      _enableMouse = enableMouse;
+      _mouseWidth = mouseWidth;
+      _mouseHeight = mouseHeight;
+      _mouseBorderRadius = mouseBorderRadius;
+      _mouseLayoutName = mouseLayoutName;
+      _mouseGap = mouseGap;
+
       // Appearance settings
       _opacity = opacity;
       _keyColorPressed = keyColorPressed;
@@ -329,12 +363,21 @@ class _MainAppState extends State<MainApp> with TrayListener {
 
   Future<void> _savePreferences() async {
     // General settings
+    await asyncPrefs.setBool('launchAtStartup', _launchAtStartup);
     await asyncPrefs.setBool('autoHideEnabled', _autoHideEnabled);
     await asyncPrefs.setDouble('autoHideDuration', _autoHideDuration);
     await asyncPrefs.setString('layout', _initialKeyboardLayout!.name);
     await asyncPrefs.setBool('useUserLayout', _useUserLayout);
     await asyncPrefs.setBool('showAltLayout', _showAltLayout);
     await asyncPrefs.setBool('kanataEnabled', _kanataEnabled);
+
+    // Mouse settings
+    await asyncPrefs.setBool('enableMouse', _enableMouse);
+    await asyncPrefs.setDouble('mouseWidth', _mouseWidth);
+    await asyncPrefs.setDouble('mouseHeight', _mouseHeight);
+    await asyncPrefs.setDouble('mouseBorderRadius', _mouseBorderRadius);
+    await asyncPrefs.setString('mouseLayoutName', _mouseLayoutName);
+    await asyncPrefs.setDouble('mouseGap', _mouseGap);
 
     // Appearance settings
     await asyncPrefs.setDouble('opacity', _opacity);
@@ -457,6 +500,26 @@ class _MainAppState extends State<MainApp> with TrayListener {
             }
           });
 
+        // Mouse settings
+        case 'updateEnableMouse':
+          final enableMouse = call.arguments as bool;
+          setState(() => _enableMouse = enableMouse);
+        case 'updateMouseWidth':
+          final mouseWidth = call.arguments as double;
+          setState(() => _mouseWidth = mouseWidth);
+        case 'updateMouseHeight':
+          final mouseHeight = call.arguments as double;
+          setState(() => _mouseHeight = mouseHeight);
+        case 'updateMouseBorderRadius':
+          final mouseBorderRadius = call.arguments as double;
+          setState(() => _mouseBorderRadius = mouseBorderRadius);
+        case 'updateMouseLayout':
+          final mouseLayoutName = call.arguments as String;
+          setState(() => _mouseLayoutName = mouseLayoutName);
+        case 'updateMouseGap':
+          final mouseGap = call.arguments as double;
+          setState(() => _mouseGap = mouseGap);
+
         // Appearance settings
         case 'updateOpacity':
           final opacity = call.arguments as double;
@@ -558,25 +621,45 @@ class _MainAppState extends State<MainApp> with TrayListener {
   }
 
   void _handleKeyEvent(dynamic message) {
-    if (message[0] is! int) return;
-
-    setState(() {
-      int keyCode = message[0];
-      bool isPressed = message[1];
-      bool isShiftDown = message[2];
+    if (message[0] == 'keyboard') {
+      int keyCode = message[1];
+      bool isPressed = message[2];
+      bool isShiftDown = message[3];
 
       if (kDebugMode) {
+        String key = getKeyFromKeyCodeShift(keyCode, isShiftDown);
         print(
-            'Key: ${getKeyFromKeyCodeShift(keyCode, isShiftDown).padRight(10)}\tKeyCode: ${keyCode.toString().padRight(5)}\tPressed: ${isPressed.toString().padRight(5)}\tShift: $isShiftDown');
+            'Key: ${key.padRight(10)}\tKeyCode: ${keyCode.toString().padRight(5)}\tPressed: ${isPressed.toString().padRight(5)}\tShift: $isShiftDown');
       }
 
-      _keyPressStates[getKeyFromKeyCodeShift(keyCode, isShiftDown)] = isPressed;
-      _resetAutoHideTimer();
-
-      if (_autoHideEnabled && !_isWindowVisible) {
-        _fadeIn();
+      String key = getKeyFromKeyCodeShift(keyCode, isShiftDown);
+      bool currentState = _keyPressStates[key] ?? false;
+      if (currentState != isPressed) {
+        setState(() {
+          _keyPressStates[key] = isPressed;
+        });
       }
-    });
+    } else if (message[0] == 'mouse') {
+      int buttonCode = message[1];
+      bool isPressed = message[2];
+
+      if (kDebugMode) {
+        String buttonName = getMouseButtonFromCode(buttonCode);
+        print(
+            'Mouse: ${buttonName.padRight(10)}\tButtonCode: ${buttonCode.toString().padRight(5)}\tPressed: ${isPressed.toString().padRight(5)}');
+      }
+
+      setState(() {
+        // Update the state of the specific button
+        _mouseButtonStates[buttonCode] = isPressed;
+      });
+    }
+
+    _resetAutoHideTimer();
+
+    if (_autoHideEnabled && !_isWindowVisible) {
+      _fadeIn();
+    }
   }
 
   void _resetAutoHideTimer() {
@@ -774,34 +857,57 @@ class _MainAppState extends State<MainApp> with TrayListener {
               },
               child: Container(
                 color: Colors.transparent,
-                child: Center(
-                  child: KeyboardScreen(
-                    keyPressStates: _keyPressStates,
-                    layout: _keyboardLayout,
-                    showAltLayout: _showAltLayout,
-                    altLayout: _altLayout,
-                    keyColorPressed: _keyColorPressed,
-                    keyColorNotPressed: _keyColorNotPressed,
-                    markerColor: _markerColor,
-                    markerColorNotPressed: _markerColorNotPressed,
-                    markerOffset: _markerOffset,
-                    markerWidth: _markerWidth,
-                    markerHeight: _markerHeight,
-                    markerBorderRadius: _markerBorderRadius,
-                    keymapStyle: _keymapStyle,
-                    showTopRow: _showTopRow,
-                    showGraveKey: _showGraveKey,
-                    keySize: _keySize,
-                    keyBorderRadius: _keyBorderRadius,
-                    keyPadding: _keyPadding,
-                    spaceWidth: _spaceWidth,
-                    splitWidth: _splitWidth,
-                    keyFontSize: _keyFontSize,
-                    spaceFontSize: _spaceFontSize,
-                    fontWeight: _fontWeight,
-                    keyTextColor: _keyTextColor,
-                    keyTextColorNotPressed: _keyTextColorNotPressed,
-                  ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Keyboard
+                    KeyboardScreen(
+                      keyPressStates: _keyPressStates,
+                      layout: _keyboardLayout,
+                      showAltLayout: _showAltLayout,
+                      altLayout: _altLayout,
+                      keyColorPressed: _keyColorPressed,
+                      keyColorNotPressed: _keyColorNotPressed,
+                      markerColor: _markerColor,
+                      markerColorNotPressed: _markerColorNotPressed,
+                      markerOffset: _markerOffset,
+                      markerWidth: _markerWidth,
+                      markerHeight: _markerHeight,
+                      markerBorderRadius: _markerBorderRadius,
+                      keymapStyle: _keymapStyle,
+                      showTopRow: _showTopRow,
+                      showGraveKey: _showGraveKey,
+                      keySize: _keySize,
+                      keyBorderRadius: _keyBorderRadius,
+                      keyPadding: _keyPadding,
+                      spaceWidth: _spaceWidth,
+                      splitWidth: _splitWidth,
+                      keyFontSize: _keyFontSize,
+                      spaceFontSize: _spaceFontSize,
+                      fontWeight: _fontWeight,
+                      keyTextColor: _keyTextColor,
+                      keyTextColorNotPressed: _keyTextColorNotPressed,
+                    ),
+                    // Spacing between keyboard and mouse
+                    if (_enableMouse) SizedBox(width: _mouseGap),
+                    // Mouse
+                    if (_enableMouse)
+                      MouseScreen(
+                        buttonStates: _mouseButtonStates,
+                        mouseColorPressed: _keyColorPressed,
+                        mouseColorNotPressed: _keyColorNotPressed,
+                        mouseWidth: _mouseWidth,
+                        mouseHeight: _mouseHeight,
+                        mouseBorderRadius: _mouseBorderRadius,
+                        markerColor: _markerColor,
+                        markerColorNotPressed: _markerColorNotPressed,
+                        markerWidth: _markerWidth,
+                        markerHeight: _markerHeight,
+                        markerBorderRadius: _markerBorderRadius,
+                        markerOffset: _markerOffset,
+                        hasSideButtons: _mouseLayoutName == 'Standard Mouse',
+                      ),
+                  ],
                 ),
               ),
             ),
