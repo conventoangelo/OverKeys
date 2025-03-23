@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:window_manager/window_manager.dart';
@@ -27,6 +28,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
 
   // UI state
   Brightness _brightness = Brightness.dark;
+  String _appVersion = '';
   String _currentTab = 'General';
 
   // General settings
@@ -75,6 +77,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     _loadPreferences();
     _setupMethodHandler();
     _detectSystemTheme();
+    _loadAppVersion();
   }
 
   void _detectSystemTheme() {
@@ -88,6 +91,15 @@ class _PreferencesScreenState extends State<PreferencesScreen>
         });
       }
     };
+  }
+
+  Future<void> _loadAppVersion() async {
+    final packageInfo = await PackageInfo.fromPlatform();
+    if (mounted) {
+      setState(() {
+        _appVersion = packageInfo.version;
+      });
+    }
   }
 
   @override
@@ -737,7 +749,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
                   fontSize: 28,
                   fontWeight: FontWeight.w900)),
           const SizedBox(height: 20),
-          Text('Version: 0.2.3-alpha.1',
+          Text('Version: $_appVersion',
               style: TextStyle(
                   color: colorScheme.onSurface,
                   fontSize: 16,
