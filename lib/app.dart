@@ -603,12 +603,12 @@ class _MainAppState extends State<MainApp> with TrayListener {
       setState(() {
         _isWindowVisible = false;
       });
-      windowManager.hide();
+      windowManager.blur();
     });
   }
 
   void _fadeIn() {
-    windowManager.show().then((_) {
+    windowManager.blur().then((_) {
       setState(() {
         _isWindowVisible = true;
         _opacity = _lastOpacity;
