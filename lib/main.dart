@@ -32,6 +32,7 @@ void main(List<String> args) async {
         await windowManager.center();
         await windowManager.setMinimumSize(const Size(828, 621));
         await windowManager.focus();
+        await windowManager.show();
       });
 
       runApp(PreferencesScreen(
@@ -63,6 +64,7 @@ void main(List<String> args) async {
       await windowManager.setSize(Size(windowWidth, windowHeight));
       await windowManager.setIgnoreMouseEvents(true);
       await windowManager.setAlignment(Alignment.bottomCenter);
+      await windowManager.show();
     });
 
     runApp(const MainApp());
