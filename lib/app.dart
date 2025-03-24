@@ -557,25 +557,39 @@ class _MainAppState extends State<MainApp> with TrayListener {
   }
 
   void _handleKeyEvent(dynamic message) {
+    if (message is! List) return;
+
+    // Session event (session unlock)
+    if (message[0] is String) {
+      if (message[0] == 'session_unlock') {
+        setState(() => _keyPressStates.clear());
+        if (kDebugMode) {
+          print('All key press states cleared due to session unlock');
+        }
+      }
+      return;
+    }
+
+    // Regular key events
     if (message[0] is! int) return;
 
+    int keyCode = message[0];
+    bool isPressed = message[1];
+    bool isShiftDown = message[2];
+    String key = getKeyFromKeyCodeShift(keyCode, isShiftDown);
+
+    if (kDebugMode) {
+      print(
+          'Key: ${key.padRight(10)}\tKeyCode: ${keyCode.toString().padRight(5)}\tPressed: ${isPressed.toString().padRight(5)}\tShift: $isShiftDown');
+    }
     setState(() {
-      int keyCode = message[0];
-      bool isPressed = message[1];
-      bool isShiftDown = message[2];
-
-      if (kDebugMode) {
-        print(
-            'Key: ${getKeyFromKeyCodeShift(keyCode, isShiftDown).padRight(10)}\tKeyCode: ${keyCode.toString().padRight(5)}\tPressed: ${isPressed.toString().padRight(5)}\tShift: $isShiftDown');
-      }
-
-      _keyPressStates[getKeyFromKeyCodeShift(keyCode, isShiftDown)] = isPressed;
-      _resetAutoHideTimer();
-
-      if (_autoHideEnabled && !_isWindowVisible) {
-        _fadeIn();
-      }
+      _keyPressStates[key] = isPressed;
     });
+    if (_autoHideEnabled && !_isWindowVisible && isPressed) {
+      _fadeIn();
+    } else {
+      _resetAutoHideTimer();
+    }
   }
 
   void _resetAutoHideTimer() {
