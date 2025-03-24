@@ -29,7 +29,6 @@ class _MainAppState extends State<MainApp> with TrayListener {
   static const double _defaultTopRowExtraHeight = 80;
   static const double _defaultTopRowExtraWidth = 160;
   static const Duration _fadeDuration = Duration(milliseconds: 200);
-  static const Duration _hideDelay = Duration(milliseconds: 300);
 
   // Services
   final SharedPreferencesAsync asyncPrefs = SharedPreferencesAsync();
@@ -598,13 +597,9 @@ class _MainAppState extends State<MainApp> with TrayListener {
     setState(() {
       _lastOpacity = _opacity;
       _opacity = 0.0;
+      _isWindowVisible = false;
     });
-    Timer(_hideDelay, () {
-      setState(() {
-        _isWindowVisible = false;
-      });
-      windowManager.blur();
-    });
+    windowManager.blur();
   }
 
   void _fadeIn() {
