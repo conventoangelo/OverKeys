@@ -21,7 +21,7 @@
 				{ "type": "revert", "section": "⏪ Reverts", "hidden": false },
 				{ "type": "docs", "section": "📝 Documentation", "hidden": false },
 				{ "type": "style", "section": "Styles", "hidden": true },
-				{ "type": "chore", "section": "Chores", "hidden": false },
+				{ "type": "chore", "section": "🧹 Miscellaneous Chores", "hidden": false },
 				{
 					"type": "refactor",
 					"section": "♻️ Code Refactoring",
