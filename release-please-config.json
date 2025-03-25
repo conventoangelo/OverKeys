@@ -5,39 +5,62 @@
 			"release-type": "dart",
 			"include-component-in-tag": false,
 			"include-v-in-tag": true,
-			"bump-minor-pre-major": true,
+			"bump-minor-pre-major": false,
 			"bump-patch-for-minor-pre-major": true,
-			"versioning": "prerelease",
-			"prerelease": true,
 			"changelog-sections": [
-				{ "type": "feat", "section": "✨ Features", "hidden": false },
-				{ "type": "feature", "section": "✨ Features", "hidden": false },
-				{ "type": "fix", "section": "🐛 Bug Fixes", "hidden": false },
+				{
+					"type": "feat",
+					"section": "✨ Features",
+					"hidden": false
+				},
+				{
+					"type": "fix",
+					"section": "🐛 Bug Fixes",
+					"hidden": false
+				},
 				{
 					"type": "perf",
 					"section": "⚡ Performance Improvements",
 					"hidden": false
 				},
-				{ "type": "revert", "section": "⏪ Reverts", "hidden": false },
-				{ "type": "docs", "section": "📝 Documentation", "hidden": false },
-				{ "type": "style", "section": "Styles", "hidden": true },
-				{ "type": "chore", "section": "🧹 Miscellaneous Chores", "hidden": false },
 				{
-					"type": "refactor",
-					"section": "♻️ Code Refactoring",
+					"type": "chore",
+					"section": "🧹 Miscellaneous Chores",
 					"hidden": false
 				},
-				{ "type": "test", "section": "Tests", "hidden": true },
-				{ "type": "build", "section": "🏗️ Build System", "hidden": false },
+				{
+					"type": "docs",
+					"section": "📖 Documentation",
+					"hidden": false
+				},
 				{
 					"type": "ci",
-					"section": "🔄 Continuous Integration",
+					"section": "🚀 CI/CD Pipeline",
+					"hidden": false
+				},
+				{
+					"type": "tests",
+					"section": "🔧 Testing",
+					"hidden": false
+				},
+				{
+					"type": "style",
+					"section": "💅 Code Style",
+					"hidden": false
+				},
+				{
+					"type": "refactor",
+					"section": "🔨 Refactoring",
+					"hidden": false
+				},
+				{
+					"type": "revert",
+					"section": "⏪ Reverts",
 					"hidden": false
 				}
 			],
 			"pull-request-title-pattern": "chore: release v${version}",
 			"group-pull-request-title-pattern": "chore: release v${version}",
-			"pull-request-header": "",
 			"extra-files": [
 				{
 					"path": "scripts/compile_exe-inno.iss",
