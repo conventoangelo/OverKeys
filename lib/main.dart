@@ -40,7 +40,6 @@ void main(List<String> args) async {
       ));
     }
   } else {
-    // Main window
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     launchAtStartup.setup(
       appName: packageInfo.appName,

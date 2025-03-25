@@ -46,19 +46,12 @@ class KanataService {
       _port = config.kanataPort;
       _userLayouts = config.userLayouts;
       _defaultUserLayout = config.defaultUserLayout;
-
-      if (kDebugMode) {
-        print(
-            'Connecting to Kanata at $_host:$_port with ${_userLayouts.length} layers. Default layer: $_defaultUserLayout');
-      }
-
       _kanataSocket = await Socket.connect(_host, _port);
       if (kDebugMode) {
         print('Connected to Kanata server at $_host:$_port');
       }
 
       _isConnected = true;
-
       _kanataSocket!.listen(
         (data) {
           String message = String.fromCharCodes(data).trim();
@@ -120,8 +113,8 @@ class KanataService {
               ),
             );
 
-            bool isDefaultUserLayout =
-                newLayout.name.toUpperCase() == _defaultUserLayout.toUpperCase();
+            bool isDefaultUserLayout = newLayout.name.toUpperCase() ==
+                _defaultUserLayout.toUpperCase();
 
             onLayerChange!(newLayout, isDefaultUserLayout);
 

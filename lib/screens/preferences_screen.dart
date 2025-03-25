@@ -413,7 +413,6 @@ class _PreferencesScreenState extends State<PreferencesScreen>
                       'Sets layout to user-defined defaultUserLayout. Make sure that the layout is saved in the config file.',
                   (value) {
                 if (value && _kanataEnabled) {
-                  // If turning on useUserLayout, turn off kanataEnabled
                   setState(() {
                     _useUserLayout = value;
                     _kanataEnabled = false;
@@ -434,7 +433,6 @@ class _PreferencesScreenState extends State<PreferencesScreen>
                       'Make sure that Kanata and OverKeys are using the same port. Restart OverKeys if config file changes were made to apply changes.',
                   (value) {
                 if (value && _useUserLayout) {
-                  // If turning on kanataEnabled, turn off useUserLayout
                   setState(() {
                     _kanataEnabled = value;
                     _useUserLayout = false;

@@ -106,7 +106,7 @@ int createSessionNotificationWindow() {
 void setHook(SendPort port) {
   sendPort = port;
 
-  // Set up ke yboard hook
+  // Set up keyboard hook
   hookId = SetWindowsHookEx(
       WH_KEYBOARD_LL, keyboardProc, GetModuleHandle(nullptr), 0);
   if (hookId == 0) {

@@ -18,35 +18,20 @@ class ConfigService {
 
   Future<UserConfig> loadConfig() async {
     if (_cachedConfig != null) {
-      // If config is changed, while app is running, cached config will be returned
-      // User needs to restart the app to get the updated config
       return _cachedConfig!;
     }
 
     try {
       final path = await _configPath;
-      if (kDebugMode) {
-        print('Config path: $path');
-      }
       final file = File(path);
 
       if (await file.exists()) {
         final contents = await file.readAsString();
         final json = jsonDecode(contents) as Map<String, dynamic>;
         _cachedConfig = UserConfig.fromJson(json);
-        if (kDebugMode) {
-          final configCopy = _cachedConfig!.toJson();
-          configCopy['userLayouts'] =
-              _cachedConfig!.userLayouts.map((layout) => layout.name).toList();
-          print('Config contents: ${jsonEncode(configCopy)}');
-        }
       } else {
-        // Create default config if file doesn't exist
         _cachedConfig = UserConfig();
         await saveConfig(_cachedConfig!);
-        if (kDebugMode) {
-          print('Created default config: $path');
-        }
       }
     } catch (e) {
       debugPrint('Error loading config: $e');
@@ -107,9 +92,6 @@ class ConfigService {
 
     for (final layout in config.userLayouts) {
       if (layout.name == altLayoutName) {
-        if (kDebugMode) {
-          print('Alt layout found: $altLayoutName');
-        }
         return layout;
       }
     }

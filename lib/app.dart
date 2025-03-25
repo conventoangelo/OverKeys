@@ -100,7 +100,6 @@ class _MainAppState extends State<MainApp> with TrayListener {
     _initStartupSetting();
     await _loadKanataConfig();
     _setupKanataLayerChangeHandler();
-
     // Delayed initialization tasks
     Future.delayed(const Duration(seconds: 2), () {
       if (_useUserLayout) {
@@ -150,14 +149,8 @@ class _MainAppState extends State<MainApp> with TrayListener {
   Future<void> _handleStartupToggle(bool enable) async {
     if (enable) {
       await launchAtStartup.enable();
-      if (kDebugMode) {
-        print('On system startup: Enabled');
-      }
     } else {
       await launchAtStartup.disable();
-      if (kDebugMode) {
-        print('On system startup: Disabled');
-      }
     }
     await _initStartupSetting();
   }
@@ -417,10 +410,8 @@ class _MainAppState extends State<MainApp> with TrayListener {
         case 'updateEnableAdvancedSettings':
           final enableAdvancedSettings = call.arguments as bool;
           setState(() => _enableAdvancedSettings = enableAdvancedSettings);
-          // Check advanced features based on advanced settings toggle state
           if (!enableAdvancedSettings) {
             _previousShowAltLayout = _showAltLayout;
-            // Disconnect kanata service if it was enabled
             if (_kanataEnabled) {
               _kanataService.disconnect();
               if (_initialKeyboardLayout != null) {
@@ -432,8 +423,6 @@ class _MainAppState extends State<MainApp> with TrayListener {
                 }
               }
             }
-
-            // Revert to initial layout if using user layout
             if (_useUserLayout &&
                 !_kanataEnabled &&
                 _initialKeyboardLayout != null) {
@@ -448,17 +437,9 @@ class _MainAppState extends State<MainApp> with TrayListener {
               setState(() {
                 _showAltLayout = false;
               });
-              if (kDebugMode) {
-                print(
-                    'Alt layout display disabled when advanced settings turned off');
-              }
             }
             _fadeIn();
           } else {
-            if (kDebugMode) {
-              print('Advanced settings enabled - features can now be toggled');
-            }
-            // If Kanata was previously enabled but disconnected due to advanced settings being off
             if (_kanataEnabled) {
               _loadKanataConfig().then((_) {
                 _kanataService.connect();
@@ -467,24 +448,17 @@ class _MainAppState extends State<MainApp> with TrayListener {
                 }
               });
             }
-
-            // Load user layout if that option is enabled
             if (_useUserLayout && !_kanataEnabled) {
               _loadUserLayout();
               if (kDebugMode) {
                 print('Loading user layout after enabling advanced settings');
               }
             }
-
-            // Load alt layout if that option is enabled
             if (_previousShowAltLayout) {
               setState(() {
                 _showAltLayout = true;
               });
               _loadAltLayout();
-              if (kDebugMode) {
-                print('Loading alt layout after enabling advanced settings');
-              }
             }
           }
 
@@ -495,7 +469,6 @@ class _MainAppState extends State<MainApp> with TrayListener {
             if (useUserLayout) {
               _loadUserLayout();
             } else {
-              // Revert back to the initial layout when turning off user layout
               setState(() {
                 if (_initialKeyboardLayout != null && !_kanataEnabled) {
                   _keyboardLayout = _initialKeyboardLayout!;
@@ -719,9 +692,6 @@ class _MainAppState extends State<MainApp> with TrayListener {
         checked: !_ignoreMouseEvents,
         onClick: (menuItem) {
           setState(() {
-            if (kDebugMode) {
-              print('Mouse Events Toggled');
-            }
             _ignoreMouseEvents = !_ignoreMouseEvents;
             windowManager.setIgnoreMouseEvents(_ignoreMouseEvents);
             if (!_ignoreMouseEvents) {
@@ -749,9 +719,6 @@ class _MainAppState extends State<MainApp> with TrayListener {
         disabled: !_ignoreMouseEvents,
         onClick: (menuItem) {
           setState(() {
-            if (kDebugMode) {
-              print('Auto Hide Toggled');
-            }
             _autoHideEnabled = !_autoHideEnabled;
             if (_autoHideEnabled) {
               _resetAutoHideTimer();
