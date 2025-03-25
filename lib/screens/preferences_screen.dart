@@ -400,7 +400,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
         _buildToggleOption('Turn on advanced settings', _enableAdvancedSettings,
             (value) {
           setState(() => _enableAdvancedSettings = value);
-          _savePreferences();
+          _updateMainWindow('updateEnableAdvancedSettings', value);
         }),
         AnimatedCrossFade(
           duration: const Duration(milliseconds: 300),
