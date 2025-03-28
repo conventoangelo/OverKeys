@@ -6,11 +6,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:launch_at_startup/launch_at_startup.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tray_manager/tray_manager.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:overkeys/services/config_service.dart';
 import 'package:overkeys/services/kanata_service.dart';
+import 'package:overkeys/services/preferences_service.dart';
 import 'package:overkeys/utils/key_code.dart';
 import 'models/keyboard_layouts.dart';
 import 'screens/keyboard_screen.dart';
@@ -31,7 +31,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
   static const Duration _fadeDuration = Duration(milliseconds: 200);
 
   // Services
-  final SharedPreferencesAsync asyncPrefs = SharedPreferencesAsync();
+  final PreferencesService _prefsService = PreferencesService();
   final KanataService _kanataService = KanataService();
   final Map<String, bool> _keyPressStates = {};
 
@@ -92,7 +92,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
   }
 
   Future<void> _initialize() async {
-    await _loadPreferences();
+    await _loadAllPreferences();
     trayManager.addListener(this);
     _setupTray();
     _setupKeyListener();
@@ -117,6 +117,111 @@ class _MainAppState extends State<MainApp> with TrayListener {
     });
   }
 
+  @override
+  void dispose() {
+    trayManager.removeListener(this);
+    unhook();
+    _autoHideTimer?.cancel();
+    _kanataService.dispose();
+    _saveAllPreferences();
+    super.dispose();
+  }
+
+  // Preference handling methods
+  Future<void> _loadAllPreferences() async {
+    // Load all preferences at once
+    final prefs = await _prefsService.loadAllPreferences();
+
+    setState(() {
+      // General settings
+      _autoHideEnabled = prefs['autoHideEnabled'];
+      _autoHideDuration = prefs['autoHideDuration'];
+      _keyboardLayout = availableLayouts
+          .firstWhere((layout) => layout.name == prefs['keyboardLayoutName']);
+      _initialKeyboardLayout = _keyboardLayout;
+      _enableAdvancedSettings = prefs['enableAdvancedSettings'];
+      _useUserLayout = prefs['useUserLayout'];
+      _showAltLayout = prefs['showAltLayout'];
+      _altLayout = _keyboardLayout;
+      _kanataEnabled = prefs['kanataEnabled'];
+
+      // Appearance settings
+      _opacity = prefs['opacity'];
+      _keyColorPressed = prefs['keyColorPressed'];
+      _keyColorNotPressed = prefs['keyColorNotPressed'];
+      _markerColor = prefs['markerColor'];
+      _markerColorNotPressed = prefs['markerColorNotPressed'];
+      _markerOffset = prefs['markerOffset'];
+      _markerWidth = prefs['markerWidth'];
+      _markerHeight = prefs['markerHeight'];
+      _markerBorderRadius = prefs['markerBorderRadius'];
+
+      // Keyboard settings
+      _keymapStyle = prefs['keymapStyle'];
+      _showTopRow = prefs['showTopRow'];
+      _showGraveKey = prefs['showGraveKey'];
+      _keySize = prefs['keySize'];
+      _keyBorderRadius = prefs['keyBorderRadius'];
+      _keyPadding = prefs['keyPadding'];
+      _spaceWidth = prefs['spaceWidth'];
+      _splitWidth = prefs['splitWidth'];
+
+      // Text settings
+      _fontFamily = prefs['fontFamily'];
+      _keyFontSize = prefs['keyFontSize'];
+      _spaceFontSize = prefs['spaceFontSize'];
+      _fontWeight = prefs['fontWeight'];
+      _keyTextColor = prefs['keyTextColor'];
+      _keyTextColorNotPressed = prefs['keyTextColorNotPressed'];
+    });
+  }
+
+  Future<void> _saveAllPreferences() async {
+    final prefs = {
+      // General settings
+      'launchAtStartup': _launchAtStartup,
+      'autoHideEnabled': _autoHideEnabled,
+      'autoHideDuration': _autoHideDuration,
+      'keyboardLayoutName': _initialKeyboardLayout!.name,
+      'enableAdvancedSettings': _enableAdvancedSettings,
+      'useUserLayout': _useUserLayout,
+      'showAltLayout': _showAltLayout,
+      'kanataEnabled': _kanataEnabled,
+
+      // Appearance settings
+      'opacity': _opacity,
+      'keyColorPressed': _keyColorPressed,
+      'keyColorNotPressed': _keyColorNotPressed,
+      'markerColor': _markerColor,
+      'markerColorNotPressed': _markerColorNotPressed,
+      'markerOffset': _markerOffset,
+      'markerWidth': _markerWidth,
+      'markerHeight': _markerHeight,
+      'markerBorderRadius': _markerBorderRadius,
+
+      // Keyboard settings
+      'keymapStyle': _keymapStyle,
+      'showTopRow': _showTopRow,
+      'showGraveKey': _showGraveKey,
+      'keySize': _keySize,
+      'keyBorderRadius': _keyBorderRadius,
+      'keyPadding': _keyPadding,
+      'spaceWidth': _spaceWidth,
+      'splitWidth': _splitWidth,
+
+      // Text settings
+      'fontFamily': _fontFamily,
+      'keyFontSize': _keyFontSize,
+      'spaceFontSize': _spaceFontSize,
+      'fontWeight': _fontWeight,
+      'keyTextColor': _keyTextColor,
+      'keyTextColorNotPressed': _keyTextColorNotPressed,
+    };
+
+    await _prefsService.saveAllPreferences(prefs);
+  }
+
+  // Kanata service related methods
   void _setupKanataLayerChangeHandler() {
     _kanataService.onLayerChange = (newLayout, isDefaultUserLayout) {
       setState(() {
@@ -141,20 +246,24 @@ class _MainAppState extends State<MainApp> with TrayListener {
     }
   }
 
-  Future<void> _initStartupSetting() async {
-    _launchAtStartup = await launchAtStartup.isEnabled();
-    setState(() {});
-  }
+  Future<void> _loadKanataConfig() async {
+    final configService = ConfigService();
+    final config = await configService.loadConfig();
 
-  Future<void> _handleStartupToggle(bool enable) async {
-    if (enable) {
-      await launchAtStartup.enable();
-    } else {
-      await launchAtStartup.disable();
+    if (_kanataEnabled) {
+      _kanataService.updateSettings(
+          config.kanataHost, config.kanataPort, config.userLayouts);
+
+      final defaultLayout = await configService.getUserLayout();
+      setState(() {
+        if (defaultLayout != null) {
+          _keyboardLayout = defaultLayout;
+        }
+      });
     }
-    await _initStartupSetting();
   }
 
+  // Keyboard layout methods
   Future<void> _loadUserLayout() async {
     if (!_useUserLayout) return;
 
@@ -189,23 +298,22 @@ class _MainAppState extends State<MainApp> with TrayListener {
     }
   }
 
-  Future<void> _loadKanataConfig() async {
-    final configService = ConfigService();
-    final config = await configService.loadConfig();
-
-    if (_kanataEnabled) {
-      _kanataService.updateSettings(
-          config.kanataHost, config.kanataPort, config.userLayouts);
-
-      final defaultLayout = await configService.getUserLayout();
-      setState(() {
-        if (defaultLayout != null) {
-          _keyboardLayout = defaultLayout;
-        }
-      });
-    }
+  // Startup related methods
+  Future<void> _initStartupSetting() async {
+    _launchAtStartup = await launchAtStartup.isEnabled();
+    setState(() {});
   }
 
+  Future<void> _handleStartupToggle(bool enable) async {
+    if (enable) {
+      await launchAtStartup.enable();
+    } else {
+      await launchAtStartup.disable();
+    }
+    await _initStartupSetting();
+  }
+
+  // Window management methods
   Future<void> _adjustWindowSize() async {
     _fadeIn();
     double height = _showTopRow
@@ -218,164 +326,234 @@ class _MainAppState extends State<MainApp> with TrayListener {
     await windowManager.setAlignment(Alignment.bottomCenter);
   }
 
-  @override
-  void dispose() {
-    trayManager.removeListener(this);
-    unhook();
-    _autoHideTimer?.cancel();
-    _kanataService.dispose();
-    _savePreferences();
-    super.dispose();
-  }
-
-  Future<void> _loadPreferences() async {
-    // General settings
-    bool autoHideEnabled = await asyncPrefs.getBool('autoHideEnabled') ?? false;
-    double autoHideDuration =
-        await asyncPrefs.getDouble('autoHideDuration') ?? 2.0;
-    String keyboardLayoutName =
-        await asyncPrefs.getString('layout') ?? 'QWERTY';
-    bool enableAdvancedSettings =
-        await asyncPrefs.getBool('enableAdvancedSettings') ?? false;
-    bool useUserLayout = await asyncPrefs.getBool('useUserLayout') ?? false;
-    bool showAltLayout = await asyncPrefs.getBool('showAltLayout') ?? false;
-    bool kanataEnabled = await asyncPrefs.getBool('kanataEnabled') ?? false;
-
-    // Appearance settings
-    double opacity = await asyncPrefs.getDouble('opacity') ?? 0.6;
-    Color keyColorPressed =
-        Color(await asyncPrefs.getInt('keyColorPressed') ?? 0xFF1E1E1E);
-    Color keyColorNotPressed =
-        Color(await asyncPrefs.getInt('keyColorNotPressed') ?? 0xFF77ABFF);
-    Color markerColor =
-        Color(await asyncPrefs.getInt('markerColor') ?? 0xFFFFFFFF);
-    Color markerColorNotPressed =
-        Color(await asyncPrefs.getInt('markerColorNotPressed') ?? 0xFF000000);
-    double markerOffset = await asyncPrefs.getDouble('markerOffset') ?? 10;
-    double markerWidth = await asyncPrefs.getDouble('markerWidth') ?? 10;
-    double markerHeight = await asyncPrefs.getDouble('markerHeight') ?? 2;
-    double markerBorderRadius =
-        await asyncPrefs.getDouble('markerBorderRadius') ?? 10;
-
-    // Keyboard settings
-    String keymapStyle =
-        await asyncPrefs.getString('keymapStyle') ?? 'Staggered';
-    bool showTopRow = await asyncPrefs.getBool('showTopRow') ?? false;
-    bool showGraveKey = await asyncPrefs.getBool('showGraveKey') ?? false;
-    double keySize = await asyncPrefs.getDouble('keySize') ?? 48;
-    double keyBorderRadius =
-        await asyncPrefs.getDouble('keyBorderRadius') ?? 12;
-    double keyPadding = await asyncPrefs.getDouble('keyPadding') ?? 3;
-    double spaceWidth = await asyncPrefs.getDouble('spaceWidth') ?? 320;
-    double splitWidth = await asyncPrefs.getDouble('splitWidth') ?? 100;
-
-    // Text settings
-    String fontFamily = await asyncPrefs.getString('fontFamily') ?? 'GeistMono';
-    double keyFontSize = await asyncPrefs.getDouble('keyFontSize') ?? 20;
-    double spaceFontSize = await asyncPrefs.getDouble('spaceFontSize') ?? 14;
-    FontWeight fontWeight = FontWeight
-        .values[await asyncPrefs.getInt('fontWeight') ?? FontWeight.w600.index];
-    Color keyTextColor =
-        Color(await asyncPrefs.getInt('keyTextColor') ?? 0xFFFFFFFF);
-    Color keyTextColorNotPressed =
-        Color(await asyncPrefs.getInt('keyTextColorNotPressed') ?? 0xFF000000);
-
+  void _fadeOut() {
     setState(() {
-      // General settings
-      _autoHideEnabled = autoHideEnabled;
-      _autoHideDuration = autoHideDuration;
-      _keyboardLayout = availableLayouts
-          .firstWhere((layout) => layout.name == keyboardLayoutName);
-      _initialKeyboardLayout = _keyboardLayout;
-      _enableAdvancedSettings = enableAdvancedSettings;
-      _useUserLayout = useUserLayout;
-      _showAltLayout = showAltLayout;
-      _altLayout = _keyboardLayout;
-      _kanataEnabled = kanataEnabled;
-
-      // Appearance settings
-      _opacity = opacity;
-      _keyColorPressed = keyColorPressed;
-      _keyColorNotPressed = keyColorNotPressed;
-      _markerColor = markerColor;
-      _markerColorNotPressed = markerColorNotPressed;
-      _markerOffset = markerOffset;
-      _markerWidth = markerWidth;
-      _markerHeight = markerHeight;
-      _markerBorderRadius = markerBorderRadius;
-
-      // Keyboard settings
-      _keymapStyle = keymapStyle;
-      _showTopRow = showTopRow;
-      _showGraveKey = showGraveKey;
-      _keySize = keySize;
-      _keyBorderRadius = keyBorderRadius;
-      _keyPadding = keyPadding;
-      _spaceWidth = spaceWidth;
-      _splitWidth = splitWidth;
-
-      // Text settings
-      _fontFamily = fontFamily;
-      _keyFontSize = keyFontSize;
-      _spaceFontSize = spaceFontSize;
-      _fontWeight = fontWeight;
-      _keyTextColor = keyTextColor;
-      _keyTextColorNotPressed = keyTextColorNotPressed;
+      _lastOpacity = _opacity;
+      _opacity = 0.0;
+      _isWindowVisible = false;
     });
+    windowManager.blur();
   }
 
-  Future<void> _savePreferences() async {
-    // General settings
-    await asyncPrefs.setBool('autoHideEnabled', _autoHideEnabled);
-    await asyncPrefs.setDouble('autoHideDuration', _autoHideDuration);
-    await asyncPrefs.setString('layout', _initialKeyboardLayout!.name);
-    await asyncPrefs.setBool('enableAdvancedSettings', _enableAdvancedSettings);
-    await asyncPrefs.setBool('useUserLayout', _useUserLayout);
-    await asyncPrefs.setBool('showAltLayout', _showAltLayout);
-    await asyncPrefs.setBool('kanataEnabled', _kanataEnabled);
-
-    // Appearance settings
-    await asyncPrefs.setDouble('opacity', _opacity);
-    await asyncPrefs.setInt('keyColorPressed', _keyColorPressed.toARGB32());
-    await asyncPrefs.setInt(
-        'keyColorNotPressed', _keyColorNotPressed.toARGB32());
-    await asyncPrefs.setInt('markerColor', _markerColor.toARGB32());
-    await asyncPrefs.setInt(
-        'markerColorNotPressed', _markerColorNotPressed.toARGB32());
-    await asyncPrefs.setDouble('markerOffset', _markerOffset);
-    await asyncPrefs.setDouble('markerWidth', _markerWidth);
-    await asyncPrefs.setDouble('markerHeight', _markerHeight);
-    await asyncPrefs.setDouble('markerBorderRadius', _markerBorderRadius);
-
-    // Keyboard settings
-    await asyncPrefs.setString('keymapStyle', _keymapStyle);
-    await asyncPrefs.setBool('showTopRow', _showTopRow);
-    await asyncPrefs.setBool('showGraveKey', _showGraveKey);
-    await asyncPrefs.setDouble('keySize', _keySize);
-    await asyncPrefs.setDouble('keyBorderRadius', _keyBorderRadius);
-    await asyncPrefs.setDouble('keyPadding', _keyPadding);
-    await asyncPrefs.setDouble('spaceWidth', _spaceWidth);
-    await asyncPrefs.setDouble('splitWidth', _splitWidth);
-
-    // Text settings
-    await asyncPrefs.setString('fontFamily', _fontFamily);
-    await asyncPrefs.setDouble('keyFontSize', _keyFontSize);
-    await asyncPrefs.setDouble('spaceFontSize', _spaceFontSize);
-    await asyncPrefs.setInt('fontWeight', _fontWeight.index);
-    await asyncPrefs.setInt('keyTextColor', _keyTextColor.toARGB32());
-    await asyncPrefs.setInt(
-        'keyTextColorNotPressed', _keyTextColorNotPressed.toARGB32());
+  void _fadeIn() {
+    windowManager.blur().then((_) {
+      setState(() {
+        _isWindowVisible = true;
+        _opacity = _lastOpacity;
+      });
+    });
+    _resetAutoHideTimer();
   }
 
+  // Key handling and auto-hide methods
+  void _setupKeyListener() {
+    ReceivePort receivePort = ReceivePort();
+    Isolate.spawn(setHook, receivePort.sendPort)
+        .then((_) {})
+        .catchError((error) {
+      if (kDebugMode) {
+        print('Error spawning Isolate: $error');
+      }
+    });
+
+    receivePort.listen(_handleKeyEvent);
+  }
+
+  void _handleKeyEvent(dynamic message) {
+    if (message is! List) return;
+
+    // Session event (session unlock)
+    if (message[0] is String) {
+      if (message[0] == 'session_unlock') {
+        setState(() => _keyPressStates.clear());
+        if (kDebugMode) {
+          print('All key press states cleared due to session unlock');
+        }
+      }
+      return;
+    }
+
+    // Regular key events
+    if (message[0] is! int) return;
+
+    int keyCode = message[0];
+    bool isPressed = message[1];
+    bool isShiftDown = message[2];
+    String key = getKeyFromKeyCodeShift(keyCode, isShiftDown);
+
+    if (kDebugMode) {
+      print(
+          'Key: ${key.padRight(10)}\tKeyCode: ${keyCode.toString().padRight(5)}\tPressed: ${isPressed.toString().padRight(5)}\tShift: $isShiftDown');
+    }
+    setState(() {
+      _keyPressStates[key] = isPressed;
+    });
+    if (_autoHideEnabled && !_isWindowVisible && isPressed) {
+      _fadeIn();
+    } else {
+      _resetAutoHideTimer();
+    }
+  }
+
+  void _resetAutoHideTimer() {
+    _autoHideTimer?.cancel();
+    if (_autoHideEnabled) {
+      _autoHideTimer = Timer(
+          Duration(milliseconds: (_autoHideDuration * 1000).round()),
+          _handleAutoHide);
+    }
+  }
+
+  void _handleAutoHide() {
+    if (_autoHideEnabled && _isWindowVisible) {
+      _fadeOut();
+    }
+  }
+
+  // System tray methods
+  Future<void> _setupTray() async {
+    String iconPath = Platform.isWindows
+        ? 'assets/images/app_icon.ico'
+        : 'assets/images/app_icon.png';
+    await trayManager.setIcon(iconPath);
+    trayManager.setToolTip('OverKeys');
+    trayManager.setContextMenu(Menu(items: [
+      MenuItem.checkbox(
+        key: 'toggle_mouse_events',
+        label: 'Move',
+        checked: !_ignoreMouseEvents,
+        onClick: (menuItem) {
+          setState(() {
+            _ignoreMouseEvents = !_ignoreMouseEvents;
+            windowManager.setIgnoreMouseEvents(_ignoreMouseEvents);
+            if (!_ignoreMouseEvents) {
+              autoHideBeforeMove = _autoHideEnabled;
+              _autoHideEnabled = false;
+              _autoHideTimer?.cancel();
+              if (!_isWindowVisible) {
+                _fadeIn();
+              }
+            } else {
+              _autoHideEnabled = autoHideBeforeMove;
+              if (_autoHideEnabled) {
+                _resetAutoHideTimer();
+              }
+            }
+          });
+          _fadeIn();
+        },
+      ),
+      MenuItem.separator(),
+      MenuItem.checkbox(
+        key: 'toggle_auto_hide',
+        label: 'Auto Hide',
+        checked: _autoHideEnabled,
+        disabled: !_ignoreMouseEvents,
+        onClick: (menuItem) {
+          setState(() {
+            _autoHideEnabled = !_autoHideEnabled;
+            if (_autoHideEnabled) {
+              _resetAutoHideTimer();
+            } else {
+              _autoHideTimer?.cancel();
+              if (!_isWindowVisible) {
+                _fadeIn();
+              }
+            }
+          });
+        },
+      ),
+      MenuItem.separator(),
+      MenuItem(
+          key: 'reset_position',
+          label: 'Reset Position',
+          onClick: (menuItem) {
+            windowManager.setAlignment(Alignment.bottomCenter);
+          }),
+      MenuItem.separator(),
+      MenuItem(
+        key: 'preferences',
+        label: 'Preferences',
+        onClick: (menuItem) {
+          if (kDebugMode) {
+            print('Preferences Window Opened');
+          }
+          _showPreferences();
+        },
+      ),
+      MenuItem.separator(),
+      MenuItem(
+        key: 'exit',
+        label: 'Exit',
+      ),
+    ]));
+  }
+
+  @override
+  void onTrayMenuItemClick(MenuItem menuItem) {
+    if (menuItem.key == 'toggle_auto_hide') {
+      DesktopMultiWindow.getAllSubWindowIds().then((windowIds) {
+        for (final id in windowIds) {
+          DesktopMultiWindow.invokeMethod(
+              id, 'updateAutoHideFromMainWindow', _autoHideEnabled);
+        }
+      });
+    } else if (menuItem.key == 'exit') {
+      DesktopMultiWindow.getAllSubWindowIds().then((windowIds) async {
+        for (final id in windowIds) {
+          await WindowController.fromWindowId(id).close();
+        }
+        await windowManager.close();
+        exit(0);
+      }).catchError((error) {
+        if (kDebugMode) {
+          print('Error closing windows: $error');
+        }
+        windowManager.close();
+        exit(0);
+      });
+      return;
+    }
+    _setupTray();
+  }
+
+  @override
+  void onTrayIconMouseDown() {
+    if (_isWindowVisible) {
+      _fadeOut();
+    } else {
+      _fadeIn();
+    }
+  }
+
+  @override
+  void onTrayIconRightMouseDown() {
+    trayManager.popUpContextMenu();
+  }
+
+  // UI related methods
+  Future<void> _showPreferences() async {
+    try {
+      await DesktopMultiWindow.createWindow(jsonEncode({
+        'name': 'preferences',
+      }));
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error creating preferences window: $e');
+      }
+    }
+  }
+
+  // Method handler for inter-window communication
   void _setupMethodHandler() {
     DesktopMultiWindow.setMethodHandler((call, fromWindowId) async {
       switch (call.method) {
         // General settings
         case 'updateLaunchAtStartup':
-          final launchAtStartupRet = call.arguments as bool;
+          final launchAtStartupValue = call.arguments as bool;
           setState(() {
-            _launchAtStartup = launchAtStartupRet;
-            _handleStartupToggle(launchAtStartupRet);
+            _launchAtStartup = launchAtStartupValue;
+            _handleStartupToggle(launchAtStartupValue);
           });
         case 'updateAutoHideEnabled':
           final autoHideEnabled = call.arguments as bool;
@@ -594,221 +772,6 @@ class _MainAppState extends State<MainApp> with TrayListener {
       }
       return null;
     });
-  }
-
-  void _setupKeyListener() {
-    ReceivePort receivePort = ReceivePort();
-    Isolate.spawn(setHook, receivePort.sendPort)
-        .then((_) {})
-        .catchError((error) {
-      if (kDebugMode) {
-        print('Error spawning Isolate: $error');
-      }
-    });
-
-    receivePort.listen(_handleKeyEvent);
-  }
-
-  void _handleKeyEvent(dynamic message) {
-    if (message is! List) return;
-
-    // Session event (session unlock)
-    if (message[0] is String) {
-      if (message[0] == 'session_unlock') {
-        setState(() => _keyPressStates.clear());
-        if (kDebugMode) {
-          print('All key press states cleared due to session unlock');
-        }
-      }
-      return;
-    }
-
-    // Regular key events
-    if (message[0] is! int) return;
-
-    int keyCode = message[0];
-    bool isPressed = message[1];
-    bool isShiftDown = message[2];
-    String key = getKeyFromKeyCodeShift(keyCode, isShiftDown);
-
-    if (kDebugMode) {
-      print(
-          'Key: ${key.padRight(10)}\tKeyCode: ${keyCode.toString().padRight(5)}\tPressed: ${isPressed.toString().padRight(5)}\tShift: $isShiftDown');
-    }
-    setState(() {
-      _keyPressStates[key] = isPressed;
-    });
-    if (_autoHideEnabled && !_isWindowVisible && isPressed) {
-      _fadeIn();
-    } else {
-      _resetAutoHideTimer();
-    }
-  }
-
-  void _resetAutoHideTimer() {
-    _autoHideTimer?.cancel();
-    if (_autoHideEnabled) {
-      _autoHideTimer = Timer(
-          Duration(milliseconds: (_autoHideDuration * 1000).round()),
-          _handleAutoHide);
-    }
-  }
-
-  void _handleAutoHide() {
-    if (_autoHideEnabled && _isWindowVisible) {
-      _fadeOut();
-    }
-  }
-
-  void _fadeOut() {
-    setState(() {
-      _lastOpacity = _opacity;
-      _opacity = 0.0;
-      _isWindowVisible = false;
-    });
-    windowManager.blur();
-  }
-
-  void _fadeIn() {
-    windowManager.blur().then((_) {
-      setState(() {
-        _isWindowVisible = true;
-        _opacity = _lastOpacity;
-      });
-    });
-    _resetAutoHideTimer();
-  }
-
-  Future<void> _setupTray() async {
-    String iconPath = Platform.isWindows
-        ? 'assets/images/app_icon.ico'
-        : 'assets/images/app_icon.png';
-    await trayManager.setIcon(iconPath);
-    trayManager.setToolTip('OverKeys');
-    trayManager.setContextMenu(Menu(items: [
-      MenuItem.checkbox(
-        key: 'toggle_mouse_events',
-        label: 'Move',
-        checked: !_ignoreMouseEvents,
-        onClick: (menuItem) {
-          setState(() {
-            _ignoreMouseEvents = !_ignoreMouseEvents;
-            windowManager.setIgnoreMouseEvents(_ignoreMouseEvents);
-            if (!_ignoreMouseEvents) {
-              autoHideBeforeMove = _autoHideEnabled;
-              _autoHideEnabled = false;
-              _autoHideTimer?.cancel();
-              if (!_isWindowVisible) {
-                _fadeIn();
-              }
-            } else {
-              _autoHideEnabled = autoHideBeforeMove;
-              if (_autoHideEnabled) {
-                _resetAutoHideTimer();
-              }
-            }
-          });
-          _fadeIn();
-        },
-      ),
-      MenuItem.separator(),
-      MenuItem.checkbox(
-        key: 'toggle_auto_hide',
-        label: 'Auto Hide',
-        checked: _autoHideEnabled,
-        disabled: !_ignoreMouseEvents,
-        onClick: (menuItem) {
-          setState(() {
-            _autoHideEnabled = !_autoHideEnabled;
-            if (_autoHideEnabled) {
-              _resetAutoHideTimer();
-            } else {
-              _autoHideTimer?.cancel();
-              if (!_isWindowVisible) {
-                _fadeIn();
-              }
-            }
-          });
-        },
-      ),
-      MenuItem.separator(),
-      MenuItem(
-          key: 'reset_position',
-          label: 'Reset Position',
-          onClick: (menuItem) {
-            windowManager.setAlignment(Alignment.bottomCenter);
-          }),
-      MenuItem.separator(),
-      MenuItem(
-        key: 'preferences',
-        label: 'Preferences',
-        onClick: (menuItem) {
-          if (kDebugMode) {
-            print('Preferences Window Opened');
-          }
-          _showPreferences();
-        },
-      ),
-      MenuItem.separator(),
-      MenuItem(
-        key: 'exit',
-        label: 'Exit',
-      ),
-    ]));
-  }
-
-  @override
-  void onTrayMenuItemClick(MenuItem menuItem) {
-    if (menuItem.key == 'toggle_auto_hide') {
-      DesktopMultiWindow.getAllSubWindowIds().then((windowIds) {
-        for (final id in windowIds) {
-          DesktopMultiWindow.invokeMethod(
-              id, 'updateAutoHideFromMainWindow', _autoHideEnabled);
-        }
-      });
-    } else if (menuItem.key == 'exit') {
-      DesktopMultiWindow.getAllSubWindowIds().then((windowIds) async {
-        for (final id in windowIds) {
-          await WindowController.fromWindowId(id).close();
-        }
-        await windowManager.close();
-        exit(0);
-      }).catchError((error) {
-        if (kDebugMode) {
-          print('Error closing windows: $error');
-        }
-        windowManager.close();
-        exit(0);
-      });
-      return;
-    }
-    _setupTray();
-  }
-
-  @override
-  void onTrayIconMouseDown() {
-    if (_isWindowVisible) {
-      _fadeOut();
-    } else {
-      _fadeIn();
-    }
-  }
-
-  @override
-  void onTrayIconRightMouseDown() {
-    trayManager.popUpContextMenu();
-  }
-
-  Future<void> _showPreferences() async {
-    try {
-      await DesktopMultiWindow.createWindow(jsonEncode({
-        'name': 'preferences',
-      }));
-    } catch (e) {
-      if (kDebugMode) {
-        print('Error creating preferences window: $e');
-      }
-    }
   }
 
   @override
