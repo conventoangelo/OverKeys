@@ -115,6 +115,9 @@ class _MainAppState extends State<MainApp> with TrayListener {
       if (_showTopRow) {
         _adjustWindowSize();
       }
+      if (_autoHideEnabled) {
+        _resetAutoHideTimer();
+      }
     });
   }
 
