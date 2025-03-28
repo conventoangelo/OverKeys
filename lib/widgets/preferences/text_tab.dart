@@ -1,0 +1,217 @@
+import 'package:flutter/material.dart';
+import 'package:overkeys/widgets/preferences/preference_option_widgets.dart';
+
+class TextTab extends StatefulWidget {
+  final String fontFamily;
+  final double keyFontSize;
+  final double spaceFontSize;
+  final FontWeight fontWeight;
+  final Color keyTextColor;
+  final Color keyTextColorNotPressed;
+  final Function(String) updateFontFamily;
+  final Function(double) updateKeyFontSize;
+  final Function(double) updateSpaceFontSize;
+  final Function(FontWeight) updateFontWeight;
+  final Function(Color) updateKeyTextColor;
+  final Function(Color) updateKeyTextColorNotPressed;
+
+  const TextTab({
+    super.key,
+    required this.fontFamily,
+    required this.keyFontSize,
+    required this.spaceFontSize,
+    required this.fontWeight,
+    required this.keyTextColor,
+    required this.keyTextColorNotPressed,
+    required this.updateFontFamily,
+    required this.updateKeyFontSize,
+    required this.updateSpaceFontSize,
+    required this.updateFontWeight,
+    required this.updateKeyTextColor,
+    required this.updateKeyTextColorNotPressed,
+  });
+
+  @override
+  State<TextTab> createState() => _TextTabState();
+}
+
+class _TextTabState extends State<TextTab> {
+  late double _localKeyFontSize;
+  late double _localSpaceFontSize;
+
+  @override
+  void initState() {
+    super.initState();
+    _localKeyFontSize = widget.keyFontSize;
+    _localSpaceFontSize = widget.spaceFontSize;
+  }
+
+  @override
+  void didUpdateWidget(TextTab oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.keyFontSize != widget.keyFontSize) {
+      _localKeyFontSize = widget.keyFontSize;
+    }
+    if (oldWidget.spaceFontSize != widget.spaceFontSize) {
+      _localSpaceFontSize = widget.spaceFontSize;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        SectionTitle(title: 'Text Settings'),
+        DropdownOption(
+            label: 'Font style',
+            value: widget.fontFamily,
+            options: [
+              'Berkeley Mono',
+              'Cascadia Mono',
+              'Comic Mono',
+              'CommitMono',
+              'Consolas',
+              'Courier',
+              'Cousine',
+              'Dank Mono',
+              'DM Mono',
+              'Droid Sans Mono',
+              'Fira Code',
+              'Fira Mono',
+              'Geist',
+              'GeistMono',
+              'Google Sans',
+              'Hack',
+              'IBM Plex Mono',
+              'Inconsolata',
+              'Input',
+              'Inter',
+              'Iosevka',
+              'JetBrains Mono',
+              'Manrope',
+              'Meslo',
+              'Monaspace Argon',
+              'Monaspace Krypton',
+              'Monaspace Neon',
+              'Monaspace Radon',
+              'Monaspace Xenon',
+              'Monocraft',
+              'MonoLisa',
+              'mononoki',
+              'Montserrat',
+              'Nunito',
+              'Poppins',
+              'Roboto',
+              'Roboto Mono',
+              'Source Code Pro',
+              'Source Sans Pro',
+              'Ubuntu',
+              'Ubuntu Mono',
+              'Victor Mono',
+            ],
+            onChanged: (value) => widget.updateFontFamily(value!),
+            subtitle:
+                'Make sure that the font is installed in your system. Falls back to Geist Mono.'),
+        SliderOption(
+          label: 'Key font size',
+          value: _localKeyFontSize,
+          min: 12,
+          max: 32,
+          divisions: 40,
+          onChanged: (value) {
+            setState(() => _localKeyFontSize = value);
+          },
+          onChangeEnd: widget.updateKeyFontSize,
+        ),
+        SliderOption(
+          label: 'Space font size',
+          value: _localSpaceFontSize,
+          min: 12,
+          max: 32,
+          divisions: 40,
+          onChanged: (value) {
+            setState(() => _localSpaceFontSize = value);
+          },
+          onChangeEnd: widget.updateSpaceFontSize,
+        ),
+        DropdownOption(
+          label: 'Font weight',
+          value: widget.fontWeight == FontWeight.w100
+              ? 'Thin'
+              : widget.fontWeight == FontWeight.w200
+                  ? 'ExtraLight'
+                  : widget.fontWeight == FontWeight.w300
+                      ? 'Light'
+                      : widget.fontWeight == FontWeight.normal
+                          ? 'Normal'
+                          : widget.fontWeight == FontWeight.w500
+                              ? 'Medium'
+                              : widget.fontWeight == FontWeight.w600
+                                  ? 'SemiBold'
+                                  : widget.fontWeight == FontWeight.bold
+                                      ? 'Bold'
+                                      : widget.fontWeight == FontWeight.w800
+                                          ? 'ExtraBold'
+                                          : 'Black',
+          options: [
+            'Thin',
+            'ExtraLight',
+            'Light',
+            'Normal',
+            'Medium',
+            'SemiBold',
+            'Bold',
+            'ExtraBold',
+            'Black'
+          ],
+          onChanged: (value) {
+            FontWeight weight;
+            switch (value) {
+              case 'Thin':
+                weight = FontWeight.w100;
+                break;
+              case 'ExtraLight':
+                weight = FontWeight.w200;
+                break;
+              case 'Light':
+                weight = FontWeight.w300;
+                break;
+              case 'Normal':
+                weight = FontWeight.normal;
+                break;
+              case 'Medium':
+                weight = FontWeight.w500;
+                break;
+              case 'SemiBold':
+                weight = FontWeight.w600;
+                break;
+              case 'Bold':
+                weight = FontWeight.bold;
+                break;
+              case 'ExtraBold':
+                weight = FontWeight.w800;
+                break;
+              case 'Black':
+                weight = FontWeight.w900;
+                break;
+              default:
+                weight = FontWeight.w500;
+            }
+            widget.updateFontWeight(weight);
+          },
+        ),
+        ColorOption(
+          label: 'Text color (pressed)',
+          currentColor: widget.keyTextColor,
+          onColorChanged: widget.updateKeyTextColor,
+        ),
+        ColorOption(
+          label: 'Text color (not pressed)',
+          currentColor: widget.keyTextColorNotPressed,
+          onColorChanged: widget.updateKeyTextColorNotPressed,
+        ),
+      ],
+    );
+  }
+}
