@@ -100,16 +100,17 @@ class _MainAppState extends State<MainApp> with TrayListener {
     _initStartupSetting();
     await _loadKanataConfig();
     _setupKanataLayerChangeHandler();
-    // Delayed initialization tasks
     Future.delayed(const Duration(seconds: 2), () {
-      if (_useUserLayout) {
-        _loadUserLayout();
-      }
-      if (_showAltLayout) {
-        _loadAltLayout();
-      }
-      if (_kanataEnabled) {
-        _kanataService.connect();
+      if (_enableAdvancedSettings) {
+        if (_useUserLayout) {
+          _loadUserLayout();
+        }
+        if (_showAltLayout) {
+          _loadAltLayout();
+        }
+        if (_kanataEnabled) {
+          _kanataService.connect();
+        }
       }
       if (_showTopRow) {
         _adjustWindowSize();
