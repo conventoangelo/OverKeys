@@ -251,7 +251,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
     final configService = ConfigService();
     final config = await configService.loadConfig();
 
-    if (_kanataEnabled) {
+    if (_kanataEnabled && _enableAdvancedSettings) {
       _kanataService.updateSettings(
           config.kanataHost, config.kanataPort, config.userLayouts);
 
@@ -633,7 +633,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
                 print('Loading user layout after enabling advanced settings');
               }
             }
-            if (_previousShowAltLayout) {
+            if (_previousShowAltLayout || _showAltLayout) {
               setState(() {
                 _showAltLayout = true;
               });
