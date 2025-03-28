@@ -798,7 +798,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
                   child: KeyboardScreen(
                     keyPressStates: _keyPressStates,
                     layout: _keyboardLayout,
-                    showAltLayout: _showAltLayout,
+                    showAltLayout: _enableAdvancedSettings && _showAltLayout,
                     altLayout: _altLayout,
                     keyColorPressed: _keyColorPressed,
                     keyColorNotPressed: _keyColorNotPressed,
