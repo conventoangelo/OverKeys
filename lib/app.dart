@@ -576,7 +576,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
         case 'updateLayout':
           final layoutName = call.arguments as String;
           setState(() {
-            if (_kanataEnabled) {
+            if ((_kanataEnabled || _useUserLayout) && _enableAdvancedSettings) {
               _initialKeyboardLayout = availableLayouts
                   .firstWhere((layout) => layout.name == layoutName);
             } else {
