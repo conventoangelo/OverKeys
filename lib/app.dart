@@ -99,25 +99,23 @@ class _MainAppState extends State<MainApp> with TrayListener {
     _setupMethodHandler();
     _initStartupSetting();
     _setupKanataLayerChangeHandler();
-    Future.delayed(const Duration(seconds: 2), () {
-      if (_enableAdvancedSettings) {
-        if (_useUserLayout) {
-          _loadUserLayout();
-        }
-        if (_showAltLayout) {
-          _loadAltLayout();
-        }
-        if (_kanataEnabled) {
-          _kanataService.connect();
-        }
+    if (_enableAdvancedSettings) {
+      if (_useUserLayout) {
+        _loadUserLayout();
       }
-      if (_showTopRow) {
-        _adjustWindowSize();
+      if (_showAltLayout) {
+        _loadAltLayout();
       }
-      if (_autoHideEnabled) {
-        _resetAutoHideTimer();
+      if (_kanataEnabled) {
+        _useKanata();
       }
-    });
+    }
+    if (_showTopRow) {
+      _adjustWindowSize();
+    }
+    if (_autoHideEnabled) {
+      _resetAutoHideTimer();
+    }
   }
 
   @override
