@@ -98,7 +98,6 @@ class _MainAppState extends State<MainApp> with TrayListener {
     _setupKeyListener();
     _setupMethodHandler();
     _initStartupSetting();
-    await _loadKanataConfig();
     _setupKanataLayerChangeHandler();
     Future.delayed(const Duration(seconds: 2), () {
       if (_enableAdvancedSettings) {
@@ -250,20 +249,14 @@ class _MainAppState extends State<MainApp> with TrayListener {
     }
   }
 
-  Future<void> _loadKanataConfig() async {
+  Future<void> _useKanata() async {
     final configService = ConfigService();
     final config = await configService.loadConfig();
 
     if (_kanataEnabled && _enableAdvancedSettings) {
       _kanataService.updateSettings(
           config.kanataHost, config.kanataPort, config.userLayouts);
-
-      final defaultLayout = await configService.getUserLayout();
-      setState(() {
-        if (defaultLayout != null) {
-          _keyboardLayout = defaultLayout;
-        }
-      });
+      _kanataService.connect();
     }
   }
 
@@ -623,12 +616,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
             _fadeIn();
           } else {
             if (_kanataEnabled) {
-              _loadKanataConfig().then((_) {
-                _kanataService.connect();
-                if (kDebugMode) {
-                  print('Reconnected to Kanata service');
-                }
-              });
+              _useKanata();
             }
             if (_useUserLayout && !_kanataEnabled) {
               _loadUserLayout();
@@ -678,9 +666,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
             if (kanataEnabled && !_kanataEnabled) {
               _initialKeyboardLayout = _keyboardLayout;
               _kanataEnabled = true;
-              _loadKanataConfig().then((_) {
-                _kanataService.connect();
-              });
+              _useKanata();
             } else if (!kanataEnabled && _kanataEnabled) {
               _kanataEnabled = false;
               _kanataService.disconnect();
