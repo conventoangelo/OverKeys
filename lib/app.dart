@@ -405,6 +405,28 @@ class _MainAppState extends State<MainApp> with TrayListener {
     }
   }
 
+  // Auto-hide toggle helper function
+  void _toggleAutoHide(bool enable) {
+    setState(() {
+      _autoHideEnabled = enable;
+      if (_autoHideEnabled) {
+        _resetAutoHideTimer();
+      } else {
+        _autoHideTimer?.cancel();
+        if (!_isWindowVisible) {
+          _fadeIn();
+        }
+      }
+    });
+    DesktopMultiWindow.getAllSubWindowIds().then((windowIds) {
+      for (final id in windowIds) {
+        DesktopMultiWindow.invokeMethod(
+            id, 'updateAutoHideFromMainWindow', _autoHideEnabled);
+      }
+    });
+    _setupTray();
+  }
+
   // System tray methods
   Future<void> _setupTray() async {
     String iconPath = Platform.isWindows
@@ -435,7 +457,6 @@ class _MainAppState extends State<MainApp> with TrayListener {
               }
             }
           });
-          _fadeIn();
         },
       ),
       MenuItem.separator(),
@@ -445,17 +466,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
         checked: _autoHideEnabled,
         disabled: !_ignoreMouseEvents,
         onClick: (menuItem) {
-          setState(() {
-            _autoHideEnabled = !_autoHideEnabled;
-            if (_autoHideEnabled) {
-              _resetAutoHideTimer();
-            } else {
-              _autoHideTimer?.cancel();
-              if (!_isWindowVisible) {
-                _fadeIn();
-              }
-            }
-          });
+          _toggleAutoHide(!_autoHideEnabled);
         },
       ),
       MenuItem.separator(),
@@ -470,9 +481,6 @@ class _MainAppState extends State<MainApp> with TrayListener {
         key: 'preferences',
         label: 'Preferences',
         onClick: (menuItem) {
-          if (kDebugMode) {
-            print('Preferences Window Opened');
-          }
           _showPreferences();
         },
       ),
@@ -509,7 +517,6 @@ class _MainAppState extends State<MainApp> with TrayListener {
       });
       return;
     }
-    _setupTray();
   }
 
   @override
@@ -552,18 +559,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
           });
         case 'updateAutoHideEnabled':
           final autoHideEnabled = call.arguments as bool;
-          setState(() {
-            _autoHideEnabled = autoHideEnabled;
-            if (_autoHideEnabled) {
-              _resetAutoHideTimer();
-            } else {
-              _autoHideTimer?.cancel();
-              if (!_isWindowVisible) {
-                _fadeIn();
-              }
-            }
-          });
-          _setupTray();
+          _toggleAutoHide(autoHideEnabled);
         case 'updateAutoHideDuration':
           final autoHideDuration = call.arguments as double;
           setState(() => _autoHideDuration = autoHideDuration);
