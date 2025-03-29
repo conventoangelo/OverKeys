@@ -5,6 +5,8 @@ import 'dart:isolate';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:desktop_multi_window/desktop_multi_window.dart';
+import 'package:flutter/services.dart';
+import 'package:hotkey_manager/hotkey_manager.dart';
 import 'package:launch_at_startup/launch_at_startup.dart';
 import 'package:tray_manager/tray_manager.dart';
 import 'package:window_manager/window_manager.dart';
@@ -37,6 +39,8 @@ class _MainAppState extends State<MainApp> with TrayListener {
 
   // Window state
   bool _isWindowVisible = true;
+  bool _forceHide = false;
+  bool autoHideBeforeForceHide = false;
   bool _ignoreMouseEvents = true;
   Timer? _autoHideTimer;
   bool autoHideBeforeMove = false;
@@ -96,6 +100,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
     trayManager.addListener(this);
     _setupTray();
     _setupKeyListener();
+    _setupHotkeys();
     _setupMethodHandler();
     _initStartupSetting();
     _setupKanataLayerChangeHandler();
@@ -493,16 +498,56 @@ class _MainAppState extends State<MainApp> with TrayListener {
     ]));
   }
 
+  Future<void> _setupHotkeys() async {
+    HotKey toggleVisibilityHotKey = HotKey(
+      key: PhysicalKeyboardKey.keyG,
+      modifiers: [HotKeyModifier.alt, HotKeyModifier.control],
+    );
+    HotKey toggleAutoHideHotKey = HotKey(
+      key: PhysicalKeyboardKey.keyQ,
+      modifiers: [HotKeyModifier.alt, HotKeyModifier.control],
+    );
+    await hotKeyManager.register(
+      toggleAutoHideHotKey,
+      keyDownHandler: (hotKey) {
+        if (kDebugMode) {
+          print('onKeyDown+${hotKey.toJson()}');
+        }
+        _toggleAutoHide(!_autoHideEnabled);
+      },
+    );
+    await hotKeyManager.register(
+      toggleVisibilityHotKey,
+      keyDownHandler: (hotKey) {
+        if (kDebugMode) {
+          print('onKeyDown+${hotKey.toJson()}');
+        }
+        setState(() {
+          _forceHide = !_forceHide;
+          if (_autoHideEnabled && _forceHide) {
+            autoHideBeforeForceHide = _autoHideEnabled;
+            _autoHideEnabled = false;
+            _autoHideTimer?.cancel();
+            if (_isWindowVisible) {
+              _fadeOut();
+            }
+          } else if (autoHideBeforeForceHide && !_forceHide) {
+            _autoHideEnabled = autoHideBeforeForceHide;
+            autoHideBeforeForceHide = false;
+            if (_autoHideEnabled) {
+              _resetAutoHideTimer();
+            }
+          } else {
+            onTrayIconMouseDown();
+          }
+        });
+      },
+    );
+  }
+
   @override
   void onTrayMenuItemClick(MenuItem menuItem) {
-    if (menuItem.key == 'toggle_auto_hide') {
-      DesktopMultiWindow.getAllSubWindowIds().then((windowIds) {
-        for (final id in windowIds) {
-          DesktopMultiWindow.invokeMethod(
-              id, 'updateAutoHideFromMainWindow', _autoHideEnabled);
-        }
-      });
-    } else if (menuItem.key == 'exit') {
+    if (menuItem.key == 'exit') {
       DesktopMultiWindow.getAllSubWindowIds().then((windowIds) async {
         for (final id in windowIds) {
           await WindowController.fromWindowId(id).close();

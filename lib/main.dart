@@ -5,6 +5,7 @@ import 'package:window_manager/window_manager.dart';
 import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:launch_at_startup/launch_at_startup.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:hotkey_manager/hotkey_manager.dart';
 import 'app.dart';
 import 'screens/preferences_screen.dart';
 
@@ -12,6 +13,7 @@ void main(List<String> args) async {
   final isSubWindow = args.firstOrNull == 'multi_window';
   WidgetsFlutterBinding.ensureInitialized();
   await windowManager.ensureInitialized();
+  await hotKeyManager.unregisterAll();
 
   if (isSubWindow) {
     final windowId = int.parse(args[1]);
