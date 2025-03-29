@@ -148,6 +148,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
 
       // Appearance settings
       _opacity = prefs['opacity'];
+      _lastOpacity = prefs['opacity'];
       _keyColorPressed = prefs['keyColorPressed'];
       _keyColorNotPressed = prefs['keyColorNotPressed'];
       _markerColor = prefs['markerColor'];
