@@ -4,6 +4,7 @@
 
 #include "flutter/generated_plugin_registrant.h"
 #include <desktop_multi_window/desktop_multi_window_plugin.h>
+#include <hotkey_manager_windows/hotkey_manager_windows_plugin_c_api.h>
 #include <window_manager/window_manager_plugin.h>
 #include <screen_retriever_windows/screen_retriever_windows_plugin_c_api.h>
 #include <url_launcher_windows/url_launcher_windows.h>
@@ -46,6 +47,9 @@ bool FlutterWindow::OnCreate() {
 
     UrlLauncherWindowsRegisterWithRegistrar(
         registry->GetRegistrarForPlugin("UrlLauncherWindows"));
+
+    HotkeyManagerWindowsPluginCApiRegisterWithRegistrar(
+        registry->GetRegistrarForPlugin("HotkeyManagerWindowsPluginCApi"));
 
     // Don't register DesktopMultiWindow with itself
   });
