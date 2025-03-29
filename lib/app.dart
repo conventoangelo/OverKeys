@@ -89,6 +89,16 @@ class _MainAppState extends State<MainApp> with TrayListener {
   Color _keyTextColor = Colors.white;
   Color _keyTextColorNotPressed = Colors.black;
 
+  // HotKey settings
+  HotKey _visibilityHotKey = HotKey(
+    key: PhysicalKeyboardKey.keyG,
+    modifiers: [HotKeyModifier.alt, HotKeyModifier.control],
+  );
+  HotKey _autoHideHotKey = HotKey(
+    key: PhysicalKeyboardKey.keyQ,
+    modifiers: [HotKeyModifier.alt, HotKeyModifier.control],
+  );
+
   @override
   void initState() {
     super.initState();
@@ -100,7 +110,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
     trayManager.addListener(this);
     _setupTray();
     _setupKeyListener();
-    _setupHotkeys();
+    _setupHotKeys();
     _setupMethodHandler();
     _initStartupSetting();
     _setupKanataLayerChangeHandler();
@@ -180,6 +190,9 @@ class _MainAppState extends State<MainApp> with TrayListener {
       _fontWeight = prefs['fontWeight'];
       _keyTextColor = prefs['keyTextColor'];
       _keyTextColorNotPressed = prefs['keyTextColorNotPressed'];
+
+      // HotKey settings
+
     });
   }
 
@@ -223,6 +236,10 @@ class _MainAppState extends State<MainApp> with TrayListener {
       'fontWeight': _fontWeight,
       'keyTextColor': _keyTextColor,
       'keyTextColorNotPressed': _keyTextColorNotPressed,
+
+      // HotKey settings
+      'visibilityHotKey': _visibilityHotKey,
+      'autoHideHotKey': _autoHideHotKey
     };
 
     await _prefsService.saveAllPreferences(prefs);
@@ -498,17 +515,11 @@ class _MainAppState extends State<MainApp> with TrayListener {
     ]));
   }
 
-  Future<void> _setupHotkeys() async {
-    HotKey toggleVisibilityHotKey = HotKey(
-      key: PhysicalKeyboardKey.keyG,
-      modifiers: [HotKeyModifier.alt, HotKeyModifier.control],
-    );
-    HotKey toggleAutoHideHotKey = HotKey(
-      key: PhysicalKeyboardKey.keyQ,
-      modifiers: [HotKeyModifier.alt, HotKeyModifier.control],
-    );
+  Future<void> _setupHotKeys() async {
+    await hotKeyManager.unregisterAll();
+
     await hotKeyManager.register(
-      toggleAutoHideHotKey,
+      _autoHideHotKey,
       keyDownHandler: (hotKey) {
         if (kDebugMode) {
           print('onKeyDown+${hotKey.toJson()}');
@@ -517,7 +528,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
       },
     );
     await hotKeyManager.register(
-      toggleVisibilityHotKey,
+      _visibilityHotKey,
       keyDownHandler: (hotKey) {
         if (kDebugMode) {
           print('onKeyDown+${hotKey.toJson()}');
@@ -796,6 +807,8 @@ class _MainAppState extends State<MainApp> with TrayListener {
           final keyTextColorNotPressed = call.arguments as int;
           setState(
               () => _keyTextColorNotPressed = Color(keyTextColorNotPressed));
+
+        // HotKey settings
 
         default:
           throw UnimplementedError('Unimplemented method ${call.method}');
