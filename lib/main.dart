@@ -65,6 +65,7 @@ void main(List<String> args) async {
       await windowManager.setSize(Size(windowWidth, windowHeight));
       await windowManager.setIgnoreMouseEvents(true);
       await windowManager.setAlignment(Alignment.bottomCenter);
+      await windowManager.setSkipTaskbar(true);
       await windowManager.show();
     });
 

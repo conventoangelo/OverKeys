@@ -25,7 +25,7 @@ class MainApp extends StatefulWidget {
   State<MainApp> createState() => _MainAppState();
 }
 
-class _MainAppState extends State<MainApp> with TrayListener {
+class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   static const double _defaultWindowWidth = 1000;
   static const double _defaultWindowHeight = 330;
   static const double _defaultTopRowExtraHeight = 80;
@@ -109,6 +109,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
   Future<void> _initialize() async {
     await _loadAllPreferences();
     trayManager.addListener(this);
+    windowManager.addListener(this);
     _setupTray();
     _setupKeyListener();
     _setupHotKeys();
@@ -136,6 +137,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
 
   @override
   void dispose() {
+    windowManager.removeListener(this);
     trayManager.removeListener(this);
     unhook();
     _autoHideTimer?.cancel();
@@ -340,15 +342,12 @@ class _MainAppState extends State<MainApp> with TrayListener {
       _opacity = 0.0;
       _isWindowVisible = false;
     });
-    windowManager.blur();
   }
 
   void _fadeIn() {
-    windowManager.blur().then((_) {
-      setState(() {
-        _isWindowVisible = true;
-        _opacity = _lastOpacity;
-      });
+    setState(() {
+      _isWindowVisible = true;
+      _opacity = _lastOpacity;
     });
     _resetAutoHideTimer();
   }
@@ -579,6 +578,11 @@ class _MainAppState extends State<MainApp> with TrayListener {
       // ignore: deprecated_member_use
       bringAppToFront: true,
     );
+  }
+
+  @override
+  void onWindowFocus() {
+    windowManager.blur();
   }
 
   Future<void> _showPreferences() async {
