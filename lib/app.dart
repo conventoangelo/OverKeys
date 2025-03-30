@@ -575,7 +575,10 @@ class _MainAppState extends State<MainApp> with TrayListener {
 
   @override
   void onTrayIconRightMouseDown() {
-    trayManager.popUpContextMenu();
+    trayManager.popUpContextMenu(
+      // ignore: deprecated_member_use
+      bringAppToFront: true,
+    );
   }
 
   Future<void> _showPreferences() async {
