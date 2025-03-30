@@ -90,6 +90,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
   Color _keyTextColorNotPressed = Colors.black;
 
   // HotKey settings
+  bool _hotKeysEnabled = true;
   HotKey _visibilityHotKey = HotKey(
     key: PhysicalKeyboardKey.keyQ,
     modifiers: [HotKeyModifier.alt, HotKeyModifier.control],
@@ -190,6 +191,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
       _keyTextColorNotPressed = prefs['keyTextColorNotPressed'];
 
       // HotKey settings
+      _hotKeysEnabled = prefs['hotKeysEnabled'];
       _visibilityHotKey = prefs['visibilityHotKey'];
       _autoHideHotKey = prefs['autoHideHotKey'];
     });
@@ -237,6 +239,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
       'keyTextColorNotPressed': _keyTextColorNotPressed,
 
       // HotKey settings
+      'hotKeysEnabled': _hotKeysEnabled,
       'visibilityHotKey': _visibilityHotKey,
       'autoHideHotKey': _autoHideHotKey
     };
@@ -497,11 +500,14 @@ class _MainAppState extends State<MainApp> with TrayListener {
   Future<void> _setupHotKeys() async {
     await hotKeyManager.unregisterAll();
 
+    if (!_hotKeysEnabled) return;
+
     await hotKeyManager.register(
       _autoHideHotKey,
       keyDownHandler: (hotKey) {
         if (kDebugMode) {
-            print('Auto-hide hotkey triggered: ${hotKey.toJson()} - toggling to ${!_autoHideEnabled}');
+          print(
+              'Auto-hide hotkey triggered: ${hotKey.toJson()} - toggling to ${!_autoHideEnabled}');
         }
         _toggleAutoHide(!_autoHideEnabled);
       },
@@ -510,7 +516,8 @@ class _MainAppState extends State<MainApp> with TrayListener {
       _visibilityHotKey,
       keyDownHandler: (hotKey) {
         if (kDebugMode) {
-          print('Visibility hotkey triggered: ${hotKey.toJson()} - toggling force hide to ${!_forceHide}');
+          print(
+              'Visibility hotkey triggered: ${hotKey.toJson()} - toggling force hide to ${!_forceHide}');
         }
         setState(() {
           _forceHide = !_forceHide;
@@ -773,6 +780,12 @@ class _MainAppState extends State<MainApp> with TrayListener {
               () => _keyTextColorNotPressed = Color(keyTextColorNotPressed));
 
         // HotKey settings
+        case 'updateHotKeysEnabled':
+          final hotKeysEnabled = call.arguments as bool;
+          setState(() {
+            _hotKeysEnabled = hotKeysEnabled;
+            _setupHotKeys();
+          });
         case 'updateVisibilityHotKey':
           final hotKeyJson = call.arguments as String;
           final newHotKey = HotKey.fromJson(jsonDecode(hotKeyJson));

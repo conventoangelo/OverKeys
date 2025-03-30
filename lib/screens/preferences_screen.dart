@@ -75,6 +75,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
   Color _keyTextColorNotPressed = Colors.black;
 
   // HotKey settings
+  bool _hotKeysEnabled = true;
   HotKey _visibilityHotKey = HotKey(
     key: PhysicalKeyboardKey.keyQ,
     modifiers: [HotKeyModifier.alt, HotKeyModifier.control],
@@ -177,6 +178,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       _keyTextColorNotPressed = prefs['keyTextColorNotPressed'];
 
       // HotKey settings
+      _hotKeysEnabled = prefs['hotKeysEnabled'];
       _visibilityHotKey = prefs['visibilityHotKey'];
       _autoHideHotKey = prefs['autoHideHotKey'];
     });
@@ -224,6 +226,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       'keyTextColorNotPressed': _keyTextColorNotPressed,
 
       // HotKey settings
+      'hotKeysEnabled': _hotKeysEnabled,
       'visibilityHotKey': _visibilityHotKey,
       'autoHideHotKey': _autoHideHotKey,
     };
@@ -291,7 +294,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           'Keyboard',
           'Text',
           'About',
-          'Keyboard Shortcuts'
+          'Hotkeys'
         ].map((tab) => _buildTabButton(tab)).toList(),
       ),
     );
@@ -500,10 +503,15 @@ class _PreferencesScreenState extends State<PreferencesScreen>
         );
       case 'About':
         return AboutTab(appVersion: _appVersion);
-      case 'Keyboard Shortcuts':
+      case 'Hotkeys':
         return HotKeysTab(
+          hotKeysEnabled: _hotKeysEnabled,
           visibilityHotKey: _visibilityHotKey,
           autoHideHotKey: _autoHideHotKey,
+          updateHotKeysEnabled: (value) {
+            setState(() => _hotKeysEnabled = value);
+            _updateMainWindow('updateHotKeysEnabled', value);
+          },
           updateVisibilityHotKey: (value) {
             setState(() => _visibilityHotKey = value);
             _updateMainWindow('updateVisibilityHotKey', value);

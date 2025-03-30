@@ -77,6 +77,8 @@ class PreferencesService {
       Color(await asyncPrefs.getInt('keyTextColorNotPressed') ?? 0xFF000000);
 
   // HotKey settings
+  Future<bool> getHotKeysEnabled() async =>
+      await asyncPrefs.getBool('enableHotKeys') ?? false;
   Future<HotKey?> getVisibilityHotKey() async {
     final json = await asyncPrefs.getString('visibilityHotKey');
     try {
@@ -167,6 +169,8 @@ class PreferencesService {
   Future<void> setKeyTextColorNotPressed(Color value) async =>
       await asyncPrefs.setInt('keyTextColorNotPressed', value.toARGB32());
 
+  Future<void> setHotKeysEnabled(bool value) async =>
+      await asyncPrefs.setBool('enableHotKeys', value);
   Future<void> setVisibilityHotKey(HotKey value) async => await asyncPrefs
       .setString('visibilityHotKey', jsonEncode(value.toJson()));
 
@@ -215,6 +219,7 @@ class PreferencesService {
       'keyTextColorNotPressed': await getKeyTextColorNotPressed(),
 
       // HotKey settings
+      'hotKeysEnabled': await getHotKeysEnabled(),
       'visibilityHotKey': await getVisibilityHotKey(),
       'autoHideHotKey': await getAutoHideHotKey(),
     };
@@ -261,6 +266,7 @@ class PreferencesService {
     await setKeyTextColorNotPressed(prefs['keyTextColorNotPressed']);
 
     // HotKey settings
+    await setHotKeysEnabled(prefs['hotKeysEnabled']);
     await setVisibilityHotKey(prefs['visibilityHotKey']);
     await setAutoHideHotKey(prefs['autoHideHotKey']);
   }

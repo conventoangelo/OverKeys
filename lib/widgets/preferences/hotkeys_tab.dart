@@ -1,37 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:hotkey_manager/hotkey_manager.dart';
+import 'package:overkeys/widgets/preferences/preference_option_widgets.dart';
 import 'package:overkeys/widgets/preferences/dialog/record_hotkey.dart';
 
-class HotKeysTab extends StatelessWidget {
+class HotKeysTab extends StatefulWidget {
+  final bool hotKeysEnabled;
   final HotKey visibilityHotKey;
   final HotKey autoHideHotKey;
+  final Function(bool) updateHotKeysEnabled;
   final Function(HotKey) updateVisibilityHotKey;
   final Function(HotKey) updateAutoHideHotKey;
 
   const HotKeysTab({
     super.key,
+    required this.hotKeysEnabled,
     required this.visibilityHotKey,
     required this.autoHideHotKey,
+    required this.updateHotKeysEnabled,
     required this.updateVisibilityHotKey,
     required this.updateAutoHideHotKey,
   });
 
   @override
+  State<HotKeysTab> createState() => _HotKeysTabState();
+}
+
+class _HotKeysTabState extends State<HotKeysTab> {
+  @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Keyboard Shortcuts',
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-        ),
+        SectionTitle(title: 'Hotkeys'),
+        ToggleOption(label: 'Enable hotkeys', 
+        value: widget.hotKeysEnabled, 
+        onChanged: widget.updateHotKeysEnabled),
         const SizedBox(height: 20),
         _buildHotKeySection(
           context,
           'Toggle Visibility',
           'Show or hide the overlay with a keyboard shortcut',
-          visibilityHotKey,
-          updateVisibilityHotKey,
+          widget.visibilityHotKey,
+          widget.updateVisibilityHotKey,
         ),
         const SizedBox(height: 20),
         const Divider(),
@@ -40,8 +50,8 @@ class HotKeysTab extends StatelessWidget {
           context,
           'Toggle Auto Hide',
           'Enable or disable auto-hide feature with a keyboard shortcut',
-          autoHideHotKey,
-          updateAutoHideHotKey,
+          widget.autoHideHotKey,
+          widget.updateAutoHideHotKey,
         ),
       ],
     );
