@@ -532,6 +532,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
             _autoHideEnabled = autoHideBeforeForceHide;
             autoHideBeforeForceHide = false;
             if (_autoHideEnabled) {
+              _fadeIn();
               _resetAutoHideTimer();
             }
           } else {
