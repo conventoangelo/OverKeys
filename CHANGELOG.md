@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.2.7](https://github.com/conventoangelo/OverKeys/compare/v0.2.6...v0.2.7) (2025-03-30)
+
+
+### ✨ Features
+
+* add fade-in effect after toggling visibility on auto-hide enabled ([5e11aba](https://github.com/conventoangelo/OverKeys/commit/5e11aba5d152320f7f1140d4fc12f17b981f2a83))
+* add hotkeys functionality ([#52](https://github.com/conventoangelo/OverKeys/issues/52)) ([5e11aba](https://github.com/conventoangelo/OverKeys/commit/5e11aba5d152320f7f1140d4fc12f17b981f2a83))
+
+
+### 🐛 Bug Fixes
+
+* add `enableAdvancedSettings` setting check for initialization tasks ([55c7569](https://github.com/conventoangelo/OverKeys/commit/55c75699add2103c90dffac1cc12bd2f57c5403f))
+* correct user layout loading with Kanata and advanced settings ([55c7569](https://github.com/conventoangelo/OverKeys/commit/55c75699add2103c90dffac1cc12bd2f57c5403f))
+* lastOpactiy now uses opactiy value on app open ([5e11aba](https://github.com/conventoangelo/OverKeys/commit/5e11aba5d152320f7f1140d4fc12f17b981f2a83))
+* remove delay of applying advanced settings on app open ([5e11aba](https://github.com/conventoangelo/OverKeys/commit/5e11aba5d152320f7f1140d4fc12f17b981f2a83))
+* show alt layout on startup only if advanced settings is on ([55c7569](https://github.com/conventoangelo/OverKeys/commit/55c75699add2103c90dffac1cc12bd2f57c5403f))
+* trigger hide timer on app  ([55c7569](https://github.com/conventoangelo/OverKeys/commit/55c75699add2103c90dffac1cc12bd2f57c5403f))
+* update keyboard layout only if no related advanced settings is on ([55c7569](https://github.com/conventoangelo/OverKeys/commit/55c75699add2103c90dffac1cc12bd2f57c5403f))
+* use SharedPreferencesAsync from package ([2e1126f](https://github.com/conventoangelo/OverKeys/commit/2e1126fdd379dd47c9837c4cf7f495fcf1a61588))
+
 ## [0.2.6](https://github.com/conventoangelo/OverKeys/compare/v0.2.5...v0.2.6) (2025-03-27)
 
 
