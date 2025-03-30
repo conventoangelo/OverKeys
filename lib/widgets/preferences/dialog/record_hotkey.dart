@@ -22,7 +22,11 @@ class _RecordHotKeyDialogState extends State<RecordHotKeyDialog> {
       content: SingleChildScrollView(
         child: ListBody(
           children: <Widget>[
-            const Text('The `HotKeyRecorder` widget will record your hotkey.'),
+            const Padding(padding: EdgeInsets.only(top: 10)),
+            const Text(
+              'Press the key combination you want to use as a shortcut.',
+              style: TextStyle(fontSize: 16),
+            ),
             Container(
               width: 100,
               height: 60,
@@ -37,7 +41,6 @@ class _RecordHotKeyDialogState extends State<RecordHotKeyDialog> {
                 children: [
                   HotKeyRecorder(
                     onHotKeyRecorded: (hotKey) {
-                      // Ensure all hotkeys are system-wide
                       _hotKey = HotKey(
                         key: hotKey.key,
                         modifiers: hotKey.modifiers,
@@ -48,6 +51,14 @@ class _RecordHotKeyDialogState extends State<RecordHotKeyDialog> {
                   ),
                 ],
               ),
+            ),
+            const Padding(padding: EdgeInsets.only(top: 10)),
+            const Text(
+              'Note: You cannot set a keybind that is already in use by another shortcut.',
+              style: TextStyle(
+                  fontSize: 14,
+                  fontStyle: FontStyle.italic,
+                  color: Colors.grey),
             ),
           ],
         ),

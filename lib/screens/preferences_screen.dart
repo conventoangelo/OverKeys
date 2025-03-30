@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:flutter/services.dart';
@@ -74,11 +76,11 @@ class _PreferencesScreenState extends State<PreferencesScreen>
 
   // HotKey settings
   HotKey _visibilityHotKey = HotKey(
-    key: PhysicalKeyboardKey.keyG,
+    key: PhysicalKeyboardKey.keyQ,
     modifiers: [HotKeyModifier.alt, HotKeyModifier.control],
   );
   HotKey _autoHideHotKey = HotKey(
-    key: PhysicalKeyboardKey.keyQ,
+    key: PhysicalKeyboardKey.keyW,
     modifiers: [HotKeyModifier.alt, HotKeyModifier.control],
   );
 
@@ -235,7 +237,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     } else if (value is FontWeight) {
       value = value.index;
     } else if (value is HotKey) {
-      value = value.toJson();
+      value = jsonEncode(value.toJson());
     }
     await DesktopMultiWindow.invokeMethod(0, method, value);
     _savePreferences();

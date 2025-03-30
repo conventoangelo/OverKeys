@@ -83,6 +83,7 @@ class HotKeysTab extends StatelessWidget {
                   fontWeight: FontWeight.w500,
                   fontFamily: 'Geist Mono',
                   color: colorScheme.onSurfaceVariant,
+                  fontSize: 16,
                 ),
               ),
             ),
@@ -95,7 +96,13 @@ class HotKeysTab extends StatelessWidget {
                 side: BorderSide(color: colorScheme.primary),
               ),
               onPressed: () => _showRecordHotKeyDialog(context, updateHotKey),
-              child: const Text('Change'),
+              child: Text(
+                'Change',
+                style: TextStyle(
+                    color: colorScheme.primary,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16),
+              ),
             ),
           ],
         ),

@@ -50,7 +50,6 @@ class KanataService {
       if (kDebugMode) {
         print('Connected to Kanata server at $_host:$_port');
       }
-
       _isConnected = true;
       _kanataSocket!.listen(
         (data) {
