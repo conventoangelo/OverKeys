@@ -125,9 +125,17 @@ class _PreferencesScreenState extends State<PreferencesScreen>
 
   void _setupMethodHandler() {
     DesktopMultiWindow.setMethodHandler((call, fromWindowId) async {
+      if (call.method == 'getWindowType') {
+        return jsonEncode({'type': 'preferences'});
+      }
+
       if (call.method == 'updateAutoHideFromMainWindow' && mounted) {
         setState(() => _autoHideEnabled = call.arguments as bool);
         await _prefsService.setAutoHideEnabled(_autoHideEnabled);
+      }
+
+      if (call.method == 'requestFocus') {
+        await windowManager.focus();
       }
       return null;
     });

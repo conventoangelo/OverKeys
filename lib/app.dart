@@ -587,12 +587,34 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
 
   Future<void> _showPreferences() async {
     try {
+      List<int> windowIds = await DesktopMultiWindow.getAllSubWindowIds();
+      for (int id in windowIds) {
+        Map<String, dynamic>? windowData;
+        try {
+          String? dataString =
+              await DesktopMultiWindow.invokeMethod(id, 'getWindowType');
+          if (dataString != null) {
+            windowData = jsonDecode(dataString);
+            if (windowData != null && windowData['type'] == 'preferences') {
+              await WindowController.fromWindowId(id).show();
+              await DesktopMultiWindow.invokeMethod(id, 'requestFocus');
+              return;
+            }
+          }
+        } catch (e) {
+          if (kDebugMode) {
+            print('Error getting window data: $e');
+          }
+        }
+      }
+
       await DesktopMultiWindow.createWindow(jsonEncode({
+        'type': 'preferences',
         'name': 'preferences',
       }));
     } catch (e) {
       if (kDebugMode) {
-        print('Error creating preferences window: $e');
+        print('Error handling preferences window: $e');
       }
     }
   }
