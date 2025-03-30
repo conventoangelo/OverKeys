@@ -430,6 +430,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
             id, 'updateAutoHideFromMainWindow', _autoHideEnabled);
       }
     });
+    _saveAllPreferences();
     _setupTray();
   }
 
