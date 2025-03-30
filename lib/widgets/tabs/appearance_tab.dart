@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:overkeys/widgets/preferences/preference_option_widgets.dart';
+import 'package:overkeys/widgets/options/options.dart';
 
 class AppearanceTab extends StatefulWidget {
   final double opacity;

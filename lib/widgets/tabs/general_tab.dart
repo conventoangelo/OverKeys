@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:overkeys/widgets/preferences/preference_option_widgets.dart';
+import 'package:overkeys/widgets/options/options.dart';
 import 'package:overkeys/models/keyboard_layouts.dart';
 import 'package:overkeys/services/config_service.dart';
 import 'package:overkeys/models/user_config.dart';

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hotkey_manager/hotkey_manager.dart';
-import 'package:overkeys/widgets/preferences/preference_option_widgets.dart';
-import 'package:overkeys/widgets/preferences/dialog/record_hotkey.dart';
+import 'package:overkeys/widgets/options/options.dart';
+import 'package:overkeys/widgets/dialog/record_hotkey.dart';
 
 class HotKeysTab extends StatefulWidget {
   final bool hotKeysEnabled;
@@ -39,7 +39,8 @@ class _HotKeysTabState extends State<HotKeysTab> {
         const SizedBox(height: 20),
         HotKeyOption(
           label: 'Toggle Visibility',
-          subtitle: 'Force show or hide the overlay with a keyboard shortcut even if it\'s set to auto-hide',
+          subtitle:
+              'Force show or hide the overlay with a keyboard shortcut even if it\'s set to auto-hide',
           formattedHotKey: _formatHotKey(widget.visibilityHotKey),
           onChangePressed: () => _showRecordHotKeyDialog(
             context,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:overkeys/widgets/preferences/preference_option_widgets.dart';
+import 'package:overkeys/widgets/options/options.dart';
 
 class AboutTab extends StatelessWidget {
   final String appVersion;

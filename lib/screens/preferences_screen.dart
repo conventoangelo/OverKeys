@@ -6,16 +6,16 @@ import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hotkey_manager/hotkey_manager.dart';
-import 'package:overkeys/widgets/preferences/hotkeys_tab.dart';
+import 'package:overkeys/widgets/tabs/hotkeys_tab.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:overkeys/utils/theme_manager.dart';
 import 'package:overkeys/services/preferences_service.dart';
-import 'package:overkeys/widgets/preferences/general_tab.dart';
-import 'package:overkeys/widgets/preferences/appearance_tab.dart';
-import 'package:overkeys/widgets/preferences/keyboard_tab.dart';
-import 'package:overkeys/widgets/preferences/text_tab.dart';
-import 'package:overkeys/widgets/preferences/about_tab.dart';
+import 'package:overkeys/widgets/tabs/general_tab.dart';
+import 'package:overkeys/widgets/tabs/appearance_tab.dart';
+import 'package:overkeys/widgets/tabs/keyboard_tab.dart';
+import 'package:overkeys/widgets/tabs/text_tab.dart';
+import 'package:overkeys/widgets/tabs/about_tab.dart';
 
 class PreferencesScreen extends StatefulWidget {
   const PreferencesScreen({super.key, required this.windowController});
