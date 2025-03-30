@@ -32,89 +32,29 @@ class _HotKeysTabState extends State<HotKeysTab> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SectionTitle(title: 'Hotkeys'),
-        ToggleOption(label: 'Enable hotkeys', 
-        value: widget.hotKeysEnabled, 
-        onChanged: widget.updateHotKeysEnabled),
+        ToggleOption(
+            label: 'Enable hotkeys',
+            value: widget.hotKeysEnabled,
+            onChanged: widget.updateHotKeysEnabled),
         const SizedBox(height: 20),
-        _buildHotKeySection(
-          context,
-          'Toggle Visibility',
-          'Show or hide the overlay with a keyboard shortcut',
-          widget.visibilityHotKey,
-          widget.updateVisibilityHotKey,
+        HotKeyOption(
+          label: 'Toggle Visibility',
+          subtitle: 'Force show or hide the overlay with a keyboard shortcut even if it\'s set to auto-hide',
+          formattedHotKey: _formatHotKey(widget.visibilityHotKey),
+          onChangePressed: () => _showRecordHotKeyDialog(
+            context,
+            widget.updateVisibilityHotKey,
+          ),
         ),
-        const SizedBox(height: 20),
-        const Divider(),
-        const SizedBox(height: 20),
-        _buildHotKeySection(
-          context,
-          'Toggle Auto Hide',
-          'Enable or disable auto-hide feature with a keyboard shortcut',
-          widget.autoHideHotKey,
-          widget.updateAutoHideHotKey,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildHotKeySection(
-    BuildContext context,
-    String title,
-    String description,
-    HotKey hotKey,
-    Function(HotKey) updateHotKey,
-  ) {
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          description,
-          style: TextStyle(color: colorScheme.onSurfaceVariant),
-        ),
-        const SizedBox(height: 12),
-        Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(
-                color: colorScheme.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                _formatHotKey(hotKey),
-                style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  fontFamily: 'Geist Mono',
-                  color: colorScheme.onSurfaceVariant,
-                  fontSize: 16,
-                ),
-              ),
-            ),
-            const SizedBox(width: 12),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: colorScheme.surfaceContainerHighest,
-                elevation: 2,
-                minimumSize: const Size(100, 45),
-                side: BorderSide(color: colorScheme.primary),
-              ),
-              onPressed: () => _showRecordHotKeyDialog(context, updateHotKey),
-              child: Text(
-                'Change',
-                style: TextStyle(
-                    color: colorScheme.primary,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16),
-              ),
-            ),
-          ],
+        HotKeyOption(
+          label: 'Toggle Auto Hide',
+          subtitle:
+              'Enable or disable auto-hide feature with a keyboard shortcut',
+          formattedHotKey: _formatHotKey(widget.autoHideHotKey),
+          onChangePressed: () => _showRecordHotKeyDialog(
+            context,
+            widget.updateAutoHideHotKey,
+          ),
         ),
       ],
     );
