@@ -269,20 +269,25 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       ],
       home: Builder(builder: (context) {
         return Scaffold(
-          appBar: AppBar(
-            toolbarHeight: 100,
-            title: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 100),
-              child: _buildTabBar(),
-            ),
-            automaticallyImplyLeading: false,
-          ),
-          body: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 60.0),
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(20.0, 0, 16.0, 20.0),
-              child: _buildCurrentTabContent(),
-            ),
+          body: Row(
+            children: [
+              // Permanent drawer
+              _buildNavigationPanel(context),
+              // Main content area
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.all(20.0),
+                        child: _buildCurrentTabContent(),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         );
       }),
@@ -290,51 +295,86 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     );
   }
 
-  Widget _buildTabBar() {
+  Widget _buildNavigationPanel(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final double drawerWidth = 200;
+
     return Container(
-      padding: const EdgeInsets.all(8),
-      child: Row(
+      width: drawerWidth,
+      color: Theme.of(context).drawerTheme.backgroundColor ??
+          colorScheme.surfaceContainer,
+      alignment: Alignment.center,
+      child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          'General',
-          'Appearance',
-          'Keyboard',
-          'Text',
-          'About',
-          'Hotkeys'
-        ].map((tab) => _buildTabButton(tab)).toList(),
+          Expanded(
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: [
+                'General',
+                'Appearance',
+                'Keyboard',
+                'Text',
+                'Hotkeys',
+                'About',
+              ].map((tab) => _buildDrawerItem(context, tab)).toList(),
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildTabButton(String tabName) {
-    final colorScheme = ThemeManager.getTheme(_brightness).colorScheme;
-    bool isActive = _currentTab == tabName;
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
-      child: ElevatedButton(
-        onPressed: () => setState(() => _currentTab = tabName),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: isActive ? colorScheme.primary : colorScheme.surface,
-          foregroundColor:
-              isActive ? colorScheme.onPrimary : colorScheme.primary,
-          elevation: 1,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          side: BorderSide(
-            color: colorScheme.primary,
-            width: 2,
-          ),
+  Widget _buildDrawerItem(BuildContext context, String tabName) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final bool isSelected = _currentTab == tabName;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: isSelected ? colorScheme.surface : Colors.transparent,
+      ),
+      child: ListTile(
+        leading: Icon(
+          _getIconForTab(tabName).icon,
+          color: isSelected
+              ? colorScheme.primary
+              : colorScheme.onSurfaceVariant.withAlpha(192),
         ),
-        child: Text(
+        title: Text(
           tabName,
           style: TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.w400,
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+            fontSize: 16,
+            color: isSelected
+                ? colorScheme.primary
+                : colorScheme.onSurfaceVariant.withAlpha(192),
           ),
         ),
+        onTap: () {
+          setState(() => _currentTab = tabName);
+        },
+        selected: isSelected,
       ),
     );
+  }
+
+  Icon _getIconForTab(String tabName) {
+    switch (tabName) {
+      case 'General':
+        return const Icon(Icons.settings);
+      case 'Appearance':
+        return const Icon(Icons.palette);
+      case 'Keyboard':
+        return const Icon(Icons.keyboard);
+      case 'Text':
+        return const Icon(Icons.text_fields);
+      case 'Hotkeys':
+        return const Icon(Icons.keyboard_alt_outlined);
+      case 'About':
+        return const Icon(Icons.info);
+      default:
+        return const Icon(Icons.menu);
+    }
   }
 
   Widget _buildCurrentTabContent() {

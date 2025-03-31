@@ -85,7 +85,6 @@ class _KeyboardTabState extends State<KeyboardTab> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        SectionTitle(title: 'Keyboard Layout'),
         DropdownOption(
           label: 'Keymap style',
           value: widget.keymapStyle,
@@ -117,7 +116,6 @@ class _KeyboardTabState extends State<KeyboardTab> {
               : CrossFadeState.showFirst,
           sizeCurve: Curves.easeInOut,
         ),
-        SectionTitle(title: 'Key Dimensions'),
         AnimatedCrossFade(
           duration: const Duration(milliseconds: 300),
           firstChild: const SizedBox.shrink(),

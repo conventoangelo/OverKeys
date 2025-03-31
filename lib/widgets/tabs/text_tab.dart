@@ -62,7 +62,6 @@ class _TextTabState extends State<TextTab> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        SectionTitle(title: 'Text Settings'),
         DropdownOption(
             label: 'Font style',
             value: widget.fontFamily,

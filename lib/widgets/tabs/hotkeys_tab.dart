@@ -31,12 +31,10 @@ class _HotKeysTabState extends State<HotKeysTab> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SectionTitle(title: 'Hotkeys'),
         ToggleOption(
             label: 'Enable hotkeys',
             value: widget.hotKeysEnabled,
             onChanged: widget.updateHotKeysEnabled),
-        const SizedBox(height: 20),
         HotKeyOption(
           label: 'Toggle Visibility',
           subtitle:

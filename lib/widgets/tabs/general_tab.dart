@@ -69,7 +69,6 @@ class _GeneralTabState extends State<GeneralTab> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        SectionTitle(title: 'General Settings'),
         ToggleOption(
           label: 'Open on system startup',
           value: widget.launchAtStartup,

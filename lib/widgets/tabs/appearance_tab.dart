@@ -59,7 +59,8 @@ class _AppearanceTabState extends State<AppearanceTab> {
   @override
   void initState() {
     super.initState();
-    _localOpacity = widget.opacity;
+    // Ensure opacity is within valid range
+    _localOpacity = widget.opacity.clamp(0.1, 1.0);
     _localMarkerOffset = widget.markerOffset;
     _localMarkerWidth = widget.markerWidth;
     _localMarkerHeight = widget.markerHeight;
@@ -70,7 +71,8 @@ class _AppearanceTabState extends State<AppearanceTab> {
   void didUpdateWidget(AppearanceTab oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.opacity != widget.opacity) {
-      _localOpacity = widget.opacity;
+      // Ensure opacity is within valid range when updated
+      _localOpacity = widget.opacity.clamp(0.1, 1.0);
     }
     if (oldWidget.markerOffset != widget.markerOffset) {
       _localMarkerOffset = widget.markerOffset;
@@ -91,7 +93,6 @@ class _AppearanceTabState extends State<AppearanceTab> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        SectionTitle(title: 'Appearance Settings'),
         SliderOption(
           label: 'Opacity',
           value: _localOpacity,
@@ -113,7 +114,6 @@ class _AppearanceTabState extends State<AppearanceTab> {
           currentColor: widget.keyColorNotPressed,
           onColorChanged: widget.updateKeyColorNotPressed,
         ),
-        SectionTitle(title: 'Tactile Markers'),
         ColorOption(
           label: 'Marker color (pressed)',
           currentColor: widget.markerColor,
