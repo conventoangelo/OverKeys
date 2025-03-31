@@ -520,24 +520,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
               'Visibility hotkey triggered: ${hotKey.toJson()} - toggling force hide to ${!_forceHide}');
         }
         setState(() {
-          _forceHide = !_forceHide;
-          if (_autoHideEnabled && _forceHide) {
-            autoHideBeforeForceHide = _autoHideEnabled;
-            _autoHideEnabled = false;
-            _autoHideTimer?.cancel();
-            if (_isWindowVisible) {
-              _fadeOut();
-            }
-          } else if (autoHideBeforeForceHide && !_forceHide) {
-            _autoHideEnabled = autoHideBeforeForceHide;
-            autoHideBeforeForceHide = false;
-            if (_autoHideEnabled) {
-              _fadeIn();
-              _resetAutoHideTimer();
-            }
-          } else {
-            onTrayIconMouseDown();
-          }
+          onTrayIconMouseDown();
         });
       },
     );
@@ -565,10 +548,27 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
 
   @override
   void onTrayIconMouseDown() {
-    if (_isWindowVisible) {
-      _fadeOut();
+    _forceHide = !_forceHide;
+    if (_autoHideEnabled && _forceHide) {
+      autoHideBeforeForceHide = _autoHideEnabled;
+      _autoHideEnabled = false;
+      _autoHideTimer?.cancel();
+      if (_isWindowVisible) {
+        _fadeOut();
+      }
+    } else if (autoHideBeforeForceHide && !_forceHide) {
+      _autoHideEnabled = autoHideBeforeForceHide;
+      autoHideBeforeForceHide = false;
+      if (_autoHideEnabled) {
+        _fadeIn();
+        _resetAutoHideTimer();
+      }
     } else {
-      _fadeIn();
+      if (_isWindowVisible) {
+        _fadeOut();
+      } else {
+        _fadeIn();
+      }
     }
   }
 
