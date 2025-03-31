@@ -75,13 +75,14 @@ String getKeyFromKeyCodeShift(int keyCode, bool isShiftDown) {
     case (VK_RIGHT, _): return 'Right';
     case (VK_UP, _): return 'Up';
     case (VK_DOWN, _): return 'Down';
-    case (VK_SHIFT, _): return 'Shift';
+    // Treating VK_(modifier) as default VK_(left modifier) for now
+    // case (VK_SHIFT, _): return 'Shift';
     case (VK_LSHIFT, _): return 'LShift';
     case (VK_RSHIFT, _): return 'RShift';
-    case (VK_CONTROL, _): return 'Control';
+    // case (VK_CONTROL, _): return 'Control';
     case (VK_LCONTROL, _): return 'LControl';
     case (VK_RCONTROL, _): return 'RControl';
-    case (VK_MENU, _): return 'Alt';
+    // case (VK_MENU, _): return 'Alt';
     case (VK_LMENU, _): return 'LAlt';
     case (VK_RMENU, _): return 'RAlt';
     case (VK_LWIN, _): return 'Win';
