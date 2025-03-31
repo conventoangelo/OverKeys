@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.2.9](https://github.com/conventoangelo/OverKeys/compare/v0.2.8...v0.2.9) (2025-03-31)
+
+
+### ✨ Features
+
+* add lastRowSplitWidth settings for split matrix ([85ed250](https://github.com/conventoangelo/OverKeys/commit/85ed2506a04803ec99b8636adf772c4455a67418))
+* add support for 6 column split keyboard layouts ([#61](https://github.com/conventoangelo/OverKeys/issues/61)) ([85ed250](https://github.com/conventoangelo/OverKeys/commit/85ed2506a04803ec99b8636adf772c4455a67418))
+* add support for 6 column split keyboards ([85ed250](https://github.com/conventoangelo/OverKeys/commit/85ed2506a04803ec99b8636adf772c4455a67418))
+* add support for custom keys in split matrix last row ([85ed250](https://github.com/conventoangelo/OverKeys/commit/85ed2506a04803ec99b8636adf772c4455a67418))
+* improve preferences window UI ([9da0734](https://github.com/conventoangelo/OverKeys/commit/9da0734189d70b9cf8fe4ad36fb6ac2cf7bb46bf))
+* improve preferences window UI ([#60](https://github.com/conventoangelo/OverKeys/issues/60)) ([9da0734](https://github.com/conventoangelo/OverKeys/commit/9da0734189d70b9cf8fe4ad36fb6ac2cf7bb46bf))
+* refactor and add more tabs to preferences ([9da0734](https://github.com/conventoangelo/OverKeys/commit/9da0734189d70b9cf8fe4ad36fb6ac2cf7bb46bf))
+* use lucide icons ([9da0734](https://github.com/conventoangelo/OverKeys/commit/9da0734189d70b9cf8fe4ad36fb6ac2cf7bb46bf))
+
+
+### 🐛 Bug Fixes
+
+* make modifiers default to left modifiers for now ([85ed250](https://github.com/conventoangelo/OverKeys/commit/85ed2506a04803ec99b8636adf772c4455a67418))
+* split matrix errors due to changing space width ([bfdc418](https://github.com/conventoangelo/OverKeys/commit/bfdc41806b1096f5ce6f02bb7fa3144f37763d3f))
+
 ## [0.2.8](https://github.com/conventoangelo/OverKeys/compare/v0.2.7...v0.2.8) (2025-03-31)
 
 
