@@ -7,6 +7,7 @@ class KeyboardScreen extends StatelessWidget {
   final KeyboardLayout layout;
   final bool showAltLayout;
   final KeyboardLayout? altLayout;
+  final bool use6ColLayout;
   final Color keyColorPressed;
   final Color keyColorNotPressed;
   final Color markerColor;
@@ -36,6 +37,7 @@ class KeyboardScreen extends StatelessWidget {
       required this.layout,
       required this.showAltLayout,
       required this.altLayout,
+      required this.use6ColLayout,
       required this.keyColorPressed,
       required this.keyColorNotPressed,
       required this.markerColor,
@@ -80,40 +82,55 @@ class KeyboardScreen extends StatelessWidget {
 
     if (keymapStyle != 'Matrix' && keymapStyle != 'Split Matrix') {
       for (int i = 0; i < keys.length; i++) {
-        if (rowIndex == 0 && i == 0 && !showGraveKey) {
-          continue;
-        }
+        if (rowIndex == 0 && i == 0 && !showGraveKey) continue;
 
-        if (rowIndex == 0 && i == keys.length - 1 && showGraveKey) {
-          rowWidgets
-              .add(buildKeys(rowIndex, keys[i], i, isLastKeyFirstRow: true));
-        } else {
-          rowWidgets.add(buildKeys(rowIndex, keys[i], i));
-        }
+        bool isLastKeyFirstRow =
+            rowIndex == 0 && i == keys.length - 1 && showGraveKey;
+        rowWidgets.add(buildKeys(rowIndex, keys[i], i,
+            isLastKeyFirstRow: isLastKeyFirstRow));
       }
     } else {
-      int startIndex = (rowIndex == 0) ? 1 : 0;
-      int endIndex = (rowIndex == 0) ? 11 : 10;
+      int startIndex = (rowIndex == 0 && (keymapStyle != 'Split Matrix' || !showGraveKey)) ? 1 : 0;
+      int endIndex = (rowIndex == 0) ? 11 : (use6ColLayout ? 12 : 10);
 
-      for (int i = startIndex; i < keys.length && i < endIndex; i++) {
-        if (keymapStyle == 'Split Matrix' && rowIndex == 0 && i == 6) {
-          rowWidgets.add(SizedBox(width: splitWidth));
-        } else if (i == 5 && keymapStyle == 'Split Matrix' && rowIndex > 0 && rowIndex < 4) {
-          rowWidgets.add(SizedBox(width: splitWidth));
-        } else if (i == keys.length ~/ 2 && keymapStyle == 'Split Matrix' && rowIndex == 4 && keys.length != 1) {
-          rowWidgets.add(SizedBox(width: lastRowSplitWidth));
+      // Special handling for first row in Split Matrix with 6 columns
+      if (rowIndex == 0 && keymapStyle == 'Split Matrix' && use6ColLayout) {
+        rowWidgets.add(buildKeys(rowIndex, keys[0], 0));
+        
+        for (int i = 1; i < 6; i++) {
+          rowWidgets.add(buildKeys(rowIndex, keys[i], i));
         }
+        
+        rowWidgets.add(SizedBox(width: splitWidth));
+        
+        for (int i = 6; i < 11; i++) {
+          rowWidgets.add(buildKeys(rowIndex, keys[i], i));
+        }
+        
+        rowWidgets.add(buildKeys(rowIndex, keys[11], 11));
+      } else {
+        for (int i = startIndex; i < keys.length && i < endIndex; i++) {
+          if (keymapStyle == 'Split Matrix') {
+            if ((rowIndex == 0 && i == 6) ||
+                (i == (use6ColLayout ? 6 : 5) && rowIndex > 0 && rowIndex < 4)) {
+              rowWidgets.add(SizedBox(width: splitWidth));
+            } else if (i == keys.length ~/ 2 &&
+                rowIndex == 4 &&
+                keys.length != 1) {
+              rowWidgets.add(SizedBox(width: lastRowSplitWidth));
+            }
+          }
 
-        if (keymapStyle == 'Split Matrix' && rowIndex == 4) {
-          if (keys[i] == " " && keys.length == 1) {
+          if (keymapStyle == 'Split Matrix' &&
+              rowIndex == 4 &&
+              keys[i] == " " &&
+              keys.length == 1) {
             rowWidgets.add(buildKeys(rowIndex, keys[i], i));
             rowWidgets.add(SizedBox(width: lastRowSplitWidth));
             rowWidgets.add(buildKeys(rowIndex, keys[i], i));
           } else {
             rowWidgets.add(buildKeys(rowIndex, keys[i], i));
           }
-        } else {
-          rowWidgets.add(buildKeys(rowIndex, keys[i], i));
         }
       }
     }

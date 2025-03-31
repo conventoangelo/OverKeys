@@ -8,10 +8,12 @@ class AdvancedTab extends StatelessWidget {
   final bool enableAdvancedSettings;
   final bool useUserLayout;
   final bool showAltLayout;
+  final bool use6ColLayout;
   final bool kanataEnabled;
   final Function(bool) updateEnableAdvancedSettings;
   final Function(bool) updateUseUserLayout;
   final Function(bool) updateShowAltLayout;
+  final Function(bool) updateUse6ColLayout;
   final Function(bool) updateKanataEnabled;
 
   const AdvancedTab({
@@ -19,10 +21,12 @@ class AdvancedTab extends StatelessWidget {
     required this.enableAdvancedSettings,
     required this.useUserLayout,
     required this.showAltLayout,
+    required this.use6ColLayout,
     required this.kanataEnabled,
     required this.updateEnableAdvancedSettings,
     required this.updateUseUserLayout,
     required this.updateShowAltLayout,
+    required this.updateUse6ColLayout,
     required this.updateKanataEnabled,
   });
 
@@ -57,6 +61,13 @@ class AdvancedTab extends StatelessWidget {
                 label: 'Show alternative layout',
                 value: showAltLayout,
                 onChanged: updateShowAltLayout,
+              ),
+              ToggleOption(
+                label: 'Use 6 column layout',
+                subtitle:
+                    'Make sure you have configured your user layouts in the config file.',
+                value: use6ColLayout,
+                onChanged: updateUse6ColLayout,
               ),
               ToggleOption(
                 label: 'Connect to Kanata',

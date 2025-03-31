@@ -87,6 +87,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   bool _showAltLayout = false;
   bool _previousShowAltLayout = false;
   KeyboardLayout _altLayout = qwerty;
+  bool _use6ColLayout = false;
   bool _kanataEnabled = false;
 
   // HotKey settings
@@ -201,6 +202,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
       _useUserLayout = prefs['useUserLayout'];
       _showAltLayout = prefs['showAltLayout'];
       _altLayout = _keyboardLayout;
+      _use6ColLayout = prefs['use6ColLayout'];
       _kanataEnabled = prefs['kanataEnabled'];
 
       // HotKey settings
@@ -254,6 +256,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
       'enableAdvancedSettings': _enableAdvancedSettings,
       'useUserLayout': _useUserLayout,
       'showAltLayout': _showAltLayout,
+      'use6ColLayout': _use6ColLayout,
       'kanataEnabled': _kanataEnabled,
 
       // HotKey settings
@@ -815,6 +818,12 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
             _loadAltLayout();
           }
           _fadeIn();
+        case 'updateUse6ColLayout':
+          final use6ColLayout = call.arguments as bool;
+          setState(() {
+            _use6ColLayout = use6ColLayout;
+          });
+          _fadeIn();
         case 'updateKanataEnabled':
           final kanataEnabled = call.arguments as bool;
           setState(() {
@@ -884,6 +893,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
                     layout: _keyboardLayout,
                     showAltLayout: _enableAdvancedSettings && _showAltLayout,
                     altLayout: _altLayout,
+                    use6ColLayout: _use6ColLayout,
                     keyColorPressed: _keyColorPressed,
                     keyColorNotPressed: _keyColorNotPressed,
                     markerColor: _markerColor,
