@@ -98,14 +98,20 @@ class KeyboardScreen extends StatelessWidget {
       for (int i = startIndex; i < keys.length && i < endIndex; i++) {
         if (keymapStyle == 'Split Matrix' && rowIndex == 0 && i == 6) {
           rowWidgets.add(SizedBox(width: splitWidth));
-        } else if (i == 5 && keymapStyle == 'Split Matrix' && rowIndex > 0) {
+        } else if (i == 5 && keymapStyle == 'Split Matrix' && rowIndex > 0 && rowIndex < 4) {
           rowWidgets.add(SizedBox(width: splitWidth));
+        } else if (i == keys.length ~/ 2 && keymapStyle == 'Split Matrix' && rowIndex == 4 && keys.length != 1) {
+          rowWidgets.add(SizedBox(width: lastRowSplitWidth));
         }
 
         if (keymapStyle == 'Split Matrix' && rowIndex == 4) {
-          rowWidgets.add(buildKeys(rowIndex, keys[i], i));
-          rowWidgets.add(SizedBox(width: lastRowSplitWidth));
-          rowWidgets.add(buildKeys(rowIndex, keys[i], i));
+          if (keys[i] == " " && keys.length == 1) {
+            rowWidgets.add(buildKeys(rowIndex, keys[i], i));
+            rowWidgets.add(SizedBox(width: lastRowSplitWidth));
+            rowWidgets.add(buildKeys(rowIndex, keys[i], i));
+          } else {
+            rowWidgets.add(buildKeys(rowIndex, keys[i], i));
+          }
         } else {
           rowWidgets.add(buildKeys(rowIndex, keys[i], i));
         }
@@ -166,7 +172,7 @@ class KeyboardScreen extends StatelessWidget {
                           textAlign: TextAlign.left,
                           style: TextStyle(
                             color: textColor,
-                            fontSize: key.length > 2
+                            fontSize: key.length > 1
                                 ? keyFontSize * 0.6
                                 : keyFontSize * 0.85,
                             fontWeight: fontWeight,
@@ -183,7 +189,7 @@ class KeyboardScreen extends StatelessWidget {
                           style: TextStyle(
                             color: textColor,
                             fontSize:
-                                _getAltLayoutKey(rowIndex, keyIndex).length > 2
+                                _getAltLayoutKey(rowIndex, keyIndex).length > 1
                                     ? keyFontSize * 0.6
                                     : keyFontSize * 0.85,
                             fontWeight: fontWeight,
@@ -199,7 +205,7 @@ class KeyboardScreen extends StatelessWidget {
                       style: TextStyle(
                         color: textColor,
                         fontSize:
-                            key.length > 2 ? keyFontSize * 0.7 : keyFontSize,
+                            key.length > 1 ? keyFontSize * 0.7 : keyFontSize,
                         fontWeight: fontWeight,
                       ),
                     ),
