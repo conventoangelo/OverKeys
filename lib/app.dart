@@ -59,6 +59,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   double _keyPadding = 3;
   double _spaceWidth = 320;
   double _splitWidth = 100;
+  double _lastRowSplitWidth = 100;
 
   // Text settings
   String _fontFamily = 'GeistMono';
@@ -173,6 +174,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
       _keyPadding = prefs['keyPadding'];
       _spaceWidth = prefs['spaceWidth'];
       _splitWidth = prefs['splitWidth'];
+      _lastRowSplitWidth = prefs['lastRowSplitWidth'];
 
       // Text settings
       _fontFamily = prefs['fontFamily'];
@@ -211,12 +213,12 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   Future<void> _saveAllPreferences() async {
     final prefs = {
       // General settings
-      'launchAtStartup': _launchAtStartup, 
+      'launchAtStartup': _launchAtStartup,
       'autoHideEnabled': _autoHideEnabled,
       'autoHideDuration': _autoHideDuration,
       'opacity': _opacity,
       'keyboardLayoutName': _initialKeyboardLayout!.name,
-      
+
       // Keyboard settings
       'keymapStyle': _keymapStyle,
       'showTopRow': _showTopRow,
@@ -226,6 +228,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
       'keyPadding': _keyPadding,
       'spaceWidth': _spaceWidth,
       'splitWidth': _splitWidth,
+      'lastRowSplitWidth': _lastRowSplitWidth,
 
       // Text settings
       'fontFamily': _fontFamily,
@@ -694,6 +697,9 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
         case 'updateSplitWidth':
           final splitWidth = call.arguments as double;
           setState(() => _splitWidth = splitWidth);
+        case 'updateLastRowSplitWidth':
+          final lastRowSplitWidth = call.arguments as double;
+          setState(() => _lastRowSplitWidth = lastRowSplitWidth);
 
         // Text settings
         case 'updateFontFamily':
@@ -741,7 +747,8 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
           setState(() => _keyTextColor = Color(keyTextColor));
         case 'updateKeyTextColorNotPressed':
           final keyTextColorNotPressed = call.arguments as int;
-          setState(() => _keyTextColorNotPressed = Color(keyTextColorNotPressed));
+          setState(
+              () => _keyTextColorNotPressed = Color(keyTextColorNotPressed));
 
         // Advanced settings
         case 'updateEnableAdvancedSettings':
@@ -893,6 +900,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
                     keyPadding: _keyPadding,
                     spaceWidth: _spaceWidth,
                     splitWidth: _splitWidth,
+                    lastRowSplitWidth: _lastRowSplitWidth,
                     keyFontSize: _keyFontSize,
                     spaceFontSize: _spaceFontSize,
                     fontWeight: _fontWeight,

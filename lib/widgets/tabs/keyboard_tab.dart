@@ -10,6 +10,7 @@ class KeyboardTab extends StatefulWidget {
   final double keyPadding;
   final double spaceWidth;
   final double splitWidth;
+  final double lastRowSplitWidth;
   final Function(String) updateKeymapStyle;
   final Function(bool) updateShowTopRow;
   final Function(bool) updateShowGraveKey;
@@ -18,6 +19,7 @@ class KeyboardTab extends StatefulWidget {
   final Function(double) updateKeyPadding;
   final Function(double) updateSpaceWidth;
   final Function(double) updateSplitWidth;
+  final Function(double) updateLastRowSplitWidth;
 
   const KeyboardTab({
     super.key,
@@ -29,6 +31,7 @@ class KeyboardTab extends StatefulWidget {
     required this.keyPadding,
     required this.spaceWidth,
     required this.splitWidth,
+    required this.lastRowSplitWidth,
     required this.updateKeymapStyle,
     required this.updateShowTopRow,
     required this.updateShowGraveKey,
@@ -37,6 +40,7 @@ class KeyboardTab extends StatefulWidget {
     required this.updateKeyPadding,
     required this.updateSpaceWidth,
     required this.updateSplitWidth,
+    required this.updateLastRowSplitWidth,
   });
 
   @override
@@ -49,6 +53,7 @@ class _KeyboardTabState extends State<KeyboardTab> {
   late double _localKeyPadding;
   late double _localSpaceWidth;
   late double _localSplitWidth;
+  late double _localLastRowSplitWidth;
 
   @override
   void initState() {
@@ -58,6 +63,7 @@ class _KeyboardTabState extends State<KeyboardTab> {
     _localKeyPadding = widget.keyPadding;
     _localSpaceWidth = widget.spaceWidth;
     _localSplitWidth = widget.splitWidth;
+    _localLastRowSplitWidth = widget.lastRowSplitWidth;
   }
 
   @override
@@ -77,6 +83,9 @@ class _KeyboardTabState extends State<KeyboardTab> {
     }
     if (oldWidget.splitWidth != widget.splitWidth) {
       _localSplitWidth = widget.splitWidth;
+    }
+    if (oldWidget.lastRowSplitWidth != widget.lastRowSplitWidth) {
+      _localLastRowSplitWidth = widget.lastRowSplitWidth;
     }
   }
 
@@ -132,6 +141,25 @@ class _KeyboardTabState extends State<KeyboardTab> {
               setState(() => _localSplitWidth = value);
             },
             onChangeEnd: widget.updateSplitWidth,
+          ),
+          crossFadeState: widget.keymapStyle == 'Split Matrix'
+              ? CrossFadeState.showSecond
+              : CrossFadeState.showFirst,
+          sizeCurve: Curves.easeInOut,
+        ),
+        AnimatedCrossFade(
+          duration: const Duration(milliseconds: 300),
+          firstChild: const SizedBox.shrink(),
+          secondChild: SliderOption(
+            label: 'Last row split width',
+            value: _localLastRowSplitWidth,
+            min: 30,
+            max: 200,
+            divisions: 34,
+            onChanged: (value) {
+              setState(() => _localLastRowSplitWidth = value);
+            },
+            onChangeEnd: widget.updateLastRowSplitWidth,
           ),
           crossFadeState: widget.keymapStyle == 'Split Matrix'
               ? CrossFadeState.showSecond

@@ -23,6 +23,7 @@ class KeyboardScreen extends StatelessWidget {
   final double keyPadding;
   final double spaceWidth;
   final double splitWidth;
+  final double lastRowSplitWidth;
   final double keyFontSize;
   final double spaceFontSize;
   final FontWeight fontWeight;
@@ -51,6 +52,7 @@ class KeyboardScreen extends StatelessWidget {
       required this.keyPadding,
       required this.spaceWidth,
       required this.splitWidth,
+      required this.lastRowSplitWidth,
       required this.keyFontSize,
       required this.spaceFontSize,
       required this.fontWeight,
@@ -102,7 +104,7 @@ class KeyboardScreen extends StatelessWidget {
 
         if (keymapStyle == 'Split Matrix' && rowIndex == 4) {
           rowWidgets.add(buildKeys(rowIndex, keys[i], i));
-          rowWidgets.add(SizedBox(width: splitWidth));
+          rowWidgets.add(SizedBox(width: lastRowSplitWidth));
           rowWidgets.add(buildKeys(rowIndex, keys[i], i));
         } else {
           rowWidgets.add(buildKeys(rowIndex, keys[i], i));

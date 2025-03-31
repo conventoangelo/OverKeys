@@ -33,6 +33,8 @@ class PreferencesService {
       await _prefs.getDouble('spaceWidth') ?? 320;
   Future<double> getSplitWidth() async =>
       await _prefs.getDouble('splitWidth') ?? 100;
+  Future<double> getLastRowSplitWidth() async =>
+      await _prefs.getDouble('lastRowSplitWidth') ?? 100;
 
   // Text settings
   Future<String> getFontFamily() async =>
@@ -105,7 +107,6 @@ class PreferencesService {
     }
   }
 
-  // Save methods follow same category order
   // General settings
   Future<void> setLaunchAtStartup(bool value) async =>
       await _prefs.setBool('launchAtStartup', value);
@@ -135,6 +136,8 @@ class PreferencesService {
       await _prefs.setDouble('spaceWidth', value);
   Future<void> setSplitWidth(double value) async =>
       await _prefs.setDouble('splitWidth', value);
+  Future<void> setLastRowSplitWidth(double value) async =>
+      await _prefs.setDouble('lastRowSplitWidth', value);
 
   // Text settings
   Future<void> setFontFamily(String value) async =>
@@ -206,6 +209,7 @@ class PreferencesService {
       'keyPadding': await getKeyPadding(),
       'spaceWidth': await getSpaceWidth(),
       'splitWidth': await getSplitWidth(),
+      'lastRowSplitWidth': await getLastRowSplitWidth(),
 
       // Text settings
       'fontFamily': await getFontFamily(),
@@ -257,6 +261,7 @@ class PreferencesService {
     await setKeyPadding(prefs['keyPadding']);
     await setSpaceWidth(prefs['spaceWidth']);
     await setSplitWidth(prefs['splitWidth']);
+    await setLastRowSplitWidth(prefs['lastRowSplitWidth']);
 
     // Text settings
     await setFontFamily(prefs['fontFamily']);

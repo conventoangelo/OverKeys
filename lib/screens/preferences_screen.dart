@@ -53,6 +53,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
   double _keyPadding = 3;
   double _spaceWidth = 320;
   double _splitWidth = 100;
+  double _lastRowSplitWidth = 100;
 
   // Text settings
   String _fontFamily = 'GeistMono';
@@ -168,6 +169,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       _keyPadding = prefs['keyPadding'];
       _spaceWidth = prefs['spaceWidth'];
       _splitWidth = prefs['splitWidth'];
+      _lastRowSplitWidth = prefs['lastRowSplitWidth'];
 
       // Text settings
       _fontFamily = prefs['fontFamily'];
@@ -220,6 +222,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       'keyPadding': _keyPadding,
       'spaceWidth': _spaceWidth,
       'splitWidth': _splitWidth,
+      'lastRowSplitWidth': _lastRowSplitWidth,
 
       // Text settings
       'fontFamily': _fontFamily,
@@ -286,9 +289,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
         return Scaffold(
           body: Row(
             children: [
-              // Permanent drawer
               _buildNavigationPanel(context),
-              // Main content area
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -323,7 +324,6 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Logo
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 20.0),
             child: Image.asset(
@@ -451,6 +451,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           keyPadding: _keyPadding,
           spaceWidth: _spaceWidth,
           splitWidth: _splitWidth,
+          lastRowSplitWidth: _lastRowSplitWidth,
           updateKeymapStyle: (value) {
             setState(() => _keymapStyle = value);
             _updateMainWindow('updateKeymapStyle', value);
@@ -482,6 +483,10 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           updateSplitWidth: (value) {
             setState(() => _splitWidth = value);
             _updateMainWindow('updateSplitWidth', value);
+          },
+          updateLastRowSplitWidth: (value) {
+            setState(() => _lastRowSplitWidth = value);
+            _updateMainWindow('updateLastRowSplitWidth', value);
           },
         );
       case 'Text':
