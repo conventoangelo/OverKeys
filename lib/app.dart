@@ -32,17 +32,12 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   static const double _defaultTopRowExtraWidth = 160;
   static const Duration _fadeDuration = Duration(milliseconds: 200);
 
-  // Services
-  final PreferencesService _prefsService = PreferencesService();
-  final KanataService _kanataService = KanataService();
-  final Map<String, bool> _keyPressStates = {};
-
-  // Window state
+  // UI state
   bool _isWindowVisible = true;
-  bool _forceHide = false;
-  bool autoHideBeforeForceHide = false;
   bool _ignoreMouseEvents = true;
   Timer? _autoHideTimer;
+  bool _forceHide = false;
+  bool autoHideBeforeForceHide = false;
   bool autoHideBeforeMove = false;
 
   // General settings
@@ -50,26 +45,10 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   bool _launchAtStartup = false;
   bool _autoHideEnabled = false;
   double _autoHideDuration = 2.0;
-  KeyboardLayout _keyboardLayout = qwerty;
-  KeyboardLayout? _initialKeyboardLayout;
-  bool _enableAdvancedSettings = false;
-  bool _useUserLayout = false;
-  KeyboardLayout? _altLayout;
-  bool _showAltLayout = false;
-  bool _previousShowAltLayout = false;
-  bool _kanataEnabled = false;
-
-  // Appearance settings
   double _opacity = 0.6;
   double _lastOpacity = 0.6;
-  Color _keyColorPressed = const Color.fromARGB(255, 30, 30, 30);
-  Color _keyColorNotPressed = const Color.fromARGB(255, 119, 171, 255);
-  Color _markerColor = Colors.white;
-  Color _markerColorNotPressed = Colors.black;
-  double _markerOffset = 10;
-  double _markerWidth = 10;
-  double _markerHeight = 2;
-  double _markerBorderRadius = 10;
+  KeyboardLayout _keyboardLayout = qwerty;
+  KeyboardLayout? _initialKeyboardLayout;
 
   // Keyboard settings
   String _keymapStyle = 'Staggered';
@@ -83,11 +62,31 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
 
   // Text settings
   String _fontFamily = 'GeistMono';
+  FontWeight _fontWeight = FontWeight.w600;
   double _keyFontSize = 20;
   double _spaceFontSize = 14;
-  FontWeight _fontWeight = FontWeight.w600;
+
+  // Markers settings
+  double _markerOffset = 10;
+  double _markerWidth = 10;
+  double _markerHeight = 2;
+  double _markerBorderRadius = 10;
+
+  // Colors settings
+  Color _keyColorPressed = const Color.fromARGB(255, 30, 30, 30);
+  Color _keyColorNotPressed = const Color.fromARGB(255, 119, 171, 255);
+  Color _markerColor = Colors.white;
+  Color _markerColorNotPressed = Colors.black;
   Color _keyTextColor = Colors.white;
   Color _keyTextColorNotPressed = Colors.black;
+
+  // Advanced settings
+  bool _enableAdvancedSettings = false;
+  bool _useUserLayout = false;
+  bool _showAltLayout = false;
+  bool _previousShowAltLayout = false;
+  KeyboardLayout _altLayout = qwerty;
+  bool _kanataEnabled = false;
 
   // HotKey settings
   bool _hotKeysEnabled = true;
@@ -99,6 +98,11 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
     key: PhysicalKeyboardKey.keyW,
     modifiers: [HotKeyModifier.alt, HotKeyModifier.control],
   );
+
+  // Services
+  final PreferencesService _prefsService = PreferencesService();
+  final KanataService _kanataService = KanataService();
+  final Map<String, bool> _keyPressStates = {};
 
   @override
   void initState() {
@@ -151,28 +155,14 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
 
     setState(() {
       // General settings
+      _launchAtStartup = prefs['launchAtStartup'];
       _autoHideEnabled = prefs['autoHideEnabled'];
       _autoHideDuration = prefs['autoHideDuration'];
+      _opacity = prefs['opacity'];
+      _lastOpacity = prefs['opacity'];
       _keyboardLayout = availableLayouts
           .firstWhere((layout) => layout.name == prefs['keyboardLayoutName']);
       _initialKeyboardLayout = _keyboardLayout;
-      _enableAdvancedSettings = prefs['enableAdvancedSettings'];
-      _useUserLayout = prefs['useUserLayout'];
-      _showAltLayout = prefs['showAltLayout'];
-      _altLayout = _keyboardLayout;
-      _kanataEnabled = prefs['kanataEnabled'];
-
-      // Appearance settings
-      _opacity = prefs['opacity'];
-      _lastOpacity = prefs['opacity'];
-      _keyColorPressed = prefs['keyColorPressed'];
-      _keyColorNotPressed = prefs['keyColorNotPressed'];
-      _markerColor = prefs['markerColor'];
-      _markerColorNotPressed = prefs['markerColorNotPressed'];
-      _markerOffset = prefs['markerOffset'];
-      _markerWidth = prefs['markerWidth'];
-      _markerHeight = prefs['markerHeight'];
-      _markerBorderRadius = prefs['markerBorderRadius'];
 
       // Keyboard settings
       _keymapStyle = prefs['keymapStyle'];
@@ -186,11 +176,30 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
 
       // Text settings
       _fontFamily = prefs['fontFamily'];
+      _fontWeight = prefs['fontWeight'];
       _keyFontSize = prefs['keyFontSize'];
       _spaceFontSize = prefs['spaceFontSize'];
-      _fontWeight = prefs['fontWeight'];
+
+      // Markers settings
+      _markerOffset = prefs['markerOffset'];
+      _markerWidth = prefs['markerWidth'];
+      _markerHeight = prefs['markerHeight'];
+      _markerBorderRadius = prefs['markerBorderRadius'];
+
+      // Colors settings
+      _keyColorPressed = prefs['keyColorPressed'];
+      _keyColorNotPressed = prefs['keyColorNotPressed'];
+      _markerColor = prefs['markerColor'];
+      _markerColorNotPressed = prefs['markerColorNotPressed'];
       _keyTextColor = prefs['keyTextColor'];
       _keyTextColorNotPressed = prefs['keyTextColorNotPressed'];
+
+      // Advanced settings
+      _enableAdvancedSettings = prefs['enableAdvancedSettings'];
+      _useUserLayout = prefs['useUserLayout'];
+      _showAltLayout = prefs['showAltLayout'];
+      _altLayout = _keyboardLayout;
+      _kanataEnabled = prefs['kanataEnabled'];
 
       // HotKey settings
       _hotKeysEnabled = prefs['hotKeysEnabled'];
@@ -202,26 +211,12 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   Future<void> _saveAllPreferences() async {
     final prefs = {
       // General settings
-      'launchAtStartup': _launchAtStartup,
+      'launchAtStartup': _launchAtStartup, 
       'autoHideEnabled': _autoHideEnabled,
       'autoHideDuration': _autoHideDuration,
-      'keyboardLayoutName': _initialKeyboardLayout!.name,
-      'enableAdvancedSettings': _enableAdvancedSettings,
-      'useUserLayout': _useUserLayout,
-      'showAltLayout': _showAltLayout,
-      'kanataEnabled': _kanataEnabled,
-
-      // Appearance settings
       'opacity': _opacity,
-      'keyColorPressed': _keyColorPressed,
-      'keyColorNotPressed': _keyColorNotPressed,
-      'markerColor': _markerColor,
-      'markerColorNotPressed': _markerColorNotPressed,
-      'markerOffset': _markerOffset,
-      'markerWidth': _markerWidth,
-      'markerHeight': _markerHeight,
-      'markerBorderRadius': _markerBorderRadius,
-
+      'keyboardLayoutName': _initialKeyboardLayout!.name,
+      
       // Keyboard settings
       'keymapStyle': _keymapStyle,
       'showTopRow': _showTopRow,
@@ -234,11 +229,29 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
 
       // Text settings
       'fontFamily': _fontFamily,
+      'fontWeight': _fontWeight,
       'keyFontSize': _keyFontSize,
       'spaceFontSize': _spaceFontSize,
-      'fontWeight': _fontWeight,
+
+      // Markers settings
+      'markerOffset': _markerOffset,
+      'markerWidth': _markerWidth,
+      'markerHeight': _markerHeight,
+      'markerBorderRadius': _markerBorderRadius,
+
+      // Colors settings
+      'keyColorPressed': _keyColorPressed,
+      'keyColorNotPressed': _keyColorNotPressed,
+      'markerColor': _markerColor,
+      'markerColorNotPressed': _markerColorNotPressed,
       'keyTextColor': _keyTextColor,
       'keyTextColorNotPressed': _keyTextColorNotPressed,
+
+      // Advanced settings
+      'enableAdvancedSettings': _enableAdvancedSettings,
+      'useUserLayout': _useUserLayout,
+      'showAltLayout': _showAltLayout,
+      'kanataEnabled': _kanataEnabled,
 
       // HotKey settings
       'hotKeysEnabled': _hotKeysEnabled,
@@ -635,6 +648,12 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
         case 'updateAutoHideDuration':
           final autoHideDuration = call.arguments as double;
           setState(() => _autoHideDuration = autoHideDuration);
+        case 'updateOpacity':
+          final opacity = call.arguments as double;
+          setState(() {
+            _opacity = opacity;
+            _lastOpacity = opacity;
+          });
         case 'updateLayout':
           final layoutName = call.arguments as String;
           setState(() {
@@ -648,6 +667,83 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
             }
           });
           _fadeIn();
+
+        // Keyboard settings
+        case 'updateKeymapStyle':
+          final keymapStyle = call.arguments as String;
+          setState(() => _keymapStyle = keymapStyle);
+        case 'updateShowTopRow':
+          final showTopRow = call.arguments as bool;
+          setState(() => _showTopRow = showTopRow);
+          _adjustWindowSize();
+        case 'updateShowGraveKey':
+          final showGraveKey = call.arguments as bool;
+          setState(() => _showGraveKey = showGraveKey);
+        case 'updateKeySize':
+          final keySize = call.arguments as double;
+          setState(() => _keySize = keySize);
+        case 'updateKeyBorderRadius':
+          final keyBorderRadius = call.arguments as double;
+          setState(() => _keyBorderRadius = keyBorderRadius);
+        case 'updateKeyPadding':
+          final keyPadding = call.arguments as double;
+          setState(() => _keyPadding = keyPadding);
+        case 'updateSpaceWidth':
+          final spaceWidth = call.arguments as double;
+          setState(() => _spaceWidth = spaceWidth);
+        case 'updateSplitWidth':
+          final splitWidth = call.arguments as double;
+          setState(() => _splitWidth = splitWidth);
+
+        // Text settings
+        case 'updateFontFamily':
+          final fontFamily = call.arguments as String;
+          setState(() => _fontFamily = fontFamily);
+        case 'updateFontWeight':
+          final fontWeightIndex = call.arguments as int;
+          setState(() => _fontWeight = FontWeight.values[fontWeightIndex]);
+        case 'updateKeyFontSize':
+          final keyFontSize = call.arguments as double;
+          setState(() => _keyFontSize = keyFontSize);
+        case 'updateSpaceFontSize':
+          final spaceFontSize = call.arguments as double;
+          setState(() => _spaceFontSize = spaceFontSize);
+
+        // Markers settings
+        case 'updateMarkerOffset':
+          final markerOffset = call.arguments as double;
+          setState(() => _markerOffset = markerOffset);
+        case 'updateMarkerWidth':
+          final markerWidth = call.arguments as double;
+          setState(() => _markerWidth = markerWidth);
+        case 'updateMarkerHeight':
+          final markerHeight = call.arguments as double;
+          setState(() => _markerHeight = markerHeight);
+        case 'updateMarkerBorderRadius':
+          final markerBorderRadius = call.arguments as double;
+          setState(() => _markerBorderRadius = markerBorderRadius);
+
+        // Colors settings
+        case 'updateKeyColorPressed':
+          final keyColorPressed = call.arguments as int;
+          setState(() => _keyColorPressed = Color(keyColorPressed));
+        case 'updateKeyColorNotPressed':
+          final keyColorNotPressed = call.arguments as int;
+          setState(() => _keyColorNotPressed = Color(keyColorNotPressed));
+        case 'updateMarkerColor':
+          final markerColor = call.arguments as int;
+          setState(() => _markerColor = Color(markerColor));
+        case 'updateMarkerColorNotPressed':
+          final markerColorNotPressed = call.arguments as int;
+          setState(() => _markerColorNotPressed = Color(markerColorNotPressed));
+        case 'updateKeyTextColor':
+          final keyTextColor = call.arguments as int;
+          setState(() => _keyTextColor = Color(keyTextColor));
+        case 'updateKeyTextColorNotPressed':
+          final keyTextColorNotPressed = call.arguments as int;
+          setState(() => _keyTextColorNotPressed = Color(keyTextColorNotPressed));
+
+        // Advanced settings
         case 'updateEnableAdvancedSettings':
           final enableAdvancedSettings = call.arguments as bool;
           setState(() => _enableAdvancedSettings = enableAdvancedSettings);
@@ -688,7 +784,6 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
               _loadAltLayout();
             }
           }
-
         case 'updateUseUserLayout':
           final useUserLayout = call.arguments as bool;
           setState(() {
@@ -729,86 +824,6 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
               }
             }
           });
-
-        // Appearance settings
-        case 'updateOpacity':
-          final opacity = call.arguments as double;
-          setState(() {
-            _opacity = opacity;
-            _lastOpacity = opacity;
-          });
-        case 'updateKeyColorPressed':
-          final keyColorPressed = call.arguments as int;
-          setState(() => _keyColorPressed = Color(keyColorPressed));
-        case 'updateKeyColorNotPressed':
-          final keyColorNotPressed = call.arguments as int;
-          setState(() => _keyColorNotPressed = Color(keyColorNotPressed));
-        case 'updateMarkerColor':
-          final markerColor = call.arguments as int;
-          setState(() => _markerColor = Color(markerColor));
-        case 'updateMarkerColorNotPressed':
-          final markerColorNotPressed = call.arguments as int;
-          setState(() => _markerColorNotPressed = Color(markerColorNotPressed));
-        case 'updateMarkerOffset':
-          final markerOffset = call.arguments as double;
-          setState(() => _markerOffset = markerOffset);
-        case 'updateMarkerWidth':
-          final markerWidth = call.arguments as double;
-          setState(() => _markerWidth = markerWidth);
-        case 'updateMarkerHeight':
-          final markerHeight = call.arguments as double;
-          setState(() => _markerHeight = markerHeight);
-        case 'updateMarkerBorderRadius':
-          final markerBorderRadius = call.arguments as double;
-          setState(() => _markerBorderRadius = markerBorderRadius);
-
-        // Keyboard settings
-        case 'updateKeymapStyle':
-          final keymapStyle = call.arguments as String;
-          setState(() => _keymapStyle = keymapStyle);
-        case 'updateShowTopRow':
-          final showTopRow = call.arguments as bool;
-          setState(() => _showTopRow = showTopRow);
-          _adjustWindowSize();
-        case 'updateShowGraveKey':
-          final showGraveKey = call.arguments as bool;
-          setState(() => _showGraveKey = showGraveKey);
-        case 'updateKeySize':
-          final keySize = call.arguments as double;
-          setState(() => _keySize = keySize);
-        case 'updateKeyBorderRadius':
-          final keyBorderRadius = call.arguments as double;
-          setState(() => _keyBorderRadius = keyBorderRadius);
-        case 'updateKeyPadding':
-          final keyPadding = call.arguments as double;
-          setState(() => _keyPadding = keyPadding);
-        case 'updateSpaceWidth':
-          final spaceWidth = call.arguments as double;
-          setState(() => _spaceWidth = spaceWidth);
-        case 'updateSplitWidth':
-          final splitWidth = call.arguments as double;
-          setState(() => _splitWidth = splitWidth);
-
-        // Text settings
-        case 'updateFontFamily':
-          final fontFamily = call.arguments as String;
-          setState(() => _fontFamily = fontFamily);
-        case 'updateKeyFontSize':
-          final keyFontSize = call.arguments as double;
-          setState(() => _keyFontSize = keyFontSize);
-        case 'updateSpaceFontSize':
-          final spaceFontSize = call.arguments as double;
-          setState(() => _spaceFontSize = spaceFontSize);
-        case 'updateFontWeight':
-          final fontWeightIndex = call.arguments as int;
-          setState(() => _fontWeight = FontWeight.values[fontWeightIndex]);
-        case 'updateKeyTextColor':
-          final keyTextColor = call.arguments as int;
-          setState(() => _keyTextColor = Color(keyTextColor));
-        case 'updateKeyTextColorNotPressed':
-          final keyTextColorNotPressed = call.arguments as int;
-          setState(
-              () => _keyTextColorNotPressed = Color(keyTextColorNotPressed));
 
         // HotKey settings
         case 'updateHotKeysEnabled':

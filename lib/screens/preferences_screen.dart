@@ -41,6 +41,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
   bool _launchAtStartup = false;
   bool _autoHideEnabled = false;
   double _autoHideDuration = 2.0;
+  double _opacity = 0.6;
   String _keyboardLayoutName = 'QWERTY';
 
   // Keyboard settings
@@ -52,13 +53,12 @@ class _PreferencesScreenState extends State<PreferencesScreen>
   double _keyPadding = 3;
   double _spaceWidth = 320;
   double _splitWidth = 100;
-  double _opacity = 0.6;
 
   // Text settings
   String _fontFamily = 'GeistMono';
+  FontWeight _fontWeight = FontWeight.w600;
   double _keyFontSize = 20;
   double _spaceFontSize = 14;
-  FontWeight _fontWeight = FontWeight.w600;
 
   // Markers settings
   double _markerOffset = 10;
@@ -156,6 +156,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       _launchAtStartup = prefs['launchAtStartup'];
       _autoHideEnabled = prefs['autoHideEnabled'];
       _autoHideDuration = prefs['autoHideDuration'];
+      _opacity = prefs['opacity'];
       _keyboardLayoutName = prefs['keyboardLayoutName'];
 
       // Keyboard settings
@@ -167,7 +168,6 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       _keyPadding = prefs['keyPadding'];
       _spaceWidth = prefs['spaceWidth'];
       _splitWidth = prefs['splitWidth'];
-      _opacity = prefs['opacity'];
 
       // Text settings
       _fontFamily = prefs['fontFamily'];
@@ -208,6 +208,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       'launchAtStartup': _launchAtStartup,
       'autoHideEnabled': _autoHideEnabled,
       'autoHideDuration': _autoHideDuration,
+      'opacity': _opacity,
       'keyboardLayoutName': _keyboardLayoutName,
 
       // Keyboard settings
@@ -219,7 +220,6 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       'keyPadding': _keyPadding,
       'spaceWidth': _spaceWidth,
       'splitWidth': _splitWidth,
-      'opacity': _opacity,
 
       // Text settings
       'fontFamily': _fontFamily,
@@ -432,13 +432,13 @@ class _PreferencesScreenState extends State<PreferencesScreen>
             setState(() => _autoHideDuration = roundedValue);
             _updateMainWindow('updateAutoHideDuration', roundedValue);
           },
-          updateKeyboardLayoutName: (value) {
-            setState(() => _keyboardLayoutName = value);
-            _updateMainWindow('updateLayout', value);
-          },
           updateOpacity: (value) {
             setState(() => _opacity = value);
             _updateMainWindow('updateOpacity', value);
+          },
+          updateKeyboardLayoutName: (value) {
+            setState(() => _keyboardLayoutName = value);
+            _updateMainWindow('updateLayout', value);
           },
         );
       case 'Keyboard':

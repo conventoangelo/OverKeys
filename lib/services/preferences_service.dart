@@ -13,36 +13,9 @@ class PreferencesService {
       await _prefs.getBool('autoHideEnabled') ?? false;
   Future<double> getAutoHideDuration() async =>
       await _prefs.getDouble('autoHideDuration') ?? 2.0;
+  Future<double> getOpacity() async => await _prefs.getDouble('opacity') ?? 0.6;
   Future<String> getKeyboardLayoutName() async =>
       await _prefs.getString('layout') ?? 'QWERTY';
-  Future<bool> getEnableAdvancedSettings() async =>
-      await _prefs.getBool('enableAdvancedSettings') ?? false;
-  Future<bool> getUseUserLayout() async =>
-      await _prefs.getBool('useUserLayout') ?? false;
-  Future<bool> getShowAltLayout() async =>
-      await _prefs.getBool('showAltLayout') ?? false;
-  Future<bool> getKanataEnabled() async =>
-      await _prefs.getBool('kanataEnabled') ?? false;
-
-  // Appearance settings
-  Future<double> getOpacity() async =>
-      await _prefs.getDouble('opacity') ?? 0.6;
-  Future<Color> getKeyColorPressed() async =>
-      Color(await _prefs.getInt('keyColorPressed') ?? 0xFF1E1E1E);
-  Future<Color> getKeyColorNotPressed() async =>
-      Color(await _prefs.getInt('keyColorNotPressed') ?? 0xFF77ABFF);
-  Future<Color> getMarkerColor() async =>
-      Color(await _prefs.getInt('markerColor') ?? 0xFFFFFFFF);
-  Future<Color> getMarkerColorNotPressed() async =>
-      Color(await _prefs.getInt('markerColorNotPressed') ?? 0xFF000000);
-  Future<double> getMarkerOffset() async =>
-      await _prefs.getDouble('markerOffset') ?? 10;
-  Future<double> getMarkerWidth() async =>
-      await _prefs.getDouble('markerWidth') ?? 10;
-  Future<double> getMarkerHeight() async =>
-      await _prefs.getDouble('markerHeight') ?? 2;
-  Future<double> getMarkerBorderRadius() async =>
-      await _prefs.getDouble('markerBorderRadius') ?? 10;
 
   // Keyboard settings
   Future<String> getKeymapStyle() async =>
@@ -51,8 +24,7 @@ class PreferencesService {
       await _prefs.getBool('showTopRow') ?? false;
   Future<bool> getShowGraveKey() async =>
       await _prefs.getBool('showGraveKey') ?? false;
-  Future<double> getKeySize() async =>
-      await _prefs.getDouble('keySize') ?? 48;
+  Future<double> getKeySize() async => await _prefs.getDouble('keySize') ?? 48;
   Future<double> getKeyBorderRadius() async =>
       await _prefs.getDouble('keyBorderRadius') ?? 12;
   Future<double> getKeyPadding() async =>
@@ -65,16 +37,46 @@ class PreferencesService {
   // Text settings
   Future<String> getFontFamily() async =>
       await _prefs.getString('fontFamily') ?? 'GeistMono';
+  Future<FontWeight> getFontWeight() async => FontWeight
+      .values[await _prefs.getInt('fontWeight') ?? FontWeight.w500.index];
   Future<double> getKeyFontSize() async =>
       await _prefs.getDouble('keyFontSize') ?? 20;
   Future<double> getSpaceFontSize() async =>
       await _prefs.getDouble('spaceFontSize') ?? 14;
-  Future<FontWeight> getFontWeight() async => FontWeight
-      .values[await _prefs.getInt('fontWeight') ?? FontWeight.w500.index];
+
+  // Markers settings
+  Future<double> getMarkerOffset() async =>
+      await _prefs.getDouble('markerOffset') ?? 10;
+  Future<double> getMarkerWidth() async =>
+      await _prefs.getDouble('markerWidth') ?? 10;
+  Future<double> getMarkerHeight() async =>
+      await _prefs.getDouble('markerHeight') ?? 2;
+  Future<double> getMarkerBorderRadius() async =>
+      await _prefs.getDouble('markerBorderRadius') ?? 10;
+
+  // Colors settings
+  Future<Color> getKeyColorPressed() async =>
+      Color(await _prefs.getInt('keyColorPressed') ?? 0xFF1E1E1E);
+  Future<Color> getKeyColorNotPressed() async =>
+      Color(await _prefs.getInt('keyColorNotPressed') ?? 0xFF77ABFF);
+  Future<Color> getMarkerColor() async =>
+      Color(await _prefs.getInt('markerColor') ?? 0xFFFFFFFF);
+  Future<Color> getMarkerColorNotPressed() async =>
+      Color(await _prefs.getInt('markerColorNotPressed') ?? 0xFF000000);
   Future<Color> getKeyTextColor() async =>
       Color(await _prefs.getInt('keyTextColor') ?? 0xFFFFFFFF);
   Future<Color> getKeyTextColorNotPressed() async =>
       Color(await _prefs.getInt('keyTextColorNotPressed') ?? 0xFF000000);
+
+  // Advanced settings
+  Future<bool> getEnableAdvancedSettings() async =>
+      await _prefs.getBool('enableAdvancedSettings') ?? false;
+  Future<bool> getUseUserLayout() async =>
+      await _prefs.getBool('useUserLayout') ?? false;
+  Future<bool> getShowAltLayout() async =>
+      await _prefs.getBool('showAltLayout') ?? false;
+  Future<bool> getKanataEnabled() async =>
+      await _prefs.getBool('kanataEnabled') ?? false;
 
   // HotKey settings
   Future<bool> getHotKeysEnabled() async =>
@@ -90,6 +92,7 @@ class PreferencesService {
       );
     }
   }
+
   Future<HotKey?> getAutoHideHotKey() async {
     final json = await _prefs.getString('autoHideHotKey');
     try {
@@ -102,43 +105,20 @@ class PreferencesService {
     }
   }
 
-  // Save methods
+  // Save methods follow same category order
+  // General settings
   Future<void> setLaunchAtStartup(bool value) async =>
       await _prefs.setBool('launchAtStartup', value);
   Future<void> setAutoHideEnabled(bool value) async =>
       await _prefs.setBool('autoHideEnabled', value);
   Future<void> setAutoHideDuration(double value) async =>
       await _prefs.setDouble('autoHideDuration', value);
-  Future<void> setKeyboardLayoutName(String value) async =>
-      await _prefs.setString('layout', value);
-  Future<void> setEnableAdvancedSettings(bool value) async =>
-      await _prefs.setBool('enableAdvancedSettings', value);
-  Future<void> setUseUserLayout(bool value) async =>
-      await _prefs.setBool('useUserLayout', value);
-  Future<void> setShowAltLayout(bool value) async =>
-      await _prefs.setBool('showAltLayout', value);
-  Future<void> setKanataEnabled(bool value) async =>
-      await _prefs.setBool('kanataEnabled', value);
-
   Future<void> setOpacity(double value) async =>
       await _prefs.setDouble('opacity', value);
-  Future<void> setKeyColorPressed(Color value) async =>
-      await _prefs.setInt('keyColorPressed', value.toARGB32());
-  Future<void> setKeyColorNotPressed(Color value) async =>
-      await _prefs.setInt('keyColorNotPressed', value.toARGB32());
-  Future<void> setMarkerColor(Color value) async =>
-      await _prefs.setInt('markerColor', value.toARGB32());
-  Future<void> setMarkerColorNotPressed(Color value) async =>
-      await _prefs.setInt('markerColorNotPressed', value.toARGB32());
-  Future<void> setMarkerOffset(double value) async =>
-      await _prefs.setDouble('markerOffset', value);
-  Future<void> setMarkerWidth(double value) async =>
-      await _prefs.setDouble('markerWidth', value);
-  Future<void> setMarkerHeight(double value) async =>
-      await _prefs.setDouble('markerHeight', value);
-  Future<void> setMarkerBorderRadius(double value) async =>
-      await _prefs.setDouble('markerBorderRadius', value);
+  Future<void> setKeyboardLayoutName(String value) async =>
+      await _prefs.setString('layout', value);
 
+  // Keyboard settings
   Future<void> setKeymapStyle(String value) async =>
       await _prefs.setString('keymapStyle', value);
   Future<void> setShowTopRow(bool value) async =>
@@ -156,6 +136,7 @@ class PreferencesService {
   Future<void> setSplitWidth(double value) async =>
       await _prefs.setDouble('splitWidth', value);
 
+  // Text settings
   Future<void> setFontFamily(String value) async =>
       await _prefs.setString('fontFamily', value);
   Future<void> setKeyFontSize(double value) async =>
@@ -164,14 +145,45 @@ class PreferencesService {
       await _prefs.setDouble('spaceFontSize', value);
   Future<void> setFontWeight(FontWeight value) async =>
       await _prefs.setInt('fontWeight', value.index);
+
+  // Markers settings
+  Future<void> setMarkerOffset(double value) async =>
+      await _prefs.setDouble('markerOffset', value);
+  Future<void> setMarkerWidth(double value) async =>
+      await _prefs.setDouble('markerWidth', value);
+  Future<void> setMarkerHeight(double value) async =>
+      await _prefs.setDouble('markerHeight', value);
+  Future<void> setMarkerBorderRadius(double value) async =>
+      await _prefs.setDouble('markerBorderRadius', value);
+
+  // Colors settings
+  Future<void> setKeyColorPressed(Color value) async =>
+      await _prefs.setInt('keyColorPressed', value.toARGB32());
+  Future<void> setKeyColorNotPressed(Color value) async =>
+      await _prefs.setInt('keyColorNotPressed', value.toARGB32());
+  Future<void> setMarkerColor(Color value) async =>
+      await _prefs.setInt('markerColor', value.toARGB32());
+  Future<void> setMarkerColorNotPressed(Color value) async =>
+      await _prefs.setInt('markerColorNotPressed', value.toARGB32());
   Future<void> setKeyTextColor(Color value) async =>
       await _prefs.setInt('keyTextColor', value.toARGB32());
   Future<void> setKeyTextColorNotPressed(Color value) async =>
       await _prefs.setInt('keyTextColorNotPressed', value.toARGB32());
 
+  // Advanced settings
+  Future<void> setEnableAdvancedSettings(bool value) async =>
+      await _prefs.setBool('enableAdvancedSettings', value);
+  Future<void> setUseUserLayout(bool value) async =>
+      await _prefs.setBool('useUserLayout', value);
+  Future<void> setShowAltLayout(bool value) async =>
+      await _prefs.setBool('showAltLayout', value);
+  Future<void> setKanataEnabled(bool value) async =>
+      await _prefs.setBool('kanataEnabled', value);
+
+  // HotKey settings
   Future<void> setHotKeysEnabled(bool value) async =>
       await _prefs.setBool('enableHotKeys', value);
-  Future<void> setVisibilityHotKey(HotKey value) async => 
+  Future<void> setVisibilityHotKey(HotKey value) async =>
       await _prefs.setString('visibilityHotKey', jsonEncode(value.toJson()));
   Future<void> setAutoHideHotKey(HotKey value) async =>
       await _prefs.setString('autoHideHotKey', jsonEncode(value.toJson()));
@@ -182,22 +194,8 @@ class PreferencesService {
       'launchAtStartup': await getLaunchAtStartup(),
       'autoHideEnabled': await getAutoHideEnabled(),
       'autoHideDuration': await getAutoHideDuration(),
-      'keyboardLayoutName': await getKeyboardLayoutName(),
-      'enableAdvancedSettings': await getEnableAdvancedSettings(),
-      'useUserLayout': await getUseUserLayout(),
-      'showAltLayout': await getShowAltLayout(),
-      'kanataEnabled': await getKanataEnabled(),
-
-      // Appearance settings
       'opacity': await getOpacity(),
-      'keyColorPressed': await getKeyColorPressed(),
-      'keyColorNotPressed': await getKeyColorNotPressed(),
-      'markerColor': await getMarkerColor(),
-      'markerColorNotPressed': await getMarkerColorNotPressed(),
-      'markerOffset': await getMarkerOffset(),
-      'markerWidth': await getMarkerWidth(),
-      'markerHeight': await getMarkerHeight(),
-      'markerBorderRadius': await getMarkerBorderRadius(),
+      'keyboardLayoutName': await getKeyboardLayoutName(),
 
       // Keyboard settings
       'keymapStyle': await getKeymapStyle(),
@@ -211,11 +209,29 @@ class PreferencesService {
 
       // Text settings
       'fontFamily': await getFontFamily(),
+      'fontWeight': await getFontWeight(),
       'keyFontSize': await getKeyFontSize(),
       'spaceFontSize': await getSpaceFontSize(),
-      'fontWeight': await getFontWeight(),
+
+      // Markers settings
+      'markerOffset': await getMarkerOffset(),
+      'markerWidth': await getMarkerWidth(),
+      'markerHeight': await getMarkerHeight(),
+      'markerBorderRadius': await getMarkerBorderRadius(),
+
+      // Colors settings
+      'keyColorPressed': await getKeyColorPressed(),
+      'keyColorNotPressed': await getKeyColorNotPressed(),
+      'markerColor': await getMarkerColor(),
+      'markerColorNotPressed': await getMarkerColorNotPressed(),
       'keyTextColor': await getKeyTextColor(),
       'keyTextColorNotPressed': await getKeyTextColorNotPressed(),
+
+      // Advanced settings
+      'enableAdvancedSettings': await getEnableAdvancedSettings(),
+      'useUserLayout': await getUseUserLayout(),
+      'showAltLayout': await getShowAltLayout(),
+      'kanataEnabled': await getKanataEnabled(),
 
       // HotKey settings
       'hotKeysEnabled': await getHotKeysEnabled(),
@@ -229,22 +245,8 @@ class PreferencesService {
     await setLaunchAtStartup(prefs['launchAtStartup']);
     await setAutoHideEnabled(prefs['autoHideEnabled']);
     await setAutoHideDuration(prefs['autoHideDuration']);
-    await setKeyboardLayoutName(prefs['keyboardLayoutName']);
-    await setEnableAdvancedSettings(prefs['enableAdvancedSettings']);
-    await setUseUserLayout(prefs['useUserLayout']);
-    await setShowAltLayout(prefs['showAltLayout']);
-    await setKanataEnabled(prefs['kanataEnabled']);
-
-    // Appearance settings
     await setOpacity(prefs['opacity']);
-    await setKeyColorPressed(prefs['keyColorPressed']);
-    await setKeyColorNotPressed(prefs['keyColorNotPressed']);
-    await setMarkerColor(prefs['markerColor']);
-    await setMarkerColorNotPressed(prefs['markerColorNotPressed']);
-    await setMarkerOffset(prefs['markerOffset']);
-    await setMarkerWidth(prefs['markerWidth']);
-    await setMarkerHeight(prefs['markerHeight']);
-    await setMarkerBorderRadius(prefs['markerBorderRadius']);
+    await setKeyboardLayoutName(prefs['keyboardLayoutName']);
 
     // Keyboard settings
     await setKeymapStyle(prefs['keymapStyle']);
@@ -258,11 +260,29 @@ class PreferencesService {
 
     // Text settings
     await setFontFamily(prefs['fontFamily']);
+    await setFontWeight(prefs['fontWeight']);
     await setKeyFontSize(prefs['keyFontSize']);
     await setSpaceFontSize(prefs['spaceFontSize']);
-    await setFontWeight(prefs['fontWeight']);
+
+    // Markers settings
+    await setMarkerOffset(prefs['markerOffset']);
+    await setMarkerWidth(prefs['markerWidth']);
+    await setMarkerHeight(prefs['markerHeight']);
+    await setMarkerBorderRadius(prefs['markerBorderRadius']);
+
+    // Colors settings
+    await setKeyColorPressed(prefs['keyColorPressed']);
+    await setKeyColorNotPressed(prefs['keyColorNotPressed']);
+    await setMarkerColor(prefs['markerColor']);
+    await setMarkerColorNotPressed(prefs['markerColorNotPressed']);
     await setKeyTextColor(prefs['keyTextColor']);
     await setKeyTextColorNotPressed(prefs['keyTextColorNotPressed']);
+
+    // Advanced settings
+    await setEnableAdvancedSettings(prefs['enableAdvancedSettings']);
+    await setUseUserLayout(prefs['useUserLayout']);
+    await setShowAltLayout(prefs['showAltLayout']);
+    await setKanataEnabled(prefs['kanataEnabled']);
 
     // HotKey settings
     await setHotKeysEnabled(prefs['hotKeysEnabled']);
