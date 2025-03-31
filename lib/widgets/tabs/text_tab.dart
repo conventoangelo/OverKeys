@@ -3,32 +3,24 @@ import 'package:overkeys/widgets/options/options.dart';
 
 class TextTab extends StatefulWidget {
   final String fontFamily;
+  final FontWeight fontWeight;
   final double keyFontSize;
   final double spaceFontSize;
-  final FontWeight fontWeight;
-  final Color keyTextColor;
-  final Color keyTextColorNotPressed;
   final Function(String) updateFontFamily;
+  final Function(FontWeight) updateFontWeight;
   final Function(double) updateKeyFontSize;
   final Function(double) updateSpaceFontSize;
-  final Function(FontWeight) updateFontWeight;
-  final Function(Color) updateKeyTextColor;
-  final Function(Color) updateKeyTextColorNotPressed;
 
   const TextTab({
     super.key,
     required this.fontFamily,
+    required this.fontWeight,
     required this.keyFontSize,
     required this.spaceFontSize,
-    required this.fontWeight,
-    required this.keyTextColor,
-    required this.keyTextColorNotPressed,
     required this.updateFontFamily,
+    required this.updateFontWeight,
     required this.updateKeyFontSize,
     required this.updateSpaceFontSize,
-    required this.updateFontWeight,
-    required this.updateKeyTextColor,
-    required this.updateKeyTextColorNotPressed,
   });
 
   @override
@@ -112,28 +104,6 @@ class _TextTabState extends State<TextTab> {
             onChanged: (value) => widget.updateFontFamily(value!),
             subtitle:
                 'Make sure that the font is installed in your system. Falls back to Geist Mono.'),
-        SliderOption(
-          label: 'Key font size',
-          value: _localKeyFontSize,
-          min: 12,
-          max: 32,
-          divisions: 40,
-          onChanged: (value) {
-            setState(() => _localKeyFontSize = value);
-          },
-          onChangeEnd: widget.updateKeyFontSize,
-        ),
-        SliderOption(
-          label: 'Space font size',
-          value: _localSpaceFontSize,
-          min: 12,
-          max: 32,
-          divisions: 40,
-          onChanged: (value) {
-            setState(() => _localSpaceFontSize = value);
-          },
-          onChangeEnd: widget.updateSpaceFontSize,
-        ),
         DropdownOption(
           label: 'Font weight',
           value: widget.fontWeight == FontWeight.w100
@@ -200,15 +170,27 @@ class _TextTabState extends State<TextTab> {
             widget.updateFontWeight(weight);
           },
         ),
-        ColorOption(
-          label: 'Text color (pressed)',
-          currentColor: widget.keyTextColor,
-          onColorChanged: widget.updateKeyTextColor,
+        SliderOption(
+          label: 'Key font size',
+          value: _localKeyFontSize,
+          min: 12,
+          max: 32,
+          divisions: 40,
+          onChanged: (value) {
+            setState(() => _localKeyFontSize = value);
+          },
+          onChangeEnd: widget.updateKeyFontSize,
         ),
-        ColorOption(
-          label: 'Text color (not pressed)',
-          currentColor: widget.keyTextColorNotPressed,
-          onColorChanged: widget.updateKeyTextColorNotPressed,
+        SliderOption(
+          label: 'Space font size',
+          value: _localSpaceFontSize,
+          min: 12,
+          max: 32,
+          divisions: 40,
+          onChanged: (value) {
+            setState(() => _localSpaceFontSize = value);
+          },
+          onChangeEnd: widget.updateSpaceFontSize,
         ),
       ],
     );
