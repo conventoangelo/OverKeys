@@ -5,6 +5,7 @@ import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hotkey_manager/hotkey_manager.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:overkeys/widgets/tabs/hotkeys_tab.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:window_manager/window_manager.dart';
@@ -358,27 +359,30 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       decoration: BoxDecoration(
         color: isSelected ? colorScheme.surface : Colors.transparent,
       ),
-      child: ListTile(
-        leading: Icon(
-          _getIconForTab(tabName).icon,
-          color: isSelected
-              ? colorScheme.primary
-              : colorScheme.onSurfaceVariant.withAlpha(192),
-        ),
-        title: Text(
-          tabName,
-          style: TextStyle(
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-            fontSize: 16,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 5.0),
+        child: ListTile(
+          leading: Icon(
+            _getIconForTab(tabName).icon,
             color: isSelected
                 ? colorScheme.primary
                 : colorScheme.onSurfaceVariant.withAlpha(192),
           ),
+          title: Text(
+            tabName,
+            style: TextStyle(
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+              fontSize: 16,
+              color: isSelected
+                  ? colorScheme.primary
+                  : colorScheme.onSurfaceVariant.withAlpha(192),
+            ),
+          ),
+          onTap: () {
+            setState(() => _currentTab = tabName);
+          },
+          selected: isSelected,
         ),
-        onTap: () {
-          setState(() => _currentTab = tabName);
-        },
-        selected: isSelected,
       ),
     );
   }
@@ -386,23 +390,23 @@ class _PreferencesScreenState extends State<PreferencesScreen>
   Icon _getIconForTab(String tabName) {
     switch (tabName) {
       case 'General':
-        return const Icon(Icons.settings);
+        return const Icon(LucideIcons.settings2);
       case 'Keyboard':
-        return const Icon(Icons.keyboard);
+        return const Icon(LucideIcons.keyboard);
       case 'Text':
-        return const Icon(Icons.text_fields);
+        return const Icon(LucideIcons.type);
       case 'Markers':
-        return const Icon(Icons.location_on_outlined);
+        return const Icon(LucideIcons.mapPin);
       case 'Colors':
-        return const Icon(Icons.palette);
+        return const Icon(LucideIcons.palette);
       case 'Hotkeys':
-        return const Icon(Icons.keyboard_alt_outlined);
+        return const Icon(LucideIcons.layers);
       case 'Advanced':
-        return const Icon(Icons.engineering);
+        return const Icon(LucideIcons.userCog2);
       case 'About':
-        return const Icon(Icons.info);
+        return const Icon(LucideIcons.info);
       default:
-        return const Icon(Icons.menu);
+        return const Icon(LucideIcons.menu);
     }
   }
 
