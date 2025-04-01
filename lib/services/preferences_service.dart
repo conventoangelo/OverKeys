@@ -70,17 +70,15 @@ class PreferencesService {
   Future<Color> getKeyTextColorNotPressed() async =>
       Color(await _prefs.getInt('keyTextColorNotPressed') ?? 0xFF000000);
 
-  // Advanced settings
-  Future<bool> getEnableAdvancedSettings() async =>
-      await _prefs.getBool('enableAdvancedSettings') ?? false;
-  Future<bool> getUseUserLayout() async =>
-      await _prefs.getBool('useUserLayout') ?? false;
-  Future<bool> getShowAltLayout() async =>
-      await _prefs.getBool('showAltLayout') ?? false;
-      Future<bool> getUse6ColLayout() async =>
-      await _prefs.getBool('use6ColLayout') ?? false;
-  Future<bool> getKanataEnabled() async =>
-      await _prefs.getBool('kanataEnabled') ?? false;
+  // Animations settings
+  Future<bool> getAnimationEnabled() async =>
+      await _prefs.getBool('animationEnabled') ?? false;
+  Future<String> getAnimationStyle() async =>
+      await _prefs.getString('animationStyle') ?? 'Raise';
+  Future<double> getAnimationDuration() async =>
+      await _prefs.getDouble('animationDuration') ?? 100;
+  Future<double> getAnimationScale() async =>
+      await _prefs.getDouble('animationScale') ?? 2.0;
 
   // HotKey settings
   Future<bool> getHotKeysEnabled() async =>
@@ -108,6 +106,18 @@ class PreferencesService {
       );
     }
   }
+
+  // Advanced settings
+  Future<bool> getEnableAdvancedSettings() async =>
+      await _prefs.getBool('enableAdvancedSettings') ?? false;
+  Future<bool> getUseUserLayout() async =>
+      await _prefs.getBool('useUserLayout') ?? false;
+  Future<bool> getShowAltLayout() async =>
+      await _prefs.getBool('showAltLayout') ?? false;
+  Future<bool> getUse6ColLayout() async =>
+      await _prefs.getBool('use6ColLayout') ?? false;
+  Future<bool> getKanataEnabled() async =>
+      await _prefs.getBool('kanataEnabled') ?? false;
 
   // General settings
   Future<void> setLaunchAtStartup(bool value) async =>
@@ -175,6 +185,24 @@ class PreferencesService {
   Future<void> setKeyTextColorNotPressed(Color value) async =>
       await _prefs.setInt('keyTextColorNotPressed', value.toARGB32());
 
+  // Animations settings
+  Future<void> setAnimationEnabled(bool value) async =>
+      await _prefs.setBool('animationEnabled', value);
+  Future<void> setAnimationStyle(String value) async =>
+      await _prefs.setString('animationStyle', value);
+  Future<void> setAnimationDuration(double value) async =>
+      await _prefs.setDouble('animationDuration', value);
+  Future<void> setAnimationScale(double value) async =>
+      await _prefs.setDouble('animationScale', value);
+
+  // HotKey settings
+  Future<void> setHotKeysEnabled(bool value) async =>
+      await _prefs.setBool('enableHotKeys', value);
+  Future<void> setVisibilityHotKey(HotKey value) async =>
+      await _prefs.setString('visibilityHotKey', jsonEncode(value.toJson()));
+  Future<void> setAutoHideHotKey(HotKey value) async =>
+      await _prefs.setString('autoHideHotKey', jsonEncode(value.toJson()));
+
   // Advanced settings
   Future<void> setEnableAdvancedSettings(bool value) async =>
       await _prefs.setBool('enableAdvancedSettings', value);
@@ -186,14 +214,6 @@ class PreferencesService {
       await _prefs.setBool('use6ColLayout', value);
   Future<void> setKanataEnabled(bool value) async =>
       await _prefs.setBool('kanataEnabled', value);
-
-  // HotKey settings
-  Future<void> setHotKeysEnabled(bool value) async =>
-      await _prefs.setBool('enableHotKeys', value);
-  Future<void> setVisibilityHotKey(HotKey value) async =>
-      await _prefs.setString('visibilityHotKey', jsonEncode(value.toJson()));
-  Future<void> setAutoHideHotKey(HotKey value) async =>
-      await _prefs.setString('autoHideHotKey', jsonEncode(value.toJson()));
 
   Future<Map<String, dynamic>> loadAllPreferences() async {
     return {
@@ -235,17 +255,23 @@ class PreferencesService {
       'keyTextColor': await getKeyTextColor(),
       'keyTextColorNotPressed': await getKeyTextColorNotPressed(),
 
+      // Animations settings
+      'animationEnabled': await getAnimationEnabled(),
+      'animationStyle': await getAnimationStyle(),
+      'animationDuration': await getAnimationDuration(),
+      'animationScale': await getAnimationScale(),
+
+      // HotKey settings
+      'hotKeysEnabled': await getHotKeysEnabled(),
+      'visibilityHotKey': await getVisibilityHotKey(),
+      'autoHideHotKey': await getAutoHideHotKey(),
+
       // Advanced settings
       'enableAdvancedSettings': await getEnableAdvancedSettings(),
       'useUserLayout': await getUseUserLayout(),
       'showAltLayout': await getShowAltLayout(),
       'use6ColLayout': await getUse6ColLayout(),
       'kanataEnabled': await getKanataEnabled(),
-
-      // HotKey settings
-      'hotKeysEnabled': await getHotKeysEnabled(),
-      'visibilityHotKey': await getVisibilityHotKey(),
-      'autoHideHotKey': await getAutoHideHotKey(),
     };
   }
 
@@ -288,16 +314,22 @@ class PreferencesService {
     await setKeyTextColor(prefs['keyTextColor']);
     await setKeyTextColorNotPressed(prefs['keyTextColorNotPressed']);
 
+    // Animations settings
+    await setAnimationEnabled(prefs['animationEnabled']);
+    await setAnimationStyle(prefs['animationStyle']);
+    await setAnimationDuration(prefs['animationDuration']);
+    await setAnimationScale(prefs['animationScale']);
+
+    // HotKey settings
+    await setHotKeysEnabled(prefs['hotKeysEnabled']);
+    await setVisibilityHotKey(prefs['visibilityHotKey']);
+    await setAutoHideHotKey(prefs['autoHideHotKey']);
+
     // Advanced settings
     await setEnableAdvancedSettings(prefs['enableAdvancedSettings']);
     await setUseUserLayout(prefs['useUserLayout']);
     await setShowAltLayout(prefs['showAltLayout']);
     await setUse6ColLayout(prefs['use6ColLayout']);
     await setKanataEnabled(prefs['kanataEnabled']);
-
-    // HotKey settings
-    await setHotKeysEnabled(prefs['hotKeysEnabled']);
-    await setVisibilityHotKey(prefs['visibilityHotKey']);
-    await setAutoHideHotKey(prefs['autoHideHotKey']);
   }
 }

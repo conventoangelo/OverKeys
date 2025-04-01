@@ -64,10 +64,10 @@ class KeyboardScreen extends StatelessWidget {
       required this.fontWeight,
       required this.keyTextColor,
       required this.keyTextColorNotPressed,
-      this.animationEnabled = true,
-      this.animationStyle = 'grow',
-      this.animationDuration = 100,
-      this.animationScale = 5.0});
+      required this.animationEnabled,
+      required this.animationStyle,
+      required this.animationDuration,
+      required this.animationScale});
 
   @override
   Widget build(BuildContext context) {
@@ -170,7 +170,8 @@ class KeyboardScreen extends StatelessWidget {
     Widget keyWidget = Padding(
       padding: EdgeInsets.all(keyPadding),
       child: AnimatedContainer(
-        duration: Duration(milliseconds: animationDuration.toInt()),
+        duration: Duration(milliseconds: animationEnabled ? animationDuration.toInt() : 20),
+        curve: Curves.easeInOutCubic,
         width: width,
         height: keySize,
         decoration: BoxDecoration(

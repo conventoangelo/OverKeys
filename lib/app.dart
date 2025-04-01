@@ -84,14 +84,11 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   Color _keyTextColor = Colors.white;
   Color _keyTextColorNotPressed = Colors.black;
 
-  // Advanced settings
-  bool _enableAdvancedSettings = false;
-  bool _useUserLayout = false;
-  bool _showAltLayout = false;
-  bool _previousShowAltLayout = false;
-  KeyboardLayout _altLayout = qwerty;
-  bool _use6ColLayout = false;
-  bool _kanataEnabled = false;
+  // Animations settings
+  bool _animationEnabled = false;
+  String _animationStyle = 'Raise';
+  double _animationDuration = 100;
+  double _animationScale = 2.0;
 
   // HotKey settings
   bool _hotKeysEnabled = true;
@@ -103,6 +100,15 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
     key: PhysicalKeyboardKey.keyW,
     modifiers: [HotKeyModifier.alt, HotKeyModifier.control],
   );
+
+  // Advanced settings
+  bool _enableAdvancedSettings = false;
+  bool _useUserLayout = false;
+  bool _showAltLayout = false;
+  bool _previousShowAltLayout = false;
+  KeyboardLayout _altLayout = qwerty;
+  bool _use6ColLayout = false;
+  bool _kanataEnabled = false;
 
   // Services
   final PreferencesService _prefsService = PreferencesService();
@@ -207,6 +213,17 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
       _keyTextColor = prefs['keyTextColor'];
       _keyTextColorNotPressed = prefs['keyTextColorNotPressed'];
 
+      // Animations settings
+      _animationEnabled = prefs['animationEnabled'];
+      _animationStyle = prefs['animationStyle'];
+      _animationDuration = prefs['animationDuration'];
+      _animationScale = prefs['animationScale'];
+
+      // HotKey settings
+      _hotKeysEnabled = prefs['hotKeysEnabled'];
+      _visibilityHotKey = prefs['visibilityHotKey'];
+      _autoHideHotKey = prefs['autoHideHotKey'];
+
       // Advanced settings
       _enableAdvancedSettings = prefs['enableAdvancedSettings'];
       _useUserLayout = prefs['useUserLayout'];
@@ -214,11 +231,6 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
       _altLayout = _keyboardLayout;
       _use6ColLayout = prefs['use6ColLayout'];
       _kanataEnabled = prefs['kanataEnabled'];
-
-      // HotKey settings
-      _hotKeysEnabled = prefs['hotKeysEnabled'];
-      _visibilityHotKey = prefs['visibilityHotKey'];
-      _autoHideHotKey = prefs['autoHideHotKey'];
     });
   }
 
@@ -262,17 +274,23 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
       'keyTextColor': _keyTextColor,
       'keyTextColorNotPressed': _keyTextColorNotPressed,
 
+      // Animations settings
+      'animationEnabled': _animationEnabled,
+      'animationStyle': _animationStyle,
+      'animationDuration': _animationDuration,
+      'animationScale': _animationScale,
+
+      // HotKey settings
+      'hotKeysEnabled': _hotKeysEnabled,
+      'visibilityHotKey': _visibilityHotKey,
+      'autoHideHotKey': _autoHideHotKey,
+
       // Advanced settings
       'enableAdvancedSettings': _enableAdvancedSettings,
       'useUserLayout': _useUserLayout,
       'showAltLayout': _showAltLayout,
       'use6ColLayout': _use6ColLayout,
       'kanataEnabled': _kanataEnabled,
-
-      // HotKey settings
-      'hotKeysEnabled': _hotKeysEnabled,
-      'visibilityHotKey': _visibilityHotKey,
-      'autoHideHotKey': _autoHideHotKey
     };
 
     await _prefsService.saveAllPreferences(prefs);
@@ -765,6 +783,40 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
           setState(
               () => _keyTextColorNotPressed = Color(keyTextColorNotPressed));
 
+        // Animations settings
+        case 'updateAnimationEnabled':
+          final animationEnabled = call.arguments as bool;
+          setState(() => _animationEnabled = animationEnabled);
+        case 'updateAnimationStyle':
+          final animationStyle = call.arguments as String;
+          setState(() => _animationStyle = animationStyle);
+        case 'updateAnimationDuration':
+          final animationDuration = call.arguments as double;
+          setState(() => _animationDuration = animationDuration);
+        case 'updateAnimationScale':
+          final animationScale = call.arguments as double;
+          setState(() => _animationScale = animationScale);
+
+        // HotKey settings
+        case 'updateHotKeysEnabled':
+          final hotKeysEnabled = call.arguments as bool;
+          setState(() {
+            _hotKeysEnabled = hotKeysEnabled;
+            _setupHotKeys();
+          });
+        case 'updateVisibilityHotKey':
+          final hotKeyJson = call.arguments as String;
+          final newHotKey = HotKey.fromJson(jsonDecode(hotKeyJson));
+          await hotKeyManager.unregister(_visibilityHotKey);
+          setState(() => _visibilityHotKey = newHotKey);
+          await _setupHotKeys();
+        case 'updateAutoHideHotKey':
+          final hotKeyJson = call.arguments as String;
+          final newHotKey = HotKey.fromJson(jsonDecode(hotKeyJson));
+          await hotKeyManager.unregister(_autoHideHotKey);
+          setState(() => _autoHideHotKey = newHotKey);
+          await _setupHotKeys();
+
         // Advanced settings
         case 'updateEnableAdvancedSettings':
           final enableAdvancedSettings = call.arguments as bool;
@@ -853,26 +905,6 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
             }
           });
 
-        // HotKey settings
-        case 'updateHotKeysEnabled':
-          final hotKeysEnabled = call.arguments as bool;
-          setState(() {
-            _hotKeysEnabled = hotKeysEnabled;
-            _setupHotKeys();
-          });
-        case 'updateVisibilityHotKey':
-          final hotKeyJson = call.arguments as String;
-          final newHotKey = HotKey.fromJson(jsonDecode(hotKeyJson));
-          await hotKeyManager.unregister(_visibilityHotKey);
-          setState(() => _visibilityHotKey = newHotKey);
-          await _setupHotKeys();
-        case 'updateAutoHideHotKey':
-          final hotKeyJson = call.arguments as String;
-          final newHotKey = HotKey.fromJson(jsonDecode(hotKeyJson));
-          await hotKeyManager.unregister(_autoHideHotKey);
-          setState(() => _autoHideHotKey = newHotKey);
-          await _setupHotKeys();
-
         default:
           throw UnimplementedError('Unimplemented method ${call.method}');
       }
@@ -930,6 +962,10 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
                       fontWeight: _fontWeight,
                       keyTextColor: _keyTextColor,
                       keyTextColorNotPressed: _keyTextColorNotPressed,
+                      animationEnabled: _animationEnabled,
+                      animationStyle: _animationStyle,
+                      animationDuration: _animationDuration,
+                      animationScale: _animationScale,
                     ),
                   ),
                 ),

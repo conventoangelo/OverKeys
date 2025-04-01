@@ -6,18 +6,19 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hotkey_manager/hotkey_manager.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:overkeys/widgets/tabs/hotkeys_tab.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:overkeys/utils/theme_manager.dart';
 import 'package:overkeys/services/preferences_service.dart';
 import 'package:overkeys/widgets/tabs/general_tab.dart';
-import 'package:overkeys/widgets/tabs/colors_tab.dart';
 import 'package:overkeys/widgets/tabs/keyboard_tab.dart';
 import 'package:overkeys/widgets/tabs/text_tab.dart';
-import 'package:overkeys/widgets/tabs/about_tab.dart';
 import 'package:overkeys/widgets/tabs/markers_tab.dart';
+import 'package:overkeys/widgets/tabs/colors_tab.dart';
+import 'package:overkeys/widgets/tabs/animations_tab.dart';
+import 'package:overkeys/widgets/tabs/hotkeys_tab.dart';
 import 'package:overkeys/widgets/tabs/advanced_tab.dart';
+import 'package:overkeys/widgets/tabs/about_tab.dart';
 
 class PreferencesScreen extends StatefulWidget {
   const PreferencesScreen({super.key, required this.windowController});
@@ -75,12 +76,11 @@ class _PreferencesScreenState extends State<PreferencesScreen>
   Color _keyTextColor = Colors.white;
   Color _keyTextColorNotPressed = Colors.black;
 
-  // Advanced settings
-  bool _enableAdvancedSettings = false;
-  bool _useUserLayout = false;
-  bool _showAltLayout = false;
-  bool _use6ColLayout = false;
-  bool _kanataEnabled = false;
+  // Animations settings
+  bool _animationEnabled = true;
+  String _animationStyle = 'Raise';
+  double _animationDuration = 100;
+  double _animationScale = 2.0;
 
   // HotKey settings
   bool _hotKeysEnabled = true;
@@ -92,6 +92,13 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     key: PhysicalKeyboardKey.keyW,
     modifiers: [HotKeyModifier.alt, HotKeyModifier.control],
   );
+
+  // Advanced settings
+  bool _enableAdvancedSettings = false;
+  bool _useUserLayout = false;
+  bool _showAltLayout = false;
+  bool _use6ColLayout = false;
+  bool _kanataEnabled = false;
 
   @override
   void initState() {
@@ -192,17 +199,23 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       _keyTextColor = prefs['keyTextColor'];
       _keyTextColorNotPressed = prefs['keyTextColorNotPressed'];
 
+      // Animations settings
+      _animationEnabled = prefs['animationEnabled'];
+      _animationStyle = prefs['animationStyle'];
+      _animationDuration = prefs['animationDuration'];
+      _animationScale = prefs['animationScale'];
+
+      // HotKey settings
+      _hotKeysEnabled = prefs['hotKeysEnabled'];
+      _visibilityHotKey = prefs['visibilityHotKey'];
+      _autoHideHotKey = prefs['autoHideHotKey'];
+
       // Advanced settings
       _enableAdvancedSettings = prefs['enableAdvancedSettings'];
       _useUserLayout = prefs['useUserLayout'];
       _showAltLayout = prefs['showAltLayout'];
       _use6ColLayout = prefs['use6ColLayout'];
       _kanataEnabled = prefs['kanataEnabled'];
-
-      // HotKey settings
-      _hotKeysEnabled = prefs['hotKeysEnabled'];
-      _visibilityHotKey = prefs['visibilityHotKey'];
-      _autoHideHotKey = prefs['autoHideHotKey'];
     });
   }
 
@@ -246,17 +259,23 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       'keyTextColor': _keyTextColor,
       'keyTextColorNotPressed': _keyTextColorNotPressed,
 
+      // Animations settings
+      'animationEnabled': _animationEnabled,
+      'animationStyle': _animationStyle,
+      'animationDuration': _animationDuration,
+      'animationScale': _animationScale,
+
+      // HotKey settings
+      'hotKeysEnabled': _hotKeysEnabled,
+      'visibilityHotKey': _visibilityHotKey,
+      'autoHideHotKey': _autoHideHotKey,
+
       // Advanced settings
       'enableAdvancedSettings': _enableAdvancedSettings,
       'useUserLayout': _useUserLayout,
       'showAltLayout': _showAltLayout,
       'use6ColLayout': _use6ColLayout,
       'kanataEnabled': _kanataEnabled,
-
-      // HotKey settings
-      'hotKeysEnabled': _hotKeysEnabled,
-      'visibilityHotKey': _visibilityHotKey,
-      'autoHideHotKey': _autoHideHotKey,
     };
 
     await _prefsService.saveAllPreferences(prefs);
@@ -343,6 +362,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
                 'Text',
                 'Markers',
                 'Colors',
+                'Animations',
                 'Hotkeys',
                 'Advanced',
                 'About',
@@ -402,6 +422,8 @@ class _PreferencesScreenState extends State<PreferencesScreen>
         return const Icon(LucideIcons.mapPin);
       case 'Colors':
         return const Icon(LucideIcons.palette);
+      case 'Animations':
+        return const Icon(LucideIcons.sparkles);
       case 'Hotkeys':
         return const Icon(LucideIcons.layers);
       case 'Advanced':
@@ -572,6 +594,47 @@ class _PreferencesScreenState extends State<PreferencesScreen>
             _updateMainWindow('updateKeyTextColorNotPressed', value);
           },
         );
+      case 'Animations':
+        return AnimationsTab(
+          animationEnabled: _animationEnabled,
+          animationStyle: _animationStyle,
+          animationDuration: _animationDuration,
+          animationScale: _animationScale,
+          updateAnimationEnabled: (value) {
+            setState(() => _animationEnabled = value);
+            _updateMainWindow('updateAnimationEnabled', value);
+          },
+          updateAnimationStyle: (value) {
+            setState(() => _animationStyle = value);
+            _updateMainWindow('updateAnimationStyle', value);
+          },
+          updateAnimationDuration: (value) {
+            setState(() => _animationDuration = value);
+            _updateMainWindow('updateAnimationDuration', value);
+          },
+          updateAnimationScale: (value) {
+            setState(() => _animationScale = value);
+            _updateMainWindow('updateAnimationScale', value);
+          },
+        );
+      case 'Hotkeys':
+        return HotKeysTab(
+          hotKeysEnabled: _hotKeysEnabled,
+          visibilityHotKey: _visibilityHotKey,
+          autoHideHotKey: _autoHideHotKey,
+          updateHotKeysEnabled: (value) {
+            setState(() => _hotKeysEnabled = value);
+            _updateMainWindow('updateHotKeysEnabled', value);
+          },
+          updateVisibilityHotKey: (value) {
+            setState(() => _visibilityHotKey = value);
+            _updateMainWindow('updateVisibilityHotKey', value);
+          },
+          updateAutoHideHotKey: (value) {
+            setState(() => _autoHideHotKey = value);
+            _updateMainWindow('updateAutoHideHotKey', value);
+          },
+        );
       case 'Advanced':
         return AdvancedTab(
           enableAdvancedSettings: _enableAdvancedSettings,
@@ -606,24 +669,6 @@ class _PreferencesScreenState extends State<PreferencesScreen>
               _updateMainWindow('updateUseUserLayout', false);
             }
             _updateMainWindow('updateKanataEnabled', value);
-          },
-        );
-      case 'Hotkeys':
-        return HotKeysTab(
-          hotKeysEnabled: _hotKeysEnabled,
-          visibilityHotKey: _visibilityHotKey,
-          autoHideHotKey: _autoHideHotKey,
-          updateHotKeysEnabled: (value) {
-            setState(() => _hotKeysEnabled = value);
-            _updateMainWindow('updateHotKeysEnabled', value);
-          },
-          updateVisibilityHotKey: (value) {
-            setState(() => _visibilityHotKey = value);
-            _updateMainWindow('updateVisibilityHotKey', value);
-          },
-          updateAutoHideHotKey: (value) {
-            setState(() => _autoHideHotKey = value);
-            _updateMainWindow('updateAutoHideHotKey', value);
           },
         );
       case 'About':
