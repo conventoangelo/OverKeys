@@ -418,6 +418,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
     setState(() {
       _keyPressStates[key] = isPressed;
     });
+    if (_forceHide) return;
     if (_autoHideEnabled && !_isWindowVisible && isPressed) {
       _fadeIn();
     } else {
@@ -596,20 +597,6 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   @override
   void onTrayIconMouseDown() {
     _forceHide = !_forceHide;
-    if (_autoHideEnabled && _forceHide) {
-      autoHideBeforeForceHide = _autoHideEnabled;
-      _autoHideEnabled = false;
-      _autoHideTimer?.cancel();
-      if (_isWindowVisible) {
-        _fadeOut();
-      }
-    } else if (autoHideBeforeForceHide && !_forceHide) {
-      _autoHideEnabled = autoHideBeforeForceHide;
-      autoHideBeforeForceHide = false;
-      if (_autoHideEnabled) {
-        _fadeIn();
-        _resetAutoHideTimer();
-      }
     } else {
       if (_isWindowVisible) {
         _fadeOut();
