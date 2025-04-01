@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.2.10](https://github.com/conventoangelo/OverKeys/compare/v0.2.9...v0.2.10) (2025-04-01)
+
+
+### ✨ Features
+
+* add  status overlay for keyboard visibility ([a520b95](https://github.com/conventoangelo/OverKeys/commit/a520b95f476b556f3fa6618d252a129d3a601403))
+* add animations on key press ([#66](https://github.com/conventoangelo/OverKeys/issues/66)) ([74bb7cf](https://github.com/conventoangelo/OverKeys/commit/74bb7cff5416094a16fcbb7a97ee728a0f12f6ec))
+* add animations settings in preferences window ([74bb7cf](https://github.com/conventoangelo/OverKeys/commit/74bb7cff5416094a16fcbb7a97ee728a0f12f6ec))
+* add status overlay for auto-hide ([a520b95](https://github.com/conventoangelo/OverKeys/commit/a520b95f476b556f3fa6618d252a129d3a601403))
+* add status overlay for move ([a520b95](https://github.com/conventoangelo/OverKeys/commit/a520b95f476b556f3fa6618d252a129d3a601403))
+* add status overlay for reset position ([a520b95](https://github.com/conventoangelo/OverKeys/commit/a520b95f476b556f3fa6618d252a129d3a601403))
+* add status overlays for tray menu toggles and hotkeys ([#65](https://github.com/conventoangelo/OverKeys/issues/65)) ([a520b95](https://github.com/conventoangelo/OverKeys/commit/a520b95f476b556f3fa6618d252a129d3a601403))
+
+
+### 🐛 Bug Fixes
+
+* improve force hide logic to not conflict with auto-hide ([a520b95](https://github.com/conventoangelo/OverKeys/commit/a520b95f476b556f3fa6618d252a129d3a601403))
+
 ## [0.2.9](https://github.com/conventoangelo/OverKeys/compare/v0.2.8...v0.2.9) (2025-03-31)
 
 
