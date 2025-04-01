@@ -36,7 +36,6 @@ class ColorsTab extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        // Key colors
         ColorOption(
           label: 'Key color (pressed)',
           currentColor: keyColorPressed,
@@ -48,7 +47,6 @@ class ColorsTab extends StatelessWidget {
           onColorChanged: updateKeyColorNotPressed,
         ),
 
-        // Marker colors
         ColorOption(
           label: 'Marker color (pressed)',
           currentColor: markerColor,
@@ -60,7 +58,6 @@ class ColorsTab extends StatelessWidget {
           onColorChanged: updateMarkerColorNotPressed,
         ),
 
-        // Text colors
         ColorOption(
           label: 'Text color (pressed)',
           currentColor: keyTextColor,

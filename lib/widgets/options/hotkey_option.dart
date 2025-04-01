@@ -24,7 +24,6 @@ class HotKeyOption extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Left side - title and subtitle
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -54,7 +53,6 @@ class HotKeyOption extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 40),
-          // Right side - hotkey display and change button
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
