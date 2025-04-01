@@ -30,6 +30,10 @@ class KeyboardScreen extends StatelessWidget {
   final FontWeight fontWeight;
   final Color keyTextColor;
   final Color keyTextColorNotPressed;
+  final bool animationEnabled;
+  final String animationStyle;
+  final double animationDuration;
+  final double animationScale;
 
   const KeyboardScreen(
       {super.key,
@@ -59,7 +63,11 @@ class KeyboardScreen extends StatelessWidget {
       required this.spaceFontSize,
       required this.fontWeight,
       required this.keyTextColor,
-      required this.keyTextColorNotPressed});
+      required this.keyTextColorNotPressed,
+      this.animationEnabled = true,
+      this.animationStyle = 'grow',
+      this.animationDuration = 100,
+      this.animationScale = 5.0});
 
   @override
   Widget build(BuildContext context) {
@@ -90,29 +98,34 @@ class KeyboardScreen extends StatelessWidget {
             isLastKeyFirstRow: isLastKeyFirstRow));
       }
     } else {
-      int startIndex = (rowIndex == 0 && (keymapStyle != 'Split Matrix' || !showGraveKey)) ? 1 : 0;
+      int startIndex =
+          (rowIndex == 0 && (keymapStyle != 'Split Matrix' || !showGraveKey))
+              ? 1
+              : 0;
       int endIndex = (rowIndex == 0) ? 11 : (use6ColLayout ? 12 : 10);
 
       // Special handling for first row in Split Matrix with 6 columns
       if (rowIndex == 0 && keymapStyle == 'Split Matrix' && use6ColLayout) {
         rowWidgets.add(buildKeys(rowIndex, keys[0], 0));
-        
+
         for (int i = 1; i < 6; i++) {
           rowWidgets.add(buildKeys(rowIndex, keys[i], i));
         }
-        
+
         rowWidgets.add(SizedBox(width: splitWidth));
-        
+
         for (int i = 6; i < 11; i++) {
           rowWidgets.add(buildKeys(rowIndex, keys[i], i));
         }
-        
+
         rowWidgets.add(buildKeys(rowIndex, keys[11], 11));
       } else {
         for (int i = startIndex; i < keys.length && i < endIndex; i++) {
           if (keymapStyle == 'Split Matrix') {
             if ((rowIndex == 0 && i == 6) ||
-                (i == (use6ColLayout ? 6 : 5) && rowIndex > 0 && rowIndex < 4)) {
+                (i == (use6ColLayout ? 6 : 5) &&
+                    rowIndex > 0 &&
+                    rowIndex < 4)) {
               rowWidgets.add(SizedBox(width: splitWidth));
             } else if (i == keys.length ~/ 2 &&
                 rowIndex == 4 &&
@@ -156,13 +169,15 @@ class KeyboardScreen extends StatelessWidget {
 
     Widget keyWidget = Padding(
       padding: EdgeInsets.all(keyPadding),
-      child: Container(
+      child: AnimatedContainer(
+        duration: Duration(milliseconds: animationDuration.toInt()),
         width: width,
         height: keySize,
         decoration: BoxDecoration(
           color: keyColor,
           borderRadius: BorderRadius.circular(keyBorderRadius),
         ),
+        transform: _getAnimationTransform(isPressed),
         child: key == " "
             ? Center(
                 child: Text(
@@ -251,6 +266,38 @@ class KeyboardScreen extends StatelessWidget {
       );
     }
     return keyWidget;
+  }
+
+  Matrix4 _getAnimationTransform(bool isPressed) {
+    if (!animationEnabled || !isPressed) {
+      return Matrix4.identity();
+    }
+
+    switch (animationStyle.toLowerCase()) {
+      case 'depress':
+        return Matrix4.translationValues(0, 2 * animationScale, 0); // Move down
+      case 'raise':
+        return Matrix4.translationValues(0, -2 * animationScale, 0); // Move up
+      case 'grow':
+        final scaleValue = 1 + 0.05 * animationScale;
+        return Matrix4.identity()
+          ..translate(
+            keySize * (1 - scaleValue) / 2,
+            keySize * (1 - scaleValue) / 2,
+          )
+          ..scale(scaleValue); // Grow from center
+      case 'shrink':
+        final scaleValue = 1 - 0.05 * animationScale;
+        return Matrix4.identity()
+          ..translate(
+            keySize * (1 - scaleValue) / 2,
+            keySize * (1 - scaleValue) / 2,
+          )
+          ..scale(scaleValue); // Shrink from center
+      default:
+        return Matrix4.translationValues(
+            0, 2 * animationScale, 0); // Default animation
+    }
   }
 
   String _getAltLayoutKey(int rowIndex, int keyIndex) {
