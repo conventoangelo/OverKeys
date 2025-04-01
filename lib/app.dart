@@ -8,12 +8,14 @@ import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:flutter/services.dart';
 import 'package:hotkey_manager/hotkey_manager.dart';
 import 'package:launch_at_startup/launch_at_startup.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:tray_manager/tray_manager.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:overkeys/services/config_service.dart';
 import 'package:overkeys/services/kanata_service.dart';
 import 'package:overkeys/services/preferences_service.dart';
 import 'package:overkeys/utils/key_code.dart';
+import 'package:overkeys/widgets/status_overlay.dart';
 import 'models/keyboard_layouts.dart';
 import 'screens/keyboard_screen.dart';
 import 'utils/hooks.dart';
@@ -31,6 +33,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   static const double _defaultTopRowExtraHeight = 80;
   static const double _defaultTopRowExtraWidth = 160;
   static const Duration _fadeDuration = Duration(milliseconds: 200);
+  static const Duration _overlayDuration = Duration(milliseconds: 1000);
 
   // UI state
   bool _isWindowVisible = true;
@@ -106,6 +109,12 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   final KanataService _kanataService = KanataService();
   final Map<String, bool> _keyPressStates = {};
 
+  // Overlay
+  bool _showStatusOverlay = false;
+  String _overlayMessage = '';
+  Icon _statusIcon = const Icon(LucideIcons.eye);
+  Timer? _overlayTimer;
+
   @override
   void initState() {
     super.initState();
@@ -147,6 +156,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
     trayManager.removeListener(this);
     unhook();
     _autoHideTimer?.cancel();
+    _overlayTimer?.cancel();
     _kanataService.dispose();
     _saveAllPreferences();
     super.dispose();
@@ -442,6 +452,11 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
         }
       }
     });
+    _showOverlay(
+        _autoHideEnabled ? 'Auto-hide Enabled' : 'Auto-hide Disabled',
+        _autoHideEnabled
+            ? const Icon(LucideIcons.timerReset)
+            : const Icon(LucideIcons.timerOff));
     DesktopMultiWindow.getAllSubWindowIds().then((windowIds) {
       for (final id in windowIds) {
         DesktopMultiWindow.invokeMethod(
@@ -450,6 +465,18 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
     });
     _saveAllPreferences();
     _setupTray();
+  }
+
+  void _showOverlay(String message, Icon icon) {
+    setState(() {
+      _overlayMessage = message;
+      _statusIcon = icon;
+      _showStatusOverlay = true;
+    });
+    _overlayTimer?.cancel();
+    _overlayTimer = Timer(_overlayDuration, () {
+      setState(() => _showStatusOverlay = false);
+    });
   }
 
   Future<void> _setupTray() async {
@@ -563,6 +590,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
       });
       return;
     }
+    _setupTray();
   }
 
   @override
@@ -876,51 +904,65 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
           fontFamily: _fontFamily,
           fontFamilyFallback: const ['GeistMono', 'Manrope', 'sans-serif']),
       home: Scaffold(
-          backgroundColor: Colors.transparent,
-          body: AnimatedOpacity(
-            opacity: _opacity,
-            duration: _fadeDuration,
-            child: GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onPanStart: (details) {
-                windowManager.startDragging();
-              },
-              child: Container(
-                color: Colors.transparent,
-                child: Center(
-                  child: KeyboardScreen(
-                    keyPressStates: _keyPressStates,
-                    layout: _keyboardLayout,
-                    showAltLayout: _enableAdvancedSettings && _showAltLayout,
-                    altLayout: _altLayout,
-                    use6ColLayout: _use6ColLayout,
-                    keyColorPressed: _keyColorPressed,
-                    keyColorNotPressed: _keyColorNotPressed,
-                    markerColor: _markerColor,
-                    markerColorNotPressed: _markerColorNotPressed,
-                    markerOffset: _markerOffset,
-                    markerWidth: _markerWidth,
-                    markerHeight: _markerHeight,
-                    markerBorderRadius: _markerBorderRadius,
-                    keymapStyle: _keymapStyle,
-                    showTopRow: _showTopRow,
-                    showGraveKey: _showGraveKey,
-                    keySize: _keySize,
-                    keyBorderRadius: _keyBorderRadius,
-                    keyPadding: _keyPadding,
-                    spaceWidth: _spaceWidth,
-                    splitWidth: _splitWidth,
-                    lastRowSplitWidth: _lastRowSplitWidth,
-                    keyFontSize: _keyFontSize,
-                    spaceFontSize: _spaceFontSize,
-                    fontWeight: _fontWeight,
-                    keyTextColor: _keyTextColor,
-                    keyTextColorNotPressed: _keyTextColorNotPressed,
+        backgroundColor: Colors.transparent,
+        body: Stack(
+          children: [
+            AnimatedOpacity(
+              opacity: _opacity,
+              duration: _fadeDuration,
+              child: GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onPanStart: (details) {
+                  windowManager.startDragging();
+                },
+                child: Container(
+                  color: Colors.transparent,
+                  child: Center(
+                    child: KeyboardScreen(
+                      keyPressStates: _keyPressStates,
+                      layout: _keyboardLayout,
+                      showAltLayout: _enableAdvancedSettings && _showAltLayout,
+                      altLayout: _altLayout,
+                      use6ColLayout: _use6ColLayout,
+                      keyColorPressed: _keyColorPressed,
+                      keyColorNotPressed: _keyColorNotPressed,
+                      markerColor: _markerColor,
+                      markerColorNotPressed: _markerColorNotPressed,
+                      markerOffset: _markerOffset,
+                      markerWidth: _markerWidth,
+                      markerHeight: _markerHeight,
+                      markerBorderRadius: _markerBorderRadius,
+                      keymapStyle: _keymapStyle,
+                      showTopRow: _showTopRow,
+                      showGraveKey: _showGraveKey,
+                      keySize: _keySize,
+                      keyBorderRadius: _keyBorderRadius,
+                      keyPadding: _keyPadding,
+                      spaceWidth: _spaceWidth,
+                      splitWidth: _splitWidth,
+                      lastRowSplitWidth: _lastRowSplitWidth,
+                      keyFontSize: _keyFontSize,
+                      spaceFontSize: _spaceFontSize,
+                      fontWeight: _fontWeight,
+                      keyTextColor: _keyTextColor,
+                      keyTextColorNotPressed: _keyTextColorNotPressed,
+                    ),
                   ),
                 ),
               ),
             ),
-          )),
+            StatusOverlay(
+              visible: _showStatusOverlay,
+              message: _overlayMessage,
+              icon: _statusIcon,
+              backgroundColor: _keyColorNotPressed,
+              textColor: _keyTextColorNotPressed,
+              keySize: _keySize,
+              keyBorderRadius: _keyBorderRadius,
+            ),
+          ],
+        ),
+      ),
       debugShowCheckedModeBanner: false,
     );
   }
