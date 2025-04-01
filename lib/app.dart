@@ -497,7 +497,8 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
             windowManager.setIgnoreMouseEvents(_ignoreMouseEvents);
             if (_ignoreMouseEvents) {
               _fadeIn();
-              _showOverlay('Dragging disabled', const Icon(LucideIcons.mousePointerClick));
+              _showOverlay('Dragging disabled',
+                  const Icon(LucideIcons.mousePointerClick));
             } else {
               _showOverlay('Dragging enabled', const Icon(LucideIcons.move));
             }
@@ -519,6 +520,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
           label: 'Reset Position',
           onClick: (menuItem) {
             windowManager.setAlignment(Alignment.bottomCenter);
+            _showOverlay('Position reset', const Icon(LucideIcons.locateFixed));
           }),
       MenuItem.separator(),
       MenuItem(
