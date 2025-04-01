@@ -597,12 +597,15 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   @override
   void onTrayIconMouseDown() {
     _forceHide = !_forceHide;
+    _showOverlay(
+        _forceHide ? 'Keyboard Hidden' : 'Keyboard Shown',
+        _forceHide
+            ? const Icon(LucideIcons.eyeOff)
+            : const Icon(LucideIcons.eye));
+    if (_isWindowVisible) {
+      _fadeOut();
     } else {
-      if (_isWindowVisible) {
-        _fadeOut();
-      } else {
-        _fadeIn();
-      }
+      _fadeIn();
     }
   }
 
