@@ -4,8 +4,8 @@ import 'dart:io';
 import 'dart:isolate';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:flutter/services.dart';
+import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:hotkey_manager/hotkey_manager.dart';
 import 'package:launch_at_startup/launch_at_startup.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -495,18 +495,11 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
           setState(() {
             _ignoreMouseEvents = !_ignoreMouseEvents;
             windowManager.setIgnoreMouseEvents(_ignoreMouseEvents);
-            if (!_ignoreMouseEvents) {
-              autoHideBeforeMove = _autoHideEnabled;
-              _autoHideEnabled = false;
-              _autoHideTimer?.cancel();
-              if (!_isWindowVisible) {
-                _fadeIn();
-              }
+            if (_ignoreMouseEvents) {
+              _fadeIn();
+              _showOverlay('Dragging disabled', const Icon(LucideIcons.mousePointerClick));
             } else {
-              _autoHideEnabled = autoHideBeforeMove;
-              if (_autoHideEnabled) {
-                _resetAutoHideTimer();
-              }
+              _showOverlay('Dragging enabled', const Icon(LucideIcons.move));
             }
           });
         },
@@ -516,7 +509,6 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
         key: 'toggle_auto_hide',
         label: 'Auto Hide',
         checked: _autoHideEnabled,
-        disabled: !_ignoreMouseEvents,
         onClick: (menuItem) {
           _toggleAutoHide(!_autoHideEnabled);
         },
