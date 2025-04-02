@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.2.11](https://github.com/conventoangelo/OverKeys/compare/v0.2.10...v0.2.11) (2025-04-02)
+
+
+### ✨ Features
+
+* add key borders to improve key visibility ([#72](https://github.com/conventoangelo/OverKeys/issues/72)) ([6adfd6a](https://github.com/conventoangelo/OverKeys/commit/6adfd6a83c5a08db0bc901eda1fd5b471a6176b3))
+* add keyboard follows mouse functionality ([#73](https://github.com/conventoangelo/OverKeys/issues/73)) ([ce6644c](https://github.com/conventoangelo/OverKeys/commit/ce6644c2b42dcef8414664b3da8bcc11d912c58b))
+* add more fonts to options ([836c230](https://github.com/conventoangelo/OverKeys/commit/836c2302afdc34ea4b3dbf46b30dba95cbc98206))
+* add support for custom fonts ([#71](https://github.com/conventoangelo/OverKeys/issues/71)) ([836c230](https://github.com/conventoangelo/OverKeys/commit/836c2302afdc34ea4b3dbf46b30dba95cbc98206))
+
+
+### 🐛 Bug Fixes
+
+* keyboard now remains hidden when auto-hide disabled ([0563c7c](https://github.com/conventoangelo/OverKeys/commit/0563c7c2b2132df5e9c48116f883afff2dacf00f))
+
 ## [0.2.10](https://github.com/conventoangelo/OverKeys/compare/v0.2.9...v0.2.10) (2025-04-01)
 
 
