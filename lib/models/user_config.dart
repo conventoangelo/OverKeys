@@ -6,44 +6,18 @@ class UserConfig {
   List<KeyboardLayout> userLayouts;
   String defaultUserLayout;
   String altLayout;
+  String customFont;
 
   UserConfig({
-    this.kanataHost = '127.0.0.1',
-    this.kanataPort = 4039,
+    this.defaultUserLayout = 'Symbol',
+    this.altLayout = 'Arabic',
+    this.customFont = 'Segoe UI',
     this.userLayouts = const [
       KeyboardLayout(
         name: "Extend",
         keys: [
-          [
-            "`",
-            "1",
-            "2",
-            "3",
-            "4",
-            "5",
-            "6",
-            "7",
-            "8",
-            "9",
-            "0",
-            "-",
-            "=",
-            "BSPC"
-          ],
-          [
-            "UNDO",
-            "CUT",
-            "COPY",
-            "PASTE",
-            "FIND",
-            "DEV",
-            "⇤",
-            "↑",
-            "⇥",
-            "",
-            "",
-            ""
-          ],
+          ["`", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "BSPC"],
+          ["UNDO", "CUT", "COPY", "PASTE", "FIND", "DEV", "⇤", "↑", "⇥", "", "", ""],
           ["1", "2", "3", "4", "5", "⤒", "←", "↓", "→", "⤓", ""],
           ["6", "7", "8", "9", "0", "", "", "", "", ""],
           [" "],
@@ -52,22 +26,7 @@ class UserConfig {
       KeyboardLayout(
         name: "Symbol",
         keys: [
-          [
-            "`",
-            "1",
-            "2",
-            "3",
-            "4",
-            "5",
-            "6",
-            "7",
-            "8",
-            "9",
-            "0",
-            "-",
-            "=",
-            "BSPC"
-          ],
+          ["`", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "BSPC"],
           ["'", "<", ">", ":", "@", "~", "\"", "{", "}", "%", "[", "]"],
           ["!", "-", "+", "=", "`", "|", ".", "(", ")", "?", "'"],
           ["^", "/", "*", "_", "\\", "&", "\$", "[", "]", "#"],
@@ -95,8 +54,8 @@ class UserConfig {
         ],
       ),
     ],
-    this.defaultUserLayout = 'Symbol',
-    this.altLayout = 'Arabic',
+    this.kanataHost = '127.0.0.1',
+    this.kanataPort = 4039,
   });
 
   factory UserConfig.fromJson(Map<String, dynamic> json) {
@@ -118,6 +77,7 @@ class UserConfig {
       userLayouts: layers,
       defaultUserLayout: json['defaultUserLayout'] ?? 'Symbol',
       altLayout: json['altLayout'] ?? 'Arabic',
+      customFont: json['customFont'] ?? 'Segoe UI',
     );
   }
 
@@ -135,6 +95,7 @@ class UserConfig {
       'userLayouts': layersJson,
       'defaultUserLayout': defaultUserLayout,
       'altLayout': altLayout,
+      'customFont': customFont,
     };
   }
 }

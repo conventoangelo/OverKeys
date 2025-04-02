@@ -8,11 +8,13 @@ class AdvancedTab extends StatelessWidget {
   final bool enableAdvancedSettings;
   final bool useUserLayout;
   final bool showAltLayout;
+  final bool customFontEnabled;
   final bool use6ColLayout;
   final bool kanataEnabled;
   final Function(bool) updateEnableAdvancedSettings;
   final Function(bool) updateUseUserLayout;
   final Function(bool) updateShowAltLayout;
+  final Function(bool) updateCustomFontEnabled;
   final Function(bool) updateUse6ColLayout;
   final Function(bool) updateKanataEnabled;
 
@@ -21,11 +23,13 @@ class AdvancedTab extends StatelessWidget {
     required this.enableAdvancedSettings,
     required this.useUserLayout,
     required this.showAltLayout,
+    required this.customFontEnabled,
     required this.use6ColLayout,
     required this.kanataEnabled,
     required this.updateEnableAdvancedSettings,
     required this.updateUseUserLayout,
     required this.updateShowAltLayout,
+    required this.updateCustomFontEnabled,
     required this.updateUse6ColLayout,
     required this.updateKanataEnabled,
   });
@@ -59,13 +63,22 @@ class AdvancedTab extends StatelessWidget {
               ),
               ToggleOption(
                 label: 'Show alternative layout',
+                subtitle:
+                    'Show alternative layout alongside primary layout. Make sure that the layout is saved in the config file.',
                 value: showAltLayout,
                 onChanged: updateShowAltLayout,
               ),
               ToggleOption(
+                label: 'Use custom font',
+                value: customFontEnabled,
+                subtitle:
+                    'Use a custom font defined in the config file. Make sure that the font is installed on your system.',
+                onChanged: updateCustomFontEnabled,
+              ),
+              ToggleOption(
                 label: 'Use 6 column layout',
                 subtitle:
-                    'Make sure you have configured your user layouts in the config file.',
+                    'Use 6 column layout instead of 5 column split matrix layout. Make sure that a compatible layout is saved in the config file.',
                 value: use6ColLayout,
                 onChanged: updateUse6ColLayout,
               ),
@@ -73,7 +86,7 @@ class AdvancedTab extends StatelessWidget {
                 label: 'Connect to Kanata',
                 value: kanataEnabled,
                 subtitle:
-                    'Make sure that Kanata and OverKeys are using the same port. Restart OverKeys if config file changes were made to apply changes.',
+                    'Listen to layer changes and see the active layer. Make sure that Kanata and OverKeys are using the same port.',
                 onChanged: (value) {
                   if (value && useUserLayout) {
                     updateUseUserLayout(false);
@@ -110,7 +123,7 @@ class AdvancedTab extends StatelessWidget {
                         fontWeight: FontWeight.w600,
                         fontSize: 16)),
                 Text(
-                  'Turn related advanced setting off then on again to apply changes',
+                  'Turn related advanced setting off then on again to apply changes. If still not working, restart OverKeys.',
                   style: TextStyle(
                       color: colorScheme.onSurface.withAlpha(153),
                       fontSize: 14.0),

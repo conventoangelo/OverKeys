@@ -66,6 +66,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
 
   // Text settings
   String _fontFamily = 'GeistMono';
+  String _initialFontFamily = 'GeistMono';
   FontWeight _fontWeight = FontWeight.w600;
   double _keyFontSize = 20;
   double _spaceFontSize = 14;
@@ -105,8 +106,9 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   bool _enableAdvancedSettings = false;
   bool _useUserLayout = false;
   bool _showAltLayout = false;
-  bool _previousShowAltLayout = false;
+  bool _initialShowAltLayout = false;
   KeyboardLayout _altLayout = qwerty;
+  bool _customFontEnabled = false;
   bool _use6ColLayout = false;
   bool _kanataEnabled = false;
 
@@ -143,6 +145,9 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
       }
       if (_showAltLayout) {
         _loadAltLayout();
+      }
+      if (_customFontEnabled) {
+        _loadCustomFont();
       }
       if (_kanataEnabled) {
         _useKanata();
@@ -229,6 +234,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
       _useUserLayout = prefs['useUserLayout'];
       _showAltLayout = prefs['showAltLayout'];
       _altLayout = _keyboardLayout;
+      _customFontEnabled = prefs['customFontEnabled'];
       _use6ColLayout = prefs['use6ColLayout'];
       _kanataEnabled = prefs['kanataEnabled'];
     });
@@ -289,6 +295,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
       'enableAdvancedSettings': _enableAdvancedSettings,
       'useUserLayout': _useUserLayout,
       'showAltLayout': _showAltLayout,
+      'customFontEnabled': _customFontEnabled,
       'use6ColLayout': _use6ColLayout,
       'kanataEnabled': _kanataEnabled,
     };
@@ -353,6 +360,20 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
     if (altLayout != null) {
       setState(() {
         _altLayout = altLayout;
+      });
+    }
+  }
+
+  Future<void> _loadCustomFont() async {
+    if (!_customFontEnabled || !_enableAdvancedSettings) return;
+
+    final configService = ConfigService();
+    final config = await configService.loadConfig();
+
+    if (config.customFont.isNotEmpty) {
+      setState(() {
+        _initialFontFamily = _fontFamily;
+        _fontFamily = config.customFont;
       });
     }
   }
@@ -738,7 +759,13 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
         // Text settings
         case 'updateFontFamily':
           final fontFamily = call.arguments as String;
-          setState(() => _fontFamily = fontFamily);
+          setState(() {
+            if (_customFontEnabled && _enableAdvancedSettings) {
+              _initialFontFamily = fontFamily;
+            } else {
+              _fontFamily = fontFamily;
+            }
+          });
         case 'updateFontWeight':
           final fontWeightIndex = call.arguments as int;
           setState(() => _fontWeight = FontWeight.values[fontWeightIndex]);
@@ -821,43 +848,43 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
         // Advanced settings
         case 'updateEnableAdvancedSettings':
           final enableAdvancedSettings = call.arguments as bool;
-          setState(() => _enableAdvancedSettings = enableAdvancedSettings);
-          if (!enableAdvancedSettings) {
-            _previousShowAltLayout = _showAltLayout;
-            if (_kanataEnabled) {
-              _kanataService.disconnect();
-              if (_initialKeyboardLayout != null) {
-                setState(() {
-                  _keyboardLayout = _initialKeyboardLayout!;
-                });
+          setState(() {
+            _enableAdvancedSettings = enableAdvancedSettings;
+            if (!enableAdvancedSettings) {
+              _initialShowAltLayout = _showAltLayout;
+              if (_kanataEnabled) {
+                _kanataService.disconnect();
+                _keyboardLayout = _initialKeyboardLayout!;
+              }
+              if (_useUserLayout) {
+                _keyboardLayout = _initialKeyboardLayout!;
+              }
+              _showAltLayout = false;
+              if (_customFontEnabled) {
+                _fontFamily = _initialFontFamily;
+              }
+            } else {
+              if (_initialShowAltLayout || _showAltLayout) {
+                _showAltLayout = true;
               }
             }
-            if (_useUserLayout &&
-                !_kanataEnabled &&
-                _initialKeyboardLayout != null) {
-              setState(() {
-                _keyboardLayout = _initialKeyboardLayout!;
-              });
-            }
-            if (_showAltLayout) {
-              setState(() {
-                _showAltLayout = false;
-              });
-            }
-            _fadeIn();
-          } else {
+          });
+
+          if (_enableAdvancedSettings) {
             if (_kanataEnabled) {
               _useKanata();
             }
             if (_useUserLayout && !_kanataEnabled) {
               _loadUserLayout();
             }
-            if (_previousShowAltLayout || _showAltLayout) {
-              setState(() {
-                _showAltLayout = true;
-              });
+            if (_showAltLayout) {
               _loadAltLayout();
             }
+            if (_customFontEnabled) {
+              _loadCustomFont();
+            }
+          } else {
+            _fadeIn();
           }
         case 'updateUseUserLayout':
           final useUserLayout = call.arguments as bool;
@@ -883,6 +910,16 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
             _loadAltLayout();
           }
           _fadeIn();
+        case 'updateCustomFontEnabled':
+          final customFontEnabled = call.arguments as bool;
+          setState(() {
+            _customFontEnabled = customFontEnabled;
+            if (customFontEnabled) {
+              _loadCustomFont();
+            } else {
+              _fontFamily = _initialFontFamily;
+            }
+          });
         case 'updateUse6ColLayout':
           final use6ColLayout = call.arguments as bool;
           setState(() {

@@ -62,6 +62,7 @@ class ConfigService {
       'userLayouts': config.userLayouts,
       'defaultUserLayout': config.defaultUserLayout,
       'altLayout': config.altLayout,
+      'customFont' : config.customFont,
     };
   }
 

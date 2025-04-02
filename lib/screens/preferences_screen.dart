@@ -97,6 +97,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
   bool _enableAdvancedSettings = false;
   bool _useUserLayout = false;
   bool _showAltLayout = false;
+  bool _customFontEnabled = false;
   bool _use6ColLayout = false;
   bool _kanataEnabled = false;
 
@@ -214,6 +215,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       _enableAdvancedSettings = prefs['enableAdvancedSettings'];
       _useUserLayout = prefs['useUserLayout'];
       _showAltLayout = prefs['showAltLayout'];
+      _customFontEnabled = prefs['customFontEnabled'];
       _use6ColLayout = prefs['use6ColLayout'];
       _kanataEnabled = prefs['kanataEnabled'];
     });
@@ -274,6 +276,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       'enableAdvancedSettings': _enableAdvancedSettings,
       'useUserLayout': _useUserLayout,
       'showAltLayout': _showAltLayout,
+      'customFontEnabled': _customFontEnabled,
       'use6ColLayout': _use6ColLayout,
       'kanataEnabled': _kanataEnabled,
     };
@@ -640,6 +643,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           enableAdvancedSettings: _enableAdvancedSettings,
           useUserLayout: _useUserLayout,
           showAltLayout: _showAltLayout,
+          customFontEnabled: _customFontEnabled,
           use6ColLayout: _use6ColLayout,
           kanataEnabled: _kanataEnabled,
           updateEnableAdvancedSettings: (value) {
@@ -657,6 +661,10 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           updateShowAltLayout: (value) {
             setState(() => _showAltLayout = value);
             _updateMainWindow('updateShowAltLayout', value);
+          },
+          updateCustomFontEnabled: (value) {
+            setState(() => _customFontEnabled = value);
+            _updateMainWindow('updateCustomFontEnabled', value);
           },
           updateUse6ColLayout: (value) {
             setState(() => _use6ColLayout = value);
