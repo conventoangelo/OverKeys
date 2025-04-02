@@ -3,24 +3,13 @@ import '../models/keyboard_layouts.dart';
 import '../models/mappings.dart';
 
 class KeyboardScreen extends StatelessWidget {
-  final Map<String, bool> keyPressStates;
   final KeyboardLayout layout;
-  final bool showAltLayout;
-  final KeyboardLayout? altLayout;
-  final bool use6ColLayout;
-  final Color keyColorPressed;
-  final Color keyColorNotPressed;
-  final Color markerColor;
-  final Color markerColorNotPressed;
-  final double markerOffset;
-  final double markerWidth;
-  final double markerHeight;
-  final double markerBorderRadius;
   final String keymapStyle;
   final bool showTopRow;
   final bool showGraveKey;
   final double keySize;
   final double keyBorderRadius;
+  final double keyBorderThickness;
   final double keyPadding;
   final double spaceWidth;
   final double splitWidth;
@@ -28,46 +17,64 @@ class KeyboardScreen extends StatelessWidget {
   final double keyFontSize;
   final double spaceFontSize;
   final FontWeight fontWeight;
+  final double markerOffset;
+  final double markerWidth;
+  final double markerHeight;
+  final double markerBorderRadius;
+  final Color keyColorPressed;
+  final Color keyColorNotPressed;
+  final Color markerColor;
+  final Color markerColorNotPressed;
   final Color keyTextColor;
   final Color keyTextColorNotPressed;
+  final Color keyBorderColorPressed;
+  final Color keyBorderColorNotPressed;
   final bool animationEnabled;
   final String animationStyle;
   final double animationDuration;
   final double animationScale;
+  final bool showAltLayout;
+  final KeyboardLayout? altLayout;
+  final bool use6ColLayout;
+  final Map<String, bool> keyPressStates;
 
-  const KeyboardScreen(
-      {super.key,
-      required this.keyPressStates,
-      required this.layout,
-      required this.showAltLayout,
-      required this.altLayout,
-      required this.use6ColLayout,
-      required this.keyColorPressed,
-      required this.keyColorNotPressed,
-      required this.markerColor,
-      required this.markerColorNotPressed,
-      required this.markerOffset,
-      required this.markerWidth,
-      required this.markerHeight,
-      required this.markerBorderRadius,
-      required this.keymapStyle,
-      required this.showTopRow,
-      required this.showGraveKey,
-      required this.keySize,
-      required this.keyBorderRadius,
-      required this.keyPadding,
-      required this.spaceWidth,
-      required this.splitWidth,
-      required this.lastRowSplitWidth,
-      required this.keyFontSize,
-      required this.spaceFontSize,
-      required this.fontWeight,
-      required this.keyTextColor,
-      required this.keyTextColorNotPressed,
-      required this.animationEnabled,
-      required this.animationStyle,
-      required this.animationDuration,
-      required this.animationScale});
+  const KeyboardScreen({
+    super.key,
+    required this.layout,
+    required this.keymapStyle,
+    required this.showTopRow,
+    required this.showGraveKey,
+    required this.keySize,
+    required this.keyBorderRadius,
+    required this.keyBorderThickness,
+    required this.keyPadding,
+    required this.spaceWidth,
+    required this.splitWidth,
+    required this.lastRowSplitWidth,
+    required this.keyFontSize,
+    required this.spaceFontSize,
+    required this.fontWeight,
+    required this.markerOffset,
+    required this.markerWidth,
+    required this.markerHeight,
+    required this.markerBorderRadius,
+    required this.keyColorPressed,
+    required this.keyColorNotPressed,
+    required this.markerColor,
+    required this.markerColorNotPressed,
+    required this.keyTextColor,
+    required this.keyTextColorNotPressed,
+    required this.keyBorderColorPressed,
+    required this.keyBorderColorNotPressed,
+    required this.animationEnabled,
+    required this.animationStyle,
+    required this.animationDuration,
+    required this.animationScale,
+    required this.showAltLayout,
+    required this.altLayout,
+    required this.use6ColLayout,
+    required this.keyPressStates,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -162,6 +169,8 @@ class KeyboardScreen extends StatelessWidget {
     Color keyColor = isPressed ? keyColorPressed : keyColorNotPressed;
     Color textColor = isPressed ? keyTextColor : keyTextColorNotPressed;
     Color tactMarkerColor = isPressed ? markerColor : markerColorNotPressed;
+    Color borderColor =
+        isPressed ? keyBorderColorPressed : keyBorderColorNotPressed;
 
     double width = key == " "
         ? spaceWidth
@@ -170,14 +179,20 @@ class KeyboardScreen extends StatelessWidget {
     Widget keyWidget = Padding(
       padding: EdgeInsets.all(keyPadding),
       child: AnimatedContainer(
-        duration: Duration(milliseconds: animationEnabled ? animationDuration.toInt() : 20),
+        duration: Duration(
+            milliseconds: animationEnabled ? animationDuration.toInt() : 20),
         curve: Curves.easeInOutCubic,
         width: width,
         height: keySize,
         decoration: BoxDecoration(
-          color: keyColor,
-          borderRadius: BorderRadius.circular(keyBorderRadius),
-        ),
+            color: keyColor,
+            borderRadius: BorderRadius.circular(keyBorderRadius),
+            border: keyBorderThickness > 0
+                ? Border.all(
+                    color: borderColor,
+                    width: keyBorderThickness,
+                  )
+                : null),
         transform: _getAnimationTransform(isPressed),
         child: key == " "
             ? Center(

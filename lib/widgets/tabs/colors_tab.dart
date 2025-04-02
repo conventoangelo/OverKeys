@@ -8,12 +8,16 @@ class ColorsTab extends StatelessWidget {
   final Color markerColorNotPressed;
   final Color keyTextColor;
   final Color keyTextColorNotPressed;
+  final Color keyBorderColorPressed;
+  final Color keyBorderColorNotPressed;
   final Function(Color) updateKeyColorPressed;
   final Function(Color) updateKeyColorNotPressed;
   final Function(Color) updateMarkerColor;
   final Function(Color) updateMarkerColorNotPressed;
   final Function(Color) updateKeyTextColor;
   final Function(Color) updateKeyTextColorNotPressed;
+  final Function(Color) updateKeyBorderColorPressed;
+  final Function(Color) updateKeyBorderColorNotPressed;
 
   const ColorsTab({
     super.key,
@@ -23,12 +27,16 @@ class ColorsTab extends StatelessWidget {
     required this.markerColorNotPressed,
     required this.keyTextColor,
     required this.keyTextColorNotPressed,
+    required this.keyBorderColorPressed,
+    required this.keyBorderColorNotPressed,
     required this.updateKeyColorPressed,
     required this.updateKeyColorNotPressed,
     required this.updateMarkerColor,
     required this.updateMarkerColorNotPressed,
     required this.updateKeyTextColor,
     required this.updateKeyTextColorNotPressed,
+    required this.updateKeyBorderColorPressed,
+    required this.updateKeyBorderColorNotPressed,
   });
 
   @override
@@ -46,7 +54,6 @@ class ColorsTab extends StatelessWidget {
           currentColor: keyColorNotPressed,
           onColorChanged: updateKeyColorNotPressed,
         ),
-
         ColorOption(
           label: 'Marker color (pressed)',
           currentColor: markerColor,
@@ -57,7 +64,6 @@ class ColorsTab extends StatelessWidget {
           currentColor: markerColorNotPressed,
           onColorChanged: updateMarkerColorNotPressed,
         ),
-
         ColorOption(
           label: 'Text color (pressed)',
           currentColor: keyTextColor,
@@ -67,6 +73,16 @@ class ColorsTab extends StatelessWidget {
           label: 'Text color (not pressed)',
           currentColor: keyTextColorNotPressed,
           onColorChanged: updateKeyTextColorNotPressed,
+        ),
+        ColorOption(
+          label: 'Border color (pressed)',
+          currentColor: keyBorderColorPressed,
+          onColorChanged: updateKeyBorderColorPressed,
+        ),
+        ColorOption(
+          label: 'Border color (not pressed)',
+          currentColor: keyBorderColorNotPressed,
+          onColorChanged: updateKeyBorderColorNotPressed,
         ),
       ],
     );

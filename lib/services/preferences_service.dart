@@ -35,6 +35,8 @@ class PreferencesService {
       await _prefs.getDouble('splitWidth') ?? 100;
   Future<double> getLastRowSplitWidth() async =>
       await _prefs.getDouble('lastRowSplitWidth') ?? 100;
+  Future<double> getKeyBorderThickness() async =>
+      await _prefs.getDouble('keyBorderThickness') ?? 0;
 
   // Text settings
   Future<String> getFontFamily() async =>
@@ -69,6 +71,10 @@ class PreferencesService {
       Color(await _prefs.getInt('keyTextColor') ?? 0xFFFFFFFF);
   Future<Color> getKeyTextColorNotPressed() async =>
       Color(await _prefs.getInt('keyTextColorNotPressed') ?? 0xFF000000);
+  Future<Color> getKeyBorderColorPressed() async =>
+      Color(await _prefs.getInt('keyBorderColorPressed') ?? 0xFF000000);
+  Future<Color> getKeyBorderColorNotPressed() async =>
+      Color(await _prefs.getInt('keyBorderColorNotPressed') ?? 0xFFFFFFFF);
 
   // Animations settings
   Future<bool> getAnimationEnabled() async =>
@@ -152,6 +158,8 @@ class PreferencesService {
       await _prefs.setDouble('splitWidth', value);
   Future<void> setLastRowSplitWidth(double value) async =>
       await _prefs.setDouble('lastRowSplitWidth', value);
+  Future<void> setKeyBorderThickness(double value) async =>
+      await _prefs.setDouble('keyBorderThickness', value);
 
   // Text settings
   Future<void> setFontFamily(String value) async =>
@@ -186,6 +194,10 @@ class PreferencesService {
       await _prefs.setInt('keyTextColor', value.toARGB32());
   Future<void> setKeyTextColorNotPressed(Color value) async =>
       await _prefs.setInt('keyTextColorNotPressed', value.toARGB32());
+  Future<void> setKeyBorderColorPressed(Color value) async =>
+      await _prefs.setInt('keyBorderColorPressed', value.toARGB32());
+  Future<void> setKeyBorderColorNotPressed(Color value) async =>
+      await _prefs.setInt('keyBorderColorNotPressed', value.toARGB32());
 
   // Animations settings
   Future<void> setAnimationEnabled(bool value) async =>
@@ -238,6 +250,7 @@ class PreferencesService {
       'spaceWidth': await getSpaceWidth(),
       'splitWidth': await getSplitWidth(),
       'lastRowSplitWidth': await getLastRowSplitWidth(),
+      'keyBorderThickness': await getKeyBorderThickness(),
 
       // Text settings
       'fontFamily': await getFontFamily(),
@@ -258,6 +271,8 @@ class PreferencesService {
       'markerColorNotPressed': await getMarkerColorNotPressed(),
       'keyTextColor': await getKeyTextColor(),
       'keyTextColorNotPressed': await getKeyTextColorNotPressed(),
+      'keyBorderColorPressed': await getKeyBorderColorPressed(),
+      'keyBorderColorNotPressed': await getKeyBorderColorNotPressed(),
 
       // Animations settings
       'animationEnabled': await getAnimationEnabled(),
@@ -298,6 +313,7 @@ class PreferencesService {
     await setSpaceWidth(prefs['spaceWidth']);
     await setSplitWidth(prefs['splitWidth']);
     await setLastRowSplitWidth(prefs['lastRowSplitWidth']);
+    await setKeyBorderThickness(prefs['keyBorderThickness']);
 
     // Text settings
     await setFontFamily(prefs['fontFamily']);
@@ -318,6 +334,8 @@ class PreferencesService {
     await setMarkerColorNotPressed(prefs['markerColorNotPressed']);
     await setKeyTextColor(prefs['keyTextColor']);
     await setKeyTextColorNotPressed(prefs['keyTextColorNotPressed']);
+    await setKeyBorderColorPressed(prefs['keyBorderColorPressed']);
+    await setKeyBorderColorNotPressed(prefs['keyBorderColorNotPressed']);
 
     // Animations settings
     await setAnimationEnabled(prefs['animationEnabled']);

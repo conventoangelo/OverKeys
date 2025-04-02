@@ -51,6 +51,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
   bool _showGraveKey = false;
   double _keySize = 48;
   double _keyBorderRadius = 12;
+  double _keyBorderThickness = 0;
   double _keyPadding = 3;
   double _spaceWidth = 320;
   double _splitWidth = 100;
@@ -75,6 +76,8 @@ class _PreferencesScreenState extends State<PreferencesScreen>
   Color _markerColorNotPressed = Colors.black;
   Color _keyTextColor = Colors.white;
   Color _keyTextColorNotPressed = Colors.black;
+  Color _keyBorderColorPressed = Colors.black;
+  Color _keyBorderColorNotPressed = Colors.white;
 
   // Animations settings
   bool _animationEnabled = true;
@@ -175,6 +178,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       _showGraveKey = prefs['showGraveKey'];
       _keySize = prefs['keySize'];
       _keyBorderRadius = prefs['keyBorderRadius'];
+      _keyBorderThickness = prefs['keyBorderThickness'];
       _keyPadding = prefs['keyPadding'];
       _spaceWidth = prefs['spaceWidth'];
       _splitWidth = prefs['splitWidth'];
@@ -199,6 +203,8 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       _markerColorNotPressed = prefs['markerColorNotPressed'];
       _keyTextColor = prefs['keyTextColor'];
       _keyTextColorNotPressed = prefs['keyTextColorNotPressed'];
+      _keyBorderColorPressed = prefs['keyBorderColorPressed'];
+      _keyBorderColorNotPressed = prefs['keyBorderColorNotPressed'];
 
       // Animations settings
       _animationEnabled = prefs['animationEnabled'];
@@ -236,6 +242,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       'showGraveKey': _showGraveKey,
       'keySize': _keySize,
       'keyBorderRadius': _keyBorderRadius,
+      'keyBorderThickness': _keyBorderThickness,
       'keyPadding': _keyPadding,
       'spaceWidth': _spaceWidth,
       'splitWidth': _splitWidth,
@@ -260,6 +267,8 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       'markerColorNotPressed': _markerColorNotPressed,
       'keyTextColor': _keyTextColor,
       'keyTextColorNotPressed': _keyTextColorNotPressed,
+      'keyBorderColorPressed': _keyBorderColorPressed,
+      'keyBorderColorNotPressed': _keyBorderColorNotPressed,
 
       // Animations settings
       'animationEnabled': _animationEnabled,
@@ -480,6 +489,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           spaceWidth: _spaceWidth,
           splitWidth: _splitWidth,
           lastRowSplitWidth: _lastRowSplitWidth,
+          keyBorderThickness: _keyBorderThickness,
           updateKeymapStyle: (value) {
             setState(() => _keymapStyle = value);
             _updateMainWindow('updateKeymapStyle', value);
@@ -515,6 +525,10 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           updateLastRowSplitWidth: (value) {
             setState(() => _lastRowSplitWidth = value);
             _updateMainWindow('updateLastRowSplitWidth', value);
+          },
+          updateKeyBorderThickness: (value) {
+            setState(() => _keyBorderThickness = value);
+            _updateMainWindow('updateKeyBorderThickness', value);
           },
         );
       case 'Text':
@@ -572,6 +586,8 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           markerColorNotPressed: _markerColorNotPressed,
           keyTextColor: _keyTextColor,
           keyTextColorNotPressed: _keyTextColorNotPressed,
+          keyBorderColorPressed: _keyBorderColorPressed,
+          keyBorderColorNotPressed: _keyBorderColorNotPressed,
           updateKeyColorPressed: (value) {
             setState(() => _keyColorPressed = value);
             _updateMainWindow('updateKeyColorPressed', value);
@@ -595,6 +611,14 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           updateKeyTextColorNotPressed: (value) {
             setState(() => _keyTextColorNotPressed = value);
             _updateMainWindow('updateKeyTextColorNotPressed', value);
+          },
+          updateKeyBorderColorPressed: (value) {
+            setState(() => _keyBorderColorPressed = value);
+            _updateMainWindow('updateKeyBorderColorPressed', value);
+          },
+          updateKeyBorderColorNotPressed: (value) {
+            setState(() => _keyBorderColorNotPressed = value);
+            _updateMainWindow('updateKeyBorderColorNotPressed', value);
           },
         );
       case 'Animations':

@@ -7,6 +7,7 @@ class KeyboardTab extends StatefulWidget {
   final bool showGraveKey;
   final double keySize;
   final double keyBorderRadius;
+  final double keyBorderThickness;
   final double keyPadding;
   final double spaceWidth;
   final double splitWidth;
@@ -16,6 +17,7 @@ class KeyboardTab extends StatefulWidget {
   final Function(bool) updateShowGraveKey;
   final Function(double) updateKeySize;
   final Function(double) updateKeyBorderRadius;
+  final Function(double) updateKeyBorderThickness;
   final Function(double) updateKeyPadding;
   final Function(double) updateSpaceWidth;
   final Function(double) updateSplitWidth;
@@ -28,6 +30,7 @@ class KeyboardTab extends StatefulWidget {
     required this.showGraveKey,
     required this.keySize,
     required this.keyBorderRadius,
+    required this.keyBorderThickness,
     required this.keyPadding,
     required this.spaceWidth,
     required this.splitWidth,
@@ -37,6 +40,7 @@ class KeyboardTab extends StatefulWidget {
     required this.updateShowGraveKey,
     required this.updateKeySize,
     required this.updateKeyBorderRadius,
+    required this.updateKeyBorderThickness,
     required this.updateKeyPadding,
     required this.updateSpaceWidth,
     required this.updateSplitWidth,
@@ -50,6 +54,7 @@ class KeyboardTab extends StatefulWidget {
 class _KeyboardTabState extends State<KeyboardTab> {
   late double _localKeySize;
   late double _localKeyBorderRadius;
+  late double _localKeyBorderThickness;
   late double _localKeyPadding;
   late double _localSpaceWidth;
   late double _localSplitWidth;
@@ -60,6 +65,7 @@ class _KeyboardTabState extends State<KeyboardTab> {
     super.initState();
     _localKeySize = widget.keySize;
     _localKeyBorderRadius = widget.keyBorderRadius;
+    _localKeyBorderThickness = widget.keyBorderThickness;
     _localKeyPadding = widget.keyPadding;
     _localSpaceWidth = widget.spaceWidth;
     _localSplitWidth = widget.splitWidth;
@@ -74,6 +80,9 @@ class _KeyboardTabState extends State<KeyboardTab> {
     }
     if (oldWidget.keyBorderRadius != widget.keyBorderRadius) {
       _localKeyBorderRadius = widget.keyBorderRadius;
+    }
+    if (oldWidget.keyBorderThickness != widget.keyBorderThickness) {
+      _localKeyBorderThickness = widget.keyBorderThickness;
     }
     if (oldWidget.keyPadding != widget.keyPadding) {
       _localKeyPadding = widget.keyPadding;
@@ -187,6 +196,17 @@ class _KeyboardTabState extends State<KeyboardTab> {
             setState(() => _localKeyBorderRadius = value);
           },
           onChangeEnd: widget.updateKeyBorderRadius,
+        ),
+        SliderOption(
+          label: 'Key border thickness',
+          value: _localKeyBorderThickness,
+          min: 0,
+          max: 5,
+          divisions: 10,
+          onChanged: (value) {
+            setState(() => _localKeyBorderThickness = value);
+          },
+          onChangeEnd: widget.updateKeyBorderThickness,
         ),
         SliderOption(
           label: 'Key padding',

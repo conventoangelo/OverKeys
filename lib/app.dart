@@ -63,6 +63,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   double _spaceWidth = 320;
   double _splitWidth = 100;
   double _lastRowSplitWidth = 100;
+  double _keyBorderThickness = 0;
 
   // Text settings
   String _fontFamily = 'GeistMono';
@@ -84,6 +85,8 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   Color _markerColorNotPressed = Colors.black;
   Color _keyTextColor = Colors.white;
   Color _keyTextColorNotPressed = Colors.black;
+  Color _keyBorderColorPressed = Colors.black;
+  Color _keyBorderColorNotPressed = Colors.white;
 
   // Animations settings
   bool _animationEnabled = false;
@@ -197,6 +200,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
       _spaceWidth = prefs['spaceWidth'];
       _splitWidth = prefs['splitWidth'];
       _lastRowSplitWidth = prefs['lastRowSplitWidth'];
+      _keyBorderThickness = prefs['keyBorderThickness'];
 
       // Text settings
       _fontFamily = prefs['fontFamily'];
@@ -217,6 +221,8 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
       _markerColorNotPressed = prefs['markerColorNotPressed'];
       _keyTextColor = prefs['keyTextColor'];
       _keyTextColorNotPressed = prefs['keyTextColorNotPressed'];
+      _keyBorderColorPressed = prefs['keyBorderColorPressed'];
+      _keyBorderColorNotPressed = prefs['keyBorderColorNotPressed'];
 
       // Animations settings
       _animationEnabled = prefs['animationEnabled'];
@@ -259,6 +265,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
       'spaceWidth': _spaceWidth,
       'splitWidth': _splitWidth,
       'lastRowSplitWidth': _lastRowSplitWidth,
+      'keyBorderThickness': _keyBorderThickness,
 
       // Text settings
       'fontFamily': _fontFamily,
@@ -279,6 +286,8 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
       'markerColorNotPressed': _markerColorNotPressed,
       'keyTextColor': _keyTextColor,
       'keyTextColorNotPressed': _keyTextColorNotPressed,
+      'keyBorderColorPressed': _keyBorderColorPressed,
+      'keyBorderColorNotPressed': _keyBorderColorNotPressed,
 
       // Animations settings
       'animationEnabled': _animationEnabled,
@@ -715,7 +724,8 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
         case 'updateLayout':
           final layoutName = call.arguments as String;
           setState(() {
-            if ((_kanataEnabled || _useUserLayout) && _advancedSettingsEnabled) {
+            if ((_kanataEnabled || _useUserLayout) &&
+                _advancedSettingsEnabled) {
               _initialKeyboardLayout = availableLayouts
                   .firstWhere((layout) => layout.name == layoutName);
             } else {
@@ -755,6 +765,9 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
         case 'updateLastRowSplitWidth':
           final lastRowSplitWidth = call.arguments as double;
           setState(() => _lastRowSplitWidth = lastRowSplitWidth);
+        case 'updateKeyBorderThickness':
+          final keyBorderThickness = call.arguments as double;
+          setState(() => _keyBorderThickness = keyBorderThickness);
 
         // Text settings
         case 'updateFontFamily':
@@ -810,6 +823,13 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
           final keyTextColorNotPressed = call.arguments as int;
           setState(
               () => _keyTextColorNotPressed = Color(keyTextColorNotPressed));
+        case 'updateKeyBorderColorPressed':
+          final keyBorderColorPressed = call.arguments as int;
+          setState(() => _keyBorderColorPressed = Color(keyBorderColorPressed));
+        case 'updateKeyBorderColorNotPressed':
+          final keyBorderColorNotPressed = call.arguments as int;
+          setState(() =>
+              _keyBorderColorNotPressed = Color(keyBorderColorNotPressed));
 
         // Animations settings
         case 'updateAnimationEnabled':
@@ -973,19 +993,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
                   color: Colors.transparent,
                   child: Center(
                     child: KeyboardScreen(
-                      keyPressStates: _keyPressStates,
                       layout: _keyboardLayout,
-                      showAltLayout: _advancedSettingsEnabled && _showAltLayout,
-                      altLayout: _altLayout,
-                      use6ColLayout: _use6ColLayout,
-                      keyColorPressed: _keyColorPressed,
-                      keyColorNotPressed: _keyColorNotPressed,
-                      markerColor: _markerColor,
-                      markerColorNotPressed: _markerColorNotPressed,
-                      markerOffset: _markerOffset,
-                      markerWidth: _markerWidth,
-                      markerHeight: _markerHeight,
-                      markerBorderRadius: _markerBorderRadius,
                       keymapStyle: _keymapStyle,
                       showTopRow: _showTopRow,
                       showGraveKey: _showGraveKey,
@@ -995,15 +1003,30 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
                       spaceWidth: _spaceWidth,
                       splitWidth: _splitWidth,
                       lastRowSplitWidth: _lastRowSplitWidth,
+                      keyBorderThickness: _keyBorderThickness,
                       keyFontSize: _keyFontSize,
                       spaceFontSize: _spaceFontSize,
                       fontWeight: _fontWeight,
+                      markerOffset: _markerOffset,
+                      markerWidth: _markerWidth,
+                      markerHeight: _markerHeight,
+                      markerBorderRadius: _markerBorderRadius,
+                      keyColorPressed: _keyColorPressed,
+                      keyColorNotPressed: _keyColorNotPressed,
+                      markerColor: _markerColor,
+                      markerColorNotPressed: _markerColorNotPressed,
                       keyTextColor: _keyTextColor,
                       keyTextColorNotPressed: _keyTextColorNotPressed,
+                      keyBorderColorPressed: _keyBorderColorPressed,
+                      keyBorderColorNotPressed: _keyBorderColorNotPressed,
                       animationEnabled: _animationEnabled,
                       animationStyle: _animationStyle,
                       animationDuration: _animationDuration,
                       animationScale: _animationScale,
+                      showAltLayout: _advancedSettingsEnabled && _showAltLayout,
+                      altLayout: _altLayout,
+                      use6ColLayout: _use6ColLayout,
+                      keyPressStates: _keyPressStates,
                     ),
                   ),
                 ),
