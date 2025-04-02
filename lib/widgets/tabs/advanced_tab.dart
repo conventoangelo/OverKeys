@@ -11,12 +11,14 @@ class AdvancedTab extends StatelessWidget {
   final bool customFontEnabled;
   final bool use6ColLayout;
   final bool kanataEnabled;
+  final bool keyboardFollowsMouse;
   final Function(bool) updateAdvancedSettingsEnabled;
   final Function(bool) updateUseUserLayout;
   final Function(bool) updateShowAltLayout;
   final Function(bool) updateCustomFontEnabled;
   final Function(bool) updateUse6ColLayout;
   final Function(bool) updateKanataEnabled;
+  final Function(bool) updateKeyboardFollowsMouse;
 
   const AdvancedTab({
     super.key,
@@ -26,12 +28,14 @@ class AdvancedTab extends StatelessWidget {
     required this.customFontEnabled,
     required this.use6ColLayout,
     required this.kanataEnabled,
+    required this.keyboardFollowsMouse,
     required this.updateAdvancedSettingsEnabled,
     required this.updateUseUserLayout,
     required this.updateShowAltLayout,
     required this.updateCustomFontEnabled,
     required this.updateUse6ColLayout,
     required this.updateKanataEnabled,
+    required this.updateKeyboardFollowsMouse,
   });
 
   @override
@@ -93,6 +97,13 @@ class AdvancedTab extends StatelessWidget {
                   }
                   updateKanataEnabled(value);
                 },
+              ),
+              ToggleOption(
+                label: 'Keyboard follows mouse',
+                value: keyboardFollowsMouse,
+                subtitle:
+                    'EXPERIMENTAL: Keyboard will follow your mouse cursor across monitors. Note: This will override manual position adjustments.',
+                onChanged: updateKeyboardFollowsMouse,
               ),
               _buildOpenConfigButton(context),
             ],

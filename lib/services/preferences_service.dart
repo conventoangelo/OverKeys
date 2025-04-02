@@ -126,6 +126,8 @@ class PreferencesService {
       await _prefs.getBool('use6ColLayout') ?? false;
   Future<bool> getKanataEnabled() async =>
       await _prefs.getBool('kanataEnabled') ?? false;
+  Future<bool> getKeyboardFollowsMouse() async =>
+      await _prefs.getBool('keyboardFollowsMouse') ?? false;
 
   // General settings
   Future<void> setLaunchAtStartup(bool value) async =>
@@ -230,6 +232,8 @@ class PreferencesService {
       await _prefs.setBool('use6ColLayout', value);
   Future<void> setKanataEnabled(bool value) async =>
       await _prefs.setBool('kanataEnabled', value);
+  Future<void> setKeyboardFollowsMouse(bool value) async =>
+      await _prefs.setBool('keyboardFollowsMouse', value);
 
   Future<Map<String, dynamic>> loadAllPreferences() async {
     return {
@@ -292,6 +296,7 @@ class PreferencesService {
       'customFontEnabled': await getCustomFontEnabled(),
       'use6ColLayout': await getUse6ColLayout(),
       'kanataEnabled': await getKanataEnabled(),
+      'keyboardFollowsMouse': await getKeyboardFollowsMouse(),
     };
   }
 
@@ -355,5 +360,6 @@ class PreferencesService {
     await setCustomFontEnabled(prefs['customFontEnabled']);
     await setUse6ColLayout(prefs['use6ColLayout']);
     await setKanataEnabled(prefs['kanataEnabled']);
+    await setKeyboardFollowsMouse(prefs['keyboardFollowsMouse']);
   }
 }

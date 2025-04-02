@@ -103,6 +103,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
   bool _customFontEnabled = false;
   bool _use6ColLayout = false;
   bool _kanataEnabled = false;
+  bool _keyboardFollowsMouse = false;
 
   @override
   void initState() {
@@ -224,6 +225,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       _customFontEnabled = prefs['customFontEnabled'];
       _use6ColLayout = prefs['use6ColLayout'];
       _kanataEnabled = prefs['kanataEnabled'];
+      _keyboardFollowsMouse = prefs['keyboardFollowsMouse'] ?? false;
     });
   }
 
@@ -288,6 +290,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       'customFontEnabled': _customFontEnabled,
       'use6ColLayout': _use6ColLayout,
       'kanataEnabled': _kanataEnabled,
+      'keyboardFollowsMouse': _keyboardFollowsMouse,
     };
 
     await _prefsService.saveAllPreferences(prefs);
@@ -670,6 +673,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           customFontEnabled: _customFontEnabled,
           use6ColLayout: _use6ColLayout,
           kanataEnabled: _kanataEnabled,
+          keyboardFollowsMouse: _keyboardFollowsMouse,
           updateAdvancedSettingsEnabled: (value) {
             setState(() => _advancedSettingsEnabled = value);
             _updateMainWindow('updateAdvancedSettingsEnabled', value);
@@ -701,6 +705,10 @@ class _PreferencesScreenState extends State<PreferencesScreen>
               _updateMainWindow('updateUseUserLayout', false);
             }
             _updateMainWindow('updateKanataEnabled', value);
+          },
+          updateKeyboardFollowsMouse: (value) {
+            setState(() => _keyboardFollowsMouse = value);
+            _updateMainWindow('updateKeyboardFollowsMouse', value);
           },
         );
       case 'About':

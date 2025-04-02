@@ -114,6 +114,8 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   bool _customFontEnabled = false;
   bool _use6ColLayout = false;
   bool _kanataEnabled = false;
+  bool _keyboardFollowsMouse = false;
+  Timer? _mouseCheckTimer;
 
   // Services
   final PreferencesService _prefsService = PreferencesService();
@@ -155,6 +157,9 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
       if (_kanataEnabled) {
         _useKanata();
       }
+      if (_keyboardFollowsMouse) {
+        _startMouseTracking();
+      }
     }
     if (_showTopRow) {
       _adjustWindowSize();
@@ -171,9 +176,23 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
     unhook();
     _autoHideTimer?.cancel();
     _overlayTimer?.cancel();
+    _mouseCheckTimer?.cancel();
     _kanataService.dispose();
     _saveAllPreferences();
     super.dispose();
+  }
+
+  void _startMouseTracking() {
+    _mouseCheckTimer?.cancel();
+    _mouseCheckTimer = Timer.periodic(const Duration(milliseconds: 500), (_) {
+      if (_keyboardFollowsMouse && _advancedSettingsEnabled) {
+        windowManager.setAlignment(Alignment.bottomCenter);
+      }
+    });
+  }
+
+  void _stopMouseTracking() {
+    _mouseCheckTimer?.cancel();
   }
 
   Future<void> _loadAllPreferences() async {
@@ -243,6 +262,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
       _customFontEnabled = prefs['customFontEnabled'];
       _use6ColLayout = prefs['use6ColLayout'];
       _kanataEnabled = prefs['kanataEnabled'];
+      _keyboardFollowsMouse = prefs['keyboardFollowsMouse'] ?? false;
     });
   }
 
@@ -307,6 +327,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
       'customFontEnabled': _customFontEnabled,
       'use6ColLayout': _use6ColLayout,
       'kanataEnabled': _kanataEnabled,
+      'keyboardFollowsMouse': _keyboardFollowsMouse,
     };
 
     await _prefsService.saveAllPreferences(prefs);
@@ -883,9 +904,15 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
               if (_customFontEnabled) {
                 _fontFamily = _initialFontFamily;
               }
+              if (_keyboardFollowsMouse) {
+                _stopMouseTracking();
+              }
             } else {
               if (_initialShowAltLayout || _showAltLayout) {
                 _showAltLayout = true;
+              }
+              if (_keyboardFollowsMouse) {
+                _startMouseTracking();
               }
             }
           });
@@ -960,6 +987,17 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
                 _keyboardLayout = _initialKeyboardLayout!;
                 _fadeIn();
               }
+            }
+          });
+        case 'updateKeyboardFollowsMouse':
+          final keyboardFollowsMouse = call.arguments as bool;
+          setState(() {
+            _keyboardFollowsMouse = keyboardFollowsMouse;
+            if (keyboardFollowsMouse && _advancedSettingsEnabled) {
+              _startMouseTracking();
+              windowManager.setAlignment(Alignment.bottomCenter);
+            } else {
+              _stopMouseTracking();
             }
           });
 
