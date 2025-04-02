@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:overkeys/widgets/options/options.dart';
+import 'package:overkeys/utils/font_options.dart';
 
 class TextTab extends StatefulWidget {
   final String fontFamily;
@@ -57,50 +58,7 @@ class _TextTabState extends State<TextTab> {
         DropdownOption(
             label: 'Font style',
             value: widget.fontFamily,
-            options: [
-              'Berkeley Mono',
-              'Cascadia Mono',
-              'Comic Mono',
-              'CommitMono',
-              'Consolas',
-              'Courier',
-              'Cousine',
-              'Dank Mono',
-              'DM Mono',
-              'Droid Sans Mono',
-              'Fira Code',
-              'Fira Mono',
-              'Geist',
-              'GeistMono',
-              'Google Sans',
-              'Hack',
-              'IBM Plex Mono',
-              'Inconsolata',
-              'Input',
-              'Inter',
-              'Iosevka',
-              'JetBrains Mono',
-              'Manrope',
-              'Meslo',
-              'Monaspace Argon',
-              'Monaspace Krypton',
-              'Monaspace Neon',
-              'Monaspace Radon',
-              'Monaspace Xenon',
-              'Monocraft',
-              'MonoLisa',
-              'mononoki',
-              'Montserrat',
-              'Nunito',
-              'Poppins',
-              'Roboto',
-              'Roboto Mono',
-              'Source Code Pro',
-              'Source Sans Pro',
-              'Ubuntu',
-              'Ubuntu Mono',
-              'Victor Mono',
-            ],
+            options: availableFontFamilies,
             onChanged: (value) => widget.updateFontFamily(value!),
             subtitle:
                 'Make sure that the font is installed in your system. Falls back to Geist Mono.'),
