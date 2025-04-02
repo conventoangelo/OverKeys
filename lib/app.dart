@@ -184,11 +184,10 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
 
   void _startMouseTracking() {
     _mouseCheckTimer?.cancel();
-    _mouseCheckTimer = Timer.periodic(const Duration(milliseconds: 500), (_) {
-      if (_keyboardFollowsMouse && _advancedSettingsEnabled) {
-        windowManager.setAlignment(Alignment.bottomCenter);
-      }
-    });
+    if (_keyboardFollowsMouse && _advancedSettingsEnabled) {
+      _mouseCheckTimer = Timer.periodic(const Duration(milliseconds: 500),
+          (_) => windowManager.setAlignment(Alignment.bottomCenter));
+    }
   }
 
   void _stopMouseTracking() {
@@ -435,6 +434,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   }
 
   void _fadeOut() {
+    if (!_isWindowVisible) return;
     setState(() {
       _lastOpacity = _opacity;
       _opacity = 0.0;
@@ -443,7 +443,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   }
 
   void _fadeIn() {
-    if (_forceHide) return;
+    if (_forceHide || _isWindowVisible) return;
     setState(() {
       _isWindowVisible = true;
       _opacity = _lastOpacity;
@@ -452,7 +452,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   }
 
   void _setupKeyListener() {
-    ReceivePort receivePort = ReceivePort();
+    final receivePort = ReceivePort();
     Isolate.spawn(setHook, receivePort.sendPort)
         .then((_) {})
         .catchError((error) {
@@ -476,10 +476,10 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
 
     if (message[0] is! int) return;
 
-    int keyCode = message[0];
-    bool isPressed = message[1];
-    bool isShiftDown = message[2];
-    String key = getKeyFromKeyCodeShift(keyCode, isShiftDown);
+    final keyCode = message[0] as int;
+    final isPressed = message[1] as bool;
+    final isShiftDown = message[2] as bool;
+    final key = getKeyFromKeyCodeShift(keyCode, isShiftDown);
 
     if (kDebugMode) {
       print(
@@ -497,12 +497,12 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   }
 
   void _resetAutoHideTimer() {
+    if (!_autoHideEnabled) return;
+
     _autoHideTimer?.cancel();
-    if (_autoHideEnabled) {
-      _autoHideTimer = Timer(
-          Duration(milliseconds: (_autoHideDuration * 1000).round()),
-          _handleAutoHide);
-    }
+    _autoHideTimer = Timer(
+        Duration(milliseconds: (_autoHideDuration * 1000).round()),
+        _handleAutoHide);
   }
 
   void _handleAutoHide() {
@@ -551,11 +551,13 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   }
 
   Future<void> _setupTray() async {
-    String iconPath = Platform.isWindows
+    final String iconPath = Platform.isWindows
         ? 'assets/images/app_icon.ico'
         : 'assets/images/app_icon.png';
-    await trayManager.setIcon(iconPath);
-    trayManager.setToolTip('OverKeys');
+    await Future.wait([
+      trayManager.setIcon(iconPath),
+      trayManager.setToolTip('OverKeys'),
+    ]);
     trayManager.setContextMenu(Menu(items: [
       MenuItem.checkbox(
         key: 'toggle_mouse_events',
@@ -1024,9 +1026,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
               duration: _fadeDuration,
               child: GestureDetector(
                 behavior: HitTestBehavior.translucent,
-                onPanStart: (details) {
-                  windowManager.startDragging();
-                },
+                onPanStart: (_) => windowManager.startDragging(),
                 child: Container(
                   color: Colors.transparent,
                   child: Center(
