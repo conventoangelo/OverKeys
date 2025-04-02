@@ -103,7 +103,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   );
 
   // Advanced settings
-  bool _enableAdvancedSettings = false;
+  bool _advancedSettingsEnabled = false;
   bool _useUserLayout = false;
   bool _showAltLayout = false;
   bool _initialShowAltLayout = false;
@@ -139,7 +139,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
     _setupMethodHandler();
     _initStartup();
     _setupKanataLayerChangeHandler();
-    if (_enableAdvancedSettings) {
+    if (_advancedSettingsEnabled) {
       if (_useUserLayout) {
         _loadUserLayout();
       }
@@ -230,7 +230,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
       _autoHideHotKey = prefs['autoHideHotKey'];
 
       // Advanced settings
-      _enableAdvancedSettings = prefs['enableAdvancedSettings'];
+      _advancedSettingsEnabled = prefs['advancedSettingsEnabled'];
       _useUserLayout = prefs['useUserLayout'];
       _showAltLayout = prefs['showAltLayout'];
       _altLayout = _keyboardLayout;
@@ -292,7 +292,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
       'autoHideHotKey': _autoHideHotKey,
 
       // Advanced settings
-      'enableAdvancedSettings': _enableAdvancedSettings,
+      'advancedSettingsEnabled': _advancedSettingsEnabled,
       'useUserLayout': _useUserLayout,
       'showAltLayout': _showAltLayout,
       'customFontEnabled': _customFontEnabled,
@@ -329,7 +329,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
     final configService = ConfigService();
     final config = await configService.loadConfig();
 
-    if (_kanataEnabled && _enableAdvancedSettings) {
+    if (_kanataEnabled && _advancedSettingsEnabled) {
       _kanataService.updateSettings(
           config.kanataHost, config.kanataPort, config.userLayouts);
       _kanataService.connect();
@@ -365,7 +365,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   }
 
   Future<void> _loadCustomFont() async {
-    if (!_customFontEnabled || !_enableAdvancedSettings) return;
+    if (!_customFontEnabled || !_advancedSettingsEnabled) return;
 
     final configService = ConfigService();
     final config = await configService.loadConfig();
@@ -715,7 +715,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
         case 'updateLayout':
           final layoutName = call.arguments as String;
           setState(() {
-            if ((_kanataEnabled || _useUserLayout) && _enableAdvancedSettings) {
+            if ((_kanataEnabled || _useUserLayout) && _advancedSettingsEnabled) {
               _initialKeyboardLayout = availableLayouts
                   .firstWhere((layout) => layout.name == layoutName);
             } else {
@@ -760,7 +760,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
         case 'updateFontFamily':
           final fontFamily = call.arguments as String;
           setState(() {
-            if (_customFontEnabled && _enableAdvancedSettings) {
+            if (_customFontEnabled && _advancedSettingsEnabled) {
               _initialFontFamily = fontFamily;
             } else {
               _fontFamily = fontFamily;
@@ -846,11 +846,11 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
           await _setupHotKeys();
 
         // Advanced settings
-        case 'updateEnableAdvancedSettings':
-          final enableAdvancedSettings = call.arguments as bool;
+        case 'updateAdvancedSettingsEnabled':
+          final advancedSettingsEnabled = call.arguments as bool;
           setState(() {
-            _enableAdvancedSettings = enableAdvancedSettings;
-            if (!enableAdvancedSettings) {
+            _advancedSettingsEnabled = advancedSettingsEnabled;
+            if (!advancedSettingsEnabled) {
               _initialShowAltLayout = _showAltLayout;
               if (_kanataEnabled) {
                 _kanataService.disconnect();
@@ -870,7 +870,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
             }
           });
 
-          if (_enableAdvancedSettings) {
+          if (_advancedSettingsEnabled) {
             if (_kanataEnabled) {
               _useKanata();
             }
@@ -975,7 +975,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
                     child: KeyboardScreen(
                       keyPressStates: _keyPressStates,
                       layout: _keyboardLayout,
-                      showAltLayout: _enableAdvancedSettings && _showAltLayout,
+                      showAltLayout: _advancedSettingsEnabled && _showAltLayout,
                       altLayout: _altLayout,
                       use6ColLayout: _use6ColLayout,
                       keyColorPressed: _keyColorPressed,

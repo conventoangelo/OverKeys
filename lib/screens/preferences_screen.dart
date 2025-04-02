@@ -94,7 +94,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
   );
 
   // Advanced settings
-  bool _enableAdvancedSettings = false;
+  bool _advancedSettingsEnabled = false;
   bool _useUserLayout = false;
   bool _showAltLayout = false;
   bool _customFontEnabled = false;
@@ -212,7 +212,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       _autoHideHotKey = prefs['autoHideHotKey'];
 
       // Advanced settings
-      _enableAdvancedSettings = prefs['enableAdvancedSettings'];
+      _advancedSettingsEnabled = prefs['advancedSettingsEnabled'];
       _useUserLayout = prefs['useUserLayout'];
       _showAltLayout = prefs['showAltLayout'];
       _customFontEnabled = prefs['customFontEnabled'];
@@ -273,7 +273,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       'autoHideHotKey': _autoHideHotKey,
 
       // Advanced settings
-      'enableAdvancedSettings': _enableAdvancedSettings,
+      'advancedSettingsEnabled': _advancedSettingsEnabled,
       'useUserLayout': _useUserLayout,
       'showAltLayout': _showAltLayout,
       'customFontEnabled': _customFontEnabled,
@@ -640,15 +640,15 @@ class _PreferencesScreenState extends State<PreferencesScreen>
         );
       case 'Advanced':
         return AdvancedTab(
-          enableAdvancedSettings: _enableAdvancedSettings,
+          advancedSettingsEnabled: _advancedSettingsEnabled,
           useUserLayout: _useUserLayout,
           showAltLayout: _showAltLayout,
           customFontEnabled: _customFontEnabled,
           use6ColLayout: _use6ColLayout,
           kanataEnabled: _kanataEnabled,
-          updateEnableAdvancedSettings: (value) {
-            setState(() => _enableAdvancedSettings = value);
-            _updateMainWindow('updateEnableAdvancedSettings', value);
+          updateAdvancedSettingsEnabled: (value) {
+            setState(() => _advancedSettingsEnabled = value);
+            _updateMainWindow('updateAdvancedSettingsEnabled', value);
           },
           updateUseUserLayout: (value) {
             setState(() => _useUserLayout = value);

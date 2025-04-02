@@ -5,13 +5,13 @@ import 'package:overkeys/services/config_service.dart';
 import 'package:overkeys/models/user_config.dart';
 
 class AdvancedTab extends StatelessWidget {
-  final bool enableAdvancedSettings;
+  final bool advancedSettingsEnabled;
   final bool useUserLayout;
   final bool showAltLayout;
   final bool customFontEnabled;
   final bool use6ColLayout;
   final bool kanataEnabled;
-  final Function(bool) updateEnableAdvancedSettings;
+  final Function(bool) updateAdvancedSettingsEnabled;
   final Function(bool) updateUseUserLayout;
   final Function(bool) updateShowAltLayout;
   final Function(bool) updateCustomFontEnabled;
@@ -20,13 +20,13 @@ class AdvancedTab extends StatelessWidget {
 
   const AdvancedTab({
     super.key,
-    required this.enableAdvancedSettings,
+    required this.advancedSettingsEnabled,
     required this.useUserLayout,
     required this.showAltLayout,
     required this.customFontEnabled,
     required this.use6ColLayout,
     required this.kanataEnabled,
-    required this.updateEnableAdvancedSettings,
+    required this.updateAdvancedSettingsEnabled,
     required this.updateUseUserLayout,
     required this.updateShowAltLayout,
     required this.updateCustomFontEnabled,
@@ -41,8 +41,8 @@ class AdvancedTab extends StatelessWidget {
       children: [
         ToggleOption(
           label: 'Turn on advanced settings',
-          value: enableAdvancedSettings,
-          onChanged: updateEnableAdvancedSettings,
+          value: advancedSettingsEnabled,
+          onChanged: updateAdvancedSettingsEnabled,
         ),
         AnimatedCrossFade(
           duration: const Duration(milliseconds: 300),
@@ -97,7 +97,7 @@ class AdvancedTab extends StatelessWidget {
               _buildOpenConfigButton(context),
             ],
           ),
-          crossFadeState: enableAdvancedSettings
+          crossFadeState: advancedSettingsEnabled
               ? CrossFadeState.showSecond
               : CrossFadeState.showFirst,
           sizeCurve: Curves.easeInOut,

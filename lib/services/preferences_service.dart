@@ -108,8 +108,8 @@ class PreferencesService {
   }
 
   // Advanced settings
-  Future<bool> getEnableAdvancedSettings() async =>
-      await _prefs.getBool('enableAdvancedSettings') ?? false;
+  Future<bool> getAdvancedSettingsEnabled() async =>
+      await _prefs.getBool('advancedSettingsEnabled') ?? false;
   Future<bool> getUseUserLayout() async =>
       await _prefs.getBool('useUserLayout') ?? false;
   Future<bool> getShowAltLayout() async =>
@@ -206,8 +206,8 @@ class PreferencesService {
       await _prefs.setString('autoHideHotKey', jsonEncode(value.toJson()));
 
   // Advanced settings
-  Future<void> setEnableAdvancedSettings(bool value) async =>
-      await _prefs.setBool('enableAdvancedSettings', value);
+  Future<void> setAdvancedSettingsEnabled(bool value) async =>
+      await _prefs.setBool('advancedSettingsEnabled', value);
   Future<void> setUseUserLayout(bool value) async =>
       await _prefs.setBool('useUserLayout', value);
   Future<void> setShowAltLayout(bool value) async =>
@@ -271,7 +271,7 @@ class PreferencesService {
       'autoHideHotKey': await getAutoHideHotKey(),
 
       // Advanced settings
-      'enableAdvancedSettings': await getEnableAdvancedSettings(),
+      'advancedSettingsEnabled': await getAdvancedSettingsEnabled(),
       'useUserLayout': await getUseUserLayout(),
       'showAltLayout': await getShowAltLayout(),
       'customFontEnabled': await getCustomFontEnabled(),
@@ -331,7 +331,7 @@ class PreferencesService {
     await setAutoHideHotKey(prefs['autoHideHotKey']);
 
     // Advanced settings
-    await setEnableAdvancedSettings(prefs['enableAdvancedSettings']);
+    await setAdvancedSettingsEnabled(prefs['advancedSettingsEnabled']);
     await setUseUserLayout(prefs['useUserLayout']);
     await setShowAltLayout(prefs['showAltLayout']);
     await setCustomFontEnabled(prefs['customFontEnabled']);
