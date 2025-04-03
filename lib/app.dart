@@ -576,10 +576,9 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
             windowManager.setIgnoreMouseEvents(_ignoreMouseEvents);
             if (_ignoreMouseEvents) {
               _fadeIn();
-              _showOverlay('Dragging disabled',
-                  const Icon(LucideIcons.mousePointerClick));
+              _showOverlay('Move disabled', const Icon(LucideIcons.move));
             } else {
-              _showOverlay('Dragging enabled', const Icon(LucideIcons.move));
+              _showOverlay('Move enabled', const Icon(LucideIcons.unlock));
             }
           });
         },
@@ -657,10 +656,9 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
           windowManager.setIgnoreMouseEvents(_ignoreMouseEvents);
           if (_ignoreMouseEvents) {
             _fadeIn();
-            _showOverlay(
-                'Dragging disabled', const Icon(LucideIcons.mousePointerClick));
+            _showOverlay('Move disabled', const Icon(LucideIcons.move));
           } else {
-            _showOverlay('Dragging enabled', const Icon(LucideIcons.move));
+            _showOverlay('Move enabled', const Icon(LucideIcons.unlock));
           }
         });
       },
