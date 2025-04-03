@@ -113,6 +113,17 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
     modifiers: [HotKeyModifier.alt, HotKeyModifier.control],
   );
 
+  // Learn settings
+  bool _learningModeEnabled = false;
+  Color _pinkyLeftColor = const Color(0xFFED3345);
+  Color _ringLeftColor = const Color(0xFFFAA71D);
+  Color _middleLeftColor = const Color(0xFF70C27B);
+  Color _indexLeftColor = const Color(0xFF00AFEB);
+  Color _indexRightColor = const Color(0xFF5985BF);
+  Color _middleRightColor = const Color(0xFF97D6F5);
+  Color _ringRightColor = const Color(0xFFFFE8A0);
+  Color _pinkyRightColor = const Color(0xFFBDE0BF);
+
   // Advanced settings
   bool _advancedSettingsEnabled = false;
   bool _useUserLayout = false;
@@ -263,6 +274,17 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
       _toggleMoveHotKey = prefs['toggleMoveHotKey'];
       _preferencesHotKey = prefs['preferencesHotKey'];
 
+      // Learn settings
+      _learningModeEnabled = prefs['learningModeEnabled'];
+      _pinkyLeftColor = prefs['pinkyLeftColor'];
+      _ringLeftColor = prefs['ringLeftColor'];
+      _middleLeftColor = prefs['middleLeftColor'];
+      _indexLeftColor = prefs['indexLeftColor'];
+      _indexRightColor = prefs['indexRightColor'];
+      _middleRightColor = prefs['middleRightColor'];
+      _ringRightColor = prefs['ringRightColor'];
+      _pinkyRightColor = prefs['pinkyRightColor'];
+
       // Advanced settings
       _advancedSettingsEnabled = prefs['advancedSettingsEnabled'];
       _useUserLayout = prefs['useUserLayout'];
@@ -271,7 +293,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
       _customFontEnabled = prefs['customFontEnabled'];
       _use6ColLayout = prefs['use6ColLayout'];
       _kanataEnabled = prefs['kanataEnabled'];
-      _keyboardFollowsMouse = prefs['keyboardFollowsMouse'] ?? false;
+      _keyboardFollowsMouse = prefs['keyboardFollowsMouse'];
     });
   }
 
@@ -330,6 +352,17 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
       'autoHideHotKey': _autoHideHotKey,
       'toggleMoveHotKey': _toggleMoveHotKey,
       'preferencesHotKey': _preferencesHotKey,
+
+      // Learn settings
+      'learningModeEnabled': _learningModeEnabled,
+      'pinkyLeftColor': _pinkyLeftColor,
+      'ringLeftColor': _ringLeftColor,
+      'middleLeftColor': _middleLeftColor,
+      'indexLeftColor': _indexLeftColor,
+      'indexRightColor': _indexRightColor,
+      'middleRightColor': _middleRightColor,
+      'ringRightColor': _ringRightColor,
+      'pinkyRightColor': _pinkyRightColor,
 
       // Advanced settings
       'advancedSettingsEnabled': _advancedSettingsEnabled,
@@ -937,6 +970,35 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
           setState(() => _preferencesHotKey = newHotKey);
           await _setupHotKeys();
 
+        // Learn settings
+        case 'updateLearningModeEnabled':
+          final learningModeEnabled = call.arguments as bool;
+          setState(() => _learningModeEnabled = learningModeEnabled);
+        case 'updatePinkyLeftColor':
+          final color = call.arguments as int;
+          setState(() => _pinkyLeftColor = Color(color));
+        case 'updateRingLeftColor':
+          final color = call.arguments as int;
+          setState(() => _ringLeftColor = Color(color));
+        case 'updateMiddleLeftColor':
+          final color = call.arguments as int;
+          setState(() => _middleLeftColor = Color(color));
+        case 'updateIndexLeftColor':
+          final color = call.arguments as int;
+          setState(() => _indexLeftColor = Color(color));
+        case 'updateIndexRightColor':
+          final color = call.arguments as int;
+          setState(() => _indexRightColor = Color(color));
+        case 'updateMiddleRightColor':
+          final color = call.arguments as int;
+          setState(() => _middleRightColor = Color(color));
+        case 'updateRingRightColor':
+          final color = call.arguments as int;
+          setState(() => _ringRightColor = Color(color));
+        case 'updatePinkyRightColor':
+          final color = call.arguments as int;
+          setState(() => _pinkyRightColor = Color(color));
+
         // Advanced settings
         case 'updateAdvancedSettingsEnabled':
           final advancedSettingsEnabled = call.arguments as bool;
@@ -1110,6 +1172,15 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
                       animationStyle: _animationStyle,
                       animationDuration: _animationDuration,
                       animationScale: _animationScale,
+                      learningModeEnabled: _learningModeEnabled,
+                      pinkyLeftColor: _pinkyLeftColor,
+                      ringLeftColor: _ringLeftColor,
+                      middleLeftColor: _middleLeftColor,
+                      indexLeftColor: _indexLeftColor,
+                      indexRightColor: _indexRightColor,
+                      middleRightColor: _middleRightColor,
+                      ringRightColor: _ringRightColor,
+                      pinkyRightColor: _pinkyRightColor,
                       showAltLayout: _advancedSettingsEnabled && _showAltLayout,
                       altLayout: _altLayout,
                       use6ColLayout: _use6ColLayout,

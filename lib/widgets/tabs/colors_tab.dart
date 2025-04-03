@@ -41,48 +41,64 @@ class ColorsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        ColorOption(
-          label: 'Key color (pressed)',
-          currentColor: keyColorPressed,
-          onColorChanged: updateKeyColorPressed,
+        // Pressed colors column
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              ColorOption(
+                label: 'Key (pressed)',
+                currentColor: keyColorPressed,
+                onColorChanged: updateKeyColorPressed,
+              ),
+              ColorOption(
+                label: 'Marker (pressed)',
+                currentColor: markerColor,
+                onColorChanged: updateMarkerColor,
+              ),
+              ColorOption(
+                label: 'Text (pressed)',
+                currentColor: keyTextColor,
+                onColorChanged: updateKeyTextColor,
+              ),
+              ColorOption(
+                label: 'Border (pressed)',
+                currentColor: keyBorderColorPressed,
+                onColorChanged: updateKeyBorderColorPressed,
+              ),
+            ],
+          ),
         ),
-        ColorOption(
-          label: 'Key color (not pressed)',
-          currentColor: keyColorNotPressed,
-          onColorChanged: updateKeyColorNotPressed,
-        ),
-        ColorOption(
-          label: 'Marker color (pressed)',
-          currentColor: markerColor,
-          onColorChanged: updateMarkerColor,
-        ),
-        ColorOption(
-          label: 'Marker color (not pressed)',
-          currentColor: markerColorNotPressed,
-          onColorChanged: updateMarkerColorNotPressed,
-        ),
-        ColorOption(
-          label: 'Text color (pressed)',
-          currentColor: keyTextColor,
-          onColorChanged: updateKeyTextColor,
-        ),
-        ColorOption(
-          label: 'Text color (not pressed)',
-          currentColor: keyTextColorNotPressed,
-          onColorChanged: updateKeyTextColorNotPressed,
-        ),
-        ColorOption(
-          label: 'Border color (pressed)',
-          currentColor: keyBorderColorPressed,
-          onColorChanged: updateKeyBorderColorPressed,
-        ),
-        ColorOption(
-          label: 'Border color (not pressed)',
-          currentColor: keyBorderColorNotPressed,
-          onColorChanged: updateKeyBorderColorNotPressed,
+        const SizedBox(width: 14), // Space between columns
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              ColorOption(
+                label: 'Key (not pressed)',
+                currentColor: keyColorNotPressed,
+                onColorChanged: updateKeyColorNotPressed,
+              ),
+              ColorOption(
+                label: 'Marker (not pressed)',
+                currentColor: markerColorNotPressed,
+                onColorChanged: updateMarkerColorNotPressed,
+              ),
+              ColorOption(
+                label: 'Text (not pressed)',
+                currentColor: keyTextColorNotPressed,
+                onColorChanged: updateKeyTextColorNotPressed,
+              ),
+              ColorOption(
+                label: 'Border (not pressed)',
+                currentColor: keyBorderColorNotPressed,
+                onColorChanged: updateKeyBorderColorNotPressed,
+              ),
+            ],
+          ),
         ),
       ],
     );

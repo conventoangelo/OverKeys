@@ -60,6 +60,7 @@ flutter:
     - assets/images/app_icon.ico
     - assets/images/app_icon.png
     - assets/images/github-mark.png
+    - assets/images/colorkeys.png
 
 flutter_launcher_icons:
   image_path: "assets/images/OK.png"

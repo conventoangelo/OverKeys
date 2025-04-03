@@ -33,6 +33,15 @@ class KeyboardScreen extends StatelessWidget {
   final String animationStyle;
   final double animationDuration;
   final double animationScale;
+  final bool learningModeEnabled;
+  final Color pinkyLeftColor;
+  final Color ringLeftColor;
+  final Color middleLeftColor;
+  final Color indexLeftColor;
+  final Color indexRightColor;
+  final Color middleRightColor;
+  final Color ringRightColor;
+  final Color pinkyRightColor;
   final bool showAltLayout;
   final KeyboardLayout? altLayout;
   final bool use6ColLayout;
@@ -70,6 +79,15 @@ class KeyboardScreen extends StatelessWidget {
     required this.animationStyle,
     required this.animationDuration,
     required this.animationScale,
+    required this.learningModeEnabled,
+    required this.pinkyLeftColor,
+    required this.ringLeftColor,
+    required this.middleLeftColor,
+    required this.indexLeftColor,
+    required this.indexRightColor,
+    required this.middleRightColor,
+    required this.ringRightColor,
+    required this.pinkyRightColor,
     required this.showAltLayout,
     required this.altLayout,
     required this.use6ColLayout,
@@ -166,7 +184,15 @@ class KeyboardScreen extends StatelessWidget {
     String keyStateKey = Mappings.getKeyForSymbol(key);
     bool isPressed = keyPressStates[keyStateKey] ?? false;
 
-    Color keyColor = isPressed ? keyColorPressed : keyColorNotPressed;
+    Color keyColor;
+    if (isPressed) {
+      keyColor = keyColorPressed;
+    } else if (learningModeEnabled && rowIndex < 4) {
+      keyColor = getFingerColor(rowIndex, keyIndex);
+    } else {
+      keyColor = keyColorNotPressed;
+    }
+
     Color textColor = isPressed ? keyTextColor : keyTextColorNotPressed;
     Color tactMarkerColor = isPressed ? markerColor : markerColorNotPressed;
     Color borderColor =
@@ -327,5 +353,36 @@ class KeyboardScreen extends StatelessWidget {
     }
 
     return altRow[keyIndex];
+  }
+
+  Color getFingerColor(int rowIndex, int keyIndex) {
+    if (rowIndex == 0) {
+      keyIndex -= 1;
+    }
+    switch (keyIndex) {
+      case 0:
+        return pinkyLeftColor;
+      case 1:
+        return ringLeftColor;
+      case 2:
+        return middleLeftColor;
+      case 3:
+      case 4:
+        return indexLeftColor;
+      case 5:
+      case 6:
+        return indexRightColor;
+      case 7:
+        return middleRightColor;
+      case 8:
+        return ringRightColor;
+      case 9:
+      case 10:
+      case 11:
+      case 12:
+        return pinkyRightColor;
+      default:
+        return keyColorNotPressed;
+    }
   }
 }

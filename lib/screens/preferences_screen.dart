@@ -17,6 +17,7 @@ import 'package:overkeys/widgets/tabs/markers_tab.dart';
 import 'package:overkeys/widgets/tabs/colors_tab.dart';
 import 'package:overkeys/widgets/tabs/animations_tab.dart';
 import 'package:overkeys/widgets/tabs/hotkeys_tab.dart';
+import 'package:overkeys/widgets/tabs/learn_tab.dart';
 import 'package:overkeys/widgets/tabs/advanced_tab.dart';
 import 'package:overkeys/widgets/tabs/about_tab.dart';
 
@@ -103,6 +104,17 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     key: PhysicalKeyboardKey.keyR,
     modifiers: [HotKeyModifier.alt, HotKeyModifier.control],
   );
+
+  // Learn settings
+  bool _learningModeEnabled = false;
+  Color _pinkyLeftColor = const Color(0xFFED3345);
+  Color _ringLeftColor = const Color(0xFFFAA71D);
+  Color _middleLeftColor = const Color(0xFF70C27B);
+  Color _indexLeftColor = const Color(0xFF00AFEB);
+  Color _indexRightColor = const Color(0xFF5985BF);
+  Color _middleRightColor = const Color(0xFF97D6F5);
+  Color _ringRightColor = const Color(0xFFFFE8A0);
+  Color _pinkyRightColor = const Color(0xFFBDE0BF);
 
   // Advanced settings
   bool _advancedSettingsEnabled = false;
@@ -228,6 +240,17 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       _toggleMoveHotKey = prefs['toggleMoveHotKey'];
       _preferencesHotKey = prefs['preferencesHotKey'];
 
+      // Learn settings
+      _learningModeEnabled = prefs['learningModeEnabled'] ?? false;
+      _pinkyLeftColor = prefs['pinkyLeftColor'];
+      _ringLeftColor = prefs['ringLeftColor'];
+      _middleLeftColor = prefs['middleLeftColor'];
+      _indexLeftColor = prefs['indexLeftColor'];
+      _indexRightColor = prefs['indexRightColor'];
+      _middleRightColor = prefs['middleRightColor'];
+      _ringRightColor = prefs['ringRightColor'];
+      _pinkyRightColor = prefs['pinkyRightColor'];
+
       // Advanced settings
       _advancedSettingsEnabled = prefs['advancedSettingsEnabled'];
       _useUserLayout = prefs['useUserLayout'];
@@ -294,6 +317,17 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       'autoHideHotKey': _autoHideHotKey,
       'toggleMoveHotKey': _toggleMoveHotKey,
       'preferencesHotKey': _preferencesHotKey,
+
+      // Learn settings
+      'learningModeEnabled': _learningModeEnabled,
+      'pinkyLeftColor': _pinkyLeftColor,
+      'ringLeftColor': _ringLeftColor,
+      'middleLeftColor': _middleLeftColor,
+      'indexLeftColor': _indexLeftColor,
+      'indexRightColor': _indexRightColor,
+      'middleRightColor': _middleRightColor,
+      'ringRightColor': _ringRightColor,
+      'pinkyRightColor': _pinkyRightColor,
 
       // Advanced settings
       'advancedSettingsEnabled': _advancedSettingsEnabled,
@@ -391,6 +425,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
                 'Colors',
                 'Animations',
                 'Hotkeys',
+                'Learn',
                 'Advanced',
                 'About',
               ].map((tab) => _buildDrawerItem(context, tab)).toList(),
@@ -453,6 +488,8 @@ class _PreferencesScreenState extends State<PreferencesScreen>
         return const Icon(LucideIcons.sparkles);
       case 'Hotkeys':
         return const Icon(LucideIcons.layers);
+      case 'Learn':
+        return const Icon(LucideIcons.graduationCap);
       case 'Advanced':
         return const Icon(LucideIcons.userCog2);
       case 'About':
@@ -685,6 +722,54 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           updatePreferencesHotKey: (value) {
             setState(() => _preferencesHotKey = value);
             _updateMainWindow('updatePreferencesHotKey', value);
+          },
+        );
+      case 'Learn':
+        return LearnTab(
+          learningModeEnabled: _learningModeEnabled,
+          pinkyLeftColor: _pinkyLeftColor,
+          ringLeftColor: _ringLeftColor,
+          middleLeftColor: _middleLeftColor,
+          indexLeftColor: _indexLeftColor,
+          indexRightColor: _indexRightColor,
+          middleRightColor: _middleRightColor,
+          ringRightColor: _ringRightColor,
+          pinkyRightColor: _pinkyRightColor,
+          updateLearningModeEnabled: (value) {
+            setState(() => _learningModeEnabled = value);
+            _updateMainWindow('updateLearningModeEnabled', value);
+          },
+          updatePinkyLeftColor: (value) {
+            setState(() => _pinkyLeftColor = value);
+            _updateMainWindow('updatePinkyLeftColor', value);
+          },
+          updateRingLeftColor: (value) {
+            setState(() => _ringLeftColor = value);
+            _updateMainWindow('updateRingLeftColor', value);
+          },
+          updateMiddleLeftColor: (value) {
+            setState(() => _middleLeftColor = value);
+            _updateMainWindow('updateMiddleLeftColor', value);
+          },
+          updateIndexLeftColor: (value) {
+            setState(() => _indexLeftColor = value);
+            _updateMainWindow('updateIndexLeftColor', value);
+          },
+          updateIndexRightColor: (value) {
+            setState(() => _indexRightColor = value);
+            _updateMainWindow('updateIndexRightColor', value);
+          },
+          updateMiddleRightColor: (value) {
+            setState(() => _middleRightColor = value);
+            _updateMainWindow('updateMiddleRightColor', value);
+          },
+          updateRingRightColor: (value) {
+            setState(() => _ringRightColor = value);
+            _updateMainWindow('updateRingRightColor', value);
+          },
+          updatePinkyRightColor: (value) {
+            setState(() => _pinkyRightColor = value);
+            _updateMainWindow('updatePinkyRightColor', value);
           },
         );
       case 'Advanced':

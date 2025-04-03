@@ -137,6 +137,26 @@ class PreferencesService {
     }
   }
 
+  // Learn settings
+  Future<bool> getLearningModeEnabled() async =>
+      await _prefs.getBool('learningModeEnabled') ?? false;
+  Future<Color> getPinkyLeftColor() async =>
+      Color(await _prefs.getInt('pinkyLeftColor') ?? 0xFFED3345);
+  Future<Color> getRingLeftColor() async =>
+      Color(await _prefs.getInt('ringLeftColor') ?? 0xFFFAA71D);
+  Future<Color> getMiddleLeftColor() async =>
+      Color(await _prefs.getInt('middleLeftColor') ?? 0xFF70C27B);
+  Future<Color> getIndexLeftColor() async =>
+      Color(await _prefs.getInt('indexLeftColor') ?? 0xFF00AFEB);
+  Future<Color> getIndexRightColor() async =>
+      Color(await _prefs.getInt('indexRightColor') ?? 0xFF5985BF);
+  Future<Color> getMiddleRightColor() async =>
+      Color(await _prefs.getInt('middleRightColor') ?? 0xFF97D6F5);
+  Future<Color> getRingRightColor() async =>
+      Color(await _prefs.getInt('ringRightColor') ?? 0xFFFFE8A0);
+  Future<Color> getPinkyRightColor() async =>
+      Color(await _prefs.getInt('pinkyRightColor') ?? 0xFFBDE0BF);
+
   // Advanced settings
   Future<bool> getAdvancedSettingsEnabled() async =>
       await _prefs.getBool('advancedSettingsEnabled') ?? false;
@@ -247,6 +267,26 @@ class PreferencesService {
   Future<void> setPreferencesHotKey(HotKey value) async =>
       await _prefs.setString('preferencesHotKey', jsonEncode(value.toJson()));
 
+  // Learn settings
+  Future<void> setLearningModeEnabled(bool value) async =>
+      await _prefs.setBool('learningModeEnabled', value);
+  Future<void> setPinkyLeftColor(Color value) async =>
+      await _prefs.setInt('pinkyLeftColor', value.toARGB32());
+  Future<void> setRingLeftColor(Color value) async =>
+      await _prefs.setInt('ringLeftColor', value.toARGB32());
+  Future<void> setMiddleLeftColor(Color value) async =>
+      await _prefs.setInt('middleLeftColor', value.toARGB32());
+  Future<void> setIndexLeftColor(Color value) async =>
+      await _prefs.setInt('indexLeftColor', value.toARGB32());
+  Future<void> setIndexRightColor(Color value) async =>
+      await _prefs.setInt('indexRightColor', value.toARGB32());
+  Future<void> setMiddleRightColor(Color value) async =>
+      await _prefs.setInt('middleRightColor', value.toARGB32());
+  Future<void> setRingRightColor(Color value) async =>
+      await _prefs.setInt('ringRightColor', value.toARGB32());
+  Future<void> setPinkyRightColor(Color value) async =>
+      await _prefs.setInt('pinkyRightColor', value.toARGB32());
+
   // Advanced settings
   Future<void> setAdvancedSettingsEnabled(bool value) async =>
       await _prefs.setBool('advancedSettingsEnabled', value);
@@ -319,6 +359,17 @@ class PreferencesService {
       'toggleMoveHotKey': await getToggleMoveHotKey(),
       'preferencesHotKey': await getPreferencesHotKey(),
 
+      // Learn settings
+      'learningModeEnabled': await getLearningModeEnabled(),
+      'pinkyLeftColor': await getPinkyLeftColor(),
+      'ringLeftColor': await getRingLeftColor(),
+      'middleLeftColor': await getMiddleLeftColor(),
+      'indexLeftColor': await getIndexLeftColor(),
+      'indexRightColor': await getIndexRightColor(),
+      'middleRightColor': await getMiddleRightColor(),
+      'ringRightColor': await getRingRightColor(),
+      'pinkyRightColor': await getPinkyRightColor(),
+
       // Advanced settings
       'advancedSettingsEnabled': await getAdvancedSettingsEnabled(),
       'useUserLayout': await getUseUserLayout(),
@@ -384,6 +435,17 @@ class PreferencesService {
     await setAutoHideHotKey(prefs['autoHideHotKey']);
     await setToggleMoveHotKey(prefs['toggleMoveHotKey']);
     await setPreferencesHotKey(prefs['preferencesHotKey']);
+
+    // Learn settings
+    await setLearningModeEnabled(prefs['learningModeEnabled'] ?? false);
+    await setPinkyLeftColor(prefs['pinkyLeftColor']);
+    await setRingLeftColor(prefs['ringLeftColor']);
+    await setMiddleLeftColor(prefs['middleLeftColor']);
+    await setIndexLeftColor(prefs['indexLeftColor']);
+    await setIndexRightColor(prefs['indexRightColor']);
+    await setMiddleRightColor(prefs['middleRightColor']);
+    await setRingRightColor(prefs['ringRightColor']);
+    await setPinkyRightColor(prefs['pinkyRightColor']);
 
     // Advanced settings
     await setAdvancedSettingsEnabled(prefs['advancedSettingsEnabled']);
