@@ -9,7 +9,6 @@ typedef LayerChangeCallback = void Function(
     KeyboardLayout layout, bool isDefaultUserLayout);
 
 class KanataService {
-  final ConfigService _configService = ConfigService();
   Socket? _kanataSocket;
   bool _isConnected = false;
   Timer? _kanataTimer;
@@ -22,16 +21,6 @@ class KanataService {
 
   bool get isConnected => _isConnected;
 
-  Future<void> initializeIfEnabled() async {
-    final config = await _configService.loadConfig();
-    _host = config.kanataHost;
-    _port = config.kanataPort;
-    _userLayouts = config.userLayouts;
-    _defaultUserLayout = config.defaultUserLayout;
-
-    connect();
-  }
-
   Future<void> connect() async {
     if (_isConnected) {
       return;
@@ -41,7 +30,8 @@ class KanataService {
     _reconnectEnabled = true;
 
     try {
-      final config = await _configService.loadConfig();
+      final ConfigService configService = ConfigService();
+      final config = await configService.loadConfig();
       _host = config.kanataHost;
       _port = config.kanataPort;
       _userLayouts = config.userLayouts;
@@ -139,20 +129,6 @@ class KanataService {
     _kanataTimer?.cancel();
     _kanataSocket?.destroy();
     _isConnected = false;
-  }
-
-  void updateSettings(String host, int port, List<KeyboardLayout> layers) {
-    bool shouldReconnect = _isConnected;
-
-    disconnect();
-    _host = host;
-    _port = port;
-    _userLayouts = layers;
-
-    if (shouldReconnect) {
-      _reconnectEnabled = true;
-      connect();
-    }
   }
 
   void dispose() {

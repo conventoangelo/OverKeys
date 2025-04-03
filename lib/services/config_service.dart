@@ -53,19 +53,6 @@ class ConfigService {
     }
   }
 
-  Future<Map<String, dynamic>?> getKanataConfig() async {
-    final config = await loadConfig();
-
-    return {
-      'host': config.kanataHost,
-      'port': config.kanataPort,
-      'userLayouts': config.userLayouts,
-      'defaultUserLayout': config.defaultUserLayout,
-      'altLayout': config.altLayout,
-      'customFont' : config.customFont,
-    };
-  }
-
   Future<KeyboardLayout?> getUserLayout() async {
     final config = await loadConfig();
     final defaultLayoutName = config.defaultUserLayout;

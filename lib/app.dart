@@ -355,12 +355,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   }
 
   Future<void> _useKanata() async {
-    final configService = ConfigService();
-    final config = await configService.loadConfig();
-
     if (_kanataEnabled && _advancedSettingsEnabled) {
-      _kanataService.updateSettings(
-          config.kanataHost, config.kanataPort, config.userLayouts);
       _kanataService.connect();
     }
   }
