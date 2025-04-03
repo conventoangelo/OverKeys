@@ -220,7 +220,7 @@ class KeyboardScreen extends StatelessWidget {
                           textAlign: TextAlign.left,
                           style: TextStyle(
                             color: textColor,
-                            fontSize: key.length > 1
+                            fontSize: key.length > 2
                                 ? keyFontSize * 0.6
                                 : keyFontSize * 0.85,
                             fontWeight: fontWeight,
@@ -237,7 +237,7 @@ class KeyboardScreen extends StatelessWidget {
                           style: TextStyle(
                             color: textColor,
                             fontSize:
-                                _getAltLayoutKey(rowIndex, keyIndex).length > 1
+                                _getAltLayoutKey(rowIndex, keyIndex).length > 2
                                     ? keyFontSize * 0.6
                                     : keyFontSize * 0.85,
                             fontWeight: fontWeight,
@@ -253,7 +253,7 @@ class KeyboardScreen extends StatelessWidget {
                       style: TextStyle(
                         color: textColor,
                         fontSize:
-                            key.length > 1 ? keyFontSize * 0.7 : keyFontSize,
+                            key.length > 2 ? keyFontSize * 0.7 : keyFontSize,
                         fontWeight: fontWeight,
                       ),
                     ),
