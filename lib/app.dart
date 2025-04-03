@@ -670,6 +670,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
         if (kDebugMode) {
           print('Preferences hotkey triggered: ${hotKey.toJson()}');
         }
+        _showOverlay('Opening Preferences', const Icon(LucideIcons.appWindow));
         _showPreferences();
       },
     );
