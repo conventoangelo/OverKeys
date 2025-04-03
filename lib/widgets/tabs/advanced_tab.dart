@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:overkeys/widgets/options/options.dart';
 import 'package:overkeys/services/config_service.dart';
 import 'package:overkeys/models/user_config.dart';
@@ -146,7 +147,8 @@ class AdvancedTab extends StatelessWidget {
           ),
           const SizedBox(width: 16),
           ElevatedButton.icon(
-            icon: Icon(Icons.file_open, color: colorScheme.primary),
+            icon: Icon(LucideIcons.fileJson2,
+                color: colorScheme.primary, size: 24),
             label: Text('Open',
                 style: TextStyle(
                   color: colorScheme.primary,
