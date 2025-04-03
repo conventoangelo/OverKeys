@@ -52,7 +52,6 @@ class _HotKeysTabState extends State<HotKeysTab> {
             context,
             widget.updateVisibilityHotKey,
             widget.visibilityHotKey,
-            
           ),
         ),
         HotKeyOption(
@@ -77,7 +76,7 @@ class _HotKeysTabState extends State<HotKeysTab> {
         ),
         HotKeyOption(
           label: 'Open Preferences',
-          subtitle: 'Show/focus the preferences window',
+          subtitle: 'Show/focus the preferences window (may be delayed)',
           formattedHotKey: _formatHotKey(widget.preferencesHotKey),
           onChangePressed: () => _showRecordHotKeyDialog(
             context,
@@ -109,8 +108,8 @@ class _HotKeysTabState extends State<HotKeysTab> {
     return modifiers!.isNotEmpty ? '$modifiers + $keyName' : keyName;
   }
 
-  void _showRecordHotKeyDialog(
-      BuildContext context, Function(HotKey) onHotKeyRecorded, HotKey initialHotKey) {
+  void _showRecordHotKeyDialog(BuildContext context,
+      Function(HotKey) onHotKeyRecorded, HotKey initialHotKey) {
     showDialog<void>(
       context: context,
       builder: (BuildContext context) {

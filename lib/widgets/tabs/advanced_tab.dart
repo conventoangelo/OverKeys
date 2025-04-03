@@ -103,7 +103,7 @@ class AdvancedTab extends StatelessWidget {
                 label: 'Keyboard follows mouse',
                 value: keyboardFollowsMouse,
                 subtitle:
-                    'EXPERIMENTAL: Keyboard will follow your mouse cursor across monitors. Note: This will override manual position adjustments.',
+                    'EXPERIMENTAL: Keyboard will follow your mouse cursor across monitors. Note: This will override manual position adjustments. Also causes focus issues',
                 onChanged: updateKeyboardFollowsMouse,
               ),
               _buildOpenConfigButton(context),
