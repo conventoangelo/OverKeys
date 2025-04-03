@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.2.12](https://github.com/conventoangelo/OverKeys/compare/v0.2.11...v0.2.12) (2025-04-03)
+
+
+### ✨ Features
+
+* add hotkeys for toggling move and opening preferences ([536608d](https://github.com/conventoangelo/OverKeys/commit/536608db5f6339f2df98d266f107bd9fb76f08cf))
+* add learning mode (overrides colors settings) ([#79](https://github.com/conventoangelo/OverKeys/issues/79)) ([3989ea1](https://github.com/conventoangelo/OverKeys/commit/3989ea1054e508f7701c9fe323905cec2b3fcbac))
+* show initial hotkey on hotkey recorder dialog open ([536608d](https://github.com/conventoangelo/OverKeys/commit/536608db5f6339f2df98d266f107bd9fb76f08cf))
+
+
+### 🐛 Bug Fixes
+
+* advanced settings changes reflected without restarting ([#78](https://github.com/conventoangelo/OverKeys/issues/78)) ([536608d](https://github.com/conventoangelo/OverKeys/commit/536608db5f6339f2df98d266f107bd9fb76f08cf))
+* correct icons for move enabled/disabled status overlays ([3989ea1](https://github.com/conventoangelo/OverKeys/commit/3989ea1054e508f7701c9fe323905cec2b3fcbac))
+* only shrink keys longer than length 2 ([#77](https://github.com/conventoangelo/OverKeys/issues/77)) ([3f5dfab](https://github.com/conventoangelo/OverKeys/commit/3f5dfab5693b313f79b255f595010fb33d96075a))
+* use LucideIcons for open config button ([536608d](https://github.com/conventoangelo/OverKeys/commit/536608db5f6339f2df98d266f107bd9fb76f08cf))
+
 ## [0.2.11](https://github.com/conventoangelo/OverKeys/compare/v0.2.10...v0.2.11) (2025-04-02)
 
 
