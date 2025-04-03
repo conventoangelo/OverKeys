@@ -135,7 +135,7 @@ class AdvancedTab extends StatelessWidget {
                         fontWeight: FontWeight.w600,
                         fontSize: 16)),
                 Text(
-                  'Turn related advanced setting off then on again to apply changes. If still not working, restart OverKeys.',
+                  'Turn related advanced setting off then on again to apply changes.',
                   style: TextStyle(
                       color: colorScheme.onSurface.withAlpha(153),
                       fontSize: 14.0),
