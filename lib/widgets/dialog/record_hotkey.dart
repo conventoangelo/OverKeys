@@ -5,9 +5,11 @@ class RecordHotKeyDialog extends StatefulWidget {
   const RecordHotKeyDialog({
     super.key,
     required this.onHotKeyRecorded,
+    required this.initialHotKey,
   });
 
   final ValueChanged<HotKey> onHotKeyRecorded;
+  final HotKey initialHotKey;
 
   @override
   State<RecordHotKeyDialog> createState() => _RecordHotKeyDialogState();
@@ -15,6 +17,12 @@ class RecordHotKeyDialog extends StatefulWidget {
 
 class _RecordHotKeyDialogState extends State<RecordHotKeyDialog> {
   HotKey? _hotKey;
+
+  @override
+  void initState() {
+    super.initState();
+    _hotKey = widget.initialHotKey;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,13 +48,15 @@ class _RecordHotKeyDialogState extends State<RecordHotKeyDialog> {
                 alignment: Alignment.center,
                 children: [
                   HotKeyRecorder(
+                    initalHotKey: _hotKey,
                     onHotKeyRecorded: (hotKey) {
-                      _hotKey = HotKey(
-                        key: hotKey.key,
-                        modifiers: hotKey.modifiers,
-                        scope: HotKeyScope.system,
-                      );
-                      setState(() {});
+                      setState(() {
+                        _hotKey = HotKey(
+                          key: hotKey.key,
+                          modifiers: hotKey.modifiers,
+                          scope: HotKeyScope.system,
+                        );
+                      });
                     },
                   ),
                 ],

@@ -51,6 +51,8 @@ class _HotKeysTabState extends State<HotKeysTab> {
           onChangePressed: () => _showRecordHotKeyDialog(
             context,
             widget.updateVisibilityHotKey,
+            widget.visibilityHotKey,
+            
           ),
         ),
         HotKeyOption(
@@ -60,6 +62,7 @@ class _HotKeysTabState extends State<HotKeysTab> {
           onChangePressed: () => _showRecordHotKeyDialog(
             context,
             widget.updateAutoHideHotKey,
+            widget.autoHideHotKey,
           ),
         ),
         HotKeyOption(
@@ -69,6 +72,7 @@ class _HotKeysTabState extends State<HotKeysTab> {
           onChangePressed: () => _showRecordHotKeyDialog(
             context,
             widget.updateToggleMoveHotKey,
+            widget.toggleMoveHotKey,
           ),
         ),
         HotKeyOption(
@@ -78,6 +82,7 @@ class _HotKeysTabState extends State<HotKeysTab> {
           onChangePressed: () => _showRecordHotKeyDialog(
             context,
             widget.updatePreferencesHotKey,
+            widget.preferencesHotKey,
           ),
         ),
       ],
@@ -105,12 +110,13 @@ class _HotKeysTabState extends State<HotKeysTab> {
   }
 
   void _showRecordHotKeyDialog(
-      BuildContext context, Function(HotKey) onHotKeyRecorded) {
+      BuildContext context, Function(HotKey) onHotKeyRecorded, HotKey initialHotKey) {
     showDialog<void>(
       context: context,
       builder: (BuildContext context) {
         return RecordHotKeyDialog(
           onHotKeyRecorded: onHotKeyRecorded,
+          initialHotKey: initialHotKey,
         );
       },
     );
