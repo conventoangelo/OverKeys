@@ -104,6 +104,14 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
     key: PhysicalKeyboardKey.keyW,
     modifiers: [HotKeyModifier.alt, HotKeyModifier.control],
   );
+  HotKey _toggleMoveHotKey = HotKey(
+    key: PhysicalKeyboardKey.keyE,
+    modifiers: [HotKeyModifier.alt, HotKeyModifier.control],
+  );
+  HotKey _preferencesHotKey = HotKey(
+    key: PhysicalKeyboardKey.keyR,
+    modifiers: [HotKeyModifier.alt, HotKeyModifier.control],
+  );
 
   // Advanced settings
   bool _advancedSettingsEnabled = false;
@@ -252,6 +260,8 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
       _hotKeysEnabled = prefs['hotKeysEnabled'];
       _visibilityHotKey = prefs['visibilityHotKey'];
       _autoHideHotKey = prefs['autoHideHotKey'];
+      _toggleMoveHotKey = prefs['toggleMoveHotKey'];
+      _preferencesHotKey = prefs['preferencesHotKey'];
 
       // Advanced settings
       _advancedSettingsEnabled = prefs['advancedSettingsEnabled'];
@@ -318,6 +328,8 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
       'hotKeysEnabled': _hotKeysEnabled,
       'visibilityHotKey': _visibilityHotKey,
       'autoHideHotKey': _autoHideHotKey,
+      'toggleMoveHotKey': _toggleMoveHotKey,
+      'preferencesHotKey': _preferencesHotKey,
 
       // Advanced settings
       'advancedSettingsEnabled': _advancedSettingsEnabled,
@@ -620,6 +632,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
         _toggleAutoHide(!_autoHideEnabled);
       },
     );
+
     await hotKeyManager.register(
       _visibilityHotKey,
       keyDownHandler: (hotKey) {
@@ -630,6 +643,36 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
         setState(() {
           onTrayIconMouseDown();
         });
+      },
+    );
+
+    await hotKeyManager.register(
+      _toggleMoveHotKey,
+      keyDownHandler: (hotKey) {
+        if (kDebugMode) {
+          print('Toggle move hotkey triggered: ${hotKey.toJson()}');
+        }
+        setState(() {
+          _ignoreMouseEvents = !_ignoreMouseEvents;
+          windowManager.setIgnoreMouseEvents(_ignoreMouseEvents);
+          if (_ignoreMouseEvents) {
+            _fadeIn();
+            _showOverlay(
+                'Dragging disabled', const Icon(LucideIcons.mousePointerClick));
+          } else {
+            _showOverlay('Dragging enabled', const Icon(LucideIcons.move));
+          }
+        });
+      },
+    );
+
+    await hotKeyManager.register(
+      _preferencesHotKey,
+      keyDownHandler: (hotKey) {
+        if (kDebugMode) {
+          print('Preferences hotkey triggered: ${hotKey.toJson()}');
+        }
+        _showPreferences();
       },
     );
   }
@@ -881,6 +924,18 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
           final newHotKey = HotKey.fromJson(jsonDecode(hotKeyJson));
           await hotKeyManager.unregister(_autoHideHotKey);
           setState(() => _autoHideHotKey = newHotKey);
+          await _setupHotKeys();
+        case 'updateToggleMoveHotKey':
+          final hotKeyJson = call.arguments as String;
+          final newHotKey = HotKey.fromJson(jsonDecode(hotKeyJson));
+          await hotKeyManager.unregister(_toggleMoveHotKey);
+          setState(() => _toggleMoveHotKey = newHotKey);
+          await _setupHotKeys();
+        case 'updatePreferencesHotKey':
+          final hotKeyJson = call.arguments as String;
+          final newHotKey = HotKey.fromJson(jsonDecode(hotKeyJson));
+          await hotKeyManager.unregister(_preferencesHotKey);
+          setState(() => _preferencesHotKey = newHotKey);
           await _setupHotKeys();
 
         // Advanced settings

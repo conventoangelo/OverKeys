@@ -7,18 +7,26 @@ class HotKeysTab extends StatefulWidget {
   final bool hotKeysEnabled;
   final HotKey visibilityHotKey;
   final HotKey autoHideHotKey;
+  final HotKey toggleMoveHotKey;
+  final HotKey preferencesHotKey;
   final Function(bool) updateHotKeysEnabled;
   final Function(HotKey) updateVisibilityHotKey;
   final Function(HotKey) updateAutoHideHotKey;
+  final Function(HotKey) updateToggleMoveHotKey;
+  final Function(HotKey) updatePreferencesHotKey;
 
   const HotKeysTab({
     super.key,
     required this.hotKeysEnabled,
     required this.visibilityHotKey,
     required this.autoHideHotKey,
+    required this.toggleMoveHotKey,
+    required this.preferencesHotKey,
     required this.updateHotKeysEnabled,
     required this.updateVisibilityHotKey,
     required this.updateAutoHideHotKey,
+    required this.updateToggleMoveHotKey,
+    required this.updatePreferencesHotKey,
   });
 
   @override
@@ -47,12 +55,29 @@ class _HotKeysTabState extends State<HotKeysTab> {
         ),
         HotKeyOption(
           label: 'Toggle Auto Hide',
-          subtitle:
-              'Enable or disable auto-hide feature with a keyboard shortcut',
+          subtitle: 'Enable or disable auto-hide feature',
           formattedHotKey: _formatHotKey(widget.autoHideHotKey),
           onChangePressed: () => _showRecordHotKeyDialog(
             context,
             widget.updateAutoHideHotKey,
+          ),
+        ),
+        HotKeyOption(
+          label: 'Toggle Move',
+          subtitle: 'Enable or disable keyboard dragging',
+          formattedHotKey: _formatHotKey(widget.toggleMoveHotKey),
+          onChangePressed: () => _showRecordHotKeyDialog(
+            context,
+            widget.updateToggleMoveHotKey,
+          ),
+        ),
+        HotKeyOption(
+          label: 'Open Preferences',
+          subtitle: 'Show/focus the preferences window',
+          formattedHotKey: _formatHotKey(widget.preferencesHotKey),
+          onChangePressed: () => _showRecordHotKeyDialog(
+            context,
+            widget.updatePreferencesHotKey,
           ),
         ),
       ],

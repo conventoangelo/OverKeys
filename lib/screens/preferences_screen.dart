@@ -95,6 +95,14 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     key: PhysicalKeyboardKey.keyW,
     modifiers: [HotKeyModifier.alt, HotKeyModifier.control],
   );
+  HotKey _toggleMoveHotKey = HotKey(
+    key: PhysicalKeyboardKey.keyE,
+    modifiers: [HotKeyModifier.alt, HotKeyModifier.control],
+  );
+  HotKey _preferencesHotKey = HotKey(
+    key: PhysicalKeyboardKey.keyR,
+    modifiers: [HotKeyModifier.alt, HotKeyModifier.control],
+  );
 
   // Advanced settings
   bool _advancedSettingsEnabled = false;
@@ -217,6 +225,8 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       _hotKeysEnabled = prefs['hotKeysEnabled'];
       _visibilityHotKey = prefs['visibilityHotKey'];
       _autoHideHotKey = prefs['autoHideHotKey'];
+      _toggleMoveHotKey = prefs['toggleMoveHotKey'];
+      _preferencesHotKey = prefs['preferencesHotKey'];
 
       // Advanced settings
       _advancedSettingsEnabled = prefs['advancedSettingsEnabled'];
@@ -282,6 +292,8 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       'hotKeysEnabled': _hotKeysEnabled,
       'visibilityHotKey': _visibilityHotKey,
       'autoHideHotKey': _autoHideHotKey,
+      'toggleMoveHotKey': _toggleMoveHotKey,
+      'preferencesHotKey': _preferencesHotKey,
 
       // Advanced settings
       'advancedSettingsEnabled': _advancedSettingsEnabled,
@@ -652,6 +664,8 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           hotKeysEnabled: _hotKeysEnabled,
           visibilityHotKey: _visibilityHotKey,
           autoHideHotKey: _autoHideHotKey,
+          toggleMoveHotKey: _toggleMoveHotKey,
+          preferencesHotKey: _preferencesHotKey,
           updateHotKeysEnabled: (value) {
             setState(() => _hotKeysEnabled = value);
             _updateMainWindow('updateHotKeysEnabled', value);
@@ -663,6 +677,14 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           updateAutoHideHotKey: (value) {
             setState(() => _autoHideHotKey = value);
             _updateMainWindow('updateAutoHideHotKey', value);
+          },
+          updateToggleMoveHotKey: (value) {
+            setState(() => _toggleMoveHotKey = value);
+            _updateMainWindow('updateToggleMoveHotKey', value);
+          },
+          updatePreferencesHotKey: (value) {
+            setState(() => _preferencesHotKey = value);
+            _updateMainWindow('updatePreferencesHotKey', value);
           },
         );
       case 'Advanced':

@@ -113,6 +113,30 @@ class PreferencesService {
     }
   }
 
+  Future<HotKey?> getToggleMoveHotKey() async {
+    final json = await _prefs.getString('toggleMoveHotKey');
+    try {
+      return HotKey.fromJson(jsonDecode(json!));
+    } catch (e) {
+      return HotKey(
+        key: PhysicalKeyboardKey.keyE,
+        modifiers: [HotKeyModifier.alt, HotKeyModifier.control],
+      );
+    }
+  }
+
+  Future<HotKey?> getPreferencesHotKey() async {
+    final json = await _prefs.getString('preferencesHotKey');
+    try {
+      return HotKey.fromJson(jsonDecode(json!));
+    } catch (e) {
+      return HotKey(
+        key: PhysicalKeyboardKey.keyR,
+        modifiers: [HotKeyModifier.alt, HotKeyModifier.control],
+      );
+    }
+  }
+
   // Advanced settings
   Future<bool> getAdvancedSettingsEnabled() async =>
       await _prefs.getBool('advancedSettingsEnabled') ?? false;
@@ -218,6 +242,10 @@ class PreferencesService {
       await _prefs.setString('visibilityHotKey', jsonEncode(value.toJson()));
   Future<void> setAutoHideHotKey(HotKey value) async =>
       await _prefs.setString('autoHideHotKey', jsonEncode(value.toJson()));
+  Future<void> setToggleMoveHotKey(HotKey value) async =>
+      await _prefs.setString('toggleMoveHotKey', jsonEncode(value.toJson()));
+  Future<void> setPreferencesHotKey(HotKey value) async =>
+      await _prefs.setString('preferencesHotKey', jsonEncode(value.toJson()));
 
   // Advanced settings
   Future<void> setAdvancedSettingsEnabled(bool value) async =>
@@ -288,6 +316,8 @@ class PreferencesService {
       'hotKeysEnabled': await getHotKeysEnabled(),
       'visibilityHotKey': await getVisibilityHotKey(),
       'autoHideHotKey': await getAutoHideHotKey(),
+      'toggleMoveHotKey': await getToggleMoveHotKey(),
+      'preferencesHotKey': await getPreferencesHotKey(),
 
       // Advanced settings
       'advancedSettingsEnabled': await getAdvancedSettingsEnabled(),
@@ -352,6 +382,8 @@ class PreferencesService {
     await setHotKeysEnabled(prefs['hotKeysEnabled']);
     await setVisibilityHotKey(prefs['visibilityHotKey']);
     await setAutoHideHotKey(prefs['autoHideHotKey']);
+    await setToggleMoveHotKey(prefs['toggleMoveHotKey']);
+    await setPreferencesHotKey(prefs['preferencesHotKey']);
 
     // Advanced settings
     await setAdvancedSettingsEnabled(prefs['advancedSettingsEnabled']);
