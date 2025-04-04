@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.13](https://github.com/conventoangelo/OverKeys/compare/v0.2.12...v0.2.13) (2025-04-04)
+
+
+### 🐛 Bug Fixes
+
+* animate tactile markers together with key ([f2240be](https://github.com/conventoangelo/OverKeys/commit/f2240beb320a6f2168304425464293e94006e55d))
+* apply learning mode color to grave key ([70060e0](https://github.com/conventoangelo/OverKeys/commit/70060e004b9a0400d454dc6aee1d5ac64bcdd0c0))
+
 ## [0.2.12](https://github.com/conventoangelo/OverKeys/compare/v0.2.11...v0.2.12) (2025-04-03)
 
 
