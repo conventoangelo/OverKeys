@@ -185,13 +185,10 @@ class LearnTab extends StatelessWidget {
                 ),
               ),
             ],
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 60.0),
-              child: Image.asset(
-                'assets/images/colorkeys.png',
-                width: double.infinity,
-                fit: BoxFit.contain,
-              ),
+            Image.asset(
+              'assets/images/learn_mode.png',
+              width: double.infinity,
+              fit: BoxFit.contain,
             ),
           ],
         ),

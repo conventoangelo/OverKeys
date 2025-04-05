@@ -2,7 +2,7 @@
 
 Learning Mode helps new users practice proper finger placement by color-coding keys according to which finger should be used to press them. When enabled, keys are colored based on standard touch typing technique, providing a visual guide that makes it easier to develop proper typing habits.
 
-![Color-coded keyboard for learning](../../assets/images/colorkeys.png)
+![Color-coded keyboard for learning](../../assets/images/learn_mode.png)
 
 ## How to Enable Learning Mode
 
