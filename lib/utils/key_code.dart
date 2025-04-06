@@ -133,17 +133,11 @@ String getKeyFromKeyCodeShift(int keyCode, bool isShiftDown) {
 
 String getMouseButtonFromCode(int buttonCode) {
   switch (buttonCode) {
-    case 0:
-      return 'MouseLeft';
-    case 1:
-      return 'MouseRight';
-    case 2:
-      return 'MouseMiddle';
-    case 3:
-      return 'MouseBackward';
-    case 4:
-      return 'MouseForward';
-    default:
-      return '';
+    case 0: return 'MouseLeft';
+    case 1: return 'MouseRight';
+    case 2: return 'MouseMiddle';
+    case 3: return 'MouseBackward';
+    case 4: return 'MouseForward';
+    default: return '';
   }
 }

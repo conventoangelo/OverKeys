@@ -36,6 +36,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
   final SharedPreferencesAsync asyncPrefs = SharedPreferencesAsync();
   final KanataService _kanataService = KanataService();
   final Map<String, bool> _keyPressStates = {};
+  final Map<int, bool> _mouseButtonStates = {};
 
   // Window state
   bool _isWindowVisible = true;
@@ -68,13 +69,6 @@ class _MainAppState extends State<MainApp> with TrayListener {
   double _markerBorderRadius = 10;
 
   // Mouse settings
-  final Map<int, bool> _mouseButtonStates = {
-    0: false, // Left button
-    1: false, // Right button
-    2: false, // Middle button
-    3: false, // Back button
-    4: false, // Forward button
-  };
   bool _enableMouse = false;
   double _mouseWidth = 130;
   double _mouseHeight = 200;
@@ -639,7 +633,7 @@ class _MainAppState extends State<MainApp> with TrayListener {
           _keyPressStates[key] = isPressed;
         });
       }
-    } else if (message[0] == 'mouse') {
+    } else if (message[0] == 'mouse' && _enableMouse) {
       int buttonCode = message[1];
       bool isPressed = message[2];
 

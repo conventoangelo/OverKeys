@@ -20,57 +20,34 @@ int lowLevelMouseProc(
 ) {
   if (nCode >= 0) {
     final mouseStruct = Pointer<MSLLHOOKSTRUCT>.fromAddress(lParam).ref;
-    bool isPressed = false;
-    int buttonCode = 0;
-
     // Only handle button events, ignore mouse movement and wheel events.
     if (wParam == WM_MOUSEMOVE || wParam == WM_MOUSEWHEEL) {
       return CallNextHookEx(mouseHookId, nCode, wParam, lParam);
     }
 
-    switch (wParam) {
-      // Left button
-      case WM_LBUTTONDOWN:
-        isPressed = true;
-        buttonCode = 0;
-        break;
-      case WM_LBUTTONUP:
-        isPressed = false;
-        buttonCode = 0;
-        break;
-      // Right button
-      case WM_RBUTTONDOWN:
-        isPressed = true;
-        buttonCode = 1;
-        break;
-      case WM_RBUTTONUP:
-        isPressed = false;
-        buttonCode = 1;
-        break;
-      // Middle button
-      case WM_MBUTTONDOWN:
-        isPressed = true;
-        buttonCode = 2;
-        break;
-      case WM_MBUTTONUP:
-        isPressed = false;
-        buttonCode = 2;
-        break;
-      // X1 and X2 buttons share the same message (WM_XBUTTONDOWN/UP)
-      // To determine which specific X button was pressed, mouseData has to be examined,
-      // HIWORD extracts the high-order 16 bits from mouseData, which contains the X button identifier
-      // Reference: https://learn.microsoft.com/en-us/windows/win32/inputdev/wm-xbuttondown
-      case WM_XBUTTONDOWN:
-        isPressed = true;
-        buttonCode = HIWORD(mouseStruct.mouseData) == xButton1 ? 3 : 4;
-        break;
-      case WM_XBUTTONUP:
-        isPressed = false;
-        buttonCode = HIWORD(mouseStruct.mouseData) == xButton1 ? 3 : 4;
-        break;
+    final Map<int, List<dynamic>> buttonMap = {
+      WM_LBUTTONDOWN: [0, true],
+      WM_LBUTTONUP: [0, false],
+      WM_RBUTTONDOWN: [1, true],
+      WM_RBUTTONUP: [1, false],
+      WM_MBUTTONDOWN: [2, true],
+      WM_MBUTTONUP: [2, false],
+    };
+
+    int? buttonCode;
+    bool? isPressed;
+
+    if (buttonMap.containsKey(wParam)) {
+      buttonCode = buttonMap[wParam]![0];
+      isPressed = buttonMap[wParam]![1];
+    } else if (wParam == WM_XBUTTONDOWN || wParam == WM_XBUTTONUP) {
+      buttonCode = HIWORD(mouseStruct.mouseData) == xButton1 ? 3 : 4;
+      isPressed = wParam == WM_XBUTTONDOWN;
     }
 
-    sendPort?.send(['mouse', buttonCode, isPressed]);
+    if (buttonCode != null && isPressed != null) {
+      sendPort?.send(['mouse', buttonCode, isPressed]);
+    }
   }
 
   return CallNextHookEx(mouseHookId, nCode, wParam, lParam);

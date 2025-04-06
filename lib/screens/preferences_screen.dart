@@ -1182,9 +1182,6 @@ class _PreferencesScreenState extends State<PreferencesScreen>
                 'Marker width': (v) => _markerWidth = v,
                 'Marker height': (v) => _markerHeight = v,
                 'Marker border radius': (v) => _markerBorderRadius = v,
-                'Mouse enabled': (v) => _enableMouse = v == 1,
-                'Mouse layout': (v) => _mouseLayoutName =
-                    v == 0 ? 'Simple Mouse' : 'Standard Mouse',
                 'Mouse width': (v) => _mouseWidth = v,
                 'Mouse height': (v) => _mouseHeight = v,
                 'Mouse border radius': (v) => _mouseBorderRadius = v,
