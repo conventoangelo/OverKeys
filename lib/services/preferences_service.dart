@@ -136,6 +136,14 @@ class PreferencesService {
       );
     }
   }
+  Future<bool> getEnableVisibilityHotKey() async =>
+      await _prefs.getBool('enableVisibilityHotKey') ?? true;
+  Future<bool> getEnableAutoHideHotKey() async =>
+      await _prefs.getBool('enableAutoHideHotKey') ?? true;
+  Future<bool> getEnableToggleMoveHotKey() async =>
+      await _prefs.getBool('enableToggleMoveHotKey') ?? true;
+  Future<bool> getEnablePreferencesHotKey() async =>
+      await _prefs.getBool('enablePreferencesHotKey') ?? true;
 
   // Learn settings
   Future<bool> getLearningModeEnabled() async =>
@@ -266,6 +274,14 @@ class PreferencesService {
       await _prefs.setString('toggleMoveHotKey', jsonEncode(value.toJson()));
   Future<void> setPreferencesHotKey(HotKey value) async =>
       await _prefs.setString('preferencesHotKey', jsonEncode(value.toJson()));
+  Future<void> setEnableVisibilityHotKey(bool value) async =>
+      await _prefs.setBool('enableVisibilityHotKey', value);
+  Future<void> setEnableAutoHideHotKey(bool value) async =>
+      await _prefs.setBool('enableAutoHideHotKey', value);
+  Future<void> setEnableToggleMoveHotKey(bool value) async =>
+      await _prefs.setBool('enableToggleMoveHotKey', value);
+  Future<void> setEnablePreferencesHotKey(bool value) async =>
+      await _prefs.setBool('enablePreferencesHotKey', value);
 
   // Learn settings
   Future<void> setLearningModeEnabled(bool value) async =>
@@ -358,6 +374,10 @@ class PreferencesService {
       'autoHideHotKey': await getAutoHideHotKey(),
       'toggleMoveHotKey': await getToggleMoveHotKey(),
       'preferencesHotKey': await getPreferencesHotKey(),
+      'enableVisibilityHotKey': await getEnableVisibilityHotKey(),
+      'enableAutoHideHotKey': await getEnableAutoHideHotKey(),
+      'enableToggleMoveHotKey': await getEnableToggleMoveHotKey(),
+      'enablePreferencesHotKey': await getEnablePreferencesHotKey(),
 
       // Learn settings
       'learningModeEnabled': await getLearningModeEnabled(),
@@ -435,6 +455,10 @@ class PreferencesService {
     await setAutoHideHotKey(prefs['autoHideHotKey']);
     await setToggleMoveHotKey(prefs['toggleMoveHotKey']);
     await setPreferencesHotKey(prefs['preferencesHotKey']);
+    await setEnableVisibilityHotKey(prefs['enableVisibilityHotKey'] ?? true);
+    await setEnableAutoHideHotKey(prefs['enableAutoHideHotKey'] ?? true);
+    await setEnableToggleMoveHotKey(prefs['enableToggleMoveHotKey'] ?? true);
+    await setEnablePreferencesHotKey(prefs['enablePreferencesHotKey'] ?? true);
 
     // Learn settings
     await setLearningModeEnabled(prefs['learningModeEnabled'] ?? false);

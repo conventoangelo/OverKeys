@@ -3,16 +3,22 @@ import 'base_option.dart';
 
 class HotKeyOption extends StatelessWidget {
   final String label;
-  final String? subtitle;
+  final String subtitle;
   final String formattedHotKey;
-  final Function() onChangePressed;
+  final bool enabled;
+  final bool isEnabled;
+  final Function(bool) onToggleChanged;
+  final VoidCallback onChangePressed;
 
   const HotKeyOption({
     super.key,
     required this.label,
+    required this.subtitle,
     required this.formattedHotKey,
+    required this.enabled,
+    required this.onToggleChanged,
     required this.onChangePressed,
-    this.subtitle,
+    required this.isEnabled,
   });
 
   @override
@@ -36,19 +42,18 @@ class HotKeyOption extends StatelessWidget {
                     fontSize: 16,
                   ),
                 ),
-                if (subtitle != null)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 4.0),
-                    child: Text(
-                      subtitle!,
-                      style: TextStyle(
-                        color: colorScheme.onSurface.withAlpha(153),
-                        fontSize: 14.0,
-                      ),
-                      softWrap: true,
-                      overflow: TextOverflow.visible,
+                Padding(
+                  padding: const EdgeInsets.only(top: 4.0),
+                  child: Text(
+                    subtitle,
+                    style: TextStyle(
+                      color: colorScheme.onSurface.withAlpha(153),
+                      fontSize: 14.0,
                     ),
+                    softWrap: true,
+                    overflow: TextOverflow.visible,
                   ),
+                ),
               ],
             ),
           ),
@@ -56,20 +61,34 @@ class HotKeyOption extends StatelessWidget {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                decoration: BoxDecoration(
-                  color: colorScheme.surfaceContainerHigh,
-                  borderRadius: BorderRadius.circular(8),
+              Switch(
+                thumbIcon: const WidgetStateProperty<Icon>.fromMap(
+                  <WidgetStatesConstraint, Icon>{
+                    WidgetState.selected: Icon(Icons.check),
+                    WidgetState.any: Icon(Icons.close),
+                  },
                 ),
-                child: Text(
-                  formattedHotKey,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    fontFamily: 'Geist Mono',
-                    color: colorScheme.onSurfaceVariant,
-                    fontSize: 14,
+                value: enabled,
+                onChanged: isEnabled ? onToggleChanged : null,
+              ),
+              const SizedBox(width: 12),
+              Opacity(
+                opacity: enabled ? 1.0 : 0.35,
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: colorScheme.surfaceContainerHigh,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    formattedHotKey,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontFamily: 'Geist Mono',
+                      color: colorScheme.onSurfaceVariant,
+                      fontSize: 14,
+                    ),
                   ),
                 ),
               ),
@@ -85,7 +104,7 @@ class HotKeyOption extends StatelessWidget {
                     side: BorderSide(color: colorScheme.primary),
                   ),
                 ),
-                onPressed: onChangePressed,
+                onPressed: enabled ? onChangePressed : null,
                 child: Text(
                   'Change',
                   style: TextStyle(

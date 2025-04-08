@@ -9,11 +9,19 @@ class HotKeysTab extends StatefulWidget {
   final HotKey autoHideHotKey;
   final HotKey toggleMoveHotKey;
   final HotKey preferencesHotKey;
+  final bool enableVisibilityHotKey;
+  final bool enableAutoHideHotKey;
+  final bool enableToggleMoveHotKey;
+  final bool enablePreferencesHotKey;
   final Function(bool) updateHotKeysEnabled;
   final Function(HotKey) updateVisibilityHotKey;
   final Function(HotKey) updateAutoHideHotKey;
   final Function(HotKey) updateToggleMoveHotKey;
   final Function(HotKey) updatePreferencesHotKey;
+  final Function(bool) updateEnableVisibilityHotKey;
+  final Function(bool) updateEnableAutoHideHotKey;
+  final Function(bool) updateEnableToggleMoveHotKey;
+  final Function(bool) updateEnablePreferencesHotKey;
 
   const HotKeysTab({
     super.key,
@@ -27,6 +35,14 @@ class HotKeysTab extends StatefulWidget {
     required this.updateAutoHideHotKey,
     required this.updateToggleMoveHotKey,
     required this.updatePreferencesHotKey,
+    required this.enableVisibilityHotKey,
+    required this.enableAutoHideHotKey,
+    required this.enableToggleMoveHotKey,
+    required this.enablePreferencesHotKey,
+    required this.updateEnableVisibilityHotKey,
+    required this.updateEnableAutoHideHotKey,
+    required this.updateEnableToggleMoveHotKey,
+    required this.updateEnablePreferencesHotKey,
   });
 
   @override
@@ -48,41 +64,53 @@ class _HotKeysTabState extends State<HotKeysTab> {
           subtitle:
               'Force show or hide the overlay with a keyboard shortcut even if it\'s set to auto-hide',
           formattedHotKey: _formatHotKey(widget.visibilityHotKey),
+          enabled: widget.enableVisibilityHotKey,
+          onToggleChanged: widget.updateEnableVisibilityHotKey,
           onChangePressed: () => _showRecordHotKeyDialog(
             context,
             widget.updateVisibilityHotKey,
             widget.visibilityHotKey,
           ),
+          isEnabled: widget.hotKeysEnabled,
         ),
         HotKeyOption(
           label: 'Toggle Auto Hide',
           subtitle: 'Enable or disable auto-hide feature',
           formattedHotKey: _formatHotKey(widget.autoHideHotKey),
+          enabled: widget.enableAutoHideHotKey,
+          onToggleChanged: widget.updateEnableAutoHideHotKey,
           onChangePressed: () => _showRecordHotKeyDialog(
             context,
             widget.updateAutoHideHotKey,
             widget.autoHideHotKey,
           ),
+          isEnabled: widget.hotKeysEnabled,
         ),
         HotKeyOption(
           label: 'Toggle Move',
           subtitle: 'Enable or disable keyboard dragging',
           formattedHotKey: _formatHotKey(widget.toggleMoveHotKey),
+          enabled: widget.enableToggleMoveHotKey,
+          onToggleChanged: widget.updateEnableToggleMoveHotKey,
           onChangePressed: () => _showRecordHotKeyDialog(
             context,
             widget.updateToggleMoveHotKey,
             widget.toggleMoveHotKey,
           ),
+          isEnabled: widget.hotKeysEnabled,
         ),
         HotKeyOption(
           label: 'Open Preferences',
           subtitle: 'Show/focus the preferences window',
           formattedHotKey: _formatHotKey(widget.preferencesHotKey),
+          enabled: widget.enablePreferencesHotKey,
+          onToggleChanged: widget.updateEnablePreferencesHotKey,
           onChangePressed: () => _showRecordHotKeyDialog(
             context,
             widget.updatePreferencesHotKey,
             widget.preferencesHotKey,
           ),
+          isEnabled: widget.hotKeysEnabled,
         ),
       ],
     );
