@@ -60,10 +60,14 @@ class ColorOption extends StatelessWidget {
                         showColorName: true,
                         showColorCode: true,
                         copyPasteBehavior: const ColorPickerCopyPasteBehavior(
-                          copyButton: true,
-                          pasteButton: true,
-                          ctrlC: true,
-                          ctrlV: true,
+                          copyFormat: ColorPickerCopyFormat.hexRRGGBB,
+                          parseShortHexCode: true,
+                          editUsesParsedPaste: true,
+                          copyButton: false,
+                          pasteButton: false,
+                          ctrlC: false,
+                          ctrlV: false,
+                          autoFocus: false,
                         ),
                         colorNameTextStyle:
                             TextStyle(color: colorScheme.onSurface),
