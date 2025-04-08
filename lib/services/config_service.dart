@@ -94,4 +94,9 @@ class ConfigService {
       return null;
     }
   }
+
+  Future<Map<String, String>?> getCustomShiftMappings() async {
+    final config = await loadConfig();
+    return config.customShiftMappings;
+  }
 }

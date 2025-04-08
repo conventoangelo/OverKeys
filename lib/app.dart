@@ -140,6 +140,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   final PreferencesService _prefsService = PreferencesService();
   final KanataService _kanataService = KanataService();
   final Map<String, bool> _keyPressStates = {};
+  Map<String, String>? _customShiftMappings;
 
   // Overlay
   bool _showStatusOverlay = false;
@@ -163,6 +164,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
     _setupMethodHandler();
     _initStartup();
     _setupKanataLayerChangeHandler();
+    _loadCustomShiftMappings();
     if (_advancedSettingsEnabled) {
       if (_useUserLayout) {
         _loadUserLayout();
@@ -375,6 +377,14 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
     };
 
     await _prefsService.saveAllPreferences(prefs);
+  }
+
+  Future<void> _loadCustomShiftMappings() async {
+    final configService = ConfigService();
+    final mappings = await configService.getCustomShiftMappings();
+    setState(() {
+      _customShiftMappings = mappings;
+    });
   }
 
   void _setupKanataLayerChangeHandler() {
@@ -1189,6 +1199,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
                       altLayout: _altLayout,
                       use6ColLayout: _use6ColLayout,
                       keyPressStates: _keyPressStates,
+                      customShiftMappings: _customShiftMappings,
                     ),
                   ),
                 ),

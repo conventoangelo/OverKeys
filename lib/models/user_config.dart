@@ -1,12 +1,13 @@
 import 'keyboard_layouts.dart';
 
 class UserConfig {
-  String kanataHost;
-  int kanataPort;
-  List<KeyboardLayout> userLayouts;
   String defaultUserLayout;
   String altLayout;
   String customFont;
+  List<KeyboardLayout> userLayouts;
+  Map<String, String>? customShiftMappings;
+  String kanataHost;
+  int kanataPort;
 
   UserConfig({
     this.defaultUserLayout = 'Symbol',
@@ -54,6 +55,7 @@ class UserConfig {
         ],
       ),
     ],
+    this.customShiftMappings,
     this.kanataHost = '127.0.0.1',
     this.kanataPort = 4039,
   });
@@ -71,13 +73,19 @@ class UserConfig {
       }
     }
 
+    Map<String, String>? customShiftMappings;
+    if (json['customShiftMappings'] != null) {
+      customShiftMappings = Map<String, String>.from(json['customShiftMappings']);
+    }
+
     return UserConfig(
-      kanataHost: json['kanataHost'] ?? '127.0.0.1',
-      kanataPort: json['kanataPort'] ?? 4039,
-      userLayouts: layers,
       defaultUserLayout: json['defaultUserLayout'] ?? 'Symbol',
       altLayout: json['altLayout'] ?? 'Arabic',
       customFont: json['customFont'] ?? 'Segoe UI',
+      userLayouts: layers,
+      customShiftMappings: customShiftMappings,
+      kanataHost: json['kanataHost'] ?? '127.0.0.1',
+      kanataPort: json['kanataPort'] ?? 4039,
     );
   }
 
@@ -90,12 +98,13 @@ class UserConfig {
         .toList();
 
     return {
-      'kanataHost': kanataHost,
-      'kanataPort': kanataPort,
-      'userLayouts': layersJson,
       'defaultUserLayout': defaultUserLayout,
       'altLayout': altLayout,
       'customFont': customFont,
+      'userLayouts': layersJson,
+      'customShiftMappings': customShiftMappings,
+      'kanataHost': kanataHost,
+      'kanataPort': kanataPort,
     };
   }
 }

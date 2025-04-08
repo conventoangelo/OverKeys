@@ -46,6 +46,7 @@ class KeyboardScreen extends StatelessWidget {
   final KeyboardLayout? altLayout;
   final bool use6ColLayout;
   final Map<String, bool> keyPressStates;
+  final Map<String, String>? customShiftMappings;
 
   const KeyboardScreen({
     super.key,
@@ -92,6 +93,7 @@ class KeyboardScreen extends StatelessWidget {
     required this.altLayout,
     required this.use6ColLayout,
     required this.keyPressStates,
+    this.customShiftMappings,
   });
 
   @override
@@ -184,7 +186,12 @@ class KeyboardScreen extends StatelessWidget {
     bool isShiftPressed = (keyPressStates["LShift"] ?? false) ||
         (keyPressStates["RShift"] ?? false);
     if (isShiftPressed) {
-      key = Mappings.getShiftedSymbol(key) ?? key;
+      if (customShiftMappings != null &&
+          customShiftMappings!.containsKey(key)) {
+        key = customShiftMappings![key]!;
+      } else {
+        key = Mappings.getShiftedSymbol(key) ?? key;
+      }
     }
     String keyStateKey = Mappings.getKeyForSymbol(key);
     bool isPressed = keyPressStates[keyStateKey] ?? false;
@@ -411,9 +418,14 @@ class KeyboardScreen extends StatelessWidget {
     }
     String altKey = altRow[keyIndex];
     bool isShiftPressed = (keyPressStates["LShift"] ?? false) ||
-      (keyPressStates["RShift"] ?? false);
+        (keyPressStates["RShift"] ?? false);
     if (isShiftPressed) {
-      altKey = Mappings.getShiftedSymbol(altKey) ?? altKey;
+      if (customShiftMappings != null &&
+          customShiftMappings!.containsKey(altKey)) {
+        altKey = customShiftMappings![altKey]!;
+      } else {
+        altKey = Mappings.getShiftedSymbol(altKey) ?? altKey;
+      }
     }
     return altKey;
   }
