@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.2.14](https://github.com/conventoangelo/OverKeys/compare/v0.2.13...v0.2.14) (2025-04-08)
+
+
+### ✨ Features
+
+* add custom shift mappings in `overkeys_config.json` ([1cf6506](https://github.com/conventoangelo/OverKeys/commit/1cf6506d7758cd77edf3a0d6d1bb24ffa91a33c7))
+* add ESC key tip in preferences window ([b22db49](https://github.com/conventoangelo/OverKeys/commit/b22db494cd249bb390e745e666ac7ef92e52b02c))
+* add overkeys custom learn_mode picture by @MG240 ([#88](https://github.com/conventoangelo/OverKeys/issues/88)) ([ae3f554](https://github.com/conventoangelo/OverKeys/commit/ae3f554e6ef4263e35c4a63b96fcd6cc2ff7bb6f))
+* add support for reactive shifted keys ([#94](https://github.com/conventoangelo/OverKeys/issues/94)) ([1cf6506](https://github.com/conventoangelo/OverKeys/commit/1cf6506d7758cd77edf3a0d6d1bb24ffa91a33c7))
+* disable/enable specific hotkeys ([#95](https://github.com/conventoangelo/OverKeys/issues/95)) ([b22db49](https://github.com/conventoangelo/OverKeys/commit/b22db494cd249bb390e745e666ac7ef92e52b02c))
+* restore focus to last active window on tray icon click ([6a469e6](https://github.com/conventoangelo/OverKeys/commit/6a469e6ddfe231ed1ca59243c02744c20987fe7b))
+* use ESC to close preferences window ([66ad129](https://github.com/conventoangelo/OverKeys/commit/66ad129f3d0bb7fd3535da4de6a76a88ce896ddf))
+
+
+### 🐛 Bug Fixes
+
+* color picker now uses hex rgb format ([6e04243](https://github.com/conventoangelo/OverKeys/commit/6e0424390311d17603e0a05246caa91faa31fdf9))
+* disabled color picker copy/paste buttons and shortcuts causing errors ([6e04243](https://github.com/conventoangelo/OverKeys/commit/6e0424390311d17603e0a05246caa91faa31fdf9))
+* update color picker behavior ([#93](https://github.com/conventoangelo/OverKeys/issues/93)) ([6e04243](https://github.com/conventoangelo/OverKeys/commit/6e0424390311d17603e0a05246caa91faa31fdf9))
+
 ## [0.2.13](https://github.com/conventoangelo/OverKeys/compare/v0.2.12...v0.2.13) (2025-04-04)
 
 
