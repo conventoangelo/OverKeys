@@ -181,6 +181,11 @@ class KeyboardScreen extends StatelessWidget {
 
   Widget buildKeys(int rowIndex, String key, int keyIndex,
       {bool isLastKeyFirstRow = false}) {
+    bool isShiftPressed = (keyPressStates["LShift"] ?? false) ||
+        (keyPressStates["RShift"] ?? false);
+    if (isShiftPressed) {
+      key = Mappings.getShiftedSymbol(key) ?? key;
+    }
     String keyStateKey = Mappings.getKeyForSymbol(key);
     bool isPressed = keyPressStates[keyStateKey] ?? false;
 
@@ -404,7 +409,13 @@ class KeyboardScreen extends StatelessWidget {
     if (keyIndex >= altRow.length) {
       return "";
     }
-    return altRow[keyIndex];
+    String altKey = altRow[keyIndex];
+    bool isShiftPressed = (keyPressStates["LShift"] ?? false) ||
+      (keyPressStates["RShift"] ?? false);
+    if (isShiftPressed) {
+      altKey = Mappings.getShiftedSymbol(altKey) ?? altKey;
+    }
+    return altKey;
   }
 
   Color getFingerColor(int rowIndex, int keyIndex) {

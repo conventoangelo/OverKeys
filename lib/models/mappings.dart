@@ -141,4 +141,32 @@ class Mappings {
   static String getKeyForSymbol(String symbol) {
     return keyMappings[symbol] ?? symbol;
   }
+
+  static String? getShiftedSymbol(String symbol) {
+    const Map<String, String> shiftedSymbols = {
+      '`': '~',
+      '1': '!',
+      '2': '@',
+      '3': '#',
+      '4': '\$',
+      '5': '%',
+      '6': '^',
+      '7': '&',
+      '8': '*',
+      '9': '(',
+      '0': ')',
+      '-': '_',
+      '=': '+',
+      '[': '{',
+      ']': '}',
+      '\\': '|',
+      ';': ':',
+      '\'': '"',
+      ',': '<',
+      '.': '>',
+      '/': '?'
+    };
+
+    return shiftedSymbols[symbol] ?? symbol;
+  }
 }
