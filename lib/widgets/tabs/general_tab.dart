@@ -110,6 +110,14 @@ class _GeneralTabState extends State<GeneralTab> {
           options: availableLayouts.map((layout) => (layout.name)).toList(),
           onChanged: (value) => widget.updateKeyboardLayoutName(value!),
         ),
+        Text(
+          'Tip: Press ESC key to close the preferences window',
+          style: TextStyle(
+            fontSize: 16,
+            fontStyle: FontStyle.italic,
+            color: Theme.of(context).colorScheme.outline,
+          ),
+        ),
       ],
     );
   }
