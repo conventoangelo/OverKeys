@@ -513,7 +513,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       case 'Animations':
         return const Icon(LucideIcons.sparkles);
       case 'Hotkeys':
-        return const Icon(LucideIcons.layers);
+        return const Icon(LucideIcons.zap);
       case 'Learn':
         return const Icon(LucideIcons.graduationCap);
       case 'Advanced':
