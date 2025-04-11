@@ -657,7 +657,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
         case HotKeyModifier.alt:
           return '⌥';
         case HotKeyModifier.control:
-          return '⎈';
+          return '⌃';
         case HotKeyModifier.shift:
           return '⇧';
         case HotKeyModifier.meta:
