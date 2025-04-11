@@ -61,13 +61,13 @@ class UserConfig {
   });
 
   factory UserConfig.fromJson(Map<String, dynamic> json) {
-    List<KeyboardLayout> layers = [];
+    List<KeyboardLayout> userLayouts = [];
     if (json['userLayouts'] != null) {
-      for (var layerJson in json['userLayouts']) {
-        layers.add(KeyboardLayout(
-          name: layerJson['name'],
+      for (var userLayout in json['userLayouts']) {
+        userLayouts.add(KeyboardLayout(
+          name: userLayout['name'],
           keys: List<List<String>>.from(
-            layerJson['keys'].map((row) => List<String>.from(row)),
+            userLayout['keys'].map((row) => List<String>.from(row)),
           ),
         ));
       }
@@ -82,7 +82,7 @@ class UserConfig {
       defaultUserLayout: json['defaultUserLayout'] ?? 'Symbol',
       altLayout: json['altLayout'] ?? 'Arabic',
       customFont: json['customFont'] ?? 'Segoe UI',
-      userLayouts: layers,
+      userLayouts: userLayouts,
       customShiftMappings: customShiftMappings,
       kanataHost: json['kanataHost'] ?? '127.0.0.1',
       kanataPort: json['kanataPort'] ?? 4039,
@@ -90,10 +90,10 @@ class UserConfig {
   }
 
   Map<String, dynamic> toJson() {
-    List<Map<String, dynamic>> layersJson = userLayouts
-        .map((layer) => {
-              'name': layer.name,
-              'keys': layer.keys,
+    List<Map<String, dynamic>> userLayoutsJson = userLayouts
+        .map((userLayout) => {
+              'name': userLayout.name,
+              'keys': userLayout.keys,
             })
         .toList();
 
@@ -101,7 +101,7 @@ class UserConfig {
       'defaultUserLayout': defaultUserLayout,
       'altLayout': altLayout,
       'customFont': customFont,
-      'userLayouts': layersJson,
+      'userLayouts': userLayoutsJson,
       'customShiftMappings': customShiftMappings,
       'kanataHost': kanataHost,
       'kanataPort': kanataPort,
