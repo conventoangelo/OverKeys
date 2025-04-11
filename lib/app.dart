@@ -487,7 +487,6 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
 
     if (config.customFont.isNotEmpty) {
       setState(() {
-        _initialFontFamily = _fontFamily;
         _fontFamily = config.customFont;
       });
     }
@@ -964,7 +963,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
             if (_customFontEnabled && _advancedSettingsEnabled) {
               _initialFontFamily = fontFamily;
             } else {
-              _fontFamily = fontFamily;
+              _initialFontFamily = _fontFamily = fontFamily;
             }
           });
         case 'updateFontWeight':
