@@ -649,6 +649,28 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
     });
   }
 
+  String _formatHotkey(HotKey hotkey, bool enabled) {
+    if (!_hotKeysEnabled || !enabled) return '';
+
+    final modifiers = hotkey.modifiers?.map((m) {
+      switch (m) {
+        case HotKeyModifier.alt:
+          return '⌥';
+        case HotKeyModifier.control:
+          return '⎈';
+        case HotKeyModifier.shift:
+          return '⇧';
+        case HotKeyModifier.meta:
+          return '⊞';
+        default:
+          return '';
+      }
+    }).join('');
+
+    final keyName = hotkey.key.keyLabel;
+    return modifiers!.isNotEmpty ? '$modifiers$keyName' : keyName;
+  }
+
   Future<void> _setupTray() async {
     final String iconPath =
         Platform.isWindows ? 'assets/images/app_icon.ico' : 'assets/images/app_icon.png';
@@ -659,7 +681,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
     trayManager.setContextMenu(Menu(items: [
       MenuItem.checkbox(
         key: 'toggle_mouse_events',
-        label: 'Move',
+        label: 'Move\t${_formatHotkey(_toggleMoveHotKey, _enableToggleMoveHotKey)}',
         checked: !_ignoreMouseEvents,
         onClick: (menuItem) {
           setState(() {
@@ -677,7 +699,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
       MenuItem.separator(),
       MenuItem.checkbox(
         key: 'toggle_auto_hide',
-        label: 'Auto Hide',
+        label: 'Auto Hide\t${_formatHotkey(_autoHideHotKey, _enableAutoHideHotKey)}',
         checked: _autoHideEnabled,
         onClick: (menuItem) {
           _toggleAutoHide(!_autoHideEnabled);
@@ -694,9 +716,17 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
       MenuItem.separator(),
       MenuItem(
         key: 'preferences',
-        label: 'Preferences',
+        label: 'Preferences\t${_formatHotkey(_preferencesHotKey, _enablePreferencesHotKey)}',
         onClick: (menuItem) {
           _showPreferences();
+        },
+      ),
+      MenuItem.separator(),
+      MenuItem(
+        key: 'toggle_visibility',
+        label: 'Hide/Show\t${_formatHotkey(_visibilityHotKey, _enableVisibilityHotKey)}',
+        onClick: (menuItem) {
+          onTrayIconMouseDown();
         },
       ),
       MenuItem.separator(),
@@ -719,15 +749,17 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   Future<void> _setupHotKeys() async {
     await hotKeyManager.unregisterAll();
 
-    if (!_hotKeysEnabled) return;
+    if (!_hotKeysEnabled) {
+      _setupTray();
+      return;
+    }
 
     if (_enableAutoHideHotKey) {
       await hotKeyManager.register(
         _autoHideHotKey,
         keyDownHandler: (hotKey) {
           if (kDebugMode) {
-            print(
-                'Auto-hide hotkey triggered: ${hotKey.toJson()} - toggling to ${!_autoHideEnabled}');
+            print('Auto-hide hotkey triggered.');
           }
           _toggleAutoHide(!_autoHideEnabled);
         },
@@ -739,8 +771,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
         _visibilityHotKey,
         keyDownHandler: (hotKey) {
           if (kDebugMode) {
-            print(
-                'Visibility hotkey triggered: ${hotKey.toJson()} - toggling force hide to ${!_forceHide}');
+            print('Visibility hotkey triggered.');
           }
           setState(() {
             onTrayIconMouseDown();
@@ -754,7 +785,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
         _toggleMoveHotKey,
         keyDownHandler: (hotKey) {
           if (kDebugMode) {
-            print('Toggle move hotkey triggered: ${hotKey.toJson()}');
+            print('Move hotkey triggered.');
           }
           setState(() {
             _ignoreMouseEvents = !_ignoreMouseEvents;
@@ -775,7 +806,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
         _preferencesHotKey,
         keyDownHandler: (hotKey) {
           if (kDebugMode) {
-            print('Preferences hotkey triggered: ${hotKey.toJson()}');
+            print('Preferences hotkey triggered. Opening/Focusing Preferences Window.');
           }
           _showOverlay('Opening Preferences', const Icon(LucideIcons.appWindow));
           _showPreferences();
@@ -788,7 +819,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
         _increaseOpacityHotKey,
         keyDownHandler: (hotKey) {
           if (kDebugMode) {
-            print('Increase opacity hotkey triggered: ${hotKey.toJson()}');
+            print('Increase opacity hotkey triggered.');
           }
           _adjustOpacity(true);
         },
@@ -800,12 +831,14 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
         _decreaseOpacityHotKey,
         keyDownHandler: (hotKey) {
           if (kDebugMode) {
-            print('Decrease opacity hotkey triggered: ${hotKey.toJson()}');
+            print('Decrease opacity hotkey triggered.');
           }
           _adjustOpacity(false);
         },
       );
     }
+
+    _setupTray();
   }
 
   @override
