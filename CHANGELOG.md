@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.2.15](https://github.com/conventoangelo/OverKeys/compare/v0.2.14...v0.2.15) (2025-04-11)
+
+
+### ✨ Features
+
+* add hotkeys for increasing/decreasing opacity ([#98](https://github.com/conventoangelo/OverKeys/issues/98)) ([b5d7e65](https://github.com/conventoangelo/OverKeys/commit/b5d7e65847deeec79b3a21114f7e5096b2a4b08f))
+* add hotkeys to tray menu label ([48c8bc6](https://github.com/conventoangelo/OverKeys/commit/48c8bc604875f43d5630eea0e3d1e3e6ed70acfa))
+* add reload config option to tray menu ([#99](https://github.com/conventoangelo/OverKeys/issues/99)) ([48c8bc6](https://github.com/conventoangelo/OverKeys/commit/48c8bc604875f43d5630eea0e3d1e3e6ed70acfa))
+
+
+### 🐛 Bug Fixes
+
+* reload config every connect to kanata call ([48c8bc6](https://github.com/conventoangelo/OverKeys/commit/48c8bc604875f43d5630eea0e3d1e3e6ed70acfa))
+* revert to correct font family after reloading config and turning custom font off ([48c8bc6](https://github.com/conventoangelo/OverKeys/commit/48c8bc604875f43d5630eea0e3d1e3e6ed70acfa))
+
 ## [0.2.14](https://github.com/conventoangelo/OverKeys/compare/v0.2.13...v0.2.14) (2025-04-08)
 
 
