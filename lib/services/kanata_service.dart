@@ -10,7 +10,6 @@ typedef LayerChangeCallback = void Function(
 
 class KanataService {
   Socket? _kanataSocket;
-  bool _isConnected = false;
   Timer? _kanataTimer;
   String _host = '127.0.0.1';
   int _port = 4039;
@@ -19,18 +18,13 @@ class KanataService {
   List<KeyboardLayout> _userLayouts = [];
   String _defaultUserLayout = 'QWERTY';
 
-  bool get isConnected => _isConnected;
-
   Future<void> connect() async {
-    if (_isConnected) {
-      return;
-    }
-
+    _kanataSocket?.destroy();
     _kanataTimer?.cancel();
     _reconnectEnabled = true;
 
     try {
-      final ConfigService configService = ConfigService();
+      ConfigService configService = ConfigService();
       final config = await configService.loadConfig();
       _host = config.kanataHost;
       _port = config.kanataPort;
@@ -40,7 +34,6 @@ class KanataService {
       if (kDebugMode) {
         print('Connected to Kanata server at $_host:$_port');
       }
-      _isConnected = true;
       _kanataSocket!.listen(
         (data) {
           String message = String.fromCharCodes(data).trim();
@@ -63,9 +56,6 @@ class KanataService {
   }
 
   void _onDisconnected() {
-    _isConnected = false;
-    _kanataSocket = null;
-
     if (kDebugMode) {
       print('Disconnected from Kanata server');
     }
@@ -128,7 +118,6 @@ class KanataService {
     _reconnectEnabled = false;
     _kanataTimer?.cancel();
     _kanataSocket?.destroy();
-    _isConnected = false;
   }
 
   void dispose() {
