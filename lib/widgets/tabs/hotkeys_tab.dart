@@ -9,19 +9,27 @@ class HotKeysTab extends StatefulWidget {
   final HotKey autoHideHotKey;
   final HotKey toggleMoveHotKey;
   final HotKey preferencesHotKey;
+  final HotKey increaseOpacityHotKey;
+  final HotKey decreaseOpacityHotKey;
   final bool enableVisibilityHotKey;
   final bool enableAutoHideHotKey;
   final bool enableToggleMoveHotKey;
   final bool enablePreferencesHotKey;
+  final bool enableIncreaseOpacityHotKey;
+  final bool enableDecreaseOpacityHotKey;
   final Function(bool) updateHotKeysEnabled;
   final Function(HotKey) updateVisibilityHotKey;
   final Function(HotKey) updateAutoHideHotKey;
   final Function(HotKey) updateToggleMoveHotKey;
   final Function(HotKey) updatePreferencesHotKey;
+  final Function(HotKey) updateIncreaseOpacityHotKey;
+  final Function(HotKey) updateDecreaseOpacityHotKey;
   final Function(bool) updateEnableVisibilityHotKey;
   final Function(bool) updateEnableAutoHideHotKey;
   final Function(bool) updateEnableToggleMoveHotKey;
   final Function(bool) updateEnablePreferencesHotKey;
+  final Function(bool) updateEnableIncreaseOpacityHotKey;
+  final Function(bool) updateEnableDecreaseOpacityHotKey;
 
   const HotKeysTab({
     super.key,
@@ -30,19 +38,27 @@ class HotKeysTab extends StatefulWidget {
     required this.autoHideHotKey,
     required this.toggleMoveHotKey,
     required this.preferencesHotKey,
+    required this.increaseOpacityHotKey,
+    required this.decreaseOpacityHotKey,
     required this.updateHotKeysEnabled,
     required this.updateVisibilityHotKey,
     required this.updateAutoHideHotKey,
     required this.updateToggleMoveHotKey,
     required this.updatePreferencesHotKey,
+    required this.updateIncreaseOpacityHotKey,
+    required this.updateDecreaseOpacityHotKey,
     required this.enableVisibilityHotKey,
     required this.enableAutoHideHotKey,
     required this.enableToggleMoveHotKey,
     required this.enablePreferencesHotKey,
+    required this.enableIncreaseOpacityHotKey,
+    required this.enableDecreaseOpacityHotKey,
     required this.updateEnableVisibilityHotKey,
     required this.updateEnableAutoHideHotKey,
     required this.updateEnableToggleMoveHotKey,
     required this.updateEnablePreferencesHotKey,
+    required this.updateEnableIncreaseOpacityHotKey,
+    required this.updateEnableDecreaseOpacityHotKey,
   });
 
   @override
@@ -109,6 +125,32 @@ class _HotKeysTabState extends State<HotKeysTab> {
             context,
             widget.updatePreferencesHotKey,
             widget.preferencesHotKey,
+          ),
+          isEnabled: widget.hotKeysEnabled,
+        ),
+        HotKeyOption(
+          label: 'Increase Opacity',
+          subtitle: 'Increase opacity by 5%',
+          formattedHotKey: _formatHotKey(widget.increaseOpacityHotKey),
+          enabled: widget.enableIncreaseOpacityHotKey,
+          onToggleChanged: widget.updateEnableIncreaseOpacityHotKey,
+          onChangePressed: () => _showRecordHotKeyDialog(
+            context,
+            widget.updateIncreaseOpacityHotKey,
+            widget.increaseOpacityHotKey,
+          ),
+          isEnabled: widget.hotKeysEnabled,
+        ),
+        HotKeyOption(
+          label: 'Decrease Opacity',
+          subtitle: 'Decrease opacity by 5%',
+          formattedHotKey: _formatHotKey(widget.decreaseOpacityHotKey),
+          enabled: widget.enableDecreaseOpacityHotKey,
+          onToggleChanged: widget.updateEnableDecreaseOpacityHotKey,
+          onChangePressed: () => _showRecordHotKeyDialog(
+            context,
+            widget.updateDecreaseOpacityHotKey,
+            widget.decreaseOpacityHotKey,
           ),
           isEnabled: widget.hotKeysEnabled,
         ),

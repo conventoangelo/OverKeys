@@ -104,10 +104,20 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     key: PhysicalKeyboardKey.keyR,
     modifiers: [HotKeyModifier.alt, HotKeyModifier.control],
   );
+  HotKey _increaseOpacityHotKey = HotKey(
+    key: PhysicalKeyboardKey.arrowUp,
+    modifiers: [HotKeyModifier.alt, HotKeyModifier.control],
+  );
+  HotKey _decreaseOpacityHotKey = HotKey(
+    key: PhysicalKeyboardKey.arrowDown,
+    modifiers: [HotKeyModifier.alt, HotKeyModifier.control],
+  );
   bool _enableVisibilityHotKey = true;
   bool _enableAutoHideHotKey = true;
   bool _enableToggleMoveHotKey = true;
   bool _enablePreferencesHotKey = true;
+  bool _enableIncreaseOpacityHotKey = true;
+  bool _enableDecreaseOpacityHotKey = true;
 
   // Learn settings
   bool _learningModeEnabled = false;
@@ -172,6 +182,11 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     DesktopMultiWindow.setMethodHandler((call, fromWindowId) async {
       if (call.method == 'getWindowType') {
         return jsonEncode({'type': 'preferences'});
+      }
+
+      if (call.method == 'updateOpacityFromMainWindow' && mounted) {
+        setState(() => _opacity = call.arguments as double);
+        await _prefsService.setOpacity(_opacity);
       }
 
       if (call.method == 'updateAutoHideFromMainWindow' && mounted) {
@@ -243,10 +258,16 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       _autoHideHotKey = prefs['autoHideHotKey'];
       _toggleMoveHotKey = prefs['toggleMoveHotKey'];
       _preferencesHotKey = prefs['preferencesHotKey'];
+      _increaseOpacityHotKey = prefs['increaseOpacityHotKey'];
+      _decreaseOpacityHotKey = prefs['decreaseOpacityHotKey'];
       _enableVisibilityHotKey = prefs['enableVisibilityHotKey'] ?? true;
       _enableAutoHideHotKey = prefs['enableAutoHideHotKey'] ?? true;
       _enableToggleMoveHotKey = prefs['enableToggleMoveHotKey'] ?? true;
       _enablePreferencesHotKey = prefs['enablePreferencesHotKey'] ?? true;
+      _enableIncreaseOpacityHotKey =
+          prefs['enableIncreaseOpacityHotKey'] ?? true;
+      _enableDecreaseOpacityHotKey =
+          prefs['enableDecreaseOpacityHotKey'] ?? true;
 
       // Learn settings
       _learningModeEnabled = prefs['learningModeEnabled'] ?? false;
@@ -325,10 +346,14 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       'autoHideHotKey': _autoHideHotKey,
       'toggleMoveHotKey': _toggleMoveHotKey,
       'preferencesHotKey': _preferencesHotKey,
+      'increaseOpacityHotKey': _increaseOpacityHotKey,
+      'decreaseOpacityHotKey': _decreaseOpacityHotKey,
       'enableVisibilityHotKey': _enableVisibilityHotKey,
       'enableAutoHideHotKey': _enableAutoHideHotKey,
       'enableToggleMoveHotKey': _enableToggleMoveHotKey,
       'enablePreferencesHotKey': _enablePreferencesHotKey,
+      'enableIncreaseOpacityHotKey': _enableIncreaseOpacityHotKey,
+      'enableDecreaseOpacityHotKey': _enableDecreaseOpacityHotKey,
 
       // Learn settings
       'learningModeEnabled': _learningModeEnabled,
@@ -729,10 +754,14 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           autoHideHotKey: _autoHideHotKey,
           toggleMoveHotKey: _toggleMoveHotKey,
           preferencesHotKey: _preferencesHotKey,
+          increaseOpacityHotKey: _increaseOpacityHotKey,
+          decreaseOpacityHotKey: _decreaseOpacityHotKey,
           enableVisibilityHotKey: _enableVisibilityHotKey,
           enableAutoHideHotKey: _enableAutoHideHotKey,
           enableToggleMoveHotKey: _enableToggleMoveHotKey,
           enablePreferencesHotKey: _enablePreferencesHotKey,
+          enableIncreaseOpacityHotKey: _enableIncreaseOpacityHotKey,
+          enableDecreaseOpacityHotKey: _enableDecreaseOpacityHotKey,
           updateHotKeysEnabled: (value) {
             setState(() => _hotKeysEnabled = value);
             _updateMainWindow('updateHotKeysEnabled', value);
@@ -753,6 +782,14 @@ class _PreferencesScreenState extends State<PreferencesScreen>
             setState(() => _preferencesHotKey = value);
             _updateMainWindow('updatePreferencesHotKey', value);
           },
+          updateIncreaseOpacityHotKey: (value) {
+            setState(() => _increaseOpacityHotKey = value);
+            _updateMainWindow('updateIncreaseOpacityHotKey', value);
+          },
+          updateDecreaseOpacityHotKey: (value) {
+            setState(() => _decreaseOpacityHotKey = value);
+            _updateMainWindow('updateDecreaseOpacityHotKey', value);
+          },
           updateEnableVisibilityHotKey: (value) {
             setState(() => _enableVisibilityHotKey = value);
             _updateMainWindow('updateEnableVisibilityHotKey', value);
@@ -768,6 +805,14 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           updateEnablePreferencesHotKey: (value) {
             setState(() => _enablePreferencesHotKey = value);
             _updateMainWindow('updateEnablePreferencesHotKey', value);
+          },
+          updateEnableIncreaseOpacityHotKey: (value) {
+            setState(() => _enableIncreaseOpacityHotKey = value);
+            _updateMainWindow('updateEnableIncreaseOpacityHotKey', value);
+          },
+          updateEnableDecreaseOpacityHotKey: (value) {
+            setState(() => _enableDecreaseOpacityHotKey = value);
+            _updateMainWindow('updateEnableDecreaseOpacityHotKey', value);
           },
         );
       case 'Learn':

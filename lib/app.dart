@@ -34,6 +34,9 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   static const double _defaultTopRowExtraWidth = 160;
   static const Duration _fadeDuration = Duration(milliseconds: 200);
   static const Duration _overlayDuration = Duration(milliseconds: 1000);
+  static const double _opacityStep = 0.05;
+  static const double _minOpacity = 0.1;
+  static const double _maxOpacity = 1.0;
 
   // UI state
   bool _isWindowVisible = true;
@@ -44,7 +47,6 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   bool autoHideBeforeMove = false;
 
   // General settings
-  // ignore: unused_field
   bool _launchAtStartup = false;
   bool _autoHideEnabled = false;
   double _autoHideDuration = 2.0;
@@ -112,10 +114,20 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
     key: PhysicalKeyboardKey.keyR,
     modifiers: [HotKeyModifier.alt, HotKeyModifier.control],
   );
+  HotKey _increaseOpacityHotKey = HotKey(
+    key: PhysicalKeyboardKey.arrowUp,
+    modifiers: [HotKeyModifier.alt, HotKeyModifier.control],
+  );
+  HotKey _decreaseOpacityHotKey = HotKey(
+    key: PhysicalKeyboardKey.arrowDown,
+    modifiers: [HotKeyModifier.alt, HotKeyModifier.control],
+  );
   bool _enableVisibilityHotKey = true;
   bool _enableAutoHideHotKey = true;
   bool _enableToggleMoveHotKey = true;
   bool _enablePreferencesHotKey = true;
+  bool _enableIncreaseOpacityHotKey = true;
+  bool _enableDecreaseOpacityHotKey = true;
 
   // Learn settings
   bool _learningModeEnabled = false;
@@ -279,10 +291,14 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
       _autoHideHotKey = prefs['autoHideHotKey'];
       _toggleMoveHotKey = prefs['toggleMoveHotKey'];
       _preferencesHotKey = prefs['preferencesHotKey'];
+      _increaseOpacityHotKey = prefs['increaseOpacityHotKey'];
+      _decreaseOpacityHotKey = prefs['decreaseOpacityHotKey'];
       _enableVisibilityHotKey = prefs['enableVisibilityHotKey'] ?? true;
       _enableAutoHideHotKey = prefs['enableAutoHideHotKey'] ?? true;
       _enableToggleMoveHotKey = prefs['enableToggleMoveHotKey'] ?? true;
       _enablePreferencesHotKey = prefs['enablePreferencesHotKey'] ?? true;
+      _enableIncreaseOpacityHotKey = prefs['enableIncreaseOpacityHotKey'] ?? true;
+      _enableDecreaseOpacityHotKey = prefs['enableDecreaseOpacityHotKey'] ?? true;
 
       // Learn settings
       _learningModeEnabled = prefs['learningModeEnabled'];
@@ -362,10 +378,14 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
       'autoHideHotKey': _autoHideHotKey,
       'toggleMoveHotKey': _toggleMoveHotKey,
       'preferencesHotKey': _preferencesHotKey,
+      'increaseOpacityHotKey': _increaseOpacityHotKey,
+      'decreaseOpacityHotKey': _decreaseOpacityHotKey,
       'enableVisibilityHotKey': _enableVisibilityHotKey,
       'enableAutoHideHotKey': _enableAutoHideHotKey,
       'enableToggleMoveHotKey': _enableToggleMoveHotKey,
       'enablePreferencesHotKey': _enablePreferencesHotKey,
+      'enableIncreaseOpacityHotKey': _enableIncreaseOpacityHotKey,
+      'enableDecreaseOpacityHotKey': _enableDecreaseOpacityHotKey,
 
       // Learn settings
       'learningModeEnabled': _learningModeEnabled,
@@ -600,6 +620,31 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
     _setupTray();
   }
 
+  void _adjustOpacity(bool increase) {
+    final newOpacity = increase 
+        ? (_opacity + _opacityStep).clamp(_minOpacity, _maxOpacity) 
+        : (_opacity - _opacityStep).clamp(_minOpacity, _maxOpacity);
+    
+    if (newOpacity != _opacity) {
+      setState(() {
+        _opacity = newOpacity;
+        _lastOpacity = newOpacity;
+      });
+      
+      _showOverlay(
+        'Opacity: ${(_opacity * 100).round()}%', 
+        increase ? const Icon(LucideIcons.plusCircle) : const Icon(LucideIcons.minusCircle)
+      );
+      
+      _saveAllPreferences();
+      DesktopMultiWindow.getAllSubWindowIds().then((windowIds) {
+        for (final id in windowIds) {
+          DesktopMultiWindow.invokeMethod(id, 'updateOpacityFromMainWindow', _opacity);
+        }
+      });
+    }
+  }
+
   void _showOverlay(String message, Icon icon) {
     setState(() {
       _overlayMessage = message;
@@ -735,6 +780,30 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
           _showOverlay(
               'Opening Preferences', const Icon(LucideIcons.appWindow));
           _showPreferences();
+        },
+      );
+    }
+
+    if (_enableIncreaseOpacityHotKey) {
+      await hotKeyManager.register(
+        _increaseOpacityHotKey,
+        keyDownHandler: (hotKey) {
+          if (kDebugMode) {
+            print('Increase opacity hotkey triggered: ${hotKey.toJson()}');
+          }
+          _adjustOpacity(true);
+        },
+      );
+    }
+
+    if (_enableDecreaseOpacityHotKey) {
+      await hotKeyManager.register(
+        _decreaseOpacityHotKey,
+        keyDownHandler: (hotKey) {
+          if (kDebugMode) {
+            print('Decrease opacity hotkey triggered: ${hotKey.toJson()}');
+          }
+          _adjustOpacity(false);
         },
       );
     }
@@ -1001,6 +1070,18 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
           await hotKeyManager.unregister(_preferencesHotKey);
           setState(() => _preferencesHotKey = newHotKey);
           await _setupHotKeys();
+        case 'updateIncreaseOpacityHotKey':
+          final hotKeyJson = call.arguments as String;
+          final newHotKey = HotKey.fromJson(jsonDecode(hotKeyJson));
+          await hotKeyManager.unregister(_increaseOpacityHotKey);
+          setState(() => _increaseOpacityHotKey = newHotKey);
+          await _setupHotKeys();
+        case 'updateDecreaseOpacityHotKey':
+          final hotKeyJson = call.arguments as String;
+          final newHotKey = HotKey.fromJson(jsonDecode(hotKeyJson));
+          await hotKeyManager.unregister(_decreaseOpacityHotKey);
+          setState(() => _decreaseOpacityHotKey = newHotKey);
+          await _setupHotKeys();
         case 'updateEnableVisibilityHotKey':
           final enabled = call.arguments as bool;
           setState(() => _enableVisibilityHotKey = enabled);
@@ -1016,6 +1097,14 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
         case 'updateEnablePreferencesHotKey':
           final enabled = call.arguments as bool;
           setState(() => _enablePreferencesHotKey = enabled);
+          await _setupHotKeys();
+        case 'updateEnableIncreaseOpacityHotKey':
+          final enabled = call.arguments as bool;
+          setState(() => _enableIncreaseOpacityHotKey = enabled);
+          await _setupHotKeys();
+        case 'updateEnableDecreaseOpacityHotKey':
+          final enabled = call.arguments as bool;
+          setState(() => _enableDecreaseOpacityHotKey = enabled);
           await _setupHotKeys();
 
         // Learn settings

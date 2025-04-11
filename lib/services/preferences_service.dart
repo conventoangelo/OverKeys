@@ -136,6 +136,31 @@ class PreferencesService {
       );
     }
   }
+
+  Future<HotKey?> getIncreaseOpacityHotKey() async {
+    final json = await _prefs.getString('increaseOpacityHotKey');
+    try {
+      return HotKey.fromJson(jsonDecode(json!));
+    } catch (e) {
+      return HotKey(
+        key: PhysicalKeyboardKey.arrowUp,
+        modifiers: [HotKeyModifier.alt, HotKeyModifier.control],
+      );
+    }
+  }
+
+  Future<HotKey?> getDecreaseOpacityHotKey() async {
+    final json = await _prefs.getString('decreaseOpacityHotKey');
+    try {
+      return HotKey.fromJson(jsonDecode(json!));
+    } catch (e) {
+      return HotKey(
+        key: PhysicalKeyboardKey.arrowDown,
+        modifiers: [HotKeyModifier.alt, HotKeyModifier.control],
+      );
+    }
+  }
+
   Future<bool> getEnableVisibilityHotKey() async =>
       await _prefs.getBool('enableVisibilityHotKey') ?? true;
   Future<bool> getEnableAutoHideHotKey() async =>
@@ -144,6 +169,10 @@ class PreferencesService {
       await _prefs.getBool('enableToggleMoveHotKey') ?? true;
   Future<bool> getEnablePreferencesHotKey() async =>
       await _prefs.getBool('enablePreferencesHotKey') ?? true;
+  Future<bool> getEnableIncreaseOpacityHotKey() async =>
+      await _prefs.getBool('enableIncreaseOpacityHotKey') ?? true;
+  Future<bool> getEnableDecreaseOpacityHotKey() async =>
+      await _prefs.getBool('enableDecreaseOpacityHotKey') ?? true;
 
   // Learn settings
   Future<bool> getLearningModeEnabled() async =>
@@ -274,6 +303,10 @@ class PreferencesService {
       await _prefs.setString('toggleMoveHotKey', jsonEncode(value.toJson()));
   Future<void> setPreferencesHotKey(HotKey value) async =>
       await _prefs.setString('preferencesHotKey', jsonEncode(value.toJson()));
+  Future<void> setIncreaseOpacityHotKey(HotKey value) async =>
+      await _prefs.setString('increaseOpacityHotKey', jsonEncode(value.toJson()));
+  Future<void> setDecreaseOpacityHotKey(HotKey value) async =>
+      await _prefs.setString('decreaseOpacityHotKey', jsonEncode(value.toJson()));
   Future<void> setEnableVisibilityHotKey(bool value) async =>
       await _prefs.setBool('enableVisibilityHotKey', value);
   Future<void> setEnableAutoHideHotKey(bool value) async =>
@@ -282,6 +315,10 @@ class PreferencesService {
       await _prefs.setBool('enableToggleMoveHotKey', value);
   Future<void> setEnablePreferencesHotKey(bool value) async =>
       await _prefs.setBool('enablePreferencesHotKey', value);
+  Future<void> setEnableIncreaseOpacityHotKey(bool value) async =>
+      await _prefs.setBool('enableIncreaseOpacityHotKey', value);
+  Future<void> setEnableDecreaseOpacityHotKey(bool value) async =>
+      await _prefs.setBool('enableDecreaseOpacityHotKey', value);
 
   // Learn settings
   Future<void> setLearningModeEnabled(bool value) async =>
@@ -374,10 +411,14 @@ class PreferencesService {
       'autoHideHotKey': await getAutoHideHotKey(),
       'toggleMoveHotKey': await getToggleMoveHotKey(),
       'preferencesHotKey': await getPreferencesHotKey(),
+      'increaseOpacityHotKey': await getIncreaseOpacityHotKey(),
+      'decreaseOpacityHotKey': await getDecreaseOpacityHotKey(),
       'enableVisibilityHotKey': await getEnableVisibilityHotKey(),
       'enableAutoHideHotKey': await getEnableAutoHideHotKey(),
       'enableToggleMoveHotKey': await getEnableToggleMoveHotKey(),
       'enablePreferencesHotKey': await getEnablePreferencesHotKey(),
+      'enableIncreaseOpacityHotKey': await getEnableIncreaseOpacityHotKey(),
+      'enableDecreaseOpacityHotKey': await getEnableDecreaseOpacityHotKey(),
 
       // Learn settings
       'learningModeEnabled': await getLearningModeEnabled(),
@@ -455,10 +496,14 @@ class PreferencesService {
     await setAutoHideHotKey(prefs['autoHideHotKey']);
     await setToggleMoveHotKey(prefs['toggleMoveHotKey']);
     await setPreferencesHotKey(prefs['preferencesHotKey']);
+    await setIncreaseOpacityHotKey(prefs['increaseOpacityHotKey']);
+    await setDecreaseOpacityHotKey(prefs['decreaseOpacityHotKey']);
     await setEnableVisibilityHotKey(prefs['enableVisibilityHotKey'] ?? true);
     await setEnableAutoHideHotKey(prefs['enableAutoHideHotKey'] ?? true);
     await setEnableToggleMoveHotKey(prefs['enableToggleMoveHotKey'] ?? true);
     await setEnablePreferencesHotKey(prefs['enablePreferencesHotKey'] ?? true);
+    await setEnableIncreaseOpacityHotKey(prefs['enableIncreaseOpacityHotKey'] ?? true);
+    await setEnableDecreaseOpacityHotKey(prefs['enableDecreaseOpacityHotKey'] ?? true);
 
     // Learn settings
     await setLearningModeEnabled(prefs['learningModeEnabled'] ?? false);
