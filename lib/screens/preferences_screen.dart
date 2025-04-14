@@ -30,8 +30,7 @@ class PreferencesScreen extends StatefulWidget {
   State<PreferencesScreen> createState() => _PreferencesScreenState();
 }
 
-class _PreferencesScreenState extends State<PreferencesScreen>
-    with WindowListener {
+class _PreferencesScreenState extends State<PreferencesScreen> with WindowListener {
   final PreferencesService _prefsService = PreferencesService();
 
   // UI state
@@ -57,6 +56,9 @@ class _PreferencesScreenState extends State<PreferencesScreen>
   double _spaceWidth = 320;
   double _splitWidth = 100;
   double _lastRowSplitWidth = 100;
+  double _keyShadowBlurRadius = 0;
+  double _keyShadowOffsetX = 2;
+  double _keyShadowOffsetY = 2;
 
   // Text settings
   String _fontFamily = 'GeistMono';
@@ -223,6 +225,9 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       _spaceWidth = prefs['spaceWidth'];
       _splitWidth = prefs['splitWidth'];
       _lastRowSplitWidth = prefs['lastRowSplitWidth'];
+      _keyShadowBlurRadius = prefs['keyShadowBlurRadius'];
+      _keyShadowOffsetX = prefs['keyShadowOffsetX'];
+      _keyShadowOffsetY = prefs['keyShadowOffsetY'];
 
       // Text settings
       _fontFamily = prefs['fontFamily'];
@@ -264,10 +269,8 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       _enableAutoHideHotKey = prefs['enableAutoHideHotKey'] ?? true;
       _enableToggleMoveHotKey = prefs['enableToggleMoveHotKey'] ?? true;
       _enablePreferencesHotKey = prefs['enablePreferencesHotKey'] ?? true;
-      _enableIncreaseOpacityHotKey =
-          prefs['enableIncreaseOpacityHotKey'] ?? true;
-      _enableDecreaseOpacityHotKey =
-          prefs['enableDecreaseOpacityHotKey'] ?? true;
+      _enableIncreaseOpacityHotKey = prefs['enableIncreaseOpacityHotKey'] ?? true;
+      _enableDecreaseOpacityHotKey = prefs['enableDecreaseOpacityHotKey'] ?? true;
 
       // Learn settings
       _learningModeEnabled = prefs['learningModeEnabled'] ?? false;
@@ -311,6 +314,9 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       'spaceWidth': _spaceWidth,
       'splitWidth': _splitWidth,
       'lastRowSplitWidth': _lastRowSplitWidth,
+      'keyShadowBlurRadius': _keyShadowBlurRadius,
+      'keyShadowOffsetX': _keyShadowOffsetX,
+      'keyShadowOffsetY': _keyShadowOffsetY,
 
       // Text settings
       'fontFamily': _fontFamily,
@@ -414,8 +420,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
         return KeyboardListener(
           focusNode: keyboardFocusNode,
           onKeyEvent: (KeyEvent keyEvent) {
-            if (keyEvent is KeyDownEvent &&
-                keyEvent.logicalKey == LogicalKeyboardKey.escape) {
+            if (keyEvent is KeyDownEvent && keyEvent.logicalKey == LogicalKeyboardKey.escape) {
               DesktopMultiWindow.invokeMethod(0, 'closePreferencesWindow');
             }
           },
@@ -429,8 +434,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
                     children: [
                       Expanded(
                         child: SingleChildScrollView(
-                          padding:
-                              const EdgeInsets.fromLTRB(20.0, 40.0, 20.0, 20.0),
+                          padding: const EdgeInsets.fromLTRB(20.0, 40.0, 20.0, 20.0),
                           child: _buildCurrentTabContent(),
                         ),
                       ),
@@ -452,8 +456,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
 
     return Container(
       width: drawerWidth,
-      color: Theme.of(context).drawerTheme.backgroundColor ??
-          colorScheme.surfaceContainer,
+      color: Theme.of(context).drawerTheme.backgroundColor ?? colorScheme.surfaceContainer,
       alignment: Alignment.center,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -500,18 +503,14 @@ class _PreferencesScreenState extends State<PreferencesScreen>
         child: ListTile(
           leading: Icon(
             _getIconForTab(tabName).icon,
-            color: isSelected
-                ? colorScheme.primary
-                : colorScheme.onSurfaceVariant.withAlpha(192),
+            color: isSelected ? colorScheme.primary : colorScheme.onSurfaceVariant.withAlpha(192),
           ),
           title: Text(
             tabName,
             style: TextStyle(
               fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
               fontSize: 16,
-              color: isSelected
-                  ? colorScheme.primary
-                  : colorScheme.onSurfaceVariant.withAlpha(192),
+              color: isSelected ? colorScheme.primary : colorScheme.onSurfaceVariant.withAlpha(192),
             ),
           ),
           onTap: () {
@@ -588,11 +587,14 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           showGraveKey: _showGraveKey,
           keySize: _keySize,
           keyBorderRadius: _keyBorderRadius,
+          keyBorderThickness: _keyBorderThickness,
           keyPadding: _keyPadding,
           spaceWidth: _spaceWidth,
           splitWidth: _splitWidth,
           lastRowSplitWidth: _lastRowSplitWidth,
-          keyBorderThickness: _keyBorderThickness,
+          keyShadowBlurRadius: _keyShadowBlurRadius,
+          keyShadowOffsetX: _keyShadowOffsetX,
+          keyShadowOffsetY: _keyShadowOffsetY,
           updateKeymapStyle: (value) {
             setState(() => _keymapStyle = value);
             _updateMainWindow('updateKeymapStyle', value);
@@ -613,6 +615,10 @@ class _PreferencesScreenState extends State<PreferencesScreen>
             setState(() => _keyBorderRadius = value);
             _updateMainWindow('updateKeyBorderRadius', value);
           },
+          updateKeyBorderThickness: (value) {
+            setState(() => _keyBorderThickness = value);
+            _updateMainWindow('updateKeyBorderThickness', value);
+          },
           updateKeyPadding: (value) {
             setState(() => _keyPadding = value);
             _updateMainWindow('updateKeyPadding', value);
@@ -629,9 +635,17 @@ class _PreferencesScreenState extends State<PreferencesScreen>
             setState(() => _lastRowSplitWidth = value);
             _updateMainWindow('updateLastRowSplitWidth', value);
           },
-          updateKeyBorderThickness: (value) {
-            setState(() => _keyBorderThickness = value);
-            _updateMainWindow('updateKeyBorderThickness', value);
+          updateKeyShadowBlurRadius: (value) {
+            setState(() => _keyShadowBlurRadius = value);
+            _updateMainWindow('updateKeyShadowBlurRadius', value);
+          },
+          updateKeyShadowOffsetX: (value) {
+            setState(() => _keyShadowOffsetX = value);
+            _updateMainWindow('updateKeyShadowOffsetX', value);
+          },
+          updateKeyShadowOffsetY: (value) {
+            setState(() => _keyShadowOffsetY = value);
+            _updateMainWindow('updateKeyShadowOffsetY', value);
           },
         );
       case 'Text':

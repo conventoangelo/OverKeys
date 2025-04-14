@@ -61,11 +61,14 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   bool _showGraveKey = false;
   double _keySize = 48;
   double _keyBorderRadius = 12;
+  double _keyBorderThickness = 0;
   double _keyPadding = 3;
   double _spaceWidth = 320;
   double _splitWidth = 100;
   double _lastRowSplitWidth = 100;
-  double _keyBorderThickness = 0;
+  double _keyShadowBlurRadius = 0;
+  double _keyShadowOffsetX = 2;
+  double _keyShadowOffsetY = 2;
 
   // Text settings
   String _fontFamily = 'GeistMono';
@@ -234,11 +237,14 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
       _showGraveKey = prefs['showGraveKey'];
       _keySize = prefs['keySize'];
       _keyBorderRadius = prefs['keyBorderRadius'];
+      _keyBorderThickness = prefs['keyBorderThickness'];
       _keyPadding = prefs['keyPadding'];
       _spaceWidth = prefs['spaceWidth'];
       _splitWidth = prefs['splitWidth'];
       _lastRowSplitWidth = prefs['lastRowSplitWidth'];
-      _keyBorderThickness = prefs['keyBorderThickness'];
+      _keyShadowBlurRadius = prefs['keyShadowBlurRadius'];
+      _keyShadowOffsetX = prefs['keyShadowOffsetX'];
+      _keyShadowOffsetY = prefs['keyShadowOffsetY'];
 
       // Text settings
       _fontFamily = prefs['fontFamily'];
@@ -321,11 +327,14 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
       'showGraveKey': _showGraveKey,
       'keySize': _keySize,
       'keyBorderRadius': _keyBorderRadius,
+      'keyBorderThickness': _keyBorderThickness,
       'keyPadding': _keyPadding,
       'spaceWidth': _spaceWidth,
       'splitWidth': _splitWidth,
       'lastRowSplitWidth': _lastRowSplitWidth,
-      'keyBorderThickness': _keyBorderThickness,
+      'keyShadowBlurRadius': _keyShadowBlurRadius,
+      'keyShadowOffsetX': _keyShadowOffsetX,
+      'keyShadowOffsetY': _keyShadowOffsetY,
 
       // Text settings
       'fontFamily': _fontFamily,
@@ -975,6 +984,9 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
         case 'updateKeyBorderRadius':
           final keyBorderRadius = call.arguments as double;
           setState(() => _keyBorderRadius = keyBorderRadius);
+        case 'updateKeyBorderThickness':
+          final keyBorderThickness = call.arguments as double;
+          setState(() => _keyBorderThickness = keyBorderThickness);
         case 'updateKeyPadding':
           final keyPadding = call.arguments as double;
           setState(() => _keyPadding = keyPadding);
@@ -987,9 +999,15 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
         case 'updateLastRowSplitWidth':
           final lastRowSplitWidth = call.arguments as double;
           setState(() => _lastRowSplitWidth = lastRowSplitWidth);
-        case 'updateKeyBorderThickness':
-          final keyBorderThickness = call.arguments as double;
-          setState(() => _keyBorderThickness = keyBorderThickness);
+        case 'updateKeyShadowBlurRadius':
+          final keyShadowBlurRadius = call.arguments as double;
+          setState(() => _keyShadowBlurRadius = keyShadowBlurRadius);
+        case 'updateKeyShadowOffsetX':
+          final keyShadowOffsetX = call.arguments as double;
+          setState(() => _keyShadowOffsetX = keyShadowOffsetX);
+        case 'updateKeyShadowOffsetY':
+          final keyShadowOffsetY = call.arguments as double;
+          setState(() => _keyShadowOffsetY = keyShadowOffsetY);
 
         // Text settings
         case 'updateFontFamily':
@@ -1314,11 +1332,14 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
                       showGraveKey: _showGraveKey,
                       keySize: _keySize,
                       keyBorderRadius: _keyBorderRadius,
+                      keyBorderThickness: _keyBorderThickness,
                       keyPadding: _keyPadding,
                       spaceWidth: _spaceWidth,
                       splitWidth: _splitWidth,
                       lastRowSplitWidth: _lastRowSplitWidth,
-                      keyBorderThickness: _keyBorderThickness,
+                      keyShadowBlurRadius: _keyShadowBlurRadius,
+                      keyShadowOffsetX: _keyShadowOffsetX,
+                      keyShadowOffsetY: _keyShadowOffsetY,
                       keyFontSize: _keyFontSize,
                       spaceFontSize: _spaceFontSize,
                       fontWeight: _fontWeight,

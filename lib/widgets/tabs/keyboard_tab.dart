@@ -12,6 +12,9 @@ class KeyboardTab extends StatefulWidget {
   final double spaceWidth;
   final double splitWidth;
   final double lastRowSplitWidth;
+  final double keyShadowBlurRadius;
+  final double keyShadowOffsetX;
+  final double keyShadowOffsetY;
   final Function(String) updateKeymapStyle;
   final Function(bool) updateShowTopRow;
   final Function(bool) updateShowGraveKey;
@@ -22,6 +25,9 @@ class KeyboardTab extends StatefulWidget {
   final Function(double) updateSpaceWidth;
   final Function(double) updateSplitWidth;
   final Function(double) updateLastRowSplitWidth;
+  final Function(double) updateKeyShadowBlurRadius;
+  final Function(double) updateKeyShadowOffsetX;
+  final Function(double) updateKeyShadowOffsetY;
 
   const KeyboardTab({
     super.key,
@@ -35,6 +41,9 @@ class KeyboardTab extends StatefulWidget {
     required this.spaceWidth,
     required this.splitWidth,
     required this.lastRowSplitWidth,
+    required this.keyShadowBlurRadius,
+    required this.keyShadowOffsetX,
+    required this.keyShadowOffsetY,
     required this.updateKeymapStyle,
     required this.updateShowTopRow,
     required this.updateShowGraveKey,
@@ -45,6 +54,9 @@ class KeyboardTab extends StatefulWidget {
     required this.updateSpaceWidth,
     required this.updateSplitWidth,
     required this.updateLastRowSplitWidth,
+    required this.updateKeyShadowBlurRadius,
+    required this.updateKeyShadowOffsetX,
+    required this.updateKeyShadowOffsetY,
   });
 
   @override
@@ -59,6 +71,9 @@ class _KeyboardTabState extends State<KeyboardTab> {
   late double _localSpaceWidth;
   late double _localSplitWidth;
   late double _localLastRowSplitWidth;
+  late double _localKeyShadowBlurRadius;
+  late double _localKeyShadowOffsetX;
+  late double _localKeyShadowOffsetY;
 
   @override
   void initState() {
@@ -70,6 +85,9 @@ class _KeyboardTabState extends State<KeyboardTab> {
     _localSpaceWidth = widget.spaceWidth;
     _localSplitWidth = widget.splitWidth;
     _localLastRowSplitWidth = widget.lastRowSplitWidth;
+    _localKeyShadowBlurRadius = widget.keyShadowBlurRadius;
+    _localKeyShadowOffsetX = widget.keyShadowOffsetX;
+    _localKeyShadowOffsetY = widget.keyShadowOffsetY;
   }
 
   @override
@@ -95,6 +113,15 @@ class _KeyboardTabState extends State<KeyboardTab> {
     }
     if (oldWidget.lastRowSplitWidth != widget.lastRowSplitWidth) {
       _localLastRowSplitWidth = widget.lastRowSplitWidth;
+    }
+    if (oldWidget.keyShadowBlurRadius != widget.keyShadowBlurRadius) {
+      _localKeyShadowBlurRadius = widget.keyShadowBlurRadius;
+    }
+    if (oldWidget.keyShadowOffsetX != widget.keyShadowOffsetX) {
+      _localKeyShadowOffsetX = widget.keyShadowOffsetX;
+    }
+    if (oldWidget.keyShadowOffsetY != widget.keyShadowOffsetY) {
+      _localKeyShadowOffsetY = widget.keyShadowOffsetY;
     }
   }
 
@@ -229,6 +256,39 @@ class _KeyboardTabState extends State<KeyboardTab> {
             setState(() => _localSpaceWidth = value);
           },
           onChangeEnd: widget.updateSpaceWidth,
+        ),
+        SliderOption(
+          label: 'Key shadow blur radius',
+          value: _localKeyShadowBlurRadius,
+          min: 0,
+          max: 20,
+          divisions: 20,
+          onChanged: (value) {
+            setState(() => _localKeyShadowBlurRadius = value);
+          },
+          onChangeEnd: widget.updateKeyShadowBlurRadius,
+        ),
+        SliderOption(
+          label: 'Key shadow offset X',
+          value: _localKeyShadowOffsetX,
+          min: -10,
+          max: 10,
+          divisions: 20,
+          onChanged: (value) {
+            setState(() => _localKeyShadowOffsetX = value);
+          },
+          onChangeEnd: widget.updateKeyShadowOffsetX,
+        ),
+        SliderOption(
+          label: 'Key shadow offset Y',
+          value: _localKeyShadowOffsetY,
+          min: -10,
+          max: 10,
+          divisions: 20,
+          onChanged: (value) {
+            setState(() => _localKeyShadowOffsetY = value);
+          },
+          onChangeEnd: widget.updateKeyShadowOffsetY,
         ),
       ],
     );
