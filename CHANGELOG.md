@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.2.16](https://github.com/conventoangelo/OverKeys/compare/v0.2.15...v0.2.16) (2025-04-14)
+
+
+### ✨ Features
+
+* add drop shadow to keys ([#104](https://github.com/conventoangelo/OverKeys/issues/104)) ([7d5fc4c](https://github.com/conventoangelo/OverKeys/commit/7d5fc4c66ee4e2afd3667810f4053e5dbc59a866))
+
+
+### 🐛 Bug Fixes
+
+* change blur style to normal ([3acd87c](https://github.com/conventoangelo/OverKeys/commit/3acd87cb415e658129be343c29119724914a76d2))
+* opacity hotkeys now only works when keyboard is visible ([56b2a7d](https://github.com/conventoangelo/OverKeys/commit/56b2a7db62e80b42052856f064c8905d2e80fc0b))
+
 ## [0.2.15](https://github.com/conventoangelo/OverKeys/compare/v0.2.14...v0.2.15) (2025-04-11)
 
 
