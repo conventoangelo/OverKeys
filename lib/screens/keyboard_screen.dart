@@ -191,6 +191,9 @@ class KeyboardScreen extends StatelessWidget {
     String keyStateKey = Mappings.getKeyForSymbol(key);
     bool isPressed = keyPressStates[keyStateKey] ?? false;
 
+    if (use6ColLayout) {
+      keyIndex -= 1;
+    }
     Color keyColor;
     if (isPressed) {
       keyColor = keyColorPressed;
@@ -310,8 +313,8 @@ class KeyboardScreen extends StatelessWidget {
               width: markerWidth * (showAltLayout && altLayout != null ? 0.5 : 1),
               height: showAltLayout && altLayout != null ? markerWidth * 0.5 : markerHeight,
               decoration: BoxDecoration(
-          color: tactMarkerColor,
-          borderRadius: BorderRadius.circular(markerBorderRadius),
+                color: tactMarkerColor,
+                borderRadius: BorderRadius.circular(markerBorderRadius),
               ),
             ),
           ),
@@ -421,7 +424,7 @@ class KeyboardScreen extends StatelessWidget {
   }
 
   Color getFingerColor(int rowIndex, int keyIndex) {
-    if (rowIndex == 0) {
+    if (rowIndex == 0 && !use6ColLayout) {
       keyIndex -= 1;
     }
     switch (keyIndex) {
