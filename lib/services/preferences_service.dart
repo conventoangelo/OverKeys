@@ -66,79 +66,34 @@ class PreferencesService {
   Future<double> getAnimationScale() async => await _prefs.getDouble('animationScale') ?? 2.0;
 
   // HotKey settings
+  Future<HotKey?> _getHotKey(
+    String key,
+    PhysicalKeyboardKey defaultKey,
+    List<HotKeyModifier> defaultModifiers,
+  ) async {
+    final json = await _prefs.getString(key);
+    try {
+      return HotKey.fromJson(jsonDecode(json!));
+    } catch (e) {
+      return HotKey(
+        key: defaultKey,
+        modifiers: defaultModifiers,
+      );
+    }
+  }
   Future<bool> getHotKeysEnabled() async => await _prefs.getBool('enableHotKeys') ?? false;
-  Future<HotKey?> getVisibilityHotKey() async {
-    final json = await _prefs.getString('visibilityHotKey');
-    try {
-      return HotKey.fromJson(jsonDecode(json!));
-    } catch (e) {
-      return HotKey(
-        key: PhysicalKeyboardKey.keyQ,
-        modifiers: [HotKeyModifier.alt, HotKeyModifier.control],
-      );
-    }
-  }
-
-  Future<HotKey?> getAutoHideHotKey() async {
-    final json = await _prefs.getString('autoHideHotKey');
-    try {
-      return HotKey.fromJson(jsonDecode(json!));
-    } catch (e) {
-      return HotKey(
-        key: PhysicalKeyboardKey.keyW,
-        modifiers: [HotKeyModifier.alt, HotKeyModifier.control],
-      );
-    }
-  }
-
-  Future<HotKey?> getToggleMoveHotKey() async {
-    final json = await _prefs.getString('toggleMoveHotKey');
-    try {
-      return HotKey.fromJson(jsonDecode(json!));
-    } catch (e) {
-      return HotKey(
-        key: PhysicalKeyboardKey.keyE,
-        modifiers: [HotKeyModifier.alt, HotKeyModifier.control],
-      );
-    }
-  }
-
-  Future<HotKey?> getPreferencesHotKey() async {
-    final json = await _prefs.getString('preferencesHotKey');
-    try {
-      return HotKey.fromJson(jsonDecode(json!));
-    } catch (e) {
-      return HotKey(
-        key: PhysicalKeyboardKey.keyR,
-        modifiers: [HotKeyModifier.alt, HotKeyModifier.control],
-      );
-    }
-  }
-
-  Future<HotKey?> getIncreaseOpacityHotKey() async {
-    final json = await _prefs.getString('increaseOpacityHotKey');
-    try {
-      return HotKey.fromJson(jsonDecode(json!));
-    } catch (e) {
-      return HotKey(
-        key: PhysicalKeyboardKey.arrowUp,
-        modifiers: [HotKeyModifier.alt, HotKeyModifier.control],
-      );
-    }
-  }
-
-  Future<HotKey?> getDecreaseOpacityHotKey() async {
-    final json = await _prefs.getString('decreaseOpacityHotKey');
-    try {
-      return HotKey.fromJson(jsonDecode(json!));
-    } catch (e) {
-      return HotKey(
-        key: PhysicalKeyboardKey.arrowDown,
-        modifiers: [HotKeyModifier.alt, HotKeyModifier.control],
-      );
-    }
-  }
-
+  Future<HotKey?> getVisibilityHotKey() async => _getHotKey(
+      'visibilityHotKey', PhysicalKeyboardKey.keyQ, [HotKeyModifier.alt, HotKeyModifier.control]);
+  Future<HotKey?> getAutoHideHotKey() async => _getHotKey(
+      'autoHideHotKey', PhysicalKeyboardKey.keyW, [HotKeyModifier.alt, HotKeyModifier.control]);
+  Future<HotKey?> getToggleMoveHotKey() async => _getHotKey(
+      'toggleMoveHotKey', PhysicalKeyboardKey.keyE, [HotKeyModifier.alt, HotKeyModifier.control]);
+  Future<HotKey?> getPreferencesHotKey() async => _getHotKey(
+      'preferencesHotKey', PhysicalKeyboardKey.keyR, [HotKeyModifier.alt, HotKeyModifier.control]);
+  Future<HotKey?> getIncreaseOpacityHotKey() async => _getHotKey('increaseOpacityHotKey',
+      PhysicalKeyboardKey.arrowUp, [HotKeyModifier.alt, HotKeyModifier.control]);
+  Future<HotKey?> getDecreaseOpacityHotKey() async => _getHotKey('decreaseOpacityHotKey',
+      PhysicalKeyboardKey.arrowDown, [HotKeyModifier.alt, HotKeyModifier.control]);
   Future<bool> getEnableVisibilityHotKey() async =>
       await _prefs.getBool('enableVisibilityHotKey') ?? true;
   Future<bool> getEnableAutoHideHotKey() async =>
