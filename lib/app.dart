@@ -166,6 +166,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   String _overlayMessage = '';
   Icon _statusIcon = const Icon(LucideIcons.eye);
   Timer? _overlayTimer;
+  Timer? _opacityDebounceTimer;
 
   @override
   void initState() {
@@ -625,26 +626,33 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   void _adjustOpacity(bool increase) {
     if (_forceHide) return;
 
-    final newOpacity = increase
-        ? (_opacity + _opacityStep).clamp(_minOpacity, _maxOpacity)
-        : (_opacity - _opacityStep).clamp(_minOpacity, _maxOpacity);
+    final newLastOpacity = increase
+        ? (_lastOpacity + _opacityStep).clamp(_minOpacity, _maxOpacity)
+        : (_lastOpacity - _opacityStep).clamp(_minOpacity, _maxOpacity);
 
-    if (newOpacity != _opacity) {
+    if (newLastOpacity != _lastOpacity) {
       setState(() {
-        _opacity = newOpacity;
-        _lastOpacity = newOpacity;
+        _lastOpacity = newLastOpacity;
       });
 
-      _showOverlay('Opacity: ${(_opacity * 100).round()}%',
+      _showOverlay('Opacity: ${(_lastOpacity * 100).round()}%',
           increase ? const Icon(LucideIcons.plusCircle) : const Icon(LucideIcons.minusCircle));
-
-      _saveAllPreferences();
-      DesktopMultiWindow.getAllSubWindowIds().then((windowIds) {
-        for (final id in windowIds) {
-          DesktopMultiWindow.invokeMethod(id, 'updateOpacityFromMainWindow', _opacity);
-        }
-      });
     }
+
+    _opacityDebounceTimer?.cancel();
+    _opacityDebounceTimer = Timer(const Duration(milliseconds: 125), () {
+      if (_opacity != _lastOpacity) {
+        setState(() {
+          _opacity = _lastOpacity;
+        });
+        _saveAllPreferences();
+        DesktopMultiWindow.getAllSubWindowIds().then((windowIds) {
+          for (final id in windowIds) {
+            DesktopMultiWindow.invokeMethod(id, 'updateOpacityFromMainWindow', _opacity);
+          }
+        });
+      }
+    });
   }
 
   void _showOverlay(String message, Icon icon) {
