@@ -1,5 +1,39 @@
 # Changelog
 
+## [0.2.17](https://github.com/conventoangelo/OverKeys/compare/v0.2.16...v0.2.17) (2025-04-26)
+
+
+### ✨ Features
+
+* add half increments to marker height ([2bca469](https://github.com/conventoangelo/OverKeys/commit/2bca469a1ca1fabf3ea9ee4b9b539be8994afe6f))
+* add note for thumb key/s learning mode color customization ([fd1fb8e](https://github.com/conventoangelo/OverKeys/commit/fd1fb8e82b7e36787393ba9f7f10803b97e9fc42))
+
+
+### 🐛 Bug Fixes
+
+* add debounce timer for opacity hotkey to remove visual lag ([#112](https://github.com/conventoangelo/OverKeys/issues/112)) ([9df40b7](https://github.com/conventoangelo/OverKeys/commit/9df40b761a066372c6f5c3f918c11b7f20c84553))
+* adjust key index handling for 6-column layout ([#110](https://github.com/conventoangelo/OverKeys/issues/110)) ([9ccffd5](https://github.com/conventoangelo/OverKeys/commit/9ccffd53c5b87c7fd80597ff8b5693c3da01405a))
+
+
+### 📚 Documentation
+
+* add key border and drop shadow settings ([8981dfd](https://github.com/conventoangelo/OverKeys/commit/8981dfdec26f8488b317ff6ceeb61eb1978ddf34))
+* add sample config file ([ba4e765](https://github.com/conventoangelo/OverKeys/commit/ba4e76550c2bcf78988b0ab61d7d63c6c68168f4))
+
+
+### ⚙️ CI/CD Pipeline
+
+* show hidden changelog sections ([cc6ee26](https://github.com/conventoangelo/OverKeys/commit/cc6ee260e3adfd7bb053bc47fca095cfd2e945b5))
+
+
+### 🔨 Refactoring
+
+* consolidate hotkey retrieval logic into a single method ([78b75f3](https://github.com/conventoangelo/OverKeys/commit/78b75f3d72aa276b830b2cf2f62142ab120c54f3))
+* improve code health ([#111](https://github.com/conventoangelo/OverKeys/issues/111)) ([78b75f3](https://github.com/conventoangelo/OverKeys/commit/78b75f3d72aa276b830b2cf2f62142ab120c54f3))
+* modularize preference loading into separate methods ([78b75f3](https://github.com/conventoangelo/OverKeys/commit/78b75f3d72aa276b830b2cf2f62142ab120c54f3))
+* simplify key retrieval logic in getKeyFromKeyCodeShift function ([78b75f3](https://github.com/conventoangelo/OverKeys/commit/78b75f3d72aa276b830b2cf2f62142ab120c54f3))
+* update user config handling and remove default values ([345f777](https://github.com/conventoangelo/OverKeys/commit/345f7773a707f031d6c8a3e5aff4fdff2e000190))
+
 ## [0.2.16](https://github.com/conventoangelo/OverKeys/compare/v0.2.15...v0.2.16) (2025-04-14)
 
 
