@@ -1,133 +1,137 @@
 import 'package:win32/win32.dart';
 
 // https://learn.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
+final Map<int, String> _keyCodeMap = {
+  VK_A: 'A',
+  VK_B: 'B',
+  VK_C: 'C',
+  VK_D: 'D',
+  VK_E: 'E',
+  VK_F: 'F',
+  VK_G: 'G',
+  VK_H: 'H',
+  VK_I: 'I',
+  VK_J: 'J',
+  VK_K: 'K',
+  VK_L: 'L',
+  VK_M: 'M',
+  VK_N: 'N',
+  VK_O: 'O',
+  VK_P: 'P',
+  VK_Q: 'Q',
+  VK_R: 'R',
+  VK_S: 'S',
+  VK_T: 'T',
+  VK_U: 'U',
+  VK_V: 'V',
+  VK_W: 'W',
+  VK_X: 'X',
+  VK_Y: 'Y',
+  VK_Z: 'Z',
+  VK_F1: 'F1',
+  VK_F2: 'F2',
+  VK_F3: 'F3',
+  VK_F4: 'F4',
+  VK_F5: 'F5',
+  VK_F6: 'F6',
+  VK_F7: 'F7',
+  VK_F8: 'F8',
+  VK_F9: 'F9',
+  VK_F10: 'F10',
+  VK_F11: 'F11',
+  VK_F12: 'F12',
+  VK_RETURN: 'Enter',
+  VK_TAB: 'Tab',
+  VK_BACK: 'Backspace',
+  VK_ESCAPE: 'Escape',
+  VK_DELETE: 'Delete',
+  VK_INSERT: 'Insert',
+  VK_HOME: 'Home',
+  VK_END: 'End',
+  VK_PRIOR: 'PageUp',
+  VK_NEXT: 'PageDown',
+  VK_LEFT: 'Left',
+  VK_RIGHT: 'Right',
+  VK_UP: 'Up',
+  VK_DOWN: 'Down',
+  VK_LSHIFT: 'LShift',
+  VK_RSHIFT: 'RShift',
+  VK_LCONTROL: 'LControl',
+  VK_RCONTROL: 'RControl',
+  VK_LMENU: 'LAlt',
+  VK_RMENU: 'RAlt',
+  VK_LWIN: 'Win',
+  VK_RWIN: 'RWin',
+  VK_CAPITAL: 'CapsLock',
+  VK_NUMLOCK: 'NumLock',
+  VK_SCROLL: 'ScrollLock',
+  VK_SPACE: ' ',
+  VK_NUMPAD0: 'Num0',
+  VK_NUMPAD1: 'Num1',
+  VK_NUMPAD2: 'Num2',
+  VK_NUMPAD3: 'Num3',
+  VK_NUMPAD4: 'Num4',
+  VK_NUMPAD5: 'Num5',
+  VK_NUMPAD6: 'Num6',
+  VK_NUMPAD7: 'Num7',
+  VK_NUMPAD8: 'Num8',
+  VK_NUMPAD9: 'Num9',
+  VK_MULTIPLY: 'NumMultiply',
+  VK_ADD: 'NumAdd',
+  VK_SUBTRACT: 'NumSubtract',
+  VK_DECIMAL: 'NumDecimal',
+  VK_DIVIDE: 'NumDivide',
+};
+
+final Map<(int, bool), String> _keyCodeShiftMap = {
+  (0x30, false): '0',
+  (0x30, true): ')',
+  (0x31, false): '1',
+  (0x31, true): '!',
+  (0x32, false): '2',
+  (0x32, true): '@',
+  (0x33, false): '3',
+  (0x33, true): '#',
+  (0x34, false): '4',
+  (0x34, true): '\$',
+  (0x35, false): '5',
+  (0x35, true): '%',
+  (0x36, false): '6',
+  (0x36, true): '^',
+  (0x37, false): '7',
+  (0x37, true): '&',
+  (0x38, false): '8',
+  (0x38, true): '*',
+  (0x39, false): '9',
+  (0x39, true): '(',
+  (VK_OEM_COMMA, false): ',',
+  (VK_OEM_COMMA, true): '<',
+  (VK_OEM_PERIOD, false): '.',
+  (VK_OEM_PERIOD, true): '>',
+  (VK_OEM_1, false): ';',
+  (VK_OEM_1, true): ':',
+  (VK_OEM_2, false): '/',
+  (VK_OEM_2, true): '?',
+  (VK_OEM_4, false): '[',
+  (VK_OEM_4, true): '{',
+  (VK_OEM_6, false): ']',
+  (VK_OEM_6, true): '}',
+  (VK_OEM_5, false): '\\',
+  (VK_OEM_5, true): '|',
+  (VK_OEM_3, false): '`',
+  (VK_OEM_3, true): '~',
+  (VK_OEM_7, false): "'",
+  (VK_OEM_7, true): '"',
+  (VK_OEM_PLUS, false): '=',
+  (VK_OEM_PLUS, true): '+',
+  (VK_OEM_MINUS, false): '-',
+  (VK_OEM_MINUS, true): '_',
+};
+
 String getKeyFromKeyCodeShift(int keyCode, bool isShiftDown) {
-  switch ((keyCode, isShiftDown)) {
-    case (VK_A, _): return 'A';
-    case (VK_B, _): return 'B';
-    case (VK_C, _): return 'C';
-    case (VK_D, _): return 'D';
-    case (VK_E, _): return 'E';
-    case (VK_F, _): return 'F';
-    case (VK_G, _): return 'G';
-    case (VK_H, _): return 'H';
-    case (VK_I, _): return 'I';
-    case (VK_J, _): return 'J';
-    case (VK_K, _): return 'K';
-    case (VK_L, _): return 'L';
-    case (VK_M, _): return 'M';
-    case (VK_N, _): return 'N';
-    case (VK_O, _): return 'O';
-    case (VK_P, _): return 'P';
-    case (VK_Q, _): return 'Q';
-    case (VK_R, _): return 'R';
-    case (VK_S, _): return 'S';
-    case (VK_T, _): return 'T';
-    case (VK_U, _): return 'U';
-    case (VK_V, _): return 'V';
-    case (VK_W, _): return 'W';
-    case (VK_X, _): return 'X';
-    case (VK_Y, _): return 'Y';
-    case (VK_Z, _): return 'Z';
-    case (0x30, false): return '0';
-    case (0x30, true): return ')';
-    case (0x31, false): return '1';
-    case (0x31, true): return '!';
-    case (0x32, false): return '2';
-    case (0x32, true): return '@';
-    case (0x33, false): return '3';
-    case (0x33, true): return '#';
-    case (0x34, false): return '4';
-    case (0x34, true): return '\$';
-    case (0x35, false): return '5';
-    case (0x35, true): return '%';
-    case (0x36, false): return '6';
-    case (0x36, true): return '^';
-    case (0x37, false): return '7';
-    case (0x37, true): return '&';
-    case (0x38, false): return '8';
-    case (0x38, true): return '*';
-    case (0x39, false): return '9';
-    case (0x39, true): return '(';
-    case (VK_F1, _): return 'F1';
-    case (VK_F2, _): return 'F2';
-    case (VK_F3, _): return 'F3';
-    case (VK_F4, _): return 'F4';
-    case (VK_F5, _): return 'F5';
-    case (VK_F6, _): return 'F6';
-    case (VK_F7, _): return 'F7';
-    case (VK_F8, _): return 'F8';
-    case (VK_F9, _): return 'F9';
-    case (VK_F10, _): return 'F10';
-    case (VK_F11, _): return 'F11';
-    case (VK_F12, _): return 'F12';
-    case (VK_RETURN, _): return 'Enter';
-    case (VK_TAB, _): return 'Tab';
-    case (VK_BACK, _): return 'Backspace';
-    case (VK_ESCAPE, _): return 'Escape';
-    case (VK_DELETE, _): return 'Delete';
-    case (VK_INSERT, _): return 'Insert';
-    case (VK_HOME, _): return 'Home';
-    case (VK_END, _): return 'End';
-    case (VK_PRIOR, _): return 'PageUp';
-    case (VK_NEXT, _): return 'PageDown';
-    case (VK_LEFT, _): return 'Left';
-    case (VK_RIGHT, _): return 'Right';
-    case (VK_UP, _): return 'Up';
-    case (VK_DOWN, _): return 'Down';
-    // Treating VK_(modifier) as default VK_(left modifier) for now
-    // case (VK_SHIFT, _): return 'Shift';
-    case (VK_LSHIFT, _): return 'LShift';
-    case (VK_RSHIFT, _): return 'RShift';
-    // case (VK_CONTROL, _): return 'Control';
-    case (VK_LCONTROL, _): return 'LControl';
-    case (VK_RCONTROL, _): return 'RControl';
-    // case (VK_MENU, _): return 'Alt';
-    case (VK_LMENU, _): return 'LAlt';
-    case (VK_RMENU, _): return 'RAlt';
-    case (VK_LWIN, _): return 'Win';
-    case (VK_RWIN, _): return 'RWin';
-    case (VK_CAPITAL, _): return 'CapsLock';
-    case (VK_NUMLOCK, _): return 'NumLock';
-    case (VK_SCROLL, _): return 'ScrollLock';
-    case (VK_SPACE, _): return ' ';
-    case (VK_OEM_COMMA, false): return ',';
-    case (VK_OEM_COMMA, true): return '<';
-    case (VK_OEM_PERIOD, false): return '.';
-    case (VK_OEM_PERIOD, true): return '>';
-    case (VK_OEM_1, false): return ';';
-    case (VK_OEM_1, true): return ':';
-    case (VK_OEM_2, false): return '/';
-    case (VK_OEM_2, true): return '?';
-    case (VK_OEM_4, false): return '[';
-    case (VK_OEM_4, true): return '{';
-    case (VK_OEM_6, false): return ']';
-    case (VK_OEM_6, true): return '}';
-    case (VK_OEM_5, false): return '\\';
-    case (VK_OEM_5, true): return '|';
-    case (VK_OEM_3, false): return '`';
-    case (VK_OEM_3, true): return '~';
-    case (VK_OEM_7, false): return "'";
-    case (VK_OEM_7, true): return '"';
-    case (VK_OEM_PLUS, false): return '=';
-    case (VK_OEM_PLUS, true): return '+';
-    case (VK_OEM_MINUS, false): return '-';
-    case (VK_OEM_MINUS, true): return '_';
-    case (VK_NUMPAD0, _): return 'Num0';
-    case (VK_NUMPAD1, _): return 'Num1';
-    case (VK_NUMPAD2, _): return 'Num2';
-    case (VK_NUMPAD3, _): return 'Num3';
-    case (VK_NUMPAD4, _): return 'Num4';
-    case (VK_NUMPAD5, _): return 'Num5';
-    case (VK_NUMPAD6, _): return 'Num6';
-    case (VK_NUMPAD7, _): return 'Num7';
-    case (VK_NUMPAD8, _): return 'Num8';
-    case (VK_NUMPAD9, _): return 'Num9';
-    case (VK_MULTIPLY, _): return 'NumMultiply';
-    case (VK_ADD, _): return 'NumAdd';
-    case (VK_SUBTRACT, _): return 'NumSubtract';
-    case (VK_DECIMAL, _): return 'NumDecimal';
-    case (VK_DIVIDE, _): return 'NumDivide';
-    default: return '';
-  }
+  final shiftKey = _keyCodeShiftMap[(keyCode, isShiftDown)];
+  if (shiftKey != null) return shiftKey;
+  final key = _keyCodeMap[keyCode];
+  if (key != null) return key;
+  return '';
 }
