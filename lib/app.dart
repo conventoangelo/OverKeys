@@ -54,6 +54,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   double _lastOpacity = 0.6;
   KeyboardLayout _keyboardLayout = qwerty;
   KeyboardLayout? _initialKeyboardLayout;
+  KeyboardLayout? _previousLayout;
 
   // Keyboard settings
   String _keymapStyle = 'Staggered';
@@ -167,6 +168,10 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   Icon _statusIcon = const Icon(LucideIcons.eye);
   Timer? _overlayTimer;
   Timer? _opacityDebounceTimer;
+
+  // Misc
+  final Set<String> _activeTriggers = {};
+  List<KeyboardLayout> _userLayers = [];
 
   @override
   void initState() {
@@ -405,6 +410,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
 
   Future<void> _loadConfiguration() async {
     await _loadCustomShiftMappings();
+    await _loadUserLayers();
     if (_advancedSettingsEnabled) {
       if (_useUserLayout) {
         await _loadUserLayout();
@@ -429,6 +435,14 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
     final mappings = await configService.getCustomShiftMappings();
     setState(() {
       _customShiftMappings = mappings;
+    });
+  }
+
+  Future<void> _loadUserLayers() async {
+    final configService = ConfigService();
+    final layers = await configService.getUserLayers() ?? [];
+    setState(() {
+      _userLayers = layers;
     });
   }
 
@@ -583,6 +597,38 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
       _fadeIn();
     } else {
       _resetAutoHideTimer();
+    }
+
+    final activeLayer = _userLayers.where((l) => l.trigger == key);
+    for (final layout in activeLayer) {
+      if (layout.type == 'toggle' && isPressed) {
+        setState(() {
+          if (_keyboardLayout.name != layout.name) {
+            _previousLayout = _keyboardLayout;
+            _keyboardLayout = layout;
+          } else if (_previousLayout != null) {
+            final temp = _keyboardLayout;
+            _keyboardLayout = _previousLayout!;
+            _previousLayout = temp;
+          }
+        });
+      } else if (layout.type == 'held') {
+        if (isPressed && !_activeTriggers.contains(key)) {
+          setState(() {
+            _previousLayout = _keyboardLayout;
+            _keyboardLayout = layout;
+            _activeTriggers.add(key);
+          });
+        } else if (!isPressed && _activeTriggers.contains(key)) {
+          setState(() {
+            if (_previousLayout != null) {
+              _keyboardLayout = _previousLayout!;
+              _previousLayout = null;
+            }
+            _activeTriggers.remove(key);
+          });
+        }
+      }
     }
   }
 
