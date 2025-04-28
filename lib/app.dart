@@ -55,7 +55,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   double _lastOpacity = 0.6;
   KeyboardLayout _keyboardLayout = qwerty;
   KeyboardLayout? _initialKeyboardLayout;
-  KeyboardLayout? _previousLayout;
+  KeyboardLayout? _defaultUserLayout;
 
   // Keyboard settings
   String _keymapStyle = 'Staggered';
@@ -481,12 +481,13 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
     final userLayout = await configService.getUserLayout();
 
     if (userLayout != null) {
-      if (!_kanataEnabled) {
-        setState(() {
+      setState(() {
+        _defaultUserLayout = userLayout;
+        if (!_kanataEnabled) {
           _keyboardLayout = userLayout;
-        });
-        _fadeIn();
-      }
+        }
+      });
+      _fadeIn();
     }
   }
 
@@ -604,26 +605,21 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
       if (layout.type == 'toggle' && isPressed) {
         setState(() {
           if (_keyboardLayout.name != layout.name) {
-            _previousLayout = _keyboardLayout;
             _keyboardLayout = layout;
-          } else if (_previousLayout != null) {
-            final temp = _keyboardLayout;
-            _keyboardLayout = _previousLayout!;
-            _previousLayout = temp;
+          } else if (_defaultUserLayout != null) {
+            _keyboardLayout = _defaultUserLayout!;
           }
         });
       } else if (layout.type == 'held') {
         if (isPressed && !_activeTriggers.contains(key)) {
           setState(() {
-            _previousLayout = _keyboardLayout;
             _keyboardLayout = layout;
             _activeTriggers.add(key);
           });
         } else if (!isPressed && _activeTriggers.contains(key)) {
           setState(() {
-            if (_previousLayout != null) {
-              _keyboardLayout = _previousLayout!;
-              _previousLayout = null;
+            if (_defaultUserLayout != null) {
+              _keyboardLayout = _defaultUserLayout!;
             }
             _activeTriggers.remove(key);
           });
