@@ -124,4 +124,15 @@ class ConfigService {
     final config = await loadConfig();
     return config.customShiftMappings;
   }
+
+  Future<List<KeyboardLayout>?> getUserLayers() async {
+    final config = await loadConfig();
+    List<KeyboardLayout> layers = [];
+
+    if (config.userLayouts != null) {
+      layers.addAll(config.userLayouts!.where((l) => l.trigger != null));
+    }
+
+    return layers;
+  }
 }
