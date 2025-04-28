@@ -410,10 +410,10 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
 
   Future<void> _loadConfiguration() async {
     await _loadCustomShiftMappings();
-    await _loadUserLayers();
     if (_advancedSettingsEnabled) {
       if (_useUserLayout) {
         await _loadUserLayout();
+        await _loadUserLayers();
       }
       if (_showAltLayout) {
         await _loadAltLayout();
@@ -435,14 +435,6 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
     final mappings = await configService.getCustomShiftMappings();
     setState(() {
       _customShiftMappings = mappings;
-    });
-  }
-
-  Future<void> _loadUserLayers() async {
-    final configService = ConfigService();
-    final layers = await configService.getUserLayers() ?? [];
-    setState(() {
-      _userLayers = layers;
     });
   }
 
@@ -489,6 +481,17 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
       });
       _fadeIn();
     }
+  }
+
+  Future<void> _loadUserLayers() async {
+    if (!_useUserLayout) return;
+
+    final configService = ConfigService();
+    final layers = await configService.getUserLayers() ?? [];
+
+    setState(() {
+      _userLayers = layers;
+    });
   }
 
   Future<void> _loadAltLayout() async {
@@ -600,29 +603,31 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
       _resetAutoHideTimer();
     }
 
-    final activeLayer = _userLayers.where((l) => l.trigger == key);
-    for (final layout in activeLayer) {
-      if (layout.type == 'toggle' && isPressed) {
-        setState(() {
-          if (_keyboardLayout.name != layout.name) {
-            _keyboardLayout = layout;
-          } else if (_defaultUserLayout != null) {
-            _keyboardLayout = _defaultUserLayout!;
-          }
-        });
-      } else if (layout.type == 'held') {
-        if (isPressed && !_activeTriggers.contains(key)) {
+    if (_useUserLayout && _advancedSettingsEnabled) {
+      final activeLayer = _userLayers.where((l) => l.trigger == key);
+      for (final layout in activeLayer) {
+        if (layout.type == 'toggle' && isPressed) {
           setState(() {
-            _keyboardLayout = layout;
-            _activeTriggers.add(key);
-          });
-        } else if (!isPressed && _activeTriggers.contains(key)) {
-          setState(() {
-            if (_defaultUserLayout != null) {
+            if (_keyboardLayout.name != layout.name) {
+              _keyboardLayout = layout;
+            } else if (_defaultUserLayout != null) {
               _keyboardLayout = _defaultUserLayout!;
             }
-            _activeTriggers.remove(key);
           });
+        } else if (layout.type == 'held') {
+          if (isPressed && !_activeTriggers.contains(key)) {
+            setState(() {
+              _keyboardLayout = layout;
+              _activeTriggers.add(key);
+            });
+          } else if (!isPressed && _activeTriggers.contains(key)) {
+            setState(() {
+              if (_defaultUserLayout != null) {
+                _keyboardLayout = _defaultUserLayout!;
+              }
+              _activeTriggers.remove(key);
+            });
+          }
         }
       }
     }
