@@ -1,5 +1,39 @@
 # Changelog
 
+## [0.3.0](https://github.com/conventoangelo/OverKeys/compare/v0.2.17...v0.3.0) (2025-04-28)
+
+
+### ⚠ BREAKING CHANGES
+
+* add support for user-defined keyboard layers ([#114](https://github.com/conventoangelo/OverKeys/issues/114))
+
+### ✨ Features
+
+* add support for F13-F24 keys ([1ddf917](https://github.com/conventoangelo/OverKeys/commit/1ddf9172ed02a82b7030723b4491e894d02e8563))
+* add support for user-defined keyboard layers ([#114](https://github.com/conventoangelo/OverKeys/issues/114)) ([1ddf917](https://github.com/conventoangelo/OverKeys/commit/1ddf9172ed02a82b7030723b4491e894d02e8563))
+
+
+### 🐛 Bug Fixes
+
+* only listen to layer changes if useUserLayout is true ([1ddf917](https://github.com/conventoangelo/OverKeys/commit/1ddf9172ed02a82b7030723b4491e894d02e8563))
+* revert to the defaultUserLayout after layer changes ([1ddf917](https://github.com/conventoangelo/OverKeys/commit/1ddf9172ed02a82b7030723b4491e894d02e8563))
+
+
+### 📚 Documentation
+
+* add keyboard shortcuts for increasing and decreasing opacity ([1d7306f](https://github.com/conventoangelo/OverKeys/commit/1d7306f66829185cad067536c2f638a91a01ed26))
+* add note about thumb keys color setting in Learning Mode ([051bade](https://github.com/conventoangelo/OverKeys/commit/051bade821fc5d287029686e4e19bed8719ff959))
+* add user-defined layers feature ([006334b](https://github.com/conventoangelo/OverKeys/commit/006334b87e736226b2de6c79f98d14e6d5dca9ed))
+* update option label from "Use custom layout from config" to "Use user layouts" ([1ddf917](https://github.com/conventoangelo/OverKeys/commit/1ddf9172ed02a82b7030723b4491e894d02e8563))
+* update supported function keys range from F1-F12 to F1-F24 ([a239190](https://github.com/conventoangelo/OverKeys/commit/a239190927c66b7fef2db7188ee67459d41f7b6b))
+* use same wording as in preferences window in its documentation ([52d53de](https://github.com/conventoangelo/OverKeys/commit/52d53dec9347013e8ad59d1e7cfd80a71f51652c))
+
+
+### 🔨 Refactoring
+
+* move variables to more appropriate groups ([1ddf917](https://github.com/conventoangelo/OverKeys/commit/1ddf9172ed02a82b7030723b4491e894d02e8563))
+* update toggle option label and subtitle for user layout ([1ddf917](https://github.com/conventoangelo/OverKeys/commit/1ddf9172ed02a82b7030723b4491e894d02e8563))
+
 ## [0.2.17](https://github.com/conventoangelo/OverKeys/compare/v0.2.16...v0.2.17) (2025-04-26)
 
 
