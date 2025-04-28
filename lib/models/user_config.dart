@@ -28,6 +28,8 @@ class UserConfig {
           keys: List<List<String>>.from(
             userLayout['keys'].map((row) => List<String>.from(row)),
           ),
+          trigger: userLayout['trigger'],
+          type: userLayout['type'],
         ));
       }
     }
@@ -54,6 +56,8 @@ class UserConfig {
             .map((userLayout) => {
                   'name': userLayout.name,
                   'keys': userLayout.keys,
+                  if (userLayout.trigger != null) 'trigger': userLayout.trigger,
+                  if (userLayout.type != null) 'type': userLayout.type,
                 })
             .toList()
         : [];

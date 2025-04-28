@@ -1,8 +1,10 @@
 class KeyboardLayout {
   final String name;
   final List<List<String>> keys;
+  final String? trigger;
+  final String? type;
 
-  const KeyboardLayout({required this.name, required this.keys});
+  const KeyboardLayout({required this.name, required this.keys, this.trigger, this.type});
 }
 
 const qwerty = KeyboardLayout(
