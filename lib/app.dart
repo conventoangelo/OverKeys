@@ -42,6 +42,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   bool _isWindowVisible = true;
   bool _ignoreMouseEvents = true;
   Timer? _autoHideTimer;
+  Timer? _opacityDebounceTimer;
   bool _forceHide = false;
   bool autoHideBeforeForceHide = false;
   bool autoHideBeforeMove = false;
@@ -159,17 +160,16 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   // Services
   final PreferencesService _prefsService = PreferencesService();
   final KanataService _kanataService = KanataService();
-  final Map<String, bool> _keyPressStates = {};
-  Map<String, String>? _customShiftMappings;
 
   // Overlay
   bool _showStatusOverlay = false;
   String _overlayMessage = '';
   Icon _statusIcon = const Icon(LucideIcons.eye);
   Timer? _overlayTimer;
-  Timer? _opacityDebounceTimer;
 
   // Misc
+  final Map<String, bool> _keyPressStates = {};
+  Map<String, String>? _customShiftMappings;
   final Set<String> _activeTriggers = {};
   List<KeyboardLayout> _userLayers = [];
 
