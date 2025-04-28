@@ -55,10 +55,10 @@ class AdvancedTab extends StatelessWidget {
           secondChild: Column(
             children: [
               ToggleOption(
-                label: 'Use custom layout from config',
+                label: 'Use user layouts',
                 value: useUserLayout,
                 subtitle:
-                    'Sets layout to user-defined defaultUserLayout. Make sure that the layout is saved in the config file.',
+                    'Use defaultUserLayout defined in the config file (as the base layer). Enables OverKeys to listen and switch between different layers. Make sure that the layouts/layers are saved in the config file.',
                 onChanged: (value) {
                   if (value && kanataEnabled) {
                     updateKanataEnabled(false);
@@ -109,9 +109,8 @@ class AdvancedTab extends StatelessWidget {
               _buildOpenConfigButton(context),
             ],
           ),
-          crossFadeState: advancedSettingsEnabled
-              ? CrossFadeState.showSecond
-              : CrossFadeState.showFirst,
+          crossFadeState:
+              advancedSettingsEnabled ? CrossFadeState.showSecond : CrossFadeState.showFirst,
           sizeCurve: Curves.easeInOut,
         ),
       ],
@@ -131,14 +130,10 @@ class AdvancedTab extends StatelessWidget {
               children: [
                 Text('Open config file',
                     style: TextStyle(
-                        color: colorScheme.onSurface,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 16)),
+                        color: colorScheme.onSurface, fontWeight: FontWeight.w600, fontSize: 16)),
                 Text(
                   'Turn related advanced setting off then on again to apply changes.',
-                  style: TextStyle(
-                      color: colorScheme.onSurface.withAlpha(153),
-                      fontSize: 14.0),
+                  style: TextStyle(color: colorScheme.onSurface.withAlpha(153), fontSize: 14.0),
                   softWrap: true,
                   overflow: TextOverflow.visible,
                 ),
@@ -147,8 +142,7 @@ class AdvancedTab extends StatelessWidget {
           ),
           const SizedBox(width: 16),
           ElevatedButton.icon(
-            icon: Icon(LucideIcons.fileJson2,
-                color: colorScheme.primary, size: 24),
+            icon: Icon(LucideIcons.fileJson2, color: colorScheme.primary, size: 24),
             label: Text('Open',
                 style: TextStyle(
                   color: colorScheme.primary,
