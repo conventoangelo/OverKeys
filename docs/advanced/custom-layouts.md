@@ -16,7 +16,7 @@ The custom layout feature in OverKeys allows you to use your own keyboard layout
 3. Select **Preferences**
 4. Go to the **General** tab
 5. Toggle the **Enable advanced settings** option
-6. Toggle the **Use custom layout from config** option
+6. Toggle the **Use user layouts** option
 7. Restart OverKeys if needed
 
 ### Using Configuration File
@@ -46,7 +46,7 @@ The custom layout feature in OverKeys allows you to use your own keyboard layout
     ```
 
 6. Save the file
-7. Toggle **Use custom layout from config** off then on again to apply changes
+7. Toggle **Use user layouts** off then on again to apply changes
 
 ## Default User Layouts
 
@@ -85,7 +85,7 @@ You can then set this layout as your default by updating the `defaultUserLayout`
 
 ```json
 {
-    "defaultUserLayout": "MyCustomLayout"
+	"defaultUserLayout": "MyCustomLayout"
 }
 ```
 

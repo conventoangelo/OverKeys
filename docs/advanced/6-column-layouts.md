@@ -50,7 +50,7 @@ The 6-column layout feature in OverKeys allows you to visualize 6-column split m
     ```
 
 6. Save the file
-7. Toggle the **Use custom layout from config** option off then on again to apply change
+7. Toggle the **Use user layouts** option off then on again to apply change
 
 ## Implementation Notes
 
