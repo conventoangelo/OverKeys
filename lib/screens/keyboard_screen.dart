@@ -125,11 +125,16 @@ class KeyboardScreen extends StatelessWidget {
       for (int i = 0; i < keys.length; i++) {
         if (rowIndex == 0 && i == 0 && !showGraveKey) continue;
 
-        bool isLastKeyFirstRow = rowIndex == 0 && i == keys.length - 1 && showGraveKey;
-        rowWidgets.add(buildKeys(rowIndex, keys[i], i, isLastKeyFirstRow: isLastKeyFirstRow));
+        bool isLastKeyFirstRow =
+            rowIndex == 0 && i == keys.length - 1 && showGraveKey;
+        rowWidgets.add(buildKeys(rowIndex, keys[i], i,
+            isLastKeyFirstRow: isLastKeyFirstRow));
       }
     } else {
-      int startIndex = (rowIndex == 0 && (keymapStyle != 'Split Matrix' || !showGraveKey)) ? 1 : 0;
+      int startIndex =
+          (rowIndex == 0 && (keymapStyle != 'Split Matrix' || !showGraveKey))
+              ? 1
+              : 0;
       int endIndex = (rowIndex == 0) ? 11 : (use6ColLayout ? 12 : 10);
 
       // Special handling for first row in Split Matrix with 6 columns
@@ -151,9 +156,13 @@ class KeyboardScreen extends StatelessWidget {
         for (int i = startIndex; i < keys.length && i < endIndex; i++) {
           if (keymapStyle == 'Split Matrix') {
             if ((rowIndex == 0 && i == 6) ||
-                (i == (use6ColLayout ? 6 : 5) && rowIndex > 0 && rowIndex < 4)) {
+                (i == (use6ColLayout ? 6 : 5) &&
+                    rowIndex > 0 &&
+                    rowIndex < 4)) {
               rowWidgets.add(SizedBox(width: splitWidth));
-            } else if (i == keys.length ~/ 2 && rowIndex == 4 && keys.length != 1) {
+            } else if (i == keys.length ~/ 2 &&
+                rowIndex == 4 &&
+                keys.length != 1) {
               rowWidgets.add(SizedBox(width: lastRowSplitWidth));
             }
           }
@@ -178,17 +187,22 @@ class KeyboardScreen extends StatelessWidget {
     );
   }
 
-  Widget buildKeys(int rowIndex, String key, int keyIndex, {bool isLastKeyFirstRow = false}) {
-    bool isShiftPressed =
-        (keyPressStates["LShift"] ?? false) || (keyPressStates["RShift"] ?? false);
+  Widget buildKeys(int rowIndex, String key, int keyIndex,
+      {bool isLastKeyFirstRow = false}) {
+    bool isShiftPressed = (keyPressStates["LShift"] ?? false) ||
+        (keyPressStates["RShift"] ?? false);
     if (isShiftPressed) {
-      if (customShiftMappings != null && customShiftMappings!.containsKey(key)) {
+      if (customShiftMappings != null &&
+          customShiftMappings!.containsKey(key)) {
         key = customShiftMappings![key]!;
       } else {
         key = Mappings.getShiftedSymbol(key) ?? key;
       }
     }
-    String keyStateKey = Mappings.getKeyForSymbol(key);
+    String realKey =
+        (layout.foreign ?? false) ? qwerty.keys[rowIndex][keyIndex] : key;
+
+    String keyStateKey = Mappings.getKeyForSymbol(realKey);
     bool isPressed = keyPressStates[keyStateKey] ?? false;
 
     if (use6ColLayout) {
@@ -205,15 +219,18 @@ class KeyboardScreen extends StatelessWidget {
 
     Color textColor = isPressed ? keyTextColor : keyTextColorNotPressed;
     Color tactMarkerColor = isPressed ? markerColor : markerColorNotPressed;
-    Color borderColor = isPressed ? keyBorderColorPressed : keyBorderColorNotPressed;
+    Color borderColor =
+        isPressed ? keyBorderColorPressed : keyBorderColorNotPressed;
 
-    double width =
-        key == " " ? spaceWidth : (isLastKeyFirstRow ? keySize * 2 + keyPadding / 2 : keySize);
+    double width = key == " "
+        ? spaceWidth
+        : (isLastKeyFirstRow ? keySize * 2 + keyPadding / 2 : keySize);
 
     Widget keyWidget = Padding(
       padding: EdgeInsets.all(keyPadding),
       child: AnimatedContainer(
-        duration: Duration(milliseconds: animationEnabled ? animationDuration.toInt() : 20),
+        duration: Duration(
+            milliseconds: animationEnabled ? animationDuration.toInt() : 20),
         curve: Curves.easeInOutCubic,
         width: width,
         height: keySize,
@@ -261,7 +278,9 @@ class KeyboardScreen extends StatelessWidget {
                           textAlign: TextAlign.left,
                           style: TextStyle(
                             color: textColor,
-                            fontSize: key.length > 2 ? keyFontSize * 0.6 : keyFontSize * 0.85,
+                            fontSize: key.length > 2
+                                ? keyFontSize * 0.6
+                                : keyFontSize * 0.85,
                             fontWeight: fontWeight,
                           ),
                         ),
@@ -275,9 +294,10 @@ class KeyboardScreen extends StatelessWidget {
                           textAlign: TextAlign.right,
                           style: TextStyle(
                             color: textColor,
-                            fontSize: _getAltLayoutKey(rowIndex, keyIndex).length > 2
-                                ? keyFontSize * 0.6
-                                : keyFontSize * 0.85,
+                            fontSize:
+                                _getAltLayoutKey(rowIndex, keyIndex).length > 2
+                                    ? keyFontSize * 0.6
+                                    : keyFontSize * 0.85,
                             fontWeight: fontWeight,
                           ),
                         ),
@@ -290,7 +310,8 @@ class KeyboardScreen extends StatelessWidget {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: textColor,
-                        fontSize: key.length > 2 ? keyFontSize * 0.7 : keyFontSize,
+                        fontSize:
+                            key.length > 2 ? keyFontSize * 0.7 : keyFontSize,
                         fontWeight: fontWeight,
                       ),
                     ),
@@ -301,17 +322,24 @@ class KeyboardScreen extends StatelessWidget {
     // Tactile Markers
     if (rowIndex == 2 && (keyIndex == 3 || keyIndex == 6)) {
       keyWidget = Stack(
-        alignment: showAltLayout && altLayout != null ? Alignment.center : Alignment.bottomCenter,
+        alignment: showAltLayout && altLayout != null
+            ? Alignment.center
+            : Alignment.bottomCenter,
         children: [
           keyWidget,
           Positioned(
             bottom: showAltLayout && altLayout != null ? null : markerOffset,
             child: AnimatedContainer(
-              duration: Duration(milliseconds: animationEnabled ? animationDuration.toInt() : 20),
+              duration: Duration(
+                  milliseconds:
+                      animationEnabled ? animationDuration.toInt() : 20),
               curve: Curves.easeInOutCubic,
               transform: _getMarkerAnimationTransform(isPressed),
-              width: markerWidth * (showAltLayout && altLayout != null ? 0.5 : 1),
-              height: showAltLayout && altLayout != null ? markerWidth * 0.5 : markerHeight,
+              width:
+                  markerWidth * (showAltLayout && altLayout != null ? 0.5 : 1),
+              height: showAltLayout && altLayout != null
+                  ? markerWidth * 0.5
+                  : markerHeight,
               decoration: BoxDecoration(
                 color: tactMarkerColor,
                 borderRadius: BorderRadius.circular(markerBorderRadius),
@@ -350,7 +378,8 @@ class KeyboardScreen extends StatelessWidget {
             keySize * (1 - scaleValue) / (2 * scaleValue),
           );
       default:
-        return Matrix4.translationValues(0, 2 * animationScale, 0); // Default animation
+        return Matrix4.translationValues(
+            0, 2 * animationScale, 0); // Default animation
     }
   }
 
@@ -377,7 +406,8 @@ class KeyboardScreen extends StatelessWidget {
             ..scale(scaleValue)
             ..translate(
               -markerWidth * (scaleValue - 1) / (2 * scaleValue),
-              -markerHeight * (scaleValue - 1) / (2 * scaleValue) + 0.8 * animationScale,
+              -markerHeight * (scaleValue - 1) / (2 * scaleValue) +
+                  0.8 * animationScale,
             );
         }
       case 'shrink':
@@ -394,7 +424,8 @@ class KeyboardScreen extends StatelessWidget {
             ..scale(scaleValue)
             ..translate(
               markerWidth * (1 - scaleValue) / (2 * scaleValue),
-              markerHeight * (1 - scaleValue) / (2 * scaleValue) - 0.8 * animationScale,
+              markerHeight * (1 - scaleValue) / (2 * scaleValue) -
+                  0.8 * animationScale,
             );
         }
       default:
@@ -411,10 +442,11 @@ class KeyboardScreen extends StatelessWidget {
       return "";
     }
     String altKey = altRow[keyIndex];
-    bool isShiftPressed =
-        (keyPressStates["LShift"] ?? false) || (keyPressStates["RShift"] ?? false);
+    bool isShiftPressed = (keyPressStates["LShift"] ?? false) ||
+        (keyPressStates["RShift"] ?? false);
     if (isShiftPressed) {
-      if (customShiftMappings != null && customShiftMappings!.containsKey(altKey)) {
+      if (customShiftMappings != null &&
+          customShiftMappings!.containsKey(altKey)) {
         altKey = customShiftMappings![altKey]!;
       } else {
         altKey = Mappings.getShiftedSymbol(altKey) ?? altKey;

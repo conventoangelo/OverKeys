@@ -3,8 +3,14 @@ class KeyboardLayout {
   final List<List<String>> keys;
   final String? trigger;
   final String? type;
+  final bool? foreign;
 
-  const KeyboardLayout({required this.name, required this.keys, this.trigger, this.type});
+  const KeyboardLayout(
+      {required this.name,
+      required this.keys,
+      this.trigger,
+      this.type,
+      this.foreign});
 }
 
 const qwerty = KeyboardLayout(
@@ -224,6 +230,39 @@ const focal = KeyboardLayout(
   ],
 );
 
+const russian = KeyboardLayout(
+    name: 'Russian',
+    keys: [
+      ["", "", "", "", "", "", "", "", "", "", "", "", ""],
+      ["й", "ц", "у", "к", "е", "н", "г", "ш", "щ", "з", "х", "ъ"],
+      ["ф", "ы", "в", "а", "п", "р", "о", "л", "д", "ж", "э"],
+      ["я", "ч", "с", "м", "и", "т", "ь", "б", "ю", "ё"],
+      [" "]
+    ],
+    foreign: true);
+
+const arabic = KeyboardLayout(
+    name: "Arabic",
+    keys: [
+      ["١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩", "٠", "", "", ""],
+      ["ض", "ص", "ث", "ق", "ف", "غ", "ع", "ه", "خ", "ح", "ج", "د"],
+      ["ش", "س", "ي", "ب", "ل", "ا", "ت", "ن", "م", "ك", "ط"],
+      ["ئ", "ء", "ؤ", "ر", "لا", "ى", "ة", "و", "ز", "ظ"],
+      [" "]
+    ],
+    foreign: true);
+
+const greek = KeyboardLayout(
+    name: 'Greek',
+    keys: [
+      ["", "", "", "", "", "", "", "", "", "", "", "", ""],
+      [";", "ς", "ε", "ρ", "τ", "υ", "θ", "ι", "ο", "π", "[", "]"],
+      ["α", "σ", "δ", "φ", "γ", "η", "ξ", "κ", "λ", "", "'"],
+      ["ζ", "χ", "ψ", "ω", "β", "ν", "μ", ",", ".", "/"],
+      [" "]
+    ],
+    foreign: true);
+
 final List<KeyboardLayout> availableLayouts = [
   qwerty,
   colemak,
@@ -245,4 +284,7 @@ final List<KeyboardLayout> availableLayouts = [
   sturdy,
   sturdyAngle,
   workman,
+  greek,
+  arabic,
+  russian,
 ];
