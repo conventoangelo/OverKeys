@@ -1431,6 +1431,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
                       showAltLayout: _advancedSettingsEnabled && _showAltLayout,
                       altLayout: _altLayout,
                       use6ColLayout: _use6ColLayout,
+                      reactiveShiftEnabled: _reactiveShiftEnabled,
                       keyPressStates: _keyPressStates,
                       customShiftMappings: _customShiftMappings,
                     ),

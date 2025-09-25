@@ -48,6 +48,7 @@ class KeyboardScreen extends StatelessWidget {
   final bool showAltLayout;
   final KeyboardLayout? altLayout;
   final bool use6ColLayout;
+  final bool reactiveShiftEnabled;
   final Map<String, bool> keyPressStates;
   final Map<String, String>? customShiftMappings;
 
@@ -98,6 +99,7 @@ class KeyboardScreen extends StatelessWidget {
     required this.showAltLayout,
     required this.altLayout,
     required this.use6ColLayout,
+    required this.reactiveShiftEnabled,
     required this.keyPressStates,
     this.customShiftMappings,
   });
@@ -191,7 +193,7 @@ class KeyboardScreen extends StatelessWidget {
       {bool isLastKeyFirstRow = false}) {
     bool isShiftPressed = (keyPressStates["LShift"] ?? false) ||
         (keyPressStates["RShift"] ?? false);
-    if (isShiftPressed) {
+    if (isShiftPressed && reactiveShiftEnabled) {
       if (customShiftMappings != null &&
           customShiftMappings!.containsKey(key)) {
         key = customShiftMappings![key]!;
@@ -444,7 +446,7 @@ class KeyboardScreen extends StatelessWidget {
     String altKey = altRow[keyIndex];
     bool isShiftPressed = (keyPressStates["LShift"] ?? false) ||
         (keyPressStates["RShift"] ?? false);
-    if (isShiftPressed) {
+    if (isShiftPressed && reactiveShiftEnabled) {
       if (customShiftMappings != null &&
           customShiftMappings!.containsKey(altKey)) {
         altKey = customShiftMappings![altKey]!;
