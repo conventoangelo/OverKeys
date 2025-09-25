@@ -1,7 +1,7 @@
 name: overkeys
 description: "An open-source, customizable on-screen keyboard for Windows. Learn and practice alternative layouts, personalize appearance, and improve your typing."
 publish_to: "none"
-version: 0.3.0
+version: 0.3.1
 repository: https://github.com/conventoangelo/OverKeys
 
 environment:

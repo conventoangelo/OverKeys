@@ -1,5 +1,31 @@
 # Changelog
 
+## [0.3.1](https://github.com/conventoangelo/OverKeys/compare/v0.3.0...v0.3.1) (2025-09-25)
+
+
+### ✨ Features
+
+* add option for enabling or disabling reactive shift ([#135](https://github.com/conventoangelo/OverKeys/issues/135)) ([3369a9e](https://github.com/conventoangelo/OverKeys/commit/3369a9eeb0cd0481167aa65d735daba671454f30))
+* add option to make OverKeys hidden on startup ([#137](https://github.com/conventoangelo/OverKeys/issues/137)) ([320f26e](https://github.com/conventoangelo/OverKeys/commit/320f26ed34d38a71347757f19807cf98c98cc1b1))
+* added greek, russian, and arabic (language) layouts ([63b369e](https://github.com/conventoangelo/OverKeys/commit/63b369e36107b21aeb8430ba6e0b2cc3160bf244))
+* added support for recognizing keypress states of foreign layouts([#122](https://github.com/conventoangelo/OverKeys/issues/122)) ([63b369e](https://github.com/conventoangelo/OverKeys/commit/63b369e36107b21aeb8430ba6e0b2cc3160bf244))
+* numpad keys now share state with regular keys ([#118](https://github.com/conventoangelo/OverKeys/issues/118)) ([0d2856f](https://github.com/conventoangelo/OverKeys/commit/0d2856f147e8cf1e819d64f69750a3c19c322920))
+
+
+### 🐛 Bug Fixes
+
+* streamline key index adjustment for 6-column layout ([#136](https://github.com/conventoangelo/OverKeys/issues/136)) ([39d94eb](https://github.com/conventoangelo/OverKeys/commit/39d94eb7dd92ada7c6e5cfea6c95d3065ed0bc6f))
+* update alias mappings to reflect numpad keys behavior change ([0d2856f](https://github.com/conventoangelo/OverKeys/commit/0d2856f147e8cf1e819d64f69750a3c19c322920))
+
+
+### 📚 Documentation
+
+* add 6-column split matrix sample layout ([2f84394](https://github.com/conventoangelo/OverKeys/commit/2f843944b2b51eb10029cd2839242b508e653bbf))
+* add custom font feature documentation ([f3ea673](https://github.com/conventoangelo/OverKeys/commit/f3ea67342d4c983165d23b576c3e44448c446de6))
+* update configuration instructions to use 'Reload config' instead of restarting OverKeys ([2c29063](https://github.com/conventoangelo/OverKeys/commit/2c290636374af138fdc292760d0ea118bf88b81d))
+* update docs to reflect numpad keys behavior change ([0d2856f](https://github.com/conventoangelo/OverKeys/commit/0d2856f147e8cf1e819d64f69750a3c19c322920))
+* updates instructions for finding config file ([#132](https://github.com/conventoangelo/OverKeys/issues/132)) ([cadc011](https://github.com/conventoangelo/OverKeys/commit/cadc011833fede782e8aae7fe5dd43eed06c53fc))
+
 ## [0.3.0](https://github.com/conventoangelo/OverKeys/compare/v0.2.17...v0.3.0) (2025-04-28)
 
 
