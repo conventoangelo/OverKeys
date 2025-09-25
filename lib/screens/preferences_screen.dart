@@ -41,6 +41,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
 
   // General settings
   bool _launchAtStartup = false;
+  bool _hideAtStartup = false;
   bool _autoHideEnabled = false;
   bool _reactiveShiftEnabled = true;
   double _autoHideDuration = 2.0;
@@ -211,6 +212,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     setState(() {
       // General settings
       _launchAtStartup = prefs['launchAtStartup'];
+      _hideAtStartup = prefs['hideAtStartup'];
       _autoHideEnabled = prefs['autoHideEnabled'];
       _reactiveShiftEnabled = prefs['reactiveShiftEnabled'];
       _autoHideDuration = prefs['autoHideDuration'];
@@ -303,6 +305,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     final prefs = {
       // General settings
       'launchAtStartup': _launchAtStartup,
+      'hideAtStartup': _hideAtStartup,
       'autoHideEnabled': _autoHideEnabled,
       'reactiveShiftEnabled': _reactiveShiftEnabled,
       'autoHideDuration': _autoHideDuration,
@@ -567,6 +570,7 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       case 'General':
         return GeneralTab(
           launchAtStartup: _launchAtStartup,
+          hideAtStartup: _hideAtStartup,
           autoHideEnabled: _autoHideEnabled,
           autoHideDuration: _autoHideDuration,
           reactiveShiftEnabled: _reactiveShiftEnabled,
@@ -575,6 +579,10 @@ class _PreferencesScreenState extends State<PreferencesScreen>
           updateLaunchAtStartup: (value) {
             setState(() => _launchAtStartup = value);
             _updateMainWindow('updateLaunchAtStartup', value);
+          },
+          updateHideAtStartup: (value) {
+            setState(() => _hideAtStartup = value);
+            _updateMainWindow('updateHideAtStartup', value);
           },
           updateAutoHideEnabled: (value) {
             setState(() => _autoHideEnabled = value);

@@ -4,12 +4,14 @@ import 'package:overkeys/models/keyboard_layouts.dart';
 
 class GeneralTab extends StatefulWidget {
   final bool launchAtStartup;
+  final bool hideAtStartup;
   final bool autoHideEnabled;
   final bool reactiveShiftEnabled;
   final double autoHideDuration;
   final String keyboardLayoutName;
   final double opacity;
   final Function(bool) updateLaunchAtStartup;
+  final Function(bool) updateHideAtStartup;
   final Function(bool) updateAutoHideEnabled;
   final Function(bool) updateReactiveShiftEnabled;
   final Function(double) updateAutoHideDuration;
@@ -19,12 +21,14 @@ class GeneralTab extends StatefulWidget {
   const GeneralTab({
     super.key,
     required this.launchAtStartup,
+    required this.hideAtStartup,
     required this.autoHideEnabled,
     required this.reactiveShiftEnabled,
     required this.autoHideDuration,
     required this.keyboardLayoutName,
     required this.opacity,
     required this.updateLaunchAtStartup,
+    required this.updateHideAtStartup,
     required this.updateAutoHideEnabled,
     required this.updateReactiveShiftEnabled,
     required this.updateAutoHideDuration,
@@ -76,12 +80,17 @@ class _GeneralTabState extends State<GeneralTab> {
         ToggleOption(
           label: 'Enable Reactive Shift',
           value: widget.reactiveShiftEnabled,
-          subtitle: 'Updates the displayed keys to their Shift+Key symbols when Shift is pressed',
+          subtitle:
+              'Updates the displayed keys to their Shift+Key symbols when Shift is pressed',
           onChanged: widget.updateReactiveShiftEnabled,
         ),
         AnimatedCrossFade(
           duration: const Duration(milliseconds: 300),
-          firstChild: const SizedBox.shrink(),
+          firstChild: ToggleOption(
+            label: 'Start hidden',
+            value: widget.hideAtStartup,
+            onChanged: widget.updateHideAtStartup,
+          ),
           secondChild: SliderOption(
             label: 'Auto-hide duration (seconds)',
             value: _localAutoHideDuration,

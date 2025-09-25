@@ -8,6 +8,7 @@ class PreferencesService {
 
   // General settings
   Future<bool> getLaunchAtStartup() async => await _prefs.getBool('launchAtStartup') ?? false;
+  Future<bool> getHideAtStartup() async => await _prefs.getBool('hideAtStartup') ?? false;
   Future<bool> getAutoHideEnabled() async => await _prefs.getBool('autoHideEnabled') ?? false;
   Future<bool> getReactiveShiftEnabled() async => await _prefs.getBool('reactiveShiftEnabled') ?? true;
   Future<double> getAutoHideDuration() async => await _prefs.getDouble('autoHideDuration') ?? 2.0;
@@ -143,6 +144,8 @@ class PreferencesService {
   // General settings
   Future<void> setLaunchAtStartup(bool value) async =>
       await _prefs.setBool('launchAtStartup', value);
+  Future<void> setHideAtStartup(bool value) async =>
+      await _prefs.setBool('hideAtStartup', value);
   Future<void> setAutoHideEnabled(bool value) async =>
       await _prefs.setBool('autoHideEnabled', value);
   Future<void> setReactiveShiftEnabled(bool value) async =>
@@ -291,6 +294,7 @@ class PreferencesService {
 
   Future<Map<String, dynamic>> _loadGeneralPreferences() async => {
         'launchAtStartup': await getLaunchAtStartup(),
+        'hideAtStartup': await getHideAtStartup(),
         'autoHideEnabled': await getAutoHideEnabled(),
         'reactiveShiftEnabled': await getReactiveShiftEnabled(),
         'autoHideDuration': await getAutoHideDuration(),
@@ -387,6 +391,7 @@ class PreferencesService {
   Future<void> saveAllPreferences(Map<String, dynamic> prefs) async {
     // General settings
     await setLaunchAtStartup(prefs['launchAtStartup']);
+    await setHideAtStartup(prefs['hideAtStartup']);
     await setAutoHideEnabled(prefs['autoHideEnabled']);
     await setReactiveShiftEnabled(prefs['reactiveShiftEnabled']);
     await setAutoHideDuration(prefs['autoHideDuration']);
