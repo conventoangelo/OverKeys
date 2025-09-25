@@ -74,8 +74,9 @@ class _GeneralTabState extends State<GeneralTab> {
           onChanged: widget.updateAutoHideEnabled,
         ),
         ToggleOption(
-          label: 'Reactive Shift (update keys when Shift is pressed)',
+          label: 'Enable Reactive Shift',
           value: widget.reactiveShiftEnabled,
+          subtitle: 'Updates the displayed keys to their Shift+Key symbols when Shift is pressed',
           onChanged: widget.updateReactiveShiftEnabled,
         ),
         AnimatedCrossFade(
