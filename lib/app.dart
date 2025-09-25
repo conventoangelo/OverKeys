@@ -197,6 +197,8 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
     }
     if (_autoHideEnabled) {
       _resetAutoHideTimer();
+    } else if (_hideAtStartup) {
+      onTrayIconMouseDown();
     }
   }
 
