@@ -207,9 +207,7 @@ class KeyboardScreen extends StatelessWidget {
     String keyStateKey = Mappings.getKeyForSymbol(realKey);
     bool isPressed = keyPressStates[keyStateKey] ?? false;
 
-    if (use6ColLayout) {
-      keyIndex -= 1;
-    }
+    keyIndex -= use6ColLayout ? 1 : 0;
     Color keyColor;
     if (isPressed) {
       keyColor = keyColorPressed;
@@ -436,6 +434,7 @@ class KeyboardScreen extends StatelessWidget {
   }
 
   String _getAltLayoutKey(int rowIndex, int keyIndex) {
+    keyIndex += use6ColLayout ? 1 : 0;
     if (altLayout == null || rowIndex >= altLayout!.keys.length) {
       return "";
     }
