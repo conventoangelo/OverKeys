@@ -50,6 +50,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   // General settings
   bool _launchAtStartup = false;
   bool _autoHideEnabled = false;
+  bool _reactiveShiftEnabled = true;
   double _autoHideDuration = 2.0;
   double _opacity = 0.6;
   double _lastOpacity = 0.6;
@@ -230,6 +231,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
       // General settings
       _launchAtStartup = prefs['launchAtStartup'];
       _autoHideEnabled = prefs['autoHideEnabled'];
+      _reactiveShiftEnabled = prefs['reactiveShiftEnabled'];
       _autoHideDuration = prefs['autoHideDuration'];
       _opacity = prefs['opacity'];
       _lastOpacity = prefs['opacity'];
@@ -322,6 +324,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
       // General settings
       'launchAtStartup': _launchAtStartup,
       'autoHideEnabled': _autoHideEnabled,
+      'reactiveShiftEnabled': _reactiveShiftEnabled,
       'autoHideDuration': _autoHideDuration,
       'opacity': _opacity,
       'keyboardLayoutName': _initialKeyboardLayout!.name,
@@ -999,6 +1002,9 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
         case 'updateAutoHideEnabled':
           final autoHideEnabled = call.arguments as bool;
           _toggleAutoHide(autoHideEnabled);
+        case 'updateReactiveShiftEnabled':
+          final reactiveShiftEnabled = call.arguments as bool;
+          setState(() => _reactiveShiftEnabled = reactiveShiftEnabled);
         case 'updateAutoHideDuration':
           final autoHideDuration = call.arguments as double;
           setState(() => _autoHideDuration = autoHideDuration);

@@ -9,6 +9,7 @@ class PreferencesService {
   // General settings
   Future<bool> getLaunchAtStartup() async => await _prefs.getBool('launchAtStartup') ?? false;
   Future<bool> getAutoHideEnabled() async => await _prefs.getBool('autoHideEnabled') ?? false;
+  Future<bool> getReactiveShiftEnabled() async => await _prefs.getBool('reactiveShiftEnabled') ?? true;
   Future<double> getAutoHideDuration() async => await _prefs.getDouble('autoHideDuration') ?? 2.0;
   Future<double> getOpacity() async => await _prefs.getDouble('opacity') ?? 0.6;
   Future<String> getKeyboardLayoutName() async => await _prefs.getString('layout') ?? 'QWERTY';
@@ -144,6 +145,8 @@ class PreferencesService {
       await _prefs.setBool('launchAtStartup', value);
   Future<void> setAutoHideEnabled(bool value) async =>
       await _prefs.setBool('autoHideEnabled', value);
+  Future<void> setReactiveShiftEnabled(bool value) async =>
+      await _prefs.setBool('reactiveShiftEnabled', value);
   Future<void> setAutoHideDuration(double value) async =>
       await _prefs.setDouble('autoHideDuration', value);
   Future<void> setOpacity(double value) async => await _prefs.setDouble('opacity', value);
@@ -289,6 +292,7 @@ class PreferencesService {
   Future<Map<String, dynamic>> _loadGeneralPreferences() async => {
         'launchAtStartup': await getLaunchAtStartup(),
         'autoHideEnabled': await getAutoHideEnabled(),
+        'reactiveShiftEnabled': await getReactiveShiftEnabled(),
         'autoHideDuration': await getAutoHideDuration(),
         'opacity': await getOpacity(),
         'keyboardLayoutName': await getKeyboardLayoutName(),
@@ -384,6 +388,7 @@ class PreferencesService {
     // General settings
     await setLaunchAtStartup(prefs['launchAtStartup']);
     await setAutoHideEnabled(prefs['autoHideEnabled']);
+    await setReactiveShiftEnabled(prefs['reactiveShiftEnabled']);
     await setAutoHideDuration(prefs['autoHideDuration']);
     await setOpacity(prefs['opacity']);
     await setKeyboardLayoutName(prefs['keyboardLayoutName']);

@@ -5,11 +5,13 @@ import 'package:overkeys/models/keyboard_layouts.dart';
 class GeneralTab extends StatefulWidget {
   final bool launchAtStartup;
   final bool autoHideEnabled;
+  final bool reactiveShiftEnabled;
   final double autoHideDuration;
   final String keyboardLayoutName;
   final double opacity;
   final Function(bool) updateLaunchAtStartup;
   final Function(bool) updateAutoHideEnabled;
+  final Function(bool) updateReactiveShiftEnabled;
   final Function(double) updateAutoHideDuration;
   final Function(String) updateKeyboardLayoutName;
   final Function(double) updateOpacity;
@@ -18,11 +20,13 @@ class GeneralTab extends StatefulWidget {
     super.key,
     required this.launchAtStartup,
     required this.autoHideEnabled,
+    required this.reactiveShiftEnabled,
     required this.autoHideDuration,
     required this.keyboardLayoutName,
     required this.opacity,
     required this.updateLaunchAtStartup,
     required this.updateAutoHideEnabled,
+    required this.updateReactiveShiftEnabled,
     required this.updateAutoHideDuration,
     required this.updateKeyboardLayoutName,
     required this.updateOpacity,
@@ -68,6 +72,11 @@ class _GeneralTabState extends State<GeneralTab> {
           label: 'Auto-hide keyboard',
           value: widget.autoHideEnabled,
           onChanged: widget.updateAutoHideEnabled,
+        ),
+        ToggleOption(
+          label: 'Reactive Shift (update keys when Shift is pressed)',
+          value: widget.reactiveShiftEnabled,
+          onChanged: widget.updateReactiveShiftEnabled,
         ),
         AnimatedCrossFade(
           duration: const Duration(milliseconds: 300),

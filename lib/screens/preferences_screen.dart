@@ -30,7 +30,8 @@ class PreferencesScreen extends StatefulWidget {
   State<PreferencesScreen> createState() => _PreferencesScreenState();
 }
 
-class _PreferencesScreenState extends State<PreferencesScreen> with WindowListener {
+class _PreferencesScreenState extends State<PreferencesScreen>
+    with WindowListener {
   final PreferencesService _prefsService = PreferencesService();
 
   // UI state
@@ -41,6 +42,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> with WindowListen
   // General settings
   bool _launchAtStartup = false;
   bool _autoHideEnabled = false;
+  bool _reactiveShiftEnabled = true;
   double _autoHideDuration = 2.0;
   double _opacity = 0.6;
   String _keyboardLayoutName = 'QWERTY';
@@ -210,6 +212,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> with WindowListen
       // General settings
       _launchAtStartup = prefs['launchAtStartup'];
       _autoHideEnabled = prefs['autoHideEnabled'];
+      _reactiveShiftEnabled = prefs['reactiveShiftEnabled'];
       _autoHideDuration = prefs['autoHideDuration'];
       _opacity = prefs['opacity'];
       _keyboardLayoutName = prefs['keyboardLayoutName'];
@@ -269,8 +272,10 @@ class _PreferencesScreenState extends State<PreferencesScreen> with WindowListen
       _enableAutoHideHotKey = prefs['enableAutoHideHotKey'] ?? true;
       _enableToggleMoveHotKey = prefs['enableToggleMoveHotKey'] ?? true;
       _enablePreferencesHotKey = prefs['enablePreferencesHotKey'] ?? true;
-      _enableIncreaseOpacityHotKey = prefs['enableIncreaseOpacityHotKey'] ?? true;
-      _enableDecreaseOpacityHotKey = prefs['enableDecreaseOpacityHotKey'] ?? true;
+      _enableIncreaseOpacityHotKey =
+          prefs['enableIncreaseOpacityHotKey'] ?? true;
+      _enableDecreaseOpacityHotKey =
+          prefs['enableDecreaseOpacityHotKey'] ?? true;
 
       // Learn settings
       _learningModeEnabled = prefs['learningModeEnabled'] ?? false;
@@ -299,6 +304,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> with WindowListen
       // General settings
       'launchAtStartup': _launchAtStartup,
       'autoHideEnabled': _autoHideEnabled,
+      'reactiveShiftEnabled': _reactiveShiftEnabled,
       'autoHideDuration': _autoHideDuration,
       'opacity': _opacity,
       'keyboardLayoutName': _keyboardLayoutName,
@@ -420,7 +426,8 @@ class _PreferencesScreenState extends State<PreferencesScreen> with WindowListen
         return KeyboardListener(
           focusNode: keyboardFocusNode,
           onKeyEvent: (KeyEvent keyEvent) {
-            if (keyEvent is KeyDownEvent && keyEvent.logicalKey == LogicalKeyboardKey.escape) {
+            if (keyEvent is KeyDownEvent &&
+                keyEvent.logicalKey == LogicalKeyboardKey.escape) {
               DesktopMultiWindow.invokeMethod(0, 'closePreferencesWindow');
             }
           },
@@ -434,7 +441,8 @@ class _PreferencesScreenState extends State<PreferencesScreen> with WindowListen
                     children: [
                       Expanded(
                         child: SingleChildScrollView(
-                          padding: const EdgeInsets.fromLTRB(20.0, 40.0, 20.0, 20.0),
+                          padding:
+                              const EdgeInsets.fromLTRB(20.0, 40.0, 20.0, 20.0),
                           child: _buildCurrentTabContent(),
                         ),
                       ),
@@ -456,7 +464,8 @@ class _PreferencesScreenState extends State<PreferencesScreen> with WindowListen
 
     return Container(
       width: drawerWidth,
-      color: Theme.of(context).drawerTheme.backgroundColor ?? colorScheme.surfaceContainer,
+      color: Theme.of(context).drawerTheme.backgroundColor ??
+          colorScheme.surfaceContainer,
       alignment: Alignment.center,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -503,14 +512,18 @@ class _PreferencesScreenState extends State<PreferencesScreen> with WindowListen
         child: ListTile(
           leading: Icon(
             _getIconForTab(tabName).icon,
-            color: isSelected ? colorScheme.primary : colorScheme.onSurfaceVariant.withAlpha(192),
+            color: isSelected
+                ? colorScheme.primary
+                : colorScheme.onSurfaceVariant.withAlpha(192),
           ),
           title: Text(
             tabName,
             style: TextStyle(
               fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
               fontSize: 16,
-              color: isSelected ? colorScheme.primary : colorScheme.onSurfaceVariant.withAlpha(192),
+              color: isSelected
+                  ? colorScheme.primary
+                  : colorScheme.onSurfaceVariant.withAlpha(192),
             ),
           ),
           onTap: () {
@@ -556,6 +569,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> with WindowListen
           launchAtStartup: _launchAtStartup,
           autoHideEnabled: _autoHideEnabled,
           autoHideDuration: _autoHideDuration,
+          reactiveShiftEnabled: _reactiveShiftEnabled,
           keyboardLayoutName: _keyboardLayoutName,
           opacity: _opacity,
           updateLaunchAtStartup: (value) {
@@ -565,6 +579,10 @@ class _PreferencesScreenState extends State<PreferencesScreen> with WindowListen
           updateAutoHideEnabled: (value) {
             setState(() => _autoHideEnabled = value);
             _updateMainWindow('updateAutoHideEnabled', value);
+          },
+          updateReactiveShiftEnabled: (value) {
+            setState(() => _reactiveShiftEnabled = value);
+            _updateMainWindow('updateReactiveShiftEnabled', value);
           },
           updateAutoHideDuration: (value) {
             double roundedValue = (value * 2).round() / 2;
