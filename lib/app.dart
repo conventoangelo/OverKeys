@@ -183,6 +183,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
 
   Future<void> _initialize() async {
     await _loadAllPreferences();
+    await initializeKeyMaps();
     trayManager.addListener(this);
     windowManager.addListener(this);
     _setupTray();

@@ -1,7 +1,8 @@
 import 'package:win32/win32.dart';
+import '../services/config_service.dart';
 
 // https://learn.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
-final Map<int, String> _keyCodeMap = {
+final Map<int, String> defaultKeyCodeMap = {
   VK_A: 'A',
   VK_B: 'B',
   VK_C: 'C',
@@ -96,7 +97,7 @@ final Map<int, String> _keyCodeMap = {
   VK_DIVIDE: '/',
 };
 
-final Map<(int, bool), String> _keyCodeShiftMap = {
+Map<(int, bool), String> defaultKeyCodeShiftMap = {
   (0x30, false): '0',
   (0x30, true): ')',
   (0x31, false): '1',
@@ -141,10 +142,39 @@ final Map<(int, bool), String> _keyCodeShiftMap = {
   (VK_OEM_MINUS, true): '_',
 };
 
+Map<int, String> activeKeyCodeMap = Map<int, String>.from(defaultKeyCodeMap);
+Map<(int, bool), String> activeKeyCodeShiftMap =
+    Map<(int, bool), String>.from(defaultKeyCodeShiftMap);
+
+Future<void> initializeKeyMaps() async {
+  final config = await ConfigService().loadConfig();
+  activeKeyCodeMap = Map<int, String>.from(defaultKeyCodeMap);
+  activeKeyCodeShiftMap = Map<(int, bool), String>.from(defaultKeyCodeShiftMap);
+
+  if (config.customKeys != null && config.customKeys!['keyCodeMap'] != null) {
+    final rawMap = config.customKeys!['keyCodeMap'] as Map;
+    rawMap.forEach((key, value) {
+      if (value is int) {
+        activeKeyCodeShiftMap[(value, false)] = key.toString();
+        activeKeyCodeMap[value] = key.toString();
+      }
+    });
+  }
+
+  if (config.customKeys != null && config.customKeys!['keyCodeShiftMap'] != null) {
+    final rawMap = config.customKeys!['keyCodeShiftMap'] as Map;
+    rawMap.forEach((key, value) {
+      if (value is int) {
+        activeKeyCodeShiftMap[(value, true)] = key.toString();
+      }
+    });
+  }
+}
+
 String getKeyFromKeyCodeShift(int keyCode, bool isShiftDown) {
-  final shiftKey = _keyCodeShiftMap[(keyCode, isShiftDown)];
+  final shiftKey = activeKeyCodeShiftMap[(keyCode, isShiftDown)];
   if (shiftKey != null) return shiftKey;
-  final key = _keyCodeMap[keyCode];
+  final key = activeKeyCodeMap[keyCode];
   if (key != null) return key;
   return '';
 }
