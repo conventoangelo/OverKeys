@@ -142,13 +142,11 @@ Map<(int, bool), String> defaultKeyCodeShiftMap = {
   (VK_OEM_MINUS, true): '_',
 };
 
-Map<int, String> activeKeyCodeMap = Map<int, String>.from(defaultKeyCodeMap);
 Map<(int, bool), String> activeKeyCodeShiftMap =
     Map<(int, bool), String>.from(defaultKeyCodeShiftMap);
 
 Future<void> initializeKeyMaps() async {
   final config = await ConfigService().loadConfig();
-  activeKeyCodeMap = Map<int, String>.from(defaultKeyCodeMap);
   activeKeyCodeShiftMap = Map<(int, bool), String>.from(defaultKeyCodeShiftMap);
 
   if (config.customKeys != null && config.customKeys!['keyCodeMap'] != null) {
@@ -157,12 +155,12 @@ Future<void> initializeKeyMaps() async {
       if (value is int) {
         activeKeyCodeShiftMap[(value, false)] = key.toString();
         activeKeyCodeShiftMap[(value, true)] = key.toString();
-        activeKeyCodeMap[value] = key.toString();
       }
     });
   }
 
-  if (config.customKeys != null && config.customKeys!['keyCodeShiftMap'] != null) {
+  if (config.customKeys != null &&
+      config.customKeys!['keyCodeShiftMap'] != null) {
     final rawMap = config.customKeys!['keyCodeShiftMap'] as Map;
     rawMap.forEach((key, value) {
       if (value is int) {
@@ -173,9 +171,5 @@ Future<void> initializeKeyMaps() async {
 }
 
 String getKeyFromKeyCodeShift(int keyCode, bool isShiftDown) {
-  final shiftKey = activeKeyCodeShiftMap[(keyCode, isShiftDown)];
-  if (shiftKey != null) return shiftKey;
-  final key = activeKeyCodeMap[keyCode];
-  if (key != null) return key;
-  return '';
+  return activeKeyCodeShiftMap[(keyCode, isShiftDown)] ?? defaultKeyCodeMap[keyCode] ?? '';
 }
