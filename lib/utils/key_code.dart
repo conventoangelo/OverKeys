@@ -147,6 +147,7 @@ Map<(int, bool), String> activeKeyCodeShiftMap =
 
 Future<void> loadCustomKeys() async {
   final config = await ConfigService().loadConfig();
+  activeKeyCodeShiftMap = Map<(int, bool), String>.from(defaultKeyCodeShiftMap);
   if (config.customKeys != null && config.customKeys!['keyCodeMap'] != null) {
     final rawMap = config.customKeys!['keyCodeMap'] as Map;
     rawMap.forEach((key, value) {
