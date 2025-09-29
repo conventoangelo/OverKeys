@@ -5,7 +5,7 @@ class UserConfig {
   String? altLayout;
   String? customFont;
   List<KeyboardLayout>? userLayouts;
-  Map<String, String> customShiftMappings;
+  Map<String, String>? customShiftMappings;
   String? kanataHost;
   int? kanataPort;
 
@@ -14,7 +14,7 @@ class UserConfig {
     this.altLayout,
     this.customFont,
     this.userLayouts,
-    Map<String, String>? customShiftMappings,
+    this.customShiftMappings,
     this.kanataHost,
     this.kanataPort,
   }) : customShiftMappings = customShiftMappings ?? {};
@@ -68,7 +68,8 @@ class UserConfig {
       if (altLayout != null) 'altLayout': altLayout,
       if (customFont != null) 'customFont': customFont,
       if (userLayoutsJson.isNotEmpty) 'userLayouts': userLayoutsJson,
-      if (customShiftMappings.isNotEmpty) 'customShiftMappings': customShiftMappings,
+      if (customShiftMappings != null && customShiftMappings!.isNotEmpty)
+        'customShiftMappings': customShiftMappings,
       if (kanataHost != null) 'kanataHost': kanataHost,
       if (kanataPort != null) 'kanataPort': kanataPort,
     };
