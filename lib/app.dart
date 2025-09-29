@@ -183,7 +183,6 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
 
   Future<void> _initialize() async {
     await _loadAllPreferences();
-    await initializeKeyMaps();
     trayManager.addListener(this);
     windowManager.addListener(this);
     _setupTray();
@@ -420,6 +419,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   }
 
   Future<void> _loadConfiguration() async {
+    await loadCustomKeys();
     await _loadCustomShiftMappings();
     if (_advancedSettingsEnabled) {
       if (_useUserLayout) {

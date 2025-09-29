@@ -145,10 +145,8 @@ Map<(int, bool), String> defaultKeyCodeShiftMap = {
 Map<(int, bool), String> activeKeyCodeShiftMap =
     Map<(int, bool), String>.from(defaultKeyCodeShiftMap);
 
-Future<void> initializeKeyMaps() async {
+Future<void> loadCustomKeys() async {
   final config = await ConfigService().loadConfig();
-  activeKeyCodeShiftMap = Map<(int, bool), String>.from(defaultKeyCodeShiftMap);
-
   if (config.customKeys != null && config.customKeys!['keyCodeMap'] != null) {
     final rawMap = config.customKeys!['keyCodeMap'] as Map;
     rawMap.forEach((key, value) {
@@ -171,5 +169,7 @@ Future<void> initializeKeyMaps() async {
 }
 
 String getKeyFromKeyCodeShift(int keyCode, bool isShiftDown) {
-  return activeKeyCodeShiftMap[(keyCode, isShiftDown)] ?? defaultKeyCodeMap[keyCode] ?? '';
+  return activeKeyCodeShiftMap[(keyCode, isShiftDown)] ??
+      defaultKeyCodeMap[keyCode] ??
+      '';
 }
