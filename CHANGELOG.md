@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.3.2](https://github.com/conventoangelo/OverKeys/compare/v0.3.1...v0.3.2) (2025-09-29)
+
+
+### ✨ Features
+
+* implement locales through customKeys in user config ([#139](https://github.com/conventoangelo/OverKeys/issues/139)) ([a5bc6da](https://github.com/conventoangelo/OverKeys/commit/a5bc6da40b859b72e8bbb591881784a06b9bf733))
+
+
+### 📚 Documentation
+
+* add documentation for custom layouts and locales support ([4e11fa9](https://github.com/conventoangelo/OverKeys/commit/4e11fa9bcde36226bc413b83f8c07f51f8fd993f))
+* add missing context menu options for Hide/Show and Reload Config ([fe2e68f](https://github.com/conventoangelo/OverKeys/commit/fe2e68fefaa3e1550667a1075e4811ef6736b4a5))
+* add note on configuring key combos for layer changes ([d832165](https://github.com/conventoangelo/OverKeys/commit/d832165d16ff1e2363127f63bd09c5dc7c16200a))
+* update tab references from General to Advanced in setup instructions ([6c02e74](https://github.com/conventoangelo/OverKeys/commit/6c02e740c90fa64d4e9e6f0c50bd54a725ef139b))
+
+
+### 🔨 Refactoring
+
+* add null checks in UserConfig serialization ([0d28498](https://github.com/conventoangelo/OverKeys/commit/0d28498861d815007caa2d495f8734b4ab97fd64))
+* clean config file by not saving null fields ([a5bc6da](https://github.com/conventoangelo/OverKeys/commit/a5bc6da40b859b72e8bbb591881784a06b9bf733))
+* enhance shifted symbol mapping using activeKeyCodeShiftMap ([a5bc6da](https://github.com/conventoangelo/OverKeys/commit/a5bc6da40b859b72e8bbb591881784a06b9bf733))
+* make customShiftMappings nullable in UserConfig ([a5bc6da](https://github.com/conventoangelo/OverKeys/commit/a5bc6da40b859b72e8bbb591881784a06b9bf733))
+
 ## [0.3.1](https://github.com/conventoangelo/OverKeys/compare/v0.3.0...v0.3.1) (2025-09-25)
 
 
