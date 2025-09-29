@@ -156,6 +156,7 @@ Future<void> initializeKeyMaps() async {
     rawMap.forEach((key, value) {
       if (value is int) {
         activeKeyCodeShiftMap[(value, false)] = key.toString();
+        activeKeyCodeShiftMap[(value, true)] = key.toString();
         activeKeyCodeMap[value] = key.toString();
       }
     });

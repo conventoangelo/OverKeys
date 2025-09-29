@@ -1,3 +1,4 @@
+import '../utils/key_code.dart';
 // https://github.com/jtroo/kanata/blob/a9dabfcb07e22c9efa0bc15349780b10afacb6cd/parser/src/keys/mod.rs as guide
 
 class Mappings {
@@ -143,30 +144,15 @@ class Mappings {
   }
 
   static String? getShiftedSymbol(String symbol) {
-    const Map<String, String> shiftedSymbols = {
-      '`': '~',
-      '1': '!',
-      '2': '@',
-      '3': '#',
-      '4': '\$',
-      '5': '%',
-      '6': '^',
-      '7': '&',
-      '8': '*',
-      '9': '(',
-      '0': ')',
-      '-': '_',
-      '=': '+',
-      '[': '{',
-      ']': '}',
-      '\\': '|',
-      ';': ':',
-      '\'': '"',
-      ',': '<',
-      '.': '>',
-      '/': '?'
-    };
-
-    return shiftedSymbols[symbol] ?? symbol;
+    for (final entry in activeKeyCodeShiftMap.entries) {
+      final key = entry.key;
+      if (key.$2 == false) {
+        final shifted = activeKeyCodeShiftMap[(key.$1, true)];
+        if (entry.value == symbol && shifted != null) {
+          return shifted;
+        }
+      }
+    }
+    return symbol;
   }
 }
