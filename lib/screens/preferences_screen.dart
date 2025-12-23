@@ -184,12 +184,8 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     super.dispose();
   }
 
-  void _setupMethodHandler() {
-    DesktopMultiWindow.setMethodHandler((call, fromWindowId) async {
-      if (call.method == 'getWindowType') {
-        return jsonEncode({'type': 'preferences'});
-      }
-
+  void _setupMethodHandler() async {
+    await widget.windowController.setWindowMethodHandler((call) async {
       if (call.method == 'updateOpacityFromMainWindow' && mounted) {
         setState(() => _opacity = call.arguments as double);
         await _prefsService.setOpacity(_opacity);
@@ -405,7 +401,13 @@ class _PreferencesScreenState extends State<PreferencesScreen>
     } else if (value is HotKey) {
       value = jsonEncode(value.toJson());
     }
-    await DesktopMultiWindow.invokeMethod(0, method, value);
+    final controllers = await WindowController.getAll();
+    for (final controller in controllers) {
+      if (controller.arguments.isEmpty || controller.arguments == 'main') {
+        await controller.invokeMethod(method, value);
+        break;
+      }
+    }
     _savePreferences();
   }
 
@@ -431,10 +433,17 @@ class _PreferencesScreenState extends State<PreferencesScreen>
       home: Builder(builder: (context) {
         return KeyboardListener(
           focusNode: keyboardFocusNode,
-          onKeyEvent: (KeyEvent keyEvent) {
+          onKeyEvent: (KeyEvent keyEvent) async {
             if (keyEvent is KeyDownEvent &&
                 keyEvent.logicalKey == LogicalKeyboardKey.escape) {
-              DesktopMultiWindow.invokeMethod(0, 'closePreferencesWindow');
+              final controllers = await WindowController.getAll();
+              for (final controller in controllers) {
+                if (controller.arguments.isEmpty ||
+                    controller.arguments == 'main') {
+                  await controller.invokeMethod('closePreferencesWindow');
+                  break;
+                }
+              }
             }
           },
           child: Scaffold(

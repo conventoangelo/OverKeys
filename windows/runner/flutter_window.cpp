@@ -38,20 +38,8 @@ bool FlutterWindow::OnCreate() {
         reinterpret_cast<flutter::FlutterViewController*>(controller);
     auto* registry = flutter_view_controller->engine();
 
-    // Register individual plugins with the new window (don't use RegisterPlugins here)
-    WindowManagerPluginRegisterWithRegistrar(
-        registry->GetRegistrarForPlugin("WindowManagerPlugin"));
-        
-    ScreenRetrieverWindowsPluginCApiRegisterWithRegistrar(
-        registry->GetRegistrarForPlugin("ScreenRetrieverWindowsPluginCApi"));
-
-    UrlLauncherWindowsRegisterWithRegistrar(
-        registry->GetRegistrarForPlugin("UrlLauncherWindows"));
-
-    HotkeyManagerWindowsPluginCApiRegisterWithRegistrar(
-        registry->GetRegistrarForPlugin("HotkeyManagerWindowsPluginCApi"));
-
-    // Don't register DesktopMultiWindow with itself
+    // Register all plugins for the new window
+    RegisterPlugins(registry);
   });
   
   SetChildContent(flutter_controller_->view()->GetNativeWindow());

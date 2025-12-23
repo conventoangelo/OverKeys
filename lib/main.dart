@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
@@ -8,67 +7,99 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:hotkey_manager/hotkey_manager.dart';
 import 'app.dart';
 import 'screens/preferences_screen.dart';
+import 'utils/window_controller_extension.dart';
 
-void main(List<String> args) async {
-  final isSubWindow = args.firstOrNull == 'multi_window';
+// Window type definitions
+class WindowType {
+  static const String main = 'main';
+  static const String preferences = 'preferences';
+}
+
+Future<void> main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Get the current window controller
+  final windowController = await WindowController.fromCurrentEngine();
+
+  // Parse window arguments to determine which window to show
+  final windowType = _parseWindowType(windowController.arguments);
+
+  // Initialize window manager
   await windowManager.ensureInitialized();
   await hotKeyManager.unregisterAll();
 
-  if (isSubWindow) {
-    final windowId = int.parse(args[1]);
-    final arguments = args[2].isEmpty
-        ? const {}
-        : jsonDecode(args[2]) as Map<String, dynamic>;
-
-    if (arguments["name"] == "preferences") {
-      WindowOptions windowOptions = const WindowOptions(
-        title: "Preferences",
-        titleBarStyle: TitleBarStyle.normal,
-        size: Size(1280, 720),
-      );
-
-      windowManager.waitUntilReadyToShow(windowOptions, () async {
-        await windowManager.setTitle("Preferences");
-        await windowManager.setIcon("assets/images/app_icon.ico");
-        await windowManager.center();
-        await windowManager.setMinimumSize(const Size(828, 621));
-        await windowManager.focus();
-        await windowManager.show();
-      });
-
+  // Run different apps based on the window type
+  switch (windowType) {
+    case WindowType.main:
+      await _initMainWindow();
+      runApp(const MainApp());
+      break;
+    case WindowType.preferences:
+      await _initPreferencesWindow();
       runApp(PreferencesScreen(
-        windowController: WindowController.fromWindowId(windowId),
+        windowController: windowController,
       ));
-    }
-  } else {
-    PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    launchAtStartup.setup(
-      appName: packageInfo.appName,
-      appPath: Platform.resolvedExecutable,
-      packageName: packageInfo.packageName,
-    );
-
-    double windowWidth = 1000;
-    double windowHeight = 330;
-
-    WindowOptions windowOptions = const WindowOptions(
-      backgroundColor: Colors.transparent,
-      skipTaskbar: true,
-      title: "OverKeys",
-      titleBarStyle: TitleBarStyle.hidden,
-    );
-
-    windowManager.waitUntilReadyToShow(windowOptions, () async {
-      await windowManager.setAlwaysOnTop(true);
-      await windowManager.setAsFrameless();
-      await windowManager.setSize(Size(windowWidth, windowHeight));
-      await windowManager.setIgnoreMouseEvents(true);
-      await windowManager.setAlignment(Alignment.bottomCenter);
-      await windowManager.setSkipTaskbar(true);
-      await windowManager.show();
-    });
-
-    runApp(const MainApp());
+      break;
+    default:
+      // Fallback to main window
+      await _initMainWindow();
+      runApp(const MainApp());
   }
+}
+
+String _parseWindowType(String arguments) {
+  if (arguments.isEmpty) {
+    return WindowType.main;
+  }
+  return arguments;
+}
+
+Future<void> _initMainWindow() async {
+  PackageInfo packageInfo = await PackageInfo.fromPlatform();
+  launchAtStartup.setup(
+    appName: packageInfo.appName,
+    appPath: Platform.resolvedExecutable,
+    packageName: packageInfo.packageName,
+  );
+
+  double windowWidth = 1000;
+  double windowHeight = 330;
+
+  WindowOptions windowOptions = const WindowOptions(
+    backgroundColor: Colors.transparent,
+    skipTaskbar: true,
+    title: "OverKeys",
+    titleBarStyle: TitleBarStyle.hidden,
+  );
+
+  windowManager.waitUntilReadyToShow(windowOptions, () async {
+    await windowManager.setAlwaysOnTop(true);
+    await windowManager.setAsFrameless();
+    await windowManager.setSize(Size(windowWidth, windowHeight));
+    await windowManager.setIgnoreMouseEvents(true);
+    await windowManager.setAlignment(Alignment.bottomCenter);
+    await windowManager.setSkipTaskbar(true);
+    await windowManager.show();
+  });
+}
+
+Future<void> _initPreferencesWindow() async {
+  // Initialize window controller methods
+  final windowController = await WindowController.fromCurrentEngine();
+  await windowController.initializeWindowMethods();
+
+  WindowOptions windowOptions = const WindowOptions(
+    title: "Preferences",
+    titleBarStyle: TitleBarStyle.normal,
+    size: Size(1280, 720),
+  );
+
+  windowManager.waitUntilReadyToShow(windowOptions, () async {
+    await windowManager.setTitle("Preferences");
+    await windowManager.setIcon("assets/images/app_icon.ico");
+    await windowManager.center();
+    await windowManager.setMinimumSize(const Size(828, 621));
+    await windowManager.focus();
+    await windowManager.show();
+  });
 }

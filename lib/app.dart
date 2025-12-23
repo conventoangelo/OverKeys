@@ -15,6 +15,7 @@ import 'package:overkeys/services/config_service.dart';
 import 'package:overkeys/services/kanata_service.dart';
 import 'package:overkeys/services/preferences_service.dart';
 import 'package:overkeys/utils/key_code.dart';
+import 'package:overkeys/utils/window_controller_extension.dart';
 import 'package:overkeys/widgets/status_overlay.dart';
 import 'models/keyboard_layouts.dart';
 import 'screens/keyboard_screen.dart';
@@ -768,10 +769,12 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
         _autoHideEnabled
             ? const Icon(LucideIcons.timerReset)
             : const Icon(LucideIcons.timerOff));
-    DesktopMultiWindow.getAllSubWindowIds().then((windowIds) {
-      for (final id in windowIds) {
-        DesktopMultiWindow.invokeMethod(
-            id, 'updateAutoHideFromMainWindow', _autoHideEnabled);
+    WindowController.getAll().then((controllers) {
+      for (final controller in controllers) {
+        if (controller.arguments == 'preferences') {
+          controller.invokeMethod(
+              'updateAutoHideFromMainWindow', _autoHideEnabled);
+        }
       }
     });
     _saveAllPreferences();
@@ -804,10 +807,12 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
           _opacity = _lastOpacity;
         });
         _saveAllPreferences();
-        DesktopMultiWindow.getAllSubWindowIds().then((windowIds) {
-          for (final id in windowIds) {
-            DesktopMultiWindow.invokeMethod(
-                id, 'updateOpacityFromMainWindow', _opacity);
+        WindowController.getAll().then((controllers) {
+          for (final controller in controllers) {
+            if (controller.arguments == 'preferences') {
+              controller.invokeMethod(
+                  'updateOpacityFromMainWindow', _opacity);
+            }
           }
         });
       }
@@ -1028,9 +1033,9 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
   @override
   void onTrayMenuItemClick(MenuItem menuItem) {
     if (menuItem.key == 'exit') {
-      DesktopMultiWindow.getAllSubWindowIds().then((windowIds) async {
-        for (final id in windowIds) {
-          await WindowController.fromWindowId(id).close();
+      WindowController.getAll().then((controllers) async {
+        for (final controller in controllers) {
+          await controller.close();
         }
         await windowManager.close();
         exit(0);
@@ -1077,31 +1082,24 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
 
   Future<void> _showPreferences() async {
     try {
-      List<int> windowIds = await DesktopMultiWindow.getAllSubWindowIds();
-      for (int id in windowIds) {
-        Map<String, dynamic>? windowData;
-        try {
-          String? dataString =
-              await DesktopMultiWindow.invokeMethod(id, 'getWindowType');
-          if (dataString != null) {
-            windowData = jsonDecode(dataString);
-            if (windowData != null && windowData['type'] == 'preferences') {
-              await WindowController.fromWindowId(id).show();
-              await DesktopMultiWindow.invokeMethod(id, 'requestFocus');
-              return;
-            }
-          }
-        } catch (e) {
-          if (kDebugMode) {
-            print('Error getting window data: $e');
-          }
+      // Get all window controllers
+      final controllers = await WindowController.getAll();
+      
+      // Check if preferences window already exists
+      for (var controller in controllers) {
+        if (controller.arguments == 'preferences') {
+          await controller.show();
+          return;
         }
       }
 
-      await DesktopMultiWindow.createWindow(jsonEncode({
-        'type': 'preferences',
-        'name': 'preferences',
-      }));
+      // Create new preferences window if it doesn't exist (hidden initially)
+      await WindowController.create(
+        WindowConfiguration(
+          hiddenAtLaunch: true,
+          arguments: 'preferences',
+        ),
+      );
     } catch (e) {
       if (kDebugMode) {
         print('Error handling preferences window: $e');
@@ -1109,8 +1107,9 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
     }
   }
 
-  void _setupMethodHandler() {
-    DesktopMultiWindow.setMethodHandler((call, fromWindowId) async {
+  void _setupMethodHandler() async {
+    final windowController = await WindowController.fromCurrentEngine();
+    await windowController.setWindowMethodHandler((call) async {
       switch (call.method) {
         // General settings
         case 'updateLaunchAtStartup':
@@ -1489,7 +1488,7 @@ class _MainAppState extends State<MainApp> with TrayListener, WindowListener {
           });
 
         case 'closePreferencesWindow':
-          await WindowController.fromWindowId(fromWindowId).close();
+          await windowController.close();
           break;
         default:
           throw UnimplementedError('Unimplemented method ${call.method}');
