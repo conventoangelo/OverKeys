@@ -14,6 +14,19 @@ FlutterWindow::FlutterWindow(const flutter::DartProject& project)
 
 FlutterWindow::~FlutterWindow() {}
 
+/**
+ * @brief Initializes the native window and configures its Flutter controller and view.
+ *
+ * Creates a FlutterViewController sized to the window client area, registers plugins
+ * for its engine (including for any subsequent multi-window controllers), installs
+ * the Flutter view as the window's child content, schedules the window to be shown
+ * after the next Flutter frame, and forces a redraw to ensure a pending frame exists.
+ *
+ * Initialization fails if the base window creation fails or if the Flutter controller
+ * is not created with both a valid engine and view.
+ *
+ * @return true if initialization and controller configuration succeeded; false otherwise.
+ */
 bool FlutterWindow::OnCreate() {
   if (!Win32Window::OnCreate()) {
     return false;

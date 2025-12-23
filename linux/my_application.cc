@@ -17,6 +17,18 @@ struct _MyApplication {
 G_DEFINE_TYPE(MyApplication, my_application, GTK_TYPE_APPLICATION)
 
 // Implements GApplication::activate.
+/**
+ * @brief Create and present the application's main window and embed the Flutter view.
+ *
+ * Creates a top-level GtkWindow for the given application, configures a GNOME-style
+ * header bar when appropriate (falls back to a traditional title bar on non-GNOME
+ * X11 window managers), sets the default size, instantiates and adds the FlView
+ * backed by a FlDartProject (propagating any stored Dart entrypoint arguments),
+ * registers plugins for the view, installs a callback to register plugins for any
+ * subsequently created windows, and gives keyboard focus to the embedded view.
+ *
+ * @param application The GApplication instance being activated.
+ */
 static void my_application_activate(GApplication* application) {
   MyApplication* self = MY_APPLICATION(application);
   GtkWindow* window =
