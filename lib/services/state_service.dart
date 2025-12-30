@@ -5,6 +5,7 @@ import '../providers/keyboard_provider.dart';
 import '../providers/preferences_provider.dart';
 import '../providers/app_state_provider.dart';
 
+/// Service for loading and saving application state across sessions
 class StateService {
   static const String _keyboardStateKey = 'keyboard_state';
   static const String _preferencesStateKey = 'preferences_state';

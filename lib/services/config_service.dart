@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import '../models/user_config.dart';
 import '../models/keyboard_layouts.dart';
 
+/// Service for managing user configuration files
 class ConfigService {
   static const String _configFileName = 'overkeys_config.json';
   UserConfig? _cachedConfig;
@@ -57,7 +58,8 @@ class ConfigService {
     final config = await loadConfig();
 
     if (config.defaultUserLayout == null) {
-      debugPrint('Cannot get user layout: defaultUserLayout is not defined in the config file');
+      debugPrint(
+          'Cannot get user layout: defaultUserLayout is not defined in the config file');
       return null;
     }
 
@@ -72,7 +74,8 @@ class ConfigService {
     }
 
     try {
-      return availableLayouts.firstWhere((layout) => layout.name == defaultLayoutName);
+      return availableLayouts
+          .firstWhere((layout) => layout.name == defaultLayoutName);
     } catch (e) {
       if (kDebugMode) {
         print('Default user layout "$defaultLayoutName" not found');
@@ -85,7 +88,8 @@ class ConfigService {
     final config = await loadConfig();
 
     if (config.altLayout == null) {
-      debugPrint('Cannot get alt layout: altLayout is not defined in the config file');
+      debugPrint(
+          'Cannot get alt layout: altLayout is not defined in the config file');
       return null;
     }
 
@@ -100,7 +104,8 @@ class ConfigService {
     }
 
     try {
-      return availableLayouts.firstWhere((layout) => layout.name == altLayoutName);
+      return availableLayouts
+          .firstWhere((layout) => layout.name == altLayoutName);
     } catch (e) {
       if (kDebugMode) {
         print('Alt layout "$altLayoutName" not found');
@@ -113,7 +118,8 @@ class ConfigService {
     final config = await loadConfig();
 
     if (config.customFont == null) {
-      debugPrint('Cannot get custom font: customFont is not defined in the config file');
+      debugPrint(
+          'Cannot get custom font: customFont is not defined in the config file');
       return null;
     }
 
