@@ -36,19 +36,22 @@ class _MarkersTabState extends ConsumerState<MarkersTab> {
   @override
   Widget build(BuildContext context) {
     final prefsState = ref.watch(preferencesNotifierProvider);
-    final keyboardState = ref.watch(keyboardNotifierProvider);
 
     // Listen for external provider changes and sync local state
     ref.listen<KeyboardState>(keyboardNotifierProvider, (previous, next) {
       if (previous != null) {
-        if (_localMarkerOffset != next.markerOffset)
+        if (_localMarkerOffset != next.markerOffset) {
           setState(() => _localMarkerOffset = next.markerOffset);
-        if (_localMarkerWidth != next.markerWidth)
+        }
+        if (_localMarkerWidth != next.markerWidth) {
           setState(() => _localMarkerWidth = next.markerWidth);
-        if (_localMarkerHeight != next.markerHeight)
+        }
+        if (_localMarkerHeight != next.markerHeight) {
           setState(() => _localMarkerHeight = next.markerHeight);
-        if (_localMarkerBorderRadius != next.markerBorderRadius)
+        }
+        if (_localMarkerBorderRadius != next.markerBorderRadius) {
           setState(() => _localMarkerBorderRadius = next.markerBorderRadius);
+        }
       }
     });
 
