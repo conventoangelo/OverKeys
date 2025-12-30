@@ -13,7 +13,7 @@ import 'package:tray_manager/tray_manager.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:overkeys/services/config_service.dart';
 import 'package:overkeys/services/kanata_service.dart';
-import 'package:overkeys/services/preferences_service.dart';
+import 'package:overkeys/services/state_service.dart';
 import 'package:overkeys/utils/key_code.dart';
 import 'package:overkeys/utils/window_controller_extension.dart';
 import 'package:overkeys/widgets/status_overlay.dart';
@@ -53,7 +53,7 @@ class _MainAppState extends ConsumerState<MainApp>
   Timer? _mouseCheckTimer;
 
   // Services
-  final PreferencesService _prefsService = PreferencesService();
+  final StateService _stateService = StateService();
   final KanataService _kanataService = KanataService();
 
   // Misc
@@ -117,186 +117,34 @@ class _MainAppState extends ConsumerState<MainApp>
   }
 
   Future<void> _loadAllPreferences() async {
-    final prefs = await _prefsService.loadAllPreferences();
+    final states = await _stateService.loadAllStates();
 
-    // Update keyboard provider
-    final keyboardNotifier = ref.read(keyboardNotifierProvider.notifier);
-    final prefsNotifier = ref.read(preferencesNotifierProvider.notifier);
+    if (states['keyboard'] != null) {
+      ref
+          .read(keyboardNotifierProvider.notifier)
+          .updateKeyboardState(states['keyboard']!);
+    }
 
-    final layout = availableLayouts
-        .firstWhere((l) => l.name == prefs['keyboardLayoutName']);
+    if (states['preferences'] != null) {
+      ref
+          .read(preferencesNotifierProvider.notifier)
+          .updatePreferencesState(states['preferences']!);
+      _lastOpacity = states['preferences']!.opacity;
+    }
 
-    keyboardNotifier.updateKeyboardState(KeyboardState(
-      layout: layout,
-      keymapStyle: prefs['keymapStyle'],
-      showTopRow: prefs['showTopRow'],
-      showGraveKey: prefs['showGraveKey'],
-      keySize: prefs['keySize'],
-      keyBorderRadius: prefs['keyBorderRadius'],
-      keyBorderThickness: prefs['keyBorderThickness'],
-      keyPadding: prefs['keyPadding'],
-      spaceWidth: prefs['spaceWidth'],
-      splitWidth: prefs['splitWidth'],
-      lastRowSplitWidth: prefs['lastRowSplitWidth'],
-      keyShadowBlurRadius: prefs['keyShadowBlurRadius'],
-      keyShadowOffsetX: prefs['keyShadowOffsetX'],
-      keyShadowOffsetY: prefs['keyShadowOffsetY'],
-      fontFamily: prefs['fontFamily'],
-      fontWeight: prefs['fontWeight'],
-      keyFontSize: prefs['keyFontSize'],
-      spaceFontSize: prefs['spaceFontSize'],
-      markerOffset: prefs['markerOffset'],
-      markerWidth: prefs['markerWidth'],
-      markerHeight: prefs['markerHeight'],
-      markerBorderRadius: prefs['markerBorderRadius'],
-      keyColorPressed: prefs['keyColorPressed'],
-      keyColorNotPressed: prefs['keyColorNotPressed'],
-      markerColor: prefs['markerColor'],
-      markerColorNotPressed: prefs['markerColorNotPressed'],
-      keyTextColor: prefs['keyTextColor'],
-      keyTextColorNotPressed: prefs['keyTextColorNotPressed'],
-      keyBorderColorPressed: prefs['keyBorderColorPressed'],
-      keyBorderColorNotPressed: prefs['keyBorderColorNotPressed'],
-      animationEnabled: prefs['animationEnabled'],
-      animationStyle: prefs['animationStyle'],
-      animationDuration: prefs['animationDuration'],
-      animationScale: prefs['animationScale'],
-      learningModeEnabled: prefs['learningModeEnabled'],
-      pinkyLeftColor: prefs['pinkyLeftColor'],
-      ringLeftColor: prefs['ringLeftColor'],
-      middleLeftColor: prefs['middleLeftColor'],
-      indexLeftColor: prefs['indexLeftColor'],
-      indexRightColor: prefs['indexRightColor'],
-      middleRightColor: prefs['middleRightColor'],
-      ringRightColor: prefs['ringRightColor'],
-      pinkyRightColor: prefs['pinkyRightColor'],
-    ));
-
-    prefsNotifier.updatePreferencesState(PreferencesState(
-      launchAtStartup: prefs['launchAtStartup'],
-      hideAtStartup: prefs['hideAtStartup'],
-      autoHideEnabled: prefs['autoHideEnabled'],
-      reactiveShiftEnabled: prefs['reactiveShiftEnabled'],
-      autoHideDuration: prefs['autoHideDuration'],
-      opacity: prefs['opacity'],
-      initialKeyboardLayout: layout,
-      useUserLayout: prefs['useUserLayout'],
-      showAltLayout: prefs['showAltLayout'],
-      use6ColLayout: prefs['use6ColLayout'],
-      customFontEnabled: prefs['customFontEnabled'],
-      advancedSettingsEnabled: prefs['advancedSettingsEnabled'],
-      kanataEnabled: prefs['kanataEnabled'],
-      keyboardFollowsMouse: prefs['keyboardFollowsMouse'],
-      hideOnDefaultLayer: prefs['hideOnDefaultLayer'],
-    ));
-
-    // Store for local usage in methods that need it
-    _lastOpacity = prefs['opacity'];
+    if (states['appState'] != null) {
+      ref
+          .read(appStateNotifierProvider.notifier)
+          .updateAppState(states['appState']!);
+    }
   }
 
   Future<void> _saveAllPreferences() async {
-    final keyboardState = ref.read(keyboardNotifierProvider);
-    final prefsState = ref.read(preferencesNotifierProvider);
-
-    final prefs = {
-      // General settings
-      'launchAtStartup': prefsState.launchAtStartup,
-      'hideAtStartup': prefsState.hideAtStartup,
-      'autoHideEnabled': prefsState.autoHideEnabled,
-      'reactiveShiftEnabled': prefsState.reactiveShiftEnabled,
-      'autoHideDuration': prefsState.autoHideDuration,
-      'opacity': prefsState.opacity,
-      'keyboardLayoutName': keyboardState.layout.name,
-
-      // Keyboard settings
-      'keymapStyle': keyboardState.keymapStyle,
-      'showTopRow': keyboardState.showTopRow,
-      'showGraveKey': keyboardState.showGraveKey,
-      'keySize': keyboardState.keySize,
-      'keyBorderRadius': keyboardState.keyBorderRadius,
-      'keyBorderThickness': keyboardState.keyBorderThickness,
-      'keyPadding': keyboardState.keyPadding,
-      'spaceWidth': keyboardState.spaceWidth,
-      'splitWidth': keyboardState.splitWidth,
-      'lastRowSplitWidth': keyboardState.lastRowSplitWidth,
-      'keyShadowBlurRadius': keyboardState.keyShadowBlurRadius,
-      'keyShadowOffsetX': keyboardState.keyShadowOffsetX,
-      'keyShadowOffsetY': keyboardState.keyShadowOffsetY,
-
-      // Text settings
-      'fontFamily': keyboardState.fontFamily,
-      'fontWeight': keyboardState.fontWeight,
-      'keyFontSize': keyboardState.keyFontSize,
-      'spaceFontSize': keyboardState.spaceFontSize,
-
-      // Markers settings
-      'markerOffset': keyboardState.markerOffset,
-      'markerWidth': keyboardState.markerWidth,
-      'markerHeight': keyboardState.markerHeight,
-      'markerBorderRadius': keyboardState.markerBorderRadius,
-
-      // Colors settings
-      'keyColorPressed': keyboardState.keyColorPressed,
-      'keyColorNotPressed': keyboardState.keyColorNotPressed,
-      'markerColor': keyboardState.markerColor,
-      'markerColorNotPressed': keyboardState.markerColorNotPressed,
-      'keyTextColor': keyboardState.keyTextColor,
-      'keyTextColorNotPressed': keyboardState.keyTextColorNotPressed,
-      'keyBorderColorPressed': keyboardState.keyBorderColorPressed,
-      'keyBorderColorNotPressed': keyboardState.keyBorderColorNotPressed,
-
-      // Animations settings
-      'animationEnabled': keyboardState.animationEnabled,
-      'animationStyle': keyboardState.animationStyle,
-      'animationDuration': keyboardState.animationDuration,
-      'animationScale': keyboardState.animationScale,
-
-      // HotKey settings
-      'hotKeysEnabled': ref.read(appStateNotifierProvider).hotKeysEnabled,
-      'visibilityHotKey': ref.read(appStateNotifierProvider).visibilityHotKey,
-      'autoHideHotKey': ref.read(appStateNotifierProvider).autoHideHotKey,
-      'toggleMoveHotKey': ref.read(appStateNotifierProvider).toggleMoveHotKey,
-      'preferencesHotKey': ref.read(appStateNotifierProvider).preferencesHotKey,
-      'increaseOpacityHotKey':
-          ref.read(appStateNotifierProvider).increaseOpacityHotKey,
-      'decreaseOpacityHotKey':
-          ref.read(appStateNotifierProvider).decreaseOpacityHotKey,
-      'enableVisibilityHotKey':
-          ref.read(appStateNotifierProvider).enableVisibilityHotKey,
-      'enableAutoHideHotKey':
-          ref.read(appStateNotifierProvider).enableAutoHideHotKey,
-      'enableToggleMoveHotKey':
-          ref.read(appStateNotifierProvider).enableToggleMoveHotKey,
-      'enablePreferencesHotKey':
-          ref.read(appStateNotifierProvider).enablePreferencesHotKey,
-      'enableIncreaseOpacityHotKey':
-          ref.read(appStateNotifierProvider).enableIncreaseOpacityHotKey,
-      'enableDecreaseOpacityHotKey':
-          ref.read(appStateNotifierProvider).enableDecreaseOpacityHotKey,
-
-      // Learn settings
-      'learningModeEnabled': keyboardState.learningModeEnabled,
-      'pinkyLeftColor': keyboardState.pinkyLeftColor,
-      'ringLeftColor': keyboardState.ringLeftColor,
-      'middleLeftColor': keyboardState.middleLeftColor,
-      'indexLeftColor': keyboardState.indexLeftColor,
-      'indexRightColor': keyboardState.indexRightColor,
-      'middleRightColor': keyboardState.middleRightColor,
-      'ringRightColor': keyboardState.ringRightColor,
-      'pinkyRightColor': keyboardState.pinkyRightColor,
-
-      // Advanced settings
-      'advancedSettingsEnabled': prefsState.advancedSettingsEnabled,
-      'useUserLayout': prefsState.useUserLayout,
-      'showAltLayout': prefsState.showAltLayout,
-      'customFontEnabled': prefsState.customFontEnabled,
-      'use6ColLayout': prefsState.use6ColLayout,
-      'kanataEnabled': prefsState.kanataEnabled,
-      'keyboardFollowsMouse': prefsState.keyboardFollowsMouse,
-      'hideOnDefaultLayer': prefsState.hideOnDefaultLayer,
-    };
-
-    await _prefsService.saveAllPreferences(prefs);
+    await _stateService.saveAllStates(
+      keyboard: ref.read(keyboardNotifierProvider),
+      preferences: ref.read(preferencesNotifierProvider),
+      appState: ref.read(appStateNotifierProvider),
+    );
   }
 
   Future<void> _loadConfiguration() async {

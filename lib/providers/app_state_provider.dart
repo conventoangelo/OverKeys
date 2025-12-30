@@ -117,6 +117,56 @@ class AppState {
       activeTriggers: activeTriggers ?? this.activeTriggers,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'hotKeysEnabled': hotKeysEnabled,
+      'visibilityHotKey': visibilityHotKey?.toJson(),
+      'autoHideHotKey': autoHideHotKey?.toJson(),
+      'toggleMoveHotKey': toggleMoveHotKey?.toJson(),
+      'preferencesHotKey': preferencesHotKey?.toJson(),
+      'increaseOpacityHotKey': increaseOpacityHotKey?.toJson(),
+      'decreaseOpacityHotKey': decreaseOpacityHotKey?.toJson(),
+      'enableVisibilityHotKey': enableVisibilityHotKey,
+      'enableAutoHideHotKey': enableAutoHideHotKey,
+      'enableToggleMoveHotKey': enableToggleMoveHotKey,
+      'enablePreferencesHotKey': enablePreferencesHotKey,
+      'enableIncreaseOpacityHotKey': enableIncreaseOpacityHotKey,
+      'enableDecreaseOpacityHotKey': enableDecreaseOpacityHotKey,
+    };
+  }
+
+  factory AppState.fromJson(Map<String, dynamic> json) {
+    return AppState(
+      hotKeysEnabled: json['hotKeysEnabled'] as bool? ?? true,
+      visibilityHotKey: json['visibilityHotKey'] != null
+          ? HotKey.fromJson(json['visibilityHotKey'])
+          : null,
+      autoHideHotKey: json['autoHideHotKey'] != null
+          ? HotKey.fromJson(json['autoHideHotKey'])
+          : null,
+      toggleMoveHotKey: json['toggleMoveHotKey'] != null
+          ? HotKey.fromJson(json['toggleMoveHotKey'])
+          : null,
+      preferencesHotKey: json['preferencesHotKey'] != null
+          ? HotKey.fromJson(json['preferencesHotKey'])
+          : null,
+      increaseOpacityHotKey: json['increaseOpacityHotKey'] != null
+          ? HotKey.fromJson(json['increaseOpacityHotKey'])
+          : null,
+      decreaseOpacityHotKey: json['decreaseOpacityHotKey'] != null
+          ? HotKey.fromJson(json['decreaseOpacityHotKey'])
+          : null,
+      enableVisibilityHotKey: json['enableVisibilityHotKey'] as bool? ?? true,
+      enableAutoHideHotKey: json['enableAutoHideHotKey'] as bool? ?? true,
+      enableToggleMoveHotKey: json['enableToggleMoveHotKey'] as bool? ?? true,
+      enablePreferencesHotKey: json['enablePreferencesHotKey'] as bool? ?? true,
+      enableIncreaseOpacityHotKey:
+          json['enableIncreaseOpacityHotKey'] as bool? ?? true,
+      enableDecreaseOpacityHotKey:
+          json['enableDecreaseOpacityHotKey'] as bool? ?? true,
+    );
+  }
 }
 
 @riverpod

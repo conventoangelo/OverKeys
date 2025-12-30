@@ -113,6 +113,81 @@ class PreferencesState {
       userConfig: userConfig ?? this.userConfig,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'launchAtStartup': launchAtStartup,
+      'hideAtStartup': hideAtStartup,
+      'autoHideEnabled': autoHideEnabled,
+      'reactiveShiftEnabled': reactiveShiftEnabled,
+      'autoHideDuration': autoHideDuration,
+      'opacity': opacity,
+      'initialKeyboardLayoutName': initialKeyboardLayout?.name,
+      'defaultUserLayoutName': defaultUserLayout?.name,
+      'altLayoutName': altLayout?.name,
+      'useUserLayout': useUserLayout,
+      'showAltLayout': showAltLayout,
+      'use6ColLayout': use6ColLayout,
+      'customFontEnabled': customFontEnabled,
+      'customFont': customFont,
+      'advancedSettingsEnabled': advancedSettingsEnabled,
+      'kanataEnabled': kanataEnabled,
+      'kanataHost': kanataHost,
+      'kanataPort': kanataPort,
+      'keyboardFollowsMouse': keyboardFollowsMouse,
+      'hideOnDefaultLayer': hideOnDefaultLayer,
+    };
+  }
+
+  factory PreferencesState.fromJson(Map<String, dynamic> json) {
+    final initialLayoutName = json['initialKeyboardLayoutName'] as String?;
+    final initialLayout = initialLayoutName != null
+        ? availableLayouts.firstWhere(
+            (l) => l.name == initialLayoutName,
+            orElse: () => qwerty,
+          )
+        : null;
+
+    final defaultLayoutName = json['defaultUserLayoutName'] as String?;
+    final defaultLayout = defaultLayoutName != null
+        ? availableLayouts.firstWhere(
+            (l) => l.name == defaultLayoutName,
+            orElse: () => qwerty,
+          )
+        : null;
+
+    final altLayoutName = json['altLayoutName'] as String?;
+    final altLayout = altLayoutName != null
+        ? availableLayouts.firstWhere(
+            (l) => l.name == altLayoutName,
+            orElse: () => qwerty,
+          )
+        : null;
+
+    return PreferencesState(
+      launchAtStartup: json['launchAtStartup'] as bool? ?? false,
+      hideAtStartup: json['hideAtStartup'] as bool? ?? false,
+      autoHideEnabled: json['autoHideEnabled'] as bool? ?? false,
+      reactiveShiftEnabled: json['reactiveShiftEnabled'] as bool? ?? true,
+      autoHideDuration: (json['autoHideDuration'] as num?)?.toDouble() ?? 2.0,
+      opacity: (json['opacity'] as num?)?.toDouble() ?? 0.6,
+      initialKeyboardLayout: initialLayout,
+      defaultUserLayout: defaultLayout,
+      altLayout: altLayout,
+      useUserLayout: json['useUserLayout'] as bool? ?? false,
+      showAltLayout: json['showAltLayout'] as bool? ?? false,
+      use6ColLayout: json['use6ColLayout'] as bool? ?? false,
+      customFontEnabled: json['customFontEnabled'] as bool? ?? false,
+      customFont: json['customFont'] as String?,
+      advancedSettingsEnabled:
+          json['advancedSettingsEnabled'] as bool? ?? false,
+      kanataEnabled: json['kanataEnabled'] as bool? ?? false,
+      kanataHost: json['kanataHost'] as String?,
+      kanataPort: json['kanataPort'] as int?,
+      keyboardFollowsMouse: json['keyboardFollowsMouse'] as bool? ?? false,
+      hideOnDefaultLayer: json['hideOnDefaultLayer'] as bool? ?? false,
+    );
+  }
 }
 
 @riverpod

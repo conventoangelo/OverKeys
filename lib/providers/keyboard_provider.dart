@@ -214,6 +214,135 @@ class KeyboardState {
       showAltLayout: showAltLayout ?? this.showAltLayout,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'layoutName': layout.name,
+      'initialLayoutName': initialLayout?.name,
+      'keymapStyle': keymapStyle,
+      'showTopRow': showTopRow,
+      'showGraveKey': showGraveKey,
+      'keySize': keySize,
+      'keyBorderRadius': keyBorderRadius,
+      'keyBorderThickness': keyBorderThickness,
+      'keyPadding': keyPadding,
+      'spaceWidth': spaceWidth,
+      'splitWidth': splitWidth,
+      'lastRowSplitWidth': lastRowSplitWidth,
+      'keyShadowBlurRadius': keyShadowBlurRadius,
+      'keyShadowOffsetX': keyShadowOffsetX,
+      'keyShadowOffsetY': keyShadowOffsetY,
+      'fontFamily': fontFamily,
+      'initialFontFamily': initialFontFamily,
+      'fontWeightIndex': fontWeight.index,
+      'keyFontSize': keyFontSize,
+      'spaceFontSize': spaceFontSize,
+      'markerOffset': markerOffset,
+      'markerWidth': markerWidth,
+      'markerHeight': markerHeight,
+      'markerBorderRadius': markerBorderRadius,
+      'keyColorPressed': keyColorPressed.value,
+      'keyColorNotPressed': keyColorNotPressed.value,
+      'markerColor': markerColor.value,
+      'markerColorNotPressed': markerColorNotPressed.value,
+      'keyTextColor': keyTextColor.value,
+      'keyTextColorNotPressed': keyTextColorNotPressed.value,
+      'keyBorderColorPressed': keyBorderColorPressed.value,
+      'keyBorderColorNotPressed': keyBorderColorNotPressed.value,
+      'animationEnabled': animationEnabled,
+      'animationStyle': animationStyle,
+      'animationDuration': animationDuration,
+      'animationScale': animationScale,
+      'learningModeEnabled': learningModeEnabled,
+      'pinkyLeftColor': pinkyLeftColor.value,
+      'ringLeftColor': ringLeftColor.value,
+      'middleLeftColor': middleLeftColor.value,
+      'indexLeftColor': indexLeftColor.value,
+      'indexRightColor': indexRightColor.value,
+      'middleRightColor': middleRightColor.value,
+      'ringRightColor': ringRightColor.value,
+      'pinkyRightColor': pinkyRightColor.value,
+      'customShiftMappings': customShiftMappings,
+      'kanataEnabled': kanataEnabled,
+      'showAltLayout': showAltLayout,
+    };
+  }
+
+  factory KeyboardState.fromJson(Map<String, dynamic> json) {
+    final layoutName = json['layoutName'] as String? ?? 'QWERTY';
+    final layout = availableLayouts.firstWhere(
+      (l) => l.name == layoutName,
+      orElse: () => qwerty,
+    );
+
+    final initialLayoutName = json['initialLayoutName'] as String?;
+    final initialLayout = initialLayoutName != null
+        ? availableLayouts.firstWhere(
+            (l) => l.name == initialLayoutName,
+            orElse: () => qwerty,
+          )
+        : null;
+
+    return KeyboardState(
+      layout: layout,
+      initialLayout: initialLayout,
+      keymapStyle: json['keymapStyle'] as String? ?? 'Staggered',
+      showTopRow: json['showTopRow'] as bool? ?? false,
+      showGraveKey: json['showGraveKey'] as bool? ?? false,
+      keySize: (json['keySize'] as num?)?.toDouble() ?? 48,
+      keyBorderRadius: (json['keyBorderRadius'] as num?)?.toDouble() ?? 12,
+      keyBorderThickness: (json['keyBorderThickness'] as num?)?.toDouble() ?? 0,
+      keyPadding: (json['keyPadding'] as num?)?.toDouble() ?? 3,
+      spaceWidth: (json['spaceWidth'] as num?)?.toDouble() ?? 320,
+      splitWidth: (json['splitWidth'] as num?)?.toDouble() ?? 100,
+      lastRowSplitWidth: (json['lastRowSplitWidth'] as num?)?.toDouble() ?? 100,
+      keyShadowBlurRadius:
+          (json['keyShadowBlurRadius'] as num?)?.toDouble() ?? 0,
+      keyShadowOffsetX: (json['keyShadowOffsetX'] as num?)?.toDouble() ?? 2,
+      keyShadowOffsetY: (json['keyShadowOffsetY'] as num?)?.toDouble() ?? 2,
+      fontFamily: json['fontFamily'] as String? ?? 'GeistMono',
+      initialFontFamily: json['initialFontFamily'] as String?,
+      fontWeight: FontWeight.values[json['fontWeightIndex'] as int? ?? 5],
+      keyFontSize: (json['keyFontSize'] as num?)?.toDouble() ?? 20,
+      spaceFontSize: (json['spaceFontSize'] as num?)?.toDouble() ?? 14,
+      markerOffset: (json['markerOffset'] as num?)?.toDouble() ?? 10,
+      markerWidth: (json['markerWidth'] as num?)?.toDouble() ?? 10,
+      markerHeight: (json['markerHeight'] as num?)?.toDouble() ?? 2,
+      markerBorderRadius:
+          (json['markerBorderRadius'] as num?)?.toDouble() ?? 10,
+      keyColorPressed: Color(json['keyColorPressed'] as int? ?? 0xFF1E1E1E),
+      keyColorNotPressed:
+          Color(json['keyColorNotPressed'] as int? ?? 0xFF77ABFF),
+      markerColor: Color(json['markerColor'] as int? ?? 0xFFFFFFFF),
+      markerColorNotPressed:
+          Color(json['markerColorNotPressed'] as int? ?? 0xFF000000),
+      keyTextColor: Color(json['keyTextColor'] as int? ?? 0xFFFFFFFF),
+      keyTextColorNotPressed:
+          Color(json['keyTextColorNotPressed'] as int? ?? 0xFF000000),
+      keyBorderColorPressed:
+          Color(json['keyBorderColorPressed'] as int? ?? 0xFF000000),
+      keyBorderColorNotPressed:
+          Color(json['keyBorderColorNotPressed'] as int? ?? 0xFFFFFFFF),
+      animationEnabled: json['animationEnabled'] as bool? ?? false,
+      animationStyle: json['animationStyle'] as String? ?? 'Raise',
+      animationDuration: (json['animationDuration'] as num?)?.toDouble() ?? 100,
+      animationScale: (json['animationScale'] as num?)?.toDouble() ?? 2.0,
+      learningModeEnabled: json['learningModeEnabled'] as bool? ?? false,
+      pinkyLeftColor: Color(json['pinkyLeftColor'] as int? ?? 0xFFED3345),
+      ringLeftColor: Color(json['ringLeftColor'] as int? ?? 0xFFFAA71D),
+      middleLeftColor: Color(json['middleLeftColor'] as int? ?? 0xFF70C27B),
+      indexLeftColor: Color(json['indexLeftColor'] as int? ?? 0xFF00AFEB),
+      indexRightColor: Color(json['indexRightColor'] as int? ?? 0xFF5985BF),
+      middleRightColor: Color(json['middleRightColor'] as int? ?? 0xFF97D6F5),
+      ringRightColor: Color(json['ringRightColor'] as int? ?? 0xFFFFE8A0),
+      pinkyRightColor: Color(json['pinkyRightColor'] as int? ?? 0xFFBDE0BF),
+      customShiftMappings: json['customShiftMappings'] != null
+          ? Map<String, String>.from(json['customShiftMappings'] as Map)
+          : null,
+      kanataEnabled: json['kanataEnabled'] as bool? ?? false,
+      showAltLayout: json['showAltLayout'] as bool? ?? false,
+    );
+  }
 }
 
 @riverpod
