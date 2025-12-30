@@ -47,10 +47,13 @@ class _PreferencesScreenState extends ConsumerState<PreferencesScreen>
   void initState() {
     super.initState();
     windowManager.addListener(this);
-    _loadState();
     _setupMethodHandler();
     _detectSystemTheme();
     _loadAppVersion();
+    // Load state after other setup is complete
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadState();
+    });
   }
 
   void _detectSystemTheme() {
@@ -159,6 +162,23 @@ class _PreferencesScreenState extends ConsumerState<PreferencesScreen>
   Widget build(BuildContext context) {
     final ThemeData theme = ThemeManager.getTheme(_brightness);
     final FocusNode keyboardFocusNode = FocusNode();
+
+    // Listen to provider changes and auto-save
+    ref.listen<KeyboardState>(keyboardNotifierProvider, (previous, next) {
+      if (previous != null && previous != next) {
+        _saveState();
+      }
+    });
+    ref.listen<PreferencesState>(preferencesNotifierProvider, (previous, next) {
+      if (previous != null && previous != next) {
+        _saveState();
+      }
+    });
+    ref.listen<AppState>(appStateNotifierProvider, (previous, next) {
+      if (previous != null && previous != next) {
+        _saveState();
+      }
+    });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       keyboardFocusNode.requestFocus();

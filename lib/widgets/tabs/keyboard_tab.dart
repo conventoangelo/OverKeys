@@ -28,40 +28,20 @@ class _KeyboardTabState extends ConsumerState<KeyboardTab> {
   late double _localKeyShadowOffsetY;
 
   @override
-  void initState() {
-    super.initState();
-    final keyboardState = ref.read(keyboardNotifierProvider);
-    _localKeySize = keyboardState.keySize;
-    _localKeyBorderRadius = keyboardState.keyBorderRadius;
-    _localKeyBorderThickness = keyboardState.keyBorderThickness;
-    _localKeyPadding = keyboardState.keyPadding;
-    _localSpaceWidth = keyboardState.spaceWidth;
-    _localSplitWidth = keyboardState.splitWidth;
-    _localLastRowSplitWidth = keyboardState.lastRowSplitWidth;
-    _localKeyShadowBlurRadius = keyboardState.keyShadowBlurRadius;
-    _localKeyShadowOffsetX = keyboardState.keyShadowOffsetX;
-    _localKeyShadowOffsetY = keyboardState.keyShadowOffsetY;
-  }
-
-  @override
-  void didUpdateWidget(KeyboardTab oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    final keyboardState = ref.read(keyboardNotifierProvider);
-    _localKeySize = keyboardState.keySize;
-    _localKeyBorderRadius = keyboardState.keyBorderRadius;
-    _localKeyBorderThickness = keyboardState.keyBorderThickness;
-    _localKeyPadding = keyboardState.keyPadding;
-    _localSpaceWidth = keyboardState.spaceWidth;
-    _localSplitWidth = keyboardState.splitWidth;
-    _localLastRowSplitWidth = keyboardState.lastRowSplitWidth;
-    _localKeyShadowBlurRadius = keyboardState.keyShadowBlurRadius;
-    _localKeyShadowOffsetX = keyboardState.keyShadowOffsetX;
-    _localKeyShadowOffsetY = keyboardState.keyShadowOffsetY;
-  }
-
-  @override
   Widget build(BuildContext context) {
     final keyboardState = ref.watch(keyboardNotifierProvider);
+
+    // Sync local state with provider state - this is the single source of truth
+    _localKeySize = keyboardState.keySize;
+    _localKeyBorderRadius = keyboardState.keyBorderRadius;
+    _localKeyBorderThickness = keyboardState.keyBorderThickness;
+    _localKeyPadding = keyboardState.keyPadding;
+    _localSpaceWidth = keyboardState.spaceWidth;
+    _localSplitWidth = keyboardState.splitWidth;
+    _localLastRowSplitWidth = keyboardState.lastRowSplitWidth;
+    _localKeyShadowBlurRadius = keyboardState.keyShadowBlurRadius;
+    _localKeyShadowOffsetX = keyboardState.keyShadowOffsetX;
+    _localKeyShadowOffsetY = keyboardState.keyShadowOffsetY;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,

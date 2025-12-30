@@ -22,25 +22,14 @@ class _GeneralTabState extends ConsumerState<GeneralTab> {
   late double _localOpacity;
 
   @override
-  void initState() {
-    super.initState();
-    final prefsState = ref.read(preferencesNotifierProvider);
-    _localAutoHideDuration = prefsState.autoHideDuration;
-    _localOpacity = prefsState.opacity.clamp(0.1, 1.0);
-  }
-
-  @override
-  void didUpdateWidget(GeneralTab oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    final prefsState = ref.read(preferencesNotifierProvider);
-    _localAutoHideDuration = prefsState.autoHideDuration;
-    _localOpacity = prefsState.opacity.clamp(0.1, 1.0);
-  }
-
   @override
   Widget build(BuildContext context) {
     final prefsState = ref.watch(preferencesNotifierProvider);
     final keyboardState = ref.watch(keyboardNotifierProvider);
+
+    // Sync local state with provider state - this is the single source of truth
+    _localAutoHideDuration = prefsState.autoHideDuration;
+    _localOpacity = prefsState.opacity.clamp(0.1, 1.0);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
