@@ -1,164 +1,198 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hotkey_manager/hotkey_manager.dart';
 import 'package:overkeys/widgets/options/options.dart';
 import 'package:overkeys/widgets/dialog/record_hotkey.dart';
+import 'package:overkeys/providers/app_state_provider.dart';
 
-class HotKeysTab extends StatefulWidget {
-  final bool hotKeysEnabled;
-  final HotKey visibilityHotKey;
-  final HotKey autoHideHotKey;
-  final HotKey toggleMoveHotKey;
-  final HotKey preferencesHotKey;
-  final HotKey increaseOpacityHotKey;
-  final HotKey decreaseOpacityHotKey;
-  final bool enableVisibilityHotKey;
-  final bool enableAutoHideHotKey;
-  final bool enableToggleMoveHotKey;
-  final bool enablePreferencesHotKey;
-  final bool enableIncreaseOpacityHotKey;
-  final bool enableDecreaseOpacityHotKey;
-  final Function(bool) updateHotKeysEnabled;
-  final Function(HotKey) updateVisibilityHotKey;
-  final Function(HotKey) updateAutoHideHotKey;
-  final Function(HotKey) updateToggleMoveHotKey;
-  final Function(HotKey) updatePreferencesHotKey;
-  final Function(HotKey) updateIncreaseOpacityHotKey;
-  final Function(HotKey) updateDecreaseOpacityHotKey;
-  final Function(bool) updateEnableVisibilityHotKey;
-  final Function(bool) updateEnableAutoHideHotKey;
-  final Function(bool) updateEnableToggleMoveHotKey;
-  final Function(bool) updateEnablePreferencesHotKey;
-  final Function(bool) updateEnableIncreaseOpacityHotKey;
-  final Function(bool) updateEnableDecreaseOpacityHotKey;
+class HotKeysTab extends ConsumerWidget {
+  final Function(String method, dynamic value) onUpdateMainWindow;
 
   const HotKeysTab({
     super.key,
-    required this.hotKeysEnabled,
-    required this.visibilityHotKey,
-    required this.autoHideHotKey,
-    required this.toggleMoveHotKey,
-    required this.preferencesHotKey,
-    required this.increaseOpacityHotKey,
-    required this.decreaseOpacityHotKey,
-    required this.updateHotKeysEnabled,
-    required this.updateVisibilityHotKey,
-    required this.updateAutoHideHotKey,
-    required this.updateToggleMoveHotKey,
-    required this.updatePreferencesHotKey,
-    required this.updateIncreaseOpacityHotKey,
-    required this.updateDecreaseOpacityHotKey,
-    required this.enableVisibilityHotKey,
-    required this.enableAutoHideHotKey,
-    required this.enableToggleMoveHotKey,
-    required this.enablePreferencesHotKey,
-    required this.enableIncreaseOpacityHotKey,
-    required this.enableDecreaseOpacityHotKey,
-    required this.updateEnableVisibilityHotKey,
-    required this.updateEnableAutoHideHotKey,
-    required this.updateEnableToggleMoveHotKey,
-    required this.updateEnablePreferencesHotKey,
-    required this.updateEnableIncreaseOpacityHotKey,
-    required this.updateEnableDecreaseOpacityHotKey,
+    required this.onUpdateMainWindow,
   });
 
   @override
-  State<HotKeysTab> createState() => _HotKeysTabState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final appState = ref.watch(appStateNotifierProvider);
 
-class _HotKeysTabState extends State<HotKeysTab> {
-  @override
-  Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ToggleOption(
             label: 'Enable hotkeys',
-            value: widget.hotKeysEnabled,
-            onChanged: widget.updateHotKeysEnabled),
+            value: appState.hotKeysEnabled,
+            onChanged: (value) {
+              ref
+                  .read(appStateNotifierProvider.notifier)
+                  .updateHotKeysEnabled(value);
+              onUpdateMainWindow('updateHotKeysEnabled', value);
+            }),
         HotKeyOption(
           label: 'Toggle Visibility',
           subtitle:
               'Force show or hide the overlay with a keyboard shortcut even if it\'s set to auto-hide',
-          formattedHotKey: _formatHotKey(widget.visibilityHotKey),
-          enabled: widget.enableVisibilityHotKey,
-          onToggleChanged: widget.updateEnableVisibilityHotKey,
+          formattedHotKey: _formatHotKey(appState.visibilityHotKey),
+          enabled: appState.enableVisibilityHotKey,
+          onToggleChanged: (value) {
+            ref
+                .read(appStateNotifierProvider.notifier)
+                .updateEnableVisibilityHotKey(value);
+            onUpdateMainWindow('updateEnableVisibilityHotKey', value);
+          },
           onChangePressed: () => _showRecordHotKeyDialog(
             context,
-            widget.updateVisibilityHotKey,
-            widget.visibilityHotKey,
+            (value) {
+              ref
+                  .read(appStateNotifierProvider.notifier)
+                  .updateVisibilityHotKey(value);
+              onUpdateMainWindow('updateVisibilityHotKey', value);
+            },
+            appState.visibilityHotKey ??
+                HotKey(
+                    key: PhysicalKeyboardKey.keyV,
+                    modifiers: [HotKeyModifier.control]),
           ),
-          isEnabled: widget.hotKeysEnabled,
+          isEnabled: appState.hotKeysEnabled,
         ),
         HotKeyOption(
           label: 'Toggle Auto Hide',
           subtitle: 'Enable or disable auto-hide feature',
-          formattedHotKey: _formatHotKey(widget.autoHideHotKey),
-          enabled: widget.enableAutoHideHotKey,
-          onToggleChanged: widget.updateEnableAutoHideHotKey,
+          formattedHotKey: _formatHotKey(appState.autoHideHotKey),
+          enabled: appState.enableAutoHideHotKey,
+          onToggleChanged: (value) {
+            ref
+                .read(appStateNotifierProvider.notifier)
+                .updateEnableAutoHideHotKey(value);
+            onUpdateMainWindow('updateEnableAutoHideHotKey', value);
+          },
           onChangePressed: () => _showRecordHotKeyDialog(
             context,
-            widget.updateAutoHideHotKey,
-            widget.autoHideHotKey,
+            (value) {
+              ref
+                  .read(appStateNotifierProvider.notifier)
+                  .updateAutoHideHotKey(value);
+              onUpdateMainWindow('updateAutoHideHotKey', value);
+            },
+            appState.autoHideHotKey ??
+                HotKey(
+                    key: PhysicalKeyboardKey.keyH,
+                    modifiers: [HotKeyModifier.control]),
           ),
-          isEnabled: widget.hotKeysEnabled,
+          isEnabled: appState.hotKeysEnabled,
         ),
         HotKeyOption(
           label: 'Toggle Move',
           subtitle: 'Enable or disable keyboard dragging',
-          formattedHotKey: _formatHotKey(widget.toggleMoveHotKey),
-          enabled: widget.enableToggleMoveHotKey,
-          onToggleChanged: widget.updateEnableToggleMoveHotKey,
+          formattedHotKey: _formatHotKey(appState.toggleMoveHotKey),
+          enabled: appState.enableToggleMoveHotKey,
+          onToggleChanged: (value) {
+            ref
+                .read(appStateNotifierProvider.notifier)
+                .updateEnableToggleMoveHotKey(value);
+            onUpdateMainWindow('updateEnableToggleMoveHotKey', value);
+          },
           onChangePressed: () => _showRecordHotKeyDialog(
             context,
-            widget.updateToggleMoveHotKey,
-            widget.toggleMoveHotKey,
+            (value) {
+              ref
+                  .read(appStateNotifierProvider.notifier)
+                  .updateToggleMoveHotKey(value);
+              onUpdateMainWindow('updateToggleMoveHotKey', value);
+            },
+            appState.toggleMoveHotKey ??
+                HotKey(
+                    key: PhysicalKeyboardKey.keyM,
+                    modifiers: [HotKeyModifier.control]),
           ),
-          isEnabled: widget.hotKeysEnabled,
+          isEnabled: appState.hotKeysEnabled,
         ),
         HotKeyOption(
           label: 'Open Preferences',
           subtitle: 'Show/focus the preferences window',
-          formattedHotKey: _formatHotKey(widget.preferencesHotKey),
-          enabled: widget.enablePreferencesHotKey,
-          onToggleChanged: widget.updateEnablePreferencesHotKey,
+          formattedHotKey: _formatHotKey(appState.preferencesHotKey),
+          enabled: appState.enablePreferencesHotKey,
+          onToggleChanged: (value) {
+            ref
+                .read(appStateNotifierProvider.notifier)
+                .updateEnablePreferencesHotKey(value);
+            onUpdateMainWindow('updateEnablePreferencesHotKey', value);
+          },
           onChangePressed: () => _showRecordHotKeyDialog(
             context,
-            widget.updatePreferencesHotKey,
-            widget.preferencesHotKey,
+            (value) {
+              ref
+                  .read(appStateNotifierProvider.notifier)
+                  .updatePreferencesHotKey(value);
+              onUpdateMainWindow('updatePreferencesHotKey', value);
+            },
+            appState.preferencesHotKey ??
+                HotKey(
+                    key: PhysicalKeyboardKey.keyP,
+                    modifiers: [HotKeyModifier.control]),
           ),
-          isEnabled: widget.hotKeysEnabled,
+          isEnabled: appState.hotKeysEnabled,
         ),
         HotKeyOption(
           label: 'Increase Opacity',
           subtitle: 'Increase opacity by 5%',
-          formattedHotKey: _formatHotKey(widget.increaseOpacityHotKey),
-          enabled: widget.enableIncreaseOpacityHotKey,
-          onToggleChanged: widget.updateEnableIncreaseOpacityHotKey,
+          formattedHotKey: _formatHotKey(appState.increaseOpacityHotKey),
+          enabled: appState.enableIncreaseOpacityHotKey,
+          onToggleChanged: (value) {
+            ref
+                .read(appStateNotifierProvider.notifier)
+                .updateEnableIncreaseOpacityHotKey(value);
+            onUpdateMainWindow('updateEnableIncreaseOpacityHotKey', value);
+          },
           onChangePressed: () => _showRecordHotKeyDialog(
             context,
-            widget.updateIncreaseOpacityHotKey,
-            widget.increaseOpacityHotKey,
+            (value) {
+              ref
+                  .read(appStateNotifierProvider.notifier)
+                  .updateIncreaseOpacityHotKey(value);
+              onUpdateMainWindow('updateIncreaseOpacityHotKey', value);
+            },
+            appState.increaseOpacityHotKey ??
+                HotKey(
+                    key: PhysicalKeyboardKey.equal,
+                    modifiers: [HotKeyModifier.control]),
           ),
-          isEnabled: widget.hotKeysEnabled,
+          isEnabled: appState.hotKeysEnabled,
         ),
         HotKeyOption(
           label: 'Decrease Opacity',
           subtitle: 'Decrease opacity by 5%',
-          formattedHotKey: _formatHotKey(widget.decreaseOpacityHotKey),
-          enabled: widget.enableDecreaseOpacityHotKey,
-          onToggleChanged: widget.updateEnableDecreaseOpacityHotKey,
+          formattedHotKey: _formatHotKey(appState.decreaseOpacityHotKey),
+          enabled: appState.enableDecreaseOpacityHotKey,
+          onToggleChanged: (value) {
+            ref
+                .read(appStateNotifierProvider.notifier)
+                .updateEnableDecreaseOpacityHotKey(value);
+            onUpdateMainWindow('updateEnableDecreaseOpacityHotKey', value);
+          },
           onChangePressed: () => _showRecordHotKeyDialog(
             context,
-            widget.updateDecreaseOpacityHotKey,
-            widget.decreaseOpacityHotKey,
+            (value) {
+              ref
+                  .read(appStateNotifierProvider.notifier)
+                  .updateDecreaseOpacityHotKey(value);
+              onUpdateMainWindow('updateDecreaseOpacityHotKey', value);
+            },
+            appState.decreaseOpacityHotKey ??
+                HotKey(
+                    key: PhysicalKeyboardKey.minus,
+                    modifiers: [HotKeyModifier.control]),
           ),
-          isEnabled: widget.hotKeysEnabled,
+          isEnabled: appState.hotKeysEnabled,
         ),
       ],
     );
   }
 
-  String _formatHotKey(HotKey hotKey) {
+  String _formatHotKey(HotKey? hotKey) {
+    if (hotKey == null) return 'Not set';
     final modifiers = hotKey.modifiers?.map((m) {
       switch (m) {
         case HotKeyModifier.alt:

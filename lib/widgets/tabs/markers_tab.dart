@@ -44,7 +44,6 @@ class _MarkersTabState extends ConsumerState<MarkersTab> {
 
   @override
   Widget build(BuildContext context) {
-    final keyboardState = ref.watch(keyboardNotifierProvider);
     final prefsState = ref.watch(preferencesNotifierProvider);
 
     return Column(
