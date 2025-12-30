@@ -1,0 +1,431 @@
+import 'package:flutter/material.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:overkeys/models/keyboard_layouts.dart';
+
+part 'keyboard_provider.g.dart';
+
+class KeyboardState {
+  final KeyboardLayout layout;
+  final KeyboardLayout? initialLayout;
+  final Map<String, bool> keyPressStates;
+  final String keymapStyle;
+  final bool showTopRow;
+  final bool showGraveKey;
+  final double keySize;
+  final double keyBorderRadius;
+  final double keyBorderThickness;
+  final double keyPadding;
+  final double spaceWidth;
+  final double splitWidth;
+  final double lastRowSplitWidth;
+  final double keyShadowBlurRadius;
+  final double keyShadowOffsetX;
+  final double keyShadowOffsetY;
+  final String fontFamily;
+  final String? initialFontFamily;
+  final FontWeight fontWeight;
+  final double keyFontSize;
+  final double spaceFontSize;
+  final double markerOffset;
+  final double markerWidth;
+  final double markerHeight;
+  final double markerBorderRadius;
+  final Color keyColorPressed;
+  final Color keyColorNotPressed;
+  final Color markerColor;
+  final Color markerColorNotPressed;
+  final Color keyTextColor;
+  final Color keyTextColorNotPressed;
+  final Color keyBorderColorPressed;
+  final Color keyBorderColorNotPressed;
+  final bool animationEnabled;
+  final String animationStyle;
+  final double animationDuration;
+  final double animationScale;
+  final bool learningModeEnabled;
+  final Color pinkyLeftColor;
+  final Color ringLeftColor;
+  final Color middleLeftColor;
+  final Color indexLeftColor;
+  final Color indexRightColor;
+  final Color middleRightColor;
+  final Color ringRightColor;
+  final Color pinkyRightColor;
+  final Map<String, String>? customShiftMappings;
+  final bool kanataEnabled;
+  final bool showAltLayout;
+
+  KeyboardState({
+    required this.layout,
+    this.initialLayout,
+    this.keyPressStates = const {},
+    this.keymapStyle = 'Staggered',
+    this.showTopRow = false,
+    this.showGraveKey = false,
+    this.keySize = 48,
+    this.keyBorderRadius = 12,
+    this.keyBorderThickness = 0,
+    this.keyPadding = 3,
+    this.spaceWidth = 320,
+    this.splitWidth = 100,
+    this.lastRowSplitWidth = 100,
+    this.keyShadowBlurRadius = 0,
+    this.keyShadowOffsetX = 2,
+    this.keyShadowOffsetY = 2,
+    this.fontFamily = 'GeistMono',
+    this.initialFontFamily,
+    this.fontWeight = FontWeight.w600,
+    this.keyFontSize = 20,
+    this.spaceFontSize = 14,
+    this.markerOffset = 10,
+    this.markerWidth = 10,
+    this.markerHeight = 2,
+    this.markerBorderRadius = 10,
+    this.keyColorPressed = const Color.fromARGB(255, 30, 30, 30),
+    this.keyColorNotPressed = const Color.fromARGB(255, 119, 171, 255),
+    this.markerColor = Colors.white,
+    this.markerColorNotPressed = Colors.black,
+    this.keyTextColor = Colors.white,
+    this.keyTextColorNotPressed = Colors.black,
+    this.keyBorderColorPressed = Colors.black,
+    this.keyBorderColorNotPressed = Colors.white,
+    this.animationEnabled = false,
+    this.animationStyle = 'Raise',
+    this.animationDuration = 100,
+    this.animationScale = 2.0,
+    this.learningModeEnabled = false,
+    this.pinkyLeftColor = const Color(0xFFED3345),
+    this.ringLeftColor = const Color(0xFFFAA71D),
+    this.middleLeftColor = const Color(0xFF70C27B),
+    this.indexLeftColor = const Color(0xFF00AFEB),
+    this.indexRightColor = const Color(0xFF5985BF),
+    this.middleRightColor = const Color(0xFF97D6F5),
+    this.ringRightColor = const Color(0xFFFFE8A0),
+    this.pinkyRightColor = const Color(0xFFBDE0BF),
+    this.customShiftMappings,
+    this.kanataEnabled = false,
+    this.showAltLayout = false,
+  });
+
+  KeyboardState copyWith({
+    KeyboardLayout? layout,
+    KeyboardLayout? initialLayout,
+    Map<String, bool>? keyPressStates,
+    String? keymapStyle,
+    bool? showTopRow,
+    bool? showGraveKey,
+    double? keySize,
+    double? keyBorderRadius,
+    double? keyBorderThickness,
+    double? keyPadding,
+    double? spaceWidth,
+    double? splitWidth,
+    double? lastRowSplitWidth,
+    double? keyShadowBlurRadius,
+    double? keyShadowOffsetX,
+    double? keyShadowOffsetY,
+    String? fontFamily,
+    String? initialFontFamily,
+    FontWeight? fontWeight,
+    double? keyFontSize,
+    double? spaceFontSize,
+    double? markerOffset,
+    double? markerWidth,
+    double? markerHeight,
+    double? markerBorderRadius,
+    Color? keyColorPressed,
+    Color? keyColorNotPressed,
+    Color? markerColor,
+    Color? markerColorNotPressed,
+    Color? keyTextColor,
+    Color? keyTextColorNotPressed,
+    Color? keyBorderColorPressed,
+    Color? keyBorderColorNotPressed,
+    bool? animationEnabled,
+    String? animationStyle,
+    double? animationDuration,
+    double? animationScale,
+    bool? learningModeEnabled,
+    Color? pinkyLeftColor,
+    Color? ringLeftColor,
+    Color? middleLeftColor,
+    Color? indexLeftColor,
+    Color? indexRightColor,
+    Color? middleRightColor,
+    Color? ringRightColor,
+    Color? pinkyRightColor,
+    Map<String, String>? customShiftMappings,
+    bool? kanataEnabled,
+    bool? showAltLayout,
+  }) {
+    return KeyboardState(
+      layout: layout ?? this.layout,
+      initialLayout: initialLayout ?? this.initialLayout,
+      keyPressStates: keyPressStates ?? this.keyPressStates,
+      keymapStyle: keymapStyle ?? this.keymapStyle,
+      showTopRow: showTopRow ?? this.showTopRow,
+      showGraveKey: showGraveKey ?? this.showGraveKey,
+      keySize: keySize ?? this.keySize,
+      keyBorderRadius: keyBorderRadius ?? this.keyBorderRadius,
+      keyBorderThickness: keyBorderThickness ?? this.keyBorderThickness,
+      keyPadding: keyPadding ?? this.keyPadding,
+      spaceWidth: spaceWidth ?? this.spaceWidth,
+      splitWidth: splitWidth ?? this.splitWidth,
+      lastRowSplitWidth: lastRowSplitWidth ?? this.lastRowSplitWidth,
+      keyShadowBlurRadius: keyShadowBlurRadius ?? this.keyShadowBlurRadius,
+      keyShadowOffsetX: keyShadowOffsetX ?? this.keyShadowOffsetX,
+      keyShadowOffsetY: keyShadowOffsetY ?? this.keyShadowOffsetY,
+      fontFamily: fontFamily ?? this.fontFamily,
+      initialFontFamily: initialFontFamily ?? this.initialFontFamily,
+      fontWeight: fontWeight ?? this.fontWeight,
+      keyFontSize: keyFontSize ?? this.keyFontSize,
+      spaceFontSize: spaceFontSize ?? this.spaceFontSize,
+      markerOffset: markerOffset ?? this.markerOffset,
+      markerWidth: markerWidth ?? this.markerWidth,
+      markerHeight: markerHeight ?? this.markerHeight,
+      markerBorderRadius: markerBorderRadius ?? this.markerBorderRadius,
+      keyColorPressed: keyColorPressed ?? this.keyColorPressed,
+      keyColorNotPressed: keyColorNotPressed ?? this.keyColorNotPressed,
+      markerColor: markerColor ?? this.markerColor,
+      markerColorNotPressed:
+          markerColorNotPressed ?? this.markerColorNotPressed,
+      keyTextColor: keyTextColor ?? this.keyTextColor,
+      keyTextColorNotPressed:
+          keyTextColorNotPressed ?? this.keyTextColorNotPressed,
+      keyBorderColorPressed:
+          keyBorderColorPressed ?? this.keyBorderColorPressed,
+      keyBorderColorNotPressed:
+          keyBorderColorNotPressed ?? this.keyBorderColorNotPressed,
+      animationEnabled: animationEnabled ?? this.animationEnabled,
+      animationStyle: animationStyle ?? this.animationStyle,
+      animationDuration: animationDuration ?? this.animationDuration,
+      animationScale: animationScale ?? this.animationScale,
+      learningModeEnabled: learningModeEnabled ?? this.learningModeEnabled,
+      pinkyLeftColor: pinkyLeftColor ?? this.pinkyLeftColor,
+      ringLeftColor: ringLeftColor ?? this.ringLeftColor,
+      middleLeftColor: middleLeftColor ?? this.middleLeftColor,
+      indexLeftColor: indexLeftColor ?? this.indexLeftColor,
+      indexRightColor: indexRightColor ?? this.indexRightColor,
+      middleRightColor: middleRightColor ?? this.middleRightColor,
+      ringRightColor: ringRightColor ?? this.ringRightColor,
+      pinkyRightColor: pinkyRightColor ?? this.pinkyRightColor,
+      customShiftMappings: customShiftMappings ?? this.customShiftMappings,
+      kanataEnabled: kanataEnabled ?? this.kanataEnabled,
+      showAltLayout: showAltLayout ?? this.showAltLayout,
+    );
+  }
+}
+
+@riverpod
+class KeyboardNotifier extends _$KeyboardNotifier {
+  @override
+  KeyboardState build() {
+    return KeyboardState(layout: qwerty);
+  }
+
+  void updateLayout(KeyboardLayout layout) {
+    state = state.copyWith(layout: layout);
+  }
+
+  void updateKeyPressState(String key, bool isPressed) {
+    final newStates = {...state.keyPressStates};
+    newStates[key] = isPressed;
+    state = state.copyWith(keyPressStates: newStates);
+  }
+
+  void clearKeyPressStates() {
+    state = state.copyWith(keyPressStates: {});
+  }
+
+  void updateKeymapStyle(String style) {
+    state = state.copyWith(keymapStyle: style);
+  }
+
+  void updateShowTopRow(bool value) {
+    state = state.copyWith(showTopRow: value);
+  }
+
+  void updateShowGraveKey(bool value) {
+    state = state.copyWith(showGraveKey: value);
+  }
+
+  void updateKeySize(double size) {
+    state = state.copyWith(keySize: size);
+  }
+
+  void updateKeyBorderRadius(double radius) {
+    state = state.copyWith(keyBorderRadius: radius);
+  }
+
+  void updateKeyBorderThickness(double thickness) {
+    state = state.copyWith(keyBorderThickness: thickness);
+  }
+
+  void updateKeyPadding(double padding) {
+    state = state.copyWith(keyPadding: padding);
+  }
+
+  void updateSpaceWidth(double width) {
+    state = state.copyWith(spaceWidth: width);
+  }
+
+  void updateSplitWidth(double width) {
+    state = state.copyWith(splitWidth: width);
+  }
+
+  void updateLastRowSplitWidth(double width) {
+    state = state.copyWith(lastRowSplitWidth: width);
+  }
+
+  void updateKeyShadowBlurRadius(double radius) {
+    state = state.copyWith(keyShadowBlurRadius: radius);
+  }
+
+  void updateKeyShadowOffsetX(double offset) {
+    state = state.copyWith(keyShadowOffsetX: offset);
+  }
+
+  void updateKeyShadowOffsetY(double offset) {
+    state = state.copyWith(keyShadowOffsetY: offset);
+  }
+
+  void updateFontFamily(String family) {
+    state = state.copyWith(fontFamily: family);
+  }
+
+  void updateFontWeight(FontWeight weight) {
+    state = state.copyWith(fontWeight: weight);
+  }
+
+  void updateKeyFontSize(double size) {
+    state = state.copyWith(keyFontSize: size);
+  }
+
+  void updateSpaceFontSize(double size) {
+    state = state.copyWith(spaceFontSize: size);
+  }
+
+  void updateMarkerOffset(double offset) {
+    state = state.copyWith(markerOffset: offset);
+  }
+
+  void updateMarkerWidth(double width) {
+    state = state.copyWith(markerWidth: width);
+  }
+
+  void updateMarkerHeight(double height) {
+    state = state.copyWith(markerHeight: height);
+  }
+
+  void updateMarkerBorderRadius(double radius) {
+    state = state.copyWith(markerBorderRadius: radius);
+  }
+
+  void updateKeyColorPressed(Color color) {
+    state = state.copyWith(keyColorPressed: color);
+  }
+
+  void updateKeyColorNotPressed(Color color) {
+    state = state.copyWith(keyColorNotPressed: color);
+  }
+
+  void updateMarkerColor(Color color) {
+    state = state.copyWith(markerColor: color);
+  }
+
+  void updateMarkerColorNotPressed(Color color) {
+    state = state.copyWith(markerColorNotPressed: color);
+  }
+
+  void updateKeyTextColor(Color color) {
+    state = state.copyWith(keyTextColor: color);
+  }
+
+  void updateKeyTextColorNotPressed(Color color) {
+    state = state.copyWith(keyTextColorNotPressed: color);
+  }
+
+  void updateKeyBorderColorPressed(Color color) {
+    state = state.copyWith(keyBorderColorPressed: color);
+  }
+
+  void updateKeyBorderColorNotPressed(Color color) {
+    state = state.copyWith(keyBorderColorNotPressed: color);
+  }
+
+  void updateAnimationEnabled(bool value) {
+    state = state.copyWith(animationEnabled: value);
+  }
+
+  void updateAnimationStyle(String style) {
+    state = state.copyWith(animationStyle: style);
+  }
+
+  void updateAnimationDuration(double duration) {
+    state = state.copyWith(animationDuration: duration);
+  }
+
+  void updateAnimationScale(double scale) {
+    state = state.copyWith(animationScale: scale);
+  }
+
+  void updateLearningModeEnabled(bool value) {
+    state = state.copyWith(learningModeEnabled: value);
+  }
+
+  void updatePinkyLeftColor(Color color) {
+    state = state.copyWith(pinkyLeftColor: color);
+  }
+
+  void updateRingLeftColor(Color color) {
+    state = state.copyWith(ringLeftColor: color);
+  }
+
+  void updateMiddleLeftColor(Color color) {
+    state = state.copyWith(middleLeftColor: color);
+  }
+
+  void updateIndexLeftColor(Color color) {
+    state = state.copyWith(indexLeftColor: color);
+  }
+
+  void updateIndexRightColor(Color color) {
+    state = state.copyWith(indexRightColor: color);
+  }
+
+  void updateMiddleRightColor(Color color) {
+    state = state.copyWith(middleRightColor: color);
+  }
+
+  void updateRingRightColor(Color color) {
+    state = state.copyWith(ringRightColor: color);
+  }
+
+  void updatePinkyRightColor(Color color) {
+    state = state.copyWith(pinkyRightColor: color);
+  }
+
+  void updateCustomShiftMappings(Map<String, String>? mappings) {
+    state = state.copyWith(customShiftMappings: mappings);
+  }
+
+  void updateInitialLayout(KeyboardLayout layout) {
+    state = state.copyWith(initialLayout: layout);
+  }
+
+  void updateInitialFontFamily(String family) {
+    state = state.copyWith(initialFontFamily: family);
+  }
+
+  void updateKanataEnabled(bool value) {
+    state = state.copyWith(kanataEnabled: value);
+  }
+
+  void updateShowAltLayout(bool value) {
+    state = state.copyWith(showAltLayout: value);
+  }
+
+  void updateKeyboardState(KeyboardState newState) {
+    state = newState;
+  }
+}

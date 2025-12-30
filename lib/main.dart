@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:launch_at_startup/launch_at_startup.dart';
@@ -32,18 +33,20 @@ Future<void> main(List<String> args) async {
   switch (windowType) {
     case WindowType.main:
       await _initMainWindow();
-      runApp(const MainApp());
+      runApp(const ProviderScope(child: MainApp()));
       break;
     case WindowType.preferences:
       await _initPreferencesWindow();
-      runApp(PreferencesScreen(
-        windowController: windowController,
+      runApp(ProviderScope(
+        child: PreferencesScreen(
+          windowController: windowController,
+        ),
       ));
       break;
     default:
       // Fallback to main window
       await _initMainWindow();
-      runApp(const MainApp());
+      runApp(const ProviderScope(child: MainApp()));
   }
 }
 
