@@ -1,46 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:overkeys/widgets/options/options.dart';
+import 'package:overkeys/providers/keyboard_provider.dart';
 
-class ColorsTab extends StatelessWidget {
-  final Color keyColorPressed;
-  final Color keyColorNotPressed;
-  final Color markerColor;
-  final Color markerColorNotPressed;
-  final Color keyTextColor;
-  final Color keyTextColorNotPressed;
-  final Color keyBorderColorPressed;
-  final Color keyBorderColorNotPressed;
-  final Function(Color) updateKeyColorPressed;
-  final Function(Color) updateKeyColorNotPressed;
-  final Function(Color) updateMarkerColor;
-  final Function(Color) updateMarkerColorNotPressed;
-  final Function(Color) updateKeyTextColor;
-  final Function(Color) updateKeyTextColorNotPressed;
-  final Function(Color) updateKeyBorderColorPressed;
-  final Function(Color) updateKeyBorderColorNotPressed;
+class ColorsTab extends ConsumerWidget {
+  final Function(String method, dynamic value) onUpdateMainWindow;
 
   const ColorsTab({
     super.key,
-    required this.keyColorPressed,
-    required this.keyColorNotPressed,
-    required this.markerColor,
-    required this.markerColorNotPressed,
-    required this.keyTextColor,
-    required this.keyTextColorNotPressed,
-    required this.keyBorderColorPressed,
-    required this.keyBorderColorNotPressed,
-    required this.updateKeyColorPressed,
-    required this.updateKeyColorNotPressed,
-    required this.updateMarkerColor,
-    required this.updateMarkerColorNotPressed,
-    required this.updateKeyTextColor,
-    required this.updateKeyTextColorNotPressed,
-    required this.updateKeyBorderColorPressed,
-    required this.updateKeyBorderColorNotPressed,
+    required this.onUpdateMainWindow,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final keyboardState = ref.watch(keyboardNotifierProvider);
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
@@ -51,23 +25,43 @@ class ColorsTab extends StatelessWidget {
             children: [
               ColorOption(
                 label: 'Key (pressed)',
-                currentColor: keyColorPressed,
-                onColorChanged: updateKeyColorPressed,
+                currentColor: keyboardState.keyColorPressed,
+                onColorChanged: (value) {
+                  ref
+                      .read(keyboardNotifierProvider.notifier)
+                      .updateKeyColorPressed(value);
+                  onUpdateMainWindow('updateKeyColorPressed', value);
+                },
               ),
               ColorOption(
                 label: 'Marker (pressed)',
-                currentColor: markerColor,
-                onColorChanged: updateMarkerColor,
+                currentColor: keyboardState.markerColor,
+                onColorChanged: (value) {
+                  ref
+                      .read(keyboardNotifierProvider.notifier)
+                      .updateMarkerColor(value);
+                  onUpdateMainWindow('updateMarkerColor', value);
+                },
               ),
               ColorOption(
                 label: 'Text (pressed)',
-                currentColor: keyTextColor,
-                onColorChanged: updateKeyTextColor,
+                currentColor: keyboardState.keyTextColor,
+                onColorChanged: (value) {
+                  ref
+                      .read(keyboardNotifierProvider.notifier)
+                      .updateKeyTextColor(value);
+                  onUpdateMainWindow('updateKeyTextColor', value);
+                },
               ),
               ColorOption(
                 label: 'Border (pressed)',
-                currentColor: keyBorderColorPressed,
-                onColorChanged: updateKeyBorderColorPressed,
+                currentColor: keyboardState.keyBorderColorPressed,
+                onColorChanged: (value) {
+                  ref
+                      .read(keyboardNotifierProvider.notifier)
+                      .updateKeyBorderColorPressed(value);
+                  onUpdateMainWindow('updateKeyBorderColorPressed', value);
+                },
               ),
             ],
           ),
@@ -79,23 +73,43 @@ class ColorsTab extends StatelessWidget {
             children: [
               ColorOption(
                 label: 'Key (not pressed)',
-                currentColor: keyColorNotPressed,
-                onColorChanged: updateKeyColorNotPressed,
+                currentColor: keyboardState.keyColorNotPressed,
+                onColorChanged: (value) {
+                  ref
+                      .read(keyboardNotifierProvider.notifier)
+                      .updateKeyColorNotPressed(value);
+                  onUpdateMainWindow('updateKeyColorNotPressed', value);
+                },
               ),
               ColorOption(
                 label: 'Marker (not pressed)',
-                currentColor: markerColorNotPressed,
-                onColorChanged: updateMarkerColorNotPressed,
+                currentColor: keyboardState.markerColorNotPressed,
+                onColorChanged: (value) {
+                  ref
+                      .read(keyboardNotifierProvider.notifier)
+                      .updateMarkerColorNotPressed(value);
+                  onUpdateMainWindow('updateMarkerColorNotPressed', value);
+                },
               ),
               ColorOption(
                 label: 'Text (not pressed)',
-                currentColor: keyTextColorNotPressed,
-                onColorChanged: updateKeyTextColorNotPressed,
+                currentColor: keyboardState.keyTextColorNotPressed,
+                onColorChanged: (value) {
+                  ref
+                      .read(keyboardNotifierProvider.notifier)
+                      .updateKeyTextColorNotPressed(value);
+                  onUpdateMainWindow('updateKeyTextColorNotPressed', value);
+                },
               ),
               ColorOption(
                 label: 'Border (not pressed)',
-                currentColor: keyBorderColorNotPressed,
-                onColorChanged: updateKeyBorderColorNotPressed,
+                currentColor: keyboardState.keyBorderColorNotPressed,
+                onColorChanged: (value) {
+                  ref
+                      .read(keyboardNotifierProvider.notifier)
+                      .updateKeyBorderColorNotPressed(value);
+                  onUpdateMainWindow('updateKeyBorderColorNotPressed', value);
+                },
               ),
             ],
           ),

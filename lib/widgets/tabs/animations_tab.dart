@@ -1,70 +1,66 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:overkeys/widgets/options/options.dart';
+import 'package:overkeys/providers/keyboard_provider.dart';
 
-class AnimationsTab extends StatefulWidget {
-  final bool animationEnabled;
-  final String animationStyle;
-  final double animationDuration;
-  final double animationScale;
-  final Function(bool) updateAnimationEnabled;
-  final Function(String) updateAnimationStyle;
-  final Function(double) updateAnimationDuration;
-  final Function(double) updateAnimationScale;
+class AnimationsTab extends ConsumerStatefulWidget {
+  final Function(String method, dynamic value) onUpdateMainWindow;
 
   const AnimationsTab({
     super.key,
-    required this.animationEnabled,
-    required this.animationStyle,
-    required this.animationDuration,
-    required this.animationScale,
-    required this.updateAnimationEnabled,
-    required this.updateAnimationStyle,
-    required this.updateAnimationDuration,
-    required this.updateAnimationScale,
+    required this.onUpdateMainWindow,
   });
 
   @override
-  State<AnimationsTab> createState() => _AnimationsTabState();
+  ConsumerState<AnimationsTab> createState() => _AnimationsTabState();
 }
 
-class _AnimationsTabState extends State<AnimationsTab> {
+class _AnimationsTabState extends ConsumerState<AnimationsTab> {
   late double _localAnimationDuration;
   late double _localAnimationScale;
 
   @override
   void initState() {
     super.initState();
-    _localAnimationDuration = widget.animationDuration;
-    _localAnimationScale = widget.animationScale;
+    final keyboardState = ref.read(keyboardNotifierProvider);
+    _localAnimationDuration = keyboardState.animationDuration;
+    _localAnimationScale = keyboardState.animationScale;
   }
 
   @override
   void didUpdateWidget(AnimationsTab oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.animationDuration != widget.animationDuration) {
-      _localAnimationDuration = widget.animationDuration;
-    }
-    if (oldWidget.animationScale != widget.animationScale) {
-      _localAnimationScale = widget.animationScale;
-    }
+    final keyboardState = ref.read(keyboardNotifierProvider);
+    _localAnimationDuration = keyboardState.animationDuration;
+    _localAnimationScale = keyboardState.animationScale;
   }
 
   @override
   Widget build(BuildContext context) {
+    final keyboardState = ref.watch(keyboardNotifierProvider);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         ToggleOption(
           label: 'Enable animations',
-          value: widget.animationEnabled,
-          onChanged: widget.updateAnimationEnabled,
+          value: keyboardState.animationEnabled,
+          onChanged: (value) {
+            ref
+                .read(keyboardNotifierProvider.notifier)
+                .updateAnimationEnabled(value);
+            widget.onUpdateMainWindow('updateAnimationEnabled', value);
+          },
         ),
         DropdownOption(
           label: 'Animation style',
-          value: widget.animationStyle,
+          value: keyboardState.animationStyle,
           options: ['Depress', 'Raise', 'Grow', 'Shrink'],
           onChanged: (value) {
-            widget.updateAnimationStyle(value!);
+            ref
+                .read(keyboardNotifierProvider.notifier)
+                .updateAnimationStyle(value!);
+            widget.onUpdateMainWindow('updateAnimationStyle', value);
           },
         ),
         SliderOption(
@@ -76,7 +72,12 @@ class _AnimationsTabState extends State<AnimationsTab> {
           onChanged: (value) {
             setState(() => _localAnimationDuration = value);
           },
-          onChangeEnd: widget.updateAnimationDuration,
+          onChangeEnd: (value) {
+            ref
+                .read(keyboardNotifierProvider.notifier)
+                .updateAnimationDuration(value);
+            widget.onUpdateMainWindow('updateAnimationDuration', value);
+          },
         ),
         SliderOption(
           label: 'Animation scale',
@@ -87,7 +88,12 @@ class _AnimationsTabState extends State<AnimationsTab> {
           onChanged: (value) {
             setState(() => _localAnimationScale = value);
           },
-          onChangeEnd: widget.updateAnimationScale,
+          onChangeEnd: (value) {
+            ref
+                .read(keyboardNotifierProvider.notifier)
+                .updateAnimationScale(value);
+            widget.onUpdateMainWindow('updateAnimationScale', value);
+          },
         ),
       ],
     );

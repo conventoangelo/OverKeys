@@ -1,57 +1,36 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:overkeys/widgets/options/options.dart';
 import 'package:overkeys/services/config_service.dart';
 import 'package:overkeys/models/user_config.dart';
+import 'package:overkeys/providers/preferences_provider.dart';
 
-class AdvancedTab extends StatelessWidget {
-  final bool advancedSettingsEnabled;
-  final bool useUserLayout;
-  final bool showAltLayout;
-  final bool customFontEnabled;
-  final bool use6ColLayout;
-  final bool kanataEnabled;
-  final bool keyboardFollowsMouse;
-  final bool hideOnDefaultLayer;
-  final Function(bool) updateAdvancedSettingsEnabled;
-  final Function(bool) updateUseUserLayout;
-  final Function(bool) updateShowAltLayout;
-  final Function(bool) updateCustomFontEnabled;
-  final Function(bool) updateUse6ColLayout;
-  final Function(bool) updateKanataEnabled;
-  final Function(bool) updateKeyboardFollowsMouse;
-  final Function(bool) updateHideOnDefaultLayer;
+class AdvancedTab extends ConsumerWidget {
+  final Function(String method, dynamic value) onUpdateMainWindow;
 
   const AdvancedTab({
     super.key,
-    required this.advancedSettingsEnabled,
-    required this.useUserLayout,
-    required this.showAltLayout,
-    required this.customFontEnabled,
-    required this.use6ColLayout,
-    required this.kanataEnabled,
-    required this.keyboardFollowsMouse,
-    required this.hideOnDefaultLayer,
-    required this.updateAdvancedSettingsEnabled,
-    required this.updateUseUserLayout,
-    required this.updateShowAltLayout,
-    required this.updateCustomFontEnabled,
-    required this.updateUse6ColLayout,
-    required this.updateKanataEnabled,
-    required this.updateKeyboardFollowsMouse,
-    required this.updateHideOnDefaultLayer,
+    required this.onUpdateMainWindow,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final prefsState = ref.watch(preferencesNotifierProvider);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         ToggleOption(
           label: 'Turn on advanced settings',
-          value: advancedSettingsEnabled,
-          onChanged: updateAdvancedSettingsEnabled,
+          value: prefsState.advancedSettingsEnabled,
+          onChanged: (value) {
+            ref
+                .read(preferencesNotifierProvider.notifier)
+                .updateAdvancedSettingsEnabled(value);
+            onUpdateMainWindow('updateAdvancedSettingsEnabled', value);
+          },
         ),
         AnimatedCrossFade(
           duration: const Duration(milliseconds: 300),
@@ -60,68 +39,106 @@ class AdvancedTab extends StatelessWidget {
             children: [
               ToggleOption(
                 label: 'Use user layouts',
-                value: useUserLayout,
+                value: prefsState.useUserLayout,
                 subtitle:
                     'Use defaultUserLayout defined in the config file (as the base layer). Enables OverKeys to listen and switch between different layers. Make sure that the layouts/layers are saved in the config file.',
                 onChanged: (value) {
-                  if (value && kanataEnabled) {
-                    updateKanataEnabled(false);
+                  if (value && prefsState.kanataEnabled) {
+                    ref
+                        .read(preferencesNotifierProvider.notifier)
+                        .updateKanataEnabled(false);
+                    onUpdateMainWindow('updateKanataEnabled', false);
                   }
-                  updateUseUserLayout(value);
+                  ref
+                      .read(preferencesNotifierProvider.notifier)
+                      .updateUseUserLayout(value);
+                  onUpdateMainWindow('updateUseUserLayout', value);
                 },
               ),
               ToggleOption(
                 label: 'Show alternative layout',
                 subtitle:
                     'Show alternative layout alongside primary layout. Make sure that the layout is saved in the config file.',
-                value: showAltLayout,
-                onChanged: updateShowAltLayout,
+                value: prefsState.showAltLayout,
+                onChanged: (value) {
+                  ref
+                      .read(preferencesNotifierProvider.notifier)
+                      .updateShowAltLayout(value);
+                  onUpdateMainWindow('updateShowAltLayout', value);
+                },
               ),
               ToggleOption(
                 label: 'Use custom font',
-                value: customFontEnabled,
+                value: prefsState.customFontEnabled,
                 subtitle:
                     'Use a custom font defined in the config file. Make sure that the font is installed on your system.',
-                onChanged: updateCustomFontEnabled,
+                onChanged: (value) {
+                  ref
+                      .read(preferencesNotifierProvider.notifier)
+                      .updateCustomFontEnabled(value);
+                  onUpdateMainWindow('updateCustomFontEnabled', value);
+                },
               ),
               ToggleOption(
                 label: 'Use 6 column layout',
                 subtitle:
                     'Use 6 column layout instead of 5 column split matrix layout. Make sure that a compatible layout is saved in the config file.',
-                value: use6ColLayout,
-                onChanged: updateUse6ColLayout,
+                value: prefsState.use6ColLayout,
+                onChanged: (value) {
+                  ref
+                      .read(preferencesNotifierProvider.notifier)
+                      .updateUse6ColLayout(value);
+                  onUpdateMainWindow('updateUse6ColLayout', value);
+                },
               ),
               ToggleOption(
                 label: 'Connect to Kanata',
-                value: kanataEnabled,
+                value: prefsState.kanataEnabled,
                 subtitle:
                     'Listen to layer changes and see the active layer. Make sure that Kanata and OverKeys are using the same port.',
                 onChanged: (value) {
-                  if (value && useUserLayout) {
-                    updateUseUserLayout(false);
+                  if (value && prefsState.useUserLayout) {
+                    ref
+                        .read(preferencesNotifierProvider.notifier)
+                        .updateUseUserLayout(false);
+                    onUpdateMainWindow('updateUseUserLayout', false);
                   }
-                  updateKanataEnabled(value);
+                  ref
+                      .read(preferencesNotifierProvider.notifier)
+                      .updateKanataEnabled(value);
+                  onUpdateMainWindow('updateKanataEnabled', value);
                 },
               ),
               ToggleOption(
                 label: 'Keyboard follows mouse',
-                value: keyboardFollowsMouse,
+                value: prefsState.keyboardFollowsMouse,
                 subtitle:
                     'EXPERIMENTAL: Keyboard will follow your mouse cursor across monitors. Note: This will override manual position adjustments. Also causes focus issues',
-                onChanged: updateKeyboardFollowsMouse,
+                onChanged: (value) {
+                  ref
+                      .read(preferencesNotifierProvider.notifier)
+                      .updateKeyboardFollowsMouse(value);
+                  onUpdateMainWindow('updateKeyboardFollowsMouse', value);
+                },
               ),
               ToggleOption(
                 label: 'Hide on default layer',
-                value: hideOnDefaultLayer,
+                value: prefsState.hideOnDefaultLayer,
                 subtitle:
                     'Automatically hide OverKeys when on the default/base layer. Only show when switching to other layers.',
-                onChanged: updateHideOnDefaultLayer,
+                onChanged: (value) {
+                  ref
+                      .read(preferencesNotifierProvider.notifier)
+                      .updateHideOnDefaultLayer(value);
+                  onUpdateMainWindow('updateHideOnDefaultLayer', value);
+                },
               ),
               _buildOpenConfigButton(context),
             ],
           ),
-          crossFadeState:
-              advancedSettingsEnabled ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+          crossFadeState: prefsState.advancedSettingsEnabled
+              ? CrossFadeState.showSecond
+              : CrossFadeState.showFirst,
           sizeCurve: Curves.easeInOut,
         ),
       ],
@@ -141,10 +158,14 @@ class AdvancedTab extends StatelessWidget {
               children: [
                 Text('Open config file',
                     style: TextStyle(
-                        color: colorScheme.onSurface, fontWeight: FontWeight.w600, fontSize: 16)),
+                        color: colorScheme.onSurface,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16)),
                 Text(
                   'Turn related advanced setting off then on again to apply changes.',
-                  style: TextStyle(color: colorScheme.onSurface.withAlpha(153), fontSize: 14.0),
+                  style: TextStyle(
+                      color: colorScheme.onSurface.withAlpha(153),
+                      fontSize: 14.0),
                   softWrap: true,
                   overflow: TextOverflow.visible,
                 ),
@@ -153,7 +174,8 @@ class AdvancedTab extends StatelessWidget {
           ),
           const SizedBox(width: 16),
           ElevatedButton.icon(
-            icon: Icon(LucideIcons.fileJson2, color: colorScheme.primary, size: 24),
+            icon: Icon(LucideIcons.fileJson2,
+                color: colorScheme.primary, size: 24),
             label: Text('Open',
                 style: TextStyle(
                   color: colorScheme.primary,

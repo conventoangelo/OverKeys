@@ -1,69 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:overkeys/widgets/options/options.dart';
+import 'package:overkeys/providers/keyboard_provider.dart';
 
-class KeyboardTab extends StatefulWidget {
-  final String keymapStyle;
-  final bool showTopRow;
-  final bool showGraveKey;
-  final double keySize;
-  final double keyBorderRadius;
-  final double keyBorderThickness;
-  final double keyPadding;
-  final double spaceWidth;
-  final double splitWidth;
-  final double lastRowSplitWidth;
-  final double keyShadowBlurRadius;
-  final double keyShadowOffsetX;
-  final double keyShadowOffsetY;
-  final Function(String) updateKeymapStyle;
-  final Function(bool) updateShowTopRow;
-  final Function(bool) updateShowGraveKey;
-  final Function(double) updateKeySize;
-  final Function(double) updateKeyBorderRadius;
-  final Function(double) updateKeyBorderThickness;
-  final Function(double) updateKeyPadding;
-  final Function(double) updateSpaceWidth;
-  final Function(double) updateSplitWidth;
-  final Function(double) updateLastRowSplitWidth;
-  final Function(double) updateKeyShadowBlurRadius;
-  final Function(double) updateKeyShadowOffsetX;
-  final Function(double) updateKeyShadowOffsetY;
+class KeyboardTab extends ConsumerStatefulWidget {
+  final Function(String method, dynamic value) onUpdateMainWindow;
 
   const KeyboardTab({
     super.key,
-    required this.keymapStyle,
-    required this.showTopRow,
-    required this.showGraveKey,
-    required this.keySize,
-    required this.keyBorderRadius,
-    required this.keyBorderThickness,
-    required this.keyPadding,
-    required this.spaceWidth,
-    required this.splitWidth,
-    required this.lastRowSplitWidth,
-    required this.keyShadowBlurRadius,
-    required this.keyShadowOffsetX,
-    required this.keyShadowOffsetY,
-    required this.updateKeymapStyle,
-    required this.updateShowTopRow,
-    required this.updateShowGraveKey,
-    required this.updateKeySize,
-    required this.updateKeyBorderRadius,
-    required this.updateKeyBorderThickness,
-    required this.updateKeyPadding,
-    required this.updateSpaceWidth,
-    required this.updateSplitWidth,
-    required this.updateLastRowSplitWidth,
-    required this.updateKeyShadowBlurRadius,
-    required this.updateKeyShadowOffsetX,
-    required this.updateKeyShadowOffsetY,
+    required this.onUpdateMainWindow,
   });
 
   @override
-  State<KeyboardTab> createState() => _KeyboardTabState();
+  ConsumerState<KeyboardTab> createState() => _KeyboardTabState();
 }
 
-class _KeyboardTabState extends State<KeyboardTab> {
+class _KeyboardTabState extends ConsumerState<KeyboardTab> {
   late double _localKeySize;
   late double _localKeyBorderRadius;
   late double _localKeyBorderThickness;
@@ -78,88 +30,86 @@ class _KeyboardTabState extends State<KeyboardTab> {
   @override
   void initState() {
     super.initState();
-    _localKeySize = widget.keySize;
-    _localKeyBorderRadius = widget.keyBorderRadius;
-    _localKeyBorderThickness = widget.keyBorderThickness;
-    _localKeyPadding = widget.keyPadding;
-    _localSpaceWidth = widget.spaceWidth;
-    _localSplitWidth = widget.splitWidth;
-    _localLastRowSplitWidth = widget.lastRowSplitWidth;
-    _localKeyShadowBlurRadius = widget.keyShadowBlurRadius;
-    _localKeyShadowOffsetX = widget.keyShadowOffsetX;
-    _localKeyShadowOffsetY = widget.keyShadowOffsetY;
+    final keyboardState = ref.read(keyboardNotifierProvider);
+    _localKeySize = keyboardState.keySize;
+    _localKeyBorderRadius = keyboardState.keyBorderRadius;
+    _localKeyBorderThickness = keyboardState.keyBorderThickness;
+    _localKeyPadding = keyboardState.keyPadding;
+    _localSpaceWidth = keyboardState.spaceWidth;
+    _localSplitWidth = keyboardState.splitWidth;
+    _localLastRowSplitWidth = keyboardState.lastRowSplitWidth;
+    _localKeyShadowBlurRadius = keyboardState.keyShadowBlurRadius;
+    _localKeyShadowOffsetX = keyboardState.keyShadowOffsetX;
+    _localKeyShadowOffsetY = keyboardState.keyShadowOffsetY;
   }
 
   @override
   void didUpdateWidget(KeyboardTab oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.keySize != widget.keySize) {
-      _localKeySize = widget.keySize;
-    }
-    if (oldWidget.keyBorderRadius != widget.keyBorderRadius) {
-      _localKeyBorderRadius = widget.keyBorderRadius;
-    }
-    if (oldWidget.keyBorderThickness != widget.keyBorderThickness) {
-      _localKeyBorderThickness = widget.keyBorderThickness;
-    }
-    if (oldWidget.keyPadding != widget.keyPadding) {
-      _localKeyPadding = widget.keyPadding;
-    }
-    if (oldWidget.spaceWidth != widget.spaceWidth) {
-      _localSpaceWidth = widget.spaceWidth;
-    }
-    if (oldWidget.splitWidth != widget.splitWidth) {
-      _localSplitWidth = widget.splitWidth;
-    }
-    if (oldWidget.lastRowSplitWidth != widget.lastRowSplitWidth) {
-      _localLastRowSplitWidth = widget.lastRowSplitWidth;
-    }
-    if (oldWidget.keyShadowBlurRadius != widget.keyShadowBlurRadius) {
-      _localKeyShadowBlurRadius = widget.keyShadowBlurRadius;
-    }
-    if (oldWidget.keyShadowOffsetX != widget.keyShadowOffsetX) {
-      _localKeyShadowOffsetX = widget.keyShadowOffsetX;
-    }
-    if (oldWidget.keyShadowOffsetY != widget.keyShadowOffsetY) {
-      _localKeyShadowOffsetY = widget.keyShadowOffsetY;
-    }
+    final keyboardState = ref.read(keyboardNotifierProvider);
+    _localKeySize = keyboardState.keySize;
+    _localKeyBorderRadius = keyboardState.keyBorderRadius;
+    _localKeyBorderThickness = keyboardState.keyBorderThickness;
+    _localKeyPadding = keyboardState.keyPadding;
+    _localSpaceWidth = keyboardState.spaceWidth;
+    _localSplitWidth = keyboardState.splitWidth;
+    _localLastRowSplitWidth = keyboardState.lastRowSplitWidth;
+    _localKeyShadowBlurRadius = keyboardState.keyShadowBlurRadius;
+    _localKeyShadowOffsetX = keyboardState.keyShadowOffsetX;
+    _localKeyShadowOffsetY = keyboardState.keyShadowOffsetY;
   }
 
   @override
   Widget build(BuildContext context) {
+    final keyboardState = ref.watch(keyboardNotifierProvider);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         DropdownOption(
           label: 'Keymap style',
-          value: widget.keymapStyle,
+          value: keyboardState.keymapStyle,
           options: ['Staggered', 'Matrix', 'Split Matrix'],
           onChanged: (value) {
             if (value == 'Split Matrix') {
               if (_localSpaceWidth > 300) {
                 setState(() => _localSpaceWidth = 220);
-                widget.updateSpaceWidth(220);
+                ref
+                    .read(keyboardNotifierProvider.notifier)
+                    .updateSpaceWidth(220);
+                widget.onUpdateMainWindow('updateSpaceWidth', 220);
               }
             }
-            widget.updateKeymapStyle(value!);
+            ref
+                .read(keyboardNotifierProvider.notifier)
+                .updateKeymapStyle(value!);
+            widget.onUpdateMainWindow('updateKeymapStyle', value);
           },
         ),
         ToggleOption(
           label: 'Show top row',
-          value: widget.showTopRow,
+          value: keyboardState.showTopRow,
           subtitle:
               'Recommended to toggle when keyboard is visible or auto-hide is off. Toggling while hidden may cause rendering errors.',
-          onChanged: widget.updateShowTopRow,
+          onChanged: (value) {
+            ref.read(keyboardNotifierProvider.notifier).updateShowTopRow(value);
+            widget.onUpdateMainWindow('updateShowTopRow', value);
+          },
         ),
         AnimatedCrossFade(
           duration: const Duration(milliseconds: 300),
           firstChild: const SizedBox.shrink(),
           secondChild: ToggleOption(
             label: 'Show grave key',
-            value: widget.showGraveKey,
-            onChanged: widget.updateShowGraveKey,
+            value: keyboardState.showGraveKey,
+            onChanged: (value) {
+              ref
+                  .read(keyboardNotifierProvider.notifier)
+                  .updateShowGraveKey(value);
+              widget.onUpdateMainWindow('updateShowGraveKey', value);
+            },
           ),
-          crossFadeState: widget.showTopRow
+          crossFadeState: keyboardState.showTopRow
               ? CrossFadeState.showSecond
               : CrossFadeState.showFirst,
           sizeCurve: Curves.easeInOut,
@@ -176,9 +126,14 @@ class _KeyboardTabState extends State<KeyboardTab> {
             onChanged: (value) {
               setState(() => _localSplitWidth = value);
             },
-            onChangeEnd: widget.updateSplitWidth,
+            onChangeEnd: (value) {
+              ref
+                  .read(keyboardNotifierProvider.notifier)
+                  .updateSplitWidth(value);
+              widget.onUpdateMainWindow('updateSplitWidth', value);
+            },
           ),
-          crossFadeState: widget.keymapStyle == 'Split Matrix'
+          crossFadeState: keyboardState.keymapStyle == 'Split Matrix'
               ? CrossFadeState.showSecond
               : CrossFadeState.showFirst,
           sizeCurve: Curves.easeInOut,
@@ -195,9 +150,14 @@ class _KeyboardTabState extends State<KeyboardTab> {
             onChanged: (value) {
               setState(() => _localLastRowSplitWidth = value);
             },
-            onChangeEnd: widget.updateLastRowSplitWidth,
+            onChangeEnd: (value) {
+              ref
+                  .read(keyboardNotifierProvider.notifier)
+                  .updateLastRowSplitWidth(value);
+              widget.onUpdateMainWindow('updateLastRowSplitWidth', value);
+            },
           ),
-          crossFadeState: widget.keymapStyle == 'Split Matrix'
+          crossFadeState: keyboardState.keymapStyle == 'Split Matrix'
               ? CrossFadeState.showSecond
               : CrossFadeState.showFirst,
           sizeCurve: Curves.easeInOut,
@@ -211,7 +171,10 @@ class _KeyboardTabState extends State<KeyboardTab> {
           onChanged: (value) {
             setState(() => _localKeySize = value);
           },
-          onChangeEnd: widget.updateKeySize,
+          onChangeEnd: (value) {
+            ref.read(keyboardNotifierProvider.notifier).updateKeySize(value);
+            widget.onUpdateMainWindow('updateKeySize', value);
+          },
         ),
         SliderOption(
           label: 'Key border radius',
@@ -222,7 +185,12 @@ class _KeyboardTabState extends State<KeyboardTab> {
           onChanged: (value) {
             setState(() => _localKeyBorderRadius = value);
           },
-          onChangeEnd: widget.updateKeyBorderRadius,
+          onChangeEnd: (value) {
+            ref
+                .read(keyboardNotifierProvider.notifier)
+                .updateKeyBorderRadius(value);
+            widget.onUpdateMainWindow('updateKeyBorderRadius', value);
+          },
         ),
         SliderOption(
           label: 'Key border thickness',
@@ -233,7 +201,12 @@ class _KeyboardTabState extends State<KeyboardTab> {
           onChanged: (value) {
             setState(() => _localKeyBorderThickness = value);
           },
-          onChangeEnd: widget.updateKeyBorderThickness,
+          onChangeEnd: (value) {
+            ref
+                .read(keyboardNotifierProvider.notifier)
+                .updateKeyBorderThickness(value);
+            widget.onUpdateMainWindow('updateKeyBorderThickness', value);
+          },
         ),
         SliderOption(
           label: 'Key padding',
@@ -244,18 +217,24 @@ class _KeyboardTabState extends State<KeyboardTab> {
           onChanged: (value) {
             setState(() => _localKeyPadding = value);
           },
-          onChangeEnd: widget.updateKeyPadding,
+          onChangeEnd: (value) {
+            ref.read(keyboardNotifierProvider.notifier).updateKeyPadding(value);
+            widget.onUpdateMainWindow('updateKeyPadding', value);
+          },
         ),
         SliderOption(
           label: 'Space width',
           value: _localSpaceWidth,
           min: 120,
-          max: (widget.keymapStyle == 'Split Matrix') ? 300 : 500,
-          divisions: (widget.keymapStyle == 'Split Matrix') ? 90 : 190,
+          max: (keyboardState.keymapStyle == 'Split Matrix') ? 300 : 500,
+          divisions: (keyboardState.keymapStyle == 'Split Matrix') ? 90 : 190,
           onChanged: (value) {
             setState(() => _localSpaceWidth = value);
           },
-          onChangeEnd: widget.updateSpaceWidth,
+          onChangeEnd: (value) {
+            ref.read(keyboardNotifierProvider.notifier).updateSpaceWidth(value);
+            widget.onUpdateMainWindow('updateSpaceWidth', value);
+          },
         ),
         SliderOption(
           label: 'Key shadow blur radius',
@@ -266,7 +245,12 @@ class _KeyboardTabState extends State<KeyboardTab> {
           onChanged: (value) {
             setState(() => _localKeyShadowBlurRadius = value);
           },
-          onChangeEnd: widget.updateKeyShadowBlurRadius,
+          onChangeEnd: (value) {
+            ref
+                .read(keyboardNotifierProvider.notifier)
+                .updateKeyShadowBlurRadius(value);
+            widget.onUpdateMainWindow('updateKeyShadowBlurRadius', value);
+          },
         ),
         SliderOption(
           label: 'Key shadow offset X',
@@ -277,7 +261,12 @@ class _KeyboardTabState extends State<KeyboardTab> {
           onChanged: (value) {
             setState(() => _localKeyShadowOffsetX = value);
           },
-          onChangeEnd: widget.updateKeyShadowOffsetX,
+          onChangeEnd: (value) {
+            ref
+                .read(keyboardNotifierProvider.notifier)
+                .updateKeyShadowOffsetX(value);
+            widget.onUpdateMainWindow('updateKeyShadowOffsetX', value);
+          },
         ),
         SliderOption(
           label: 'Key shadow offset Y',
@@ -288,7 +277,12 @@ class _KeyboardTabState extends State<KeyboardTab> {
           onChanged: (value) {
             setState(() => _localKeyShadowOffsetY = value);
           },
-          onChangeEnd: widget.updateKeyShadowOffsetY,
+          onChangeEnd: (value) {
+            ref
+                .read(keyboardNotifierProvider.notifier)
+                .updateKeyShadowOffsetY(value);
+            widget.onUpdateMainWindow('updateKeyShadowOffsetY', value);
+          },
         ),
       ],
     );

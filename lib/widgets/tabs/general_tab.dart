@@ -1,95 +1,93 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:overkeys/widgets/options/options.dart';
 import 'package:overkeys/models/keyboard_layouts.dart';
+import 'package:overkeys/providers/keyboard_provider.dart';
+import 'package:overkeys/providers/preferences_provider.dart';
 
-class GeneralTab extends StatefulWidget {
-  final bool launchAtStartup;
-  final bool hideAtStartup;
-  final bool autoHideEnabled;
-  final bool reactiveShiftEnabled;
-  final double autoHideDuration;
-  final String keyboardLayoutName;
-  final double opacity;
-  final Function(bool) updateLaunchAtStartup;
-  final Function(bool) updateHideAtStartup;
-  final Function(bool) updateAutoHideEnabled;
-  final Function(bool) updateReactiveShiftEnabled;
-  final Function(double) updateAutoHideDuration;
-  final Function(String) updateKeyboardLayoutName;
-  final Function(double) updateOpacity;
+class GeneralTab extends ConsumerStatefulWidget {
+  final Function(String method, dynamic value) onUpdateMainWindow;
 
   const GeneralTab({
     super.key,
-    required this.launchAtStartup,
-    required this.hideAtStartup,
-    required this.autoHideEnabled,
-    required this.reactiveShiftEnabled,
-    required this.autoHideDuration,
-    required this.keyboardLayoutName,
-    required this.opacity,
-    required this.updateLaunchAtStartup,
-    required this.updateHideAtStartup,
-    required this.updateAutoHideEnabled,
-    required this.updateReactiveShiftEnabled,
-    required this.updateAutoHideDuration,
-    required this.updateKeyboardLayoutName,
-    required this.updateOpacity,
+    required this.onUpdateMainWindow,
   });
 
   @override
-  State<GeneralTab> createState() => _GeneralTabState();
+  ConsumerState<GeneralTab> createState() => _GeneralTabState();
 }
 
-class _GeneralTabState extends State<GeneralTab> {
+class _GeneralTabState extends ConsumerState<GeneralTab> {
   late double _localAutoHideDuration;
   late double _localOpacity;
 
   @override
   void initState() {
     super.initState();
-    _localAutoHideDuration = widget.autoHideDuration;
-    _localOpacity = widget.opacity.clamp(0.1, 1.0);
+    final prefsState = ref.read(preferencesNotifierProvider);
+    _localAutoHideDuration = prefsState.autoHideDuration;
+    _localOpacity = prefsState.opacity.clamp(0.1, 1.0);
   }
 
   @override
   void didUpdateWidget(GeneralTab oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.autoHideDuration != widget.autoHideDuration) {
-      _localAutoHideDuration = widget.autoHideDuration;
-    }
-    if (oldWidget.opacity != widget.opacity) {
-      _localOpacity = widget.opacity.clamp(0.1, 1.0);
-    }
+    final prefsState = ref.read(preferencesNotifierProvider);
+    _localAutoHideDuration = prefsState.autoHideDuration;
+    _localOpacity = prefsState.opacity.clamp(0.1, 1.0);
   }
 
   @override
   Widget build(BuildContext context) {
+    final prefsState = ref.watch(preferencesNotifierProvider);
+    final keyboardState = ref.watch(keyboardNotifierProvider);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         ToggleOption(
           label: 'Open on system startup',
-          value: widget.launchAtStartup,
-          onChanged: widget.updateLaunchAtStartup,
+          value: prefsState.launchAtStartup,
+          onChanged: (value) {
+            ref
+                .read(preferencesNotifierProvider.notifier)
+                .updateLaunchAtStartup(value);
+            widget.onUpdateMainWindow('updateLaunchAtStartup', value);
+          },
         ),
         ToggleOption(
           label: 'Auto-hide keyboard',
-          value: widget.autoHideEnabled,
-          onChanged: widget.updateAutoHideEnabled,
+          value: prefsState.autoHideEnabled,
+          onChanged: (value) {
+            ref
+                .read(preferencesNotifierProvider.notifier)
+                .updateAutoHideEnabled(value);
+            widget.onUpdateMainWindow('updateAutoHideEnabled', value);
+          },
         ),
         ToggleOption(
           label: 'Enable Reactive Shift',
-          value: widget.reactiveShiftEnabled,
+          value: prefsState.reactiveShiftEnabled,
           subtitle:
               'Updates the displayed keys to their Shift+Key symbols when Shift is pressed',
-          onChanged: widget.updateReactiveShiftEnabled,
+          onChanged: (value) {
+            ref
+                .read(preferencesNotifierProvider.notifier)
+                .updateReactiveShiftEnabled(value);
+            widget.onUpdateMainWindow('updateReactiveShiftEnabled', value);
+          },
         ),
         AnimatedCrossFade(
           duration: const Duration(milliseconds: 300),
           firstChild: ToggleOption(
             label: 'Start hidden',
-            value: widget.hideAtStartup,
-            onChanged: widget.updateHideAtStartup,
+            value: prefsState.hideAtStartup,
+            onChanged: (value) {
+              ref
+                  .read(preferencesNotifierProvider.notifier)
+                  .updateHideAtStartup(value);
+              widget.onUpdateMainWindow('updateHideAtStartup', value);
+            },
           ),
           secondChild: SliderOption(
             label: 'Auto-hide duration (seconds)',
@@ -103,11 +101,14 @@ class _GeneralTabState extends State<GeneralTab> {
             },
             onChangeEnd: (value) {
               double roundedValue = (value * 2).round() / 2;
-              widget.updateAutoHideDuration(roundedValue);
+              ref
+                  .read(preferencesNotifierProvider.notifier)
+                  .updateAutoHideDuration(roundedValue);
+              widget.onUpdateMainWindow('updateAutoHideDuration', roundedValue);
             },
             valueDisplayFormatter: (value) => value.toStringAsFixed(1),
           ),
-          crossFadeState: widget.autoHideEnabled
+          crossFadeState: prefsState.autoHideEnabled
               ? CrossFadeState.showSecond
               : CrossFadeState.showFirst,
           sizeCurve: Curves.easeInOut,
@@ -121,13 +122,20 @@ class _GeneralTabState extends State<GeneralTab> {
           onChanged: (value) {
             setState(() => _localOpacity = value);
           },
-          onChangeEnd: widget.updateOpacity,
+          onChangeEnd: (value) {
+            ref.read(preferencesNotifierProvider.notifier).updateOpacity(value);
+            widget.onUpdateMainWindow('updateOpacity', value);
+          },
         ),
         DropdownOption(
           label: 'Layout',
-          value: widget.keyboardLayoutName,
+          value: keyboardState.layout.name,
           options: availableLayouts.map((layout) => (layout.name)).toList(),
-          onChanged: (value) => widget.updateKeyboardLayoutName(value!),
+          onChanged: (value) {
+            final layout = availableLayouts.firstWhere((l) => l.name == value!);
+            ref.read(keyboardNotifierProvider.notifier).updateLayout(layout);
+            widget.onUpdateMainWindow('updateLayout', value!);
+          },
         ),
         Text(
           'Tip: Press ESC key to close the preferences window',

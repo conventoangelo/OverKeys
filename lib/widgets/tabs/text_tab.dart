@@ -1,84 +1,78 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:overkeys/widgets/options/options.dart';
 import 'package:overkeys/utils/font_options.dart';
+import 'package:overkeys/providers/keyboard_provider.dart';
 
-class TextTab extends StatefulWidget {
-  final String fontFamily;
-  final FontWeight fontWeight;
-  final double keyFontSize;
-  final double spaceFontSize;
-  final Function(String) updateFontFamily;
-  final Function(FontWeight) updateFontWeight;
-  final Function(double) updateKeyFontSize;
-  final Function(double) updateSpaceFontSize;
+class TextTab extends ConsumerStatefulWidget {
+  final Function(String method, dynamic value) onUpdateMainWindow;
 
   const TextTab({
     super.key,
-    required this.fontFamily,
-    required this.fontWeight,
-    required this.keyFontSize,
-    required this.spaceFontSize,
-    required this.updateFontFamily,
-    required this.updateFontWeight,
-    required this.updateKeyFontSize,
-    required this.updateSpaceFontSize,
+    required this.onUpdateMainWindow,
   });
 
   @override
-  State<TextTab> createState() => _TextTabState();
+  ConsumerState<TextTab> createState() => _TextTabState();
 }
 
-class _TextTabState extends State<TextTab> {
+class _TextTabState extends ConsumerState<TextTab> {
   late double _localKeyFontSize;
   late double _localSpaceFontSize;
 
   @override
   void initState() {
     super.initState();
-    _localKeyFontSize = widget.keyFontSize;
-    _localSpaceFontSize = widget.spaceFontSize;
+    final keyboardState = ref.read(keyboardNotifierProvider);
+    _localKeyFontSize = keyboardState.keyFontSize;
+    _localSpaceFontSize = keyboardState.spaceFontSize;
   }
 
   @override
   void didUpdateWidget(TextTab oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.keyFontSize != widget.keyFontSize) {
-      _localKeyFontSize = widget.keyFontSize;
-    }
-    if (oldWidget.spaceFontSize != widget.spaceFontSize) {
-      _localSpaceFontSize = widget.spaceFontSize;
-    }
+    final keyboardState = ref.read(keyboardNotifierProvider);
+    _localKeyFontSize = keyboardState.keyFontSize;
+    _localSpaceFontSize = keyboardState.spaceFontSize;
   }
 
   @override
   Widget build(BuildContext context) {
+    final keyboardState = ref.watch(keyboardNotifierProvider);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         DropdownOption(
             label: 'Font style',
-            value: widget.fontFamily,
+            value: keyboardState.fontFamily,
             options: availableFontFamilies,
-            onChanged: (value) => widget.updateFontFamily(value!),
+            onChanged: (value) {
+              ref
+                  .read(keyboardNotifierProvider.notifier)
+                  .updateFontFamily(value!);
+              widget.onUpdateMainWindow('updateFontFamily', value);
+            },
             subtitle:
                 'Make sure that the font is installed in your system. Falls back to Geist Mono.'),
         DropdownOption(
           label: 'Font weight',
-          value: widget.fontWeight == FontWeight.w100
+          value: keyboardState.fontWeight == FontWeight.w100
               ? 'Thin'
-              : widget.fontWeight == FontWeight.w200
+              : keyboardState.fontWeight == FontWeight.w200
                   ? 'ExtraLight'
-                  : widget.fontWeight == FontWeight.w300
+                  : keyboardState.fontWeight == FontWeight.w300
                       ? 'Light'
-                      : widget.fontWeight == FontWeight.normal
+                      : keyboardState.fontWeight == FontWeight.normal
                           ? 'Normal'
-                          : widget.fontWeight == FontWeight.w500
+                          : keyboardState.fontWeight == FontWeight.w500
                               ? 'Medium'
-                              : widget.fontWeight == FontWeight.w600
+                              : keyboardState.fontWeight == FontWeight.w600
                                   ? 'SemiBold'
-                                  : widget.fontWeight == FontWeight.bold
+                                  : keyboardState.fontWeight == FontWeight.bold
                                       ? 'Bold'
-                                      : widget.fontWeight == FontWeight.w800
+                                      : keyboardState.fontWeight ==
+                                              FontWeight.w800
                                           ? 'ExtraBold'
                                           : 'Black',
           options: [
@@ -125,7 +119,10 @@ class _TextTabState extends State<TextTab> {
               default:
                 weight = FontWeight.w500;
             }
-            widget.updateFontWeight(weight);
+            ref
+                .read(keyboardNotifierProvider.notifier)
+                .updateFontWeight(weight);
+            widget.onUpdateMainWindow('updateFontWeight', weight);
           },
         ),
         SliderOption(
@@ -137,7 +134,12 @@ class _TextTabState extends State<TextTab> {
           onChanged: (value) {
             setState(() => _localKeyFontSize = value);
           },
-          onChangeEnd: widget.updateKeyFontSize,
+          onChangeEnd: (value) {
+            ref
+                .read(keyboardNotifierProvider.notifier)
+                .updateKeyFontSize(value);
+            widget.onUpdateMainWindow('updateKeyFontSize', value);
+          },
         ),
         SliderOption(
           label: 'Space font size',
@@ -148,7 +150,12 @@ class _TextTabState extends State<TextTab> {
           onChanged: (value) {
             setState(() => _localSpaceFontSize = value);
           },
-          onChangeEnd: widget.updateSpaceFontSize,
+          onChangeEnd: (value) {
+            ref
+                .read(keyboardNotifierProvider.notifier)
+                .updateSpaceFontSize(value);
+            widget.onUpdateMainWindow('updateSpaceFontSize', value);
+          },
         ),
       ],
     );
