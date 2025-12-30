@@ -20,12 +20,29 @@ class _AnimationsTabState extends ConsumerState<AnimationsTab> {
   late double _localAnimationScale;
 
   @override
+  void initState() {
+    super.initState();
+    // Initialize with current provider values
+    final keyboardState = ref.read(keyboardNotifierProvider);
+    _localAnimationDuration = keyboardState.animationDuration;
+    _localAnimationScale = keyboardState.animationScale;
+  }
+
+  @override
   Widget build(BuildContext context) {
     final keyboardState = ref.watch(keyboardNotifierProvider);
 
-    // Sync local state with provider state - this is the single source of truth
-    _localAnimationDuration = keyboardState.animationDuration;
-    _localAnimationScale = keyboardState.animationScale;
+    // Listen for external provider changes and sync local state
+    ref.listen<KeyboardState>(keyboardNotifierProvider, (previous, next) {
+      if (previous != null) {
+        if (_localAnimationDuration != next.animationDuration) {
+          setState(() => _localAnimationDuration = next.animationDuration);
+        }
+        if (_localAnimationScale != next.animationScale) {
+          setState(() => _localAnimationScale = next.animationScale);
+        }
+      }
+    });
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,

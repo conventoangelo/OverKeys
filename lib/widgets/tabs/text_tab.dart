@@ -21,12 +21,29 @@ class _TextTabState extends ConsumerState<TextTab> {
   late double _localSpaceFontSize;
 
   @override
+  void initState() {
+    super.initState();
+    // Initialize with current provider values
+    final keyboardState = ref.read(keyboardNotifierProvider);
+    _localKeyFontSize = keyboardState.keyFontSize;
+    _localSpaceFontSize = keyboardState.spaceFontSize;
+  }
+
+  @override
   Widget build(BuildContext context) {
     final keyboardState = ref.watch(keyboardNotifierProvider);
 
-    // Sync local state with provider state - this is the single source of truth
-    _localKeyFontSize = keyboardState.keyFontSize;
-    _localSpaceFontSize = keyboardState.spaceFontSize;
+    // Listen for external provider changes and sync local state
+    ref.listen<KeyboardState>(keyboardNotifierProvider, (previous, next) {
+      if (previous != null) {
+        if (_localKeyFontSize != next.keyFontSize) {
+          setState(() => _localKeyFontSize = next.keyFontSize);
+        }
+        if (_localSpaceFontSize != next.spaceFontSize) {
+          setState(() => _localSpaceFontSize = next.spaceFontSize);
+        }
+      }
+    });
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,

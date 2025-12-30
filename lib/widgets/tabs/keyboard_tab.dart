@@ -28,10 +28,10 @@ class _KeyboardTabState extends ConsumerState<KeyboardTab> {
   late double _localKeyShadowOffsetY;
 
   @override
-  Widget build(BuildContext context) {
-    final keyboardState = ref.watch(keyboardNotifierProvider);
-
-    // Sync local state with provider state - this is the single source of truth
+  void initState() {
+    super.initState();
+    // Initialize with current provider values
+    final keyboardState = ref.read(keyboardNotifierProvider);
     _localKeySize = keyboardState.keySize;
     _localKeyBorderRadius = keyboardState.keyBorderRadius;
     _localKeyBorderThickness = keyboardState.keyBorderThickness;
@@ -42,6 +42,37 @@ class _KeyboardTabState extends ConsumerState<KeyboardTab> {
     _localKeyShadowBlurRadius = keyboardState.keyShadowBlurRadius;
     _localKeyShadowOffsetX = keyboardState.keyShadowOffsetX;
     _localKeyShadowOffsetY = keyboardState.keyShadowOffsetY;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final keyboardState = ref.watch(keyboardNotifierProvider);
+
+    // Listen for external provider changes and sync local state
+    ref.listen<KeyboardState>(keyboardNotifierProvider, (previous, next) {
+      if (previous != null) {
+        if (_localKeySize != next.keySize)
+          setState(() => _localKeySize = next.keySize);
+        if (_localKeyBorderRadius != next.keyBorderRadius)
+          setState(() => _localKeyBorderRadius = next.keyBorderRadius);
+        if (_localKeyBorderThickness != next.keyBorderThickness)
+          setState(() => _localKeyBorderThickness = next.keyBorderThickness);
+        if (_localKeyPadding != next.keyPadding)
+          setState(() => _localKeyPadding = next.keyPadding);
+        if (_localSpaceWidth != next.spaceWidth)
+          setState(() => _localSpaceWidth = next.spaceWidth);
+        if (_localSplitWidth != next.splitWidth)
+          setState(() => _localSplitWidth = next.splitWidth);
+        if (_localLastRowSplitWidth != next.lastRowSplitWidth)
+          setState(() => _localLastRowSplitWidth = next.lastRowSplitWidth);
+        if (_localKeyShadowBlurRadius != next.keyShadowBlurRadius)
+          setState(() => _localKeyShadowBlurRadius = next.keyShadowBlurRadius);
+        if (_localKeyShadowOffsetX != next.keyShadowOffsetX)
+          setState(() => _localKeyShadowOffsetX = next.keyShadowOffsetX);
+        if (_localKeyShadowOffsetY != next.keyShadowOffsetY)
+          setState(() => _localKeyShadowOffsetY = next.keyShadowOffsetY);
+      }
+    });
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,

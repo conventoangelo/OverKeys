@@ -23,15 +23,34 @@ class _MarkersTabState extends ConsumerState<MarkersTab> {
   late double _localMarkerBorderRadius;
 
   @override
-  Widget build(BuildContext context) {
-    final prefsState = ref.watch(preferencesNotifierProvider);
-    final keyboardState = ref.watch(keyboardNotifierProvider);
-
-    // Sync local state with provider state - this is the single source of truth
+  void initState() {
+    super.initState();
+    // Initialize with current provider values
+    final keyboardState = ref.read(keyboardNotifierProvider);
     _localMarkerOffset = keyboardState.markerOffset;
     _localMarkerWidth = keyboardState.markerWidth;
     _localMarkerHeight = keyboardState.markerHeight;
     _localMarkerBorderRadius = keyboardState.markerBorderRadius;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final prefsState = ref.watch(preferencesNotifierProvider);
+    final keyboardState = ref.watch(keyboardNotifierProvider);
+
+    // Listen for external provider changes and sync local state
+    ref.listen<KeyboardState>(keyboardNotifierProvider, (previous, next) {
+      if (previous != null) {
+        if (_localMarkerOffset != next.markerOffset)
+          setState(() => _localMarkerOffset = next.markerOffset);
+        if (_localMarkerWidth != next.markerWidth)
+          setState(() => _localMarkerWidth = next.markerWidth);
+        if (_localMarkerHeight != next.markerHeight)
+          setState(() => _localMarkerHeight = next.markerHeight);
+        if (_localMarkerBorderRadius != next.markerBorderRadius)
+          setState(() => _localMarkerBorderRadius = next.markerBorderRadius);
+      }
+    });
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
