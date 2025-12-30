@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../providers/keyboard_provider.dart';
 import '../providers/preferences_provider.dart';
@@ -19,7 +20,7 @@ class StateService {
       final Map<String, dynamic> json = jsonDecode(jsonString);
       return KeyboardState.fromJson(json);
     } catch (e) {
-      print('Error loading keyboard state: $e');
+      if (kDebugMode) print('Error loading keyboard state: $e');
       return null;
     }
   }
@@ -31,7 +32,7 @@ class StateService {
       final jsonString = jsonEncode(state.toJson());
       await prefs.setString(_keyboardStateKey, jsonString);
     } catch (e) {
-      print('Error saving keyboard state: $e');
+      if (kDebugMode) print('Error saving keyboard state: $e');
     }
   }
 
@@ -45,7 +46,7 @@ class StateService {
       final Map<String, dynamic> json = jsonDecode(jsonString);
       return PreferencesState.fromJson(json);
     } catch (e) {
-      print('Error loading preferences state: $e');
+      if (kDebugMode) print('Error loading preferences state: $e');
       return null;
     }
   }
@@ -57,7 +58,7 @@ class StateService {
       final jsonString = jsonEncode(state.toJson());
       await prefs.setString(_preferencesStateKey, jsonString);
     } catch (e) {
-      print('Error saving preferences state: $e');
+      if (kDebugMode) print('Error saving preferences state: $e');
     }
   }
 
@@ -71,7 +72,7 @@ class StateService {
       final Map<String, dynamic> json = jsonDecode(jsonString);
       return AppState.fromJson(json);
     } catch (e) {
-      print('Error loading app state: $e');
+      if (kDebugMode) print('Error loading app state: $e');
       return null;
     }
   }
@@ -83,7 +84,7 @@ class StateService {
       final jsonString = jsonEncode(state.toJson());
       await prefs.setString(_appStateKey, jsonString);
     } catch (e) {
-      print('Error saving app state: $e');
+      if (kDebugMode) print('Error saving app state: $e');
     }
   }
 

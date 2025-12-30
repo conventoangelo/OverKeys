@@ -267,8 +267,9 @@ class _MainAppState extends ConsumerState<MainApp>
 
   Future<void> _loadCustomFont() async {
     final prefsState = ref.read(preferencesNotifierProvider);
-    if (!prefsState.customFontEnabled || !prefsState.advancedSettingsEnabled)
+    if (!prefsState.customFontEnabled || !prefsState.advancedSettingsEnabled) {
       return;
+    }
 
     final configService = ConfigService();
     final keyboardNotifier = ref.read(keyboardNotifierProvider.notifier);
