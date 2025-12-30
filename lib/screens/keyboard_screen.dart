@@ -53,6 +53,7 @@ class KeyboardScreen extends ConsumerWidget {
           i,
           isLastKeyFirstRow: isLastKeyFirstRow,
           keyboardState: keyboardState,
+          prefsState: prefsState,
           altLayout: prefsState.altLayout,
         ));
       }
@@ -70,22 +71,30 @@ class KeyboardScreen extends ConsumerWidget {
           keyboardState.keymapStyle == 'Split Matrix' &&
           prefsState.use6ColLayout) {
         rowWidgets.add(buildKeys(rowIndex, keys[0], 0,
-            keyboardState: keyboardState, altLayout: prefsState.altLayout));
+            keyboardState: keyboardState,
+            prefsState: prefsState,
+            altLayout: prefsState.altLayout));
 
         for (int i = 1; i < 6; i++) {
           rowWidgets.add(buildKeys(rowIndex, keys[i], i,
-              keyboardState: keyboardState, altLayout: prefsState.altLayout));
+              keyboardState: keyboardState,
+              prefsState: prefsState,
+              altLayout: prefsState.altLayout));
         }
 
         rowWidgets.add(SizedBox(width: keyboardState.splitWidth));
 
         for (int i = 6; i < 11; i++) {
           rowWidgets.add(buildKeys(rowIndex, keys[i], i,
-              keyboardState: keyboardState, altLayout: prefsState.altLayout));
+              keyboardState: keyboardState,
+              prefsState: prefsState,
+              altLayout: prefsState.altLayout));
         }
 
         rowWidgets.add(buildKeys(rowIndex, keys[11], 11,
-            keyboardState: keyboardState, altLayout: prefsState.altLayout));
+            keyboardState: keyboardState,
+            prefsState: prefsState,
+            altLayout: prefsState.altLayout));
       } else {
         for (int i = startIndex; i < keys.length && i < endIndex; i++) {
           if (keyboardState.keymapStyle == 'Split Matrix') {
@@ -106,13 +115,19 @@ class KeyboardScreen extends ConsumerWidget {
               keys[i] == " " &&
               keys.length == 1) {
             rowWidgets.add(buildKeys(rowIndex, keys[i], i,
-                keyboardState: keyboardState, altLayout: prefsState.altLayout));
+                keyboardState: keyboardState,
+                prefsState: prefsState,
+                altLayout: prefsState.altLayout));
             rowWidgets.add(SizedBox(width: keyboardState.lastRowSplitWidth));
             rowWidgets.add(buildKeys(rowIndex, keys[i], i,
-                keyboardState: keyboardState, altLayout: prefsState.altLayout));
+                keyboardState: keyboardState,
+                prefsState: prefsState,
+                altLayout: prefsState.altLayout));
           } else {
             rowWidgets.add(buildKeys(rowIndex, keys[i], i,
-                keyboardState: keyboardState, altLayout: prefsState.altLayout));
+                keyboardState: keyboardState,
+                prefsState: prefsState,
+                altLayout: prefsState.altLayout));
           }
         }
       }
@@ -130,6 +145,7 @@ class KeyboardScreen extends ConsumerWidget {
     int keyIndex, {
     bool isLastKeyFirstRow = false,
     required KeyboardState keyboardState,
+    required PreferencesState prefsState,
     KeyboardLayout? altLayout,
   }) {
     bool isShiftPressed = (keyboardState.keyPressStates["LShift"] ?? false) ||
@@ -149,12 +165,13 @@ class KeyboardScreen extends ConsumerWidget {
     String keyStateKey = Mappings.getKeyForSymbol(realKey);
     bool isPressed = keyboardState.keyPressStates[keyStateKey] ?? false;
 
-    keyIndex -= keyboardState.fontWeight == FontWeight.w600 ? 1 : 0;
+    // Adjust key index for 6-column layouts (extra backtick column shifts indices by 1)
+    keyIndex -= prefsState.use6ColLayout ? 1 : 0;
     Color keyColor;
     if (isPressed) {
       keyColor = keyboardState.keyColorPressed;
     } else if (keyboardState.learningModeEnabled && rowIndex < 4) {
-      keyColor = getFingerColor(rowIndex, keyIndex, keyboardState);
+      keyColor = getFingerColor(rowIndex, keyIndex, keyboardState, prefsState);
     } else {
       keyColor = keyboardState.keyColorNotPressed;
     }
@@ -242,13 +259,17 @@ class KeyboardScreen extends ConsumerWidget {
                         bottom: 4,
                         right: 8,
                         child: Text(
-                          _getAltLayoutKey(
-                              rowIndex, keyIndex, keyboardState, altLayout),
+                          _getAltLayoutKey(rowIndex, keyIndex, keyboardState,
+                              prefsState, altLayout),
                           textAlign: TextAlign.right,
                           style: TextStyle(
                             color: textColor,
-                            fontSize: _getAltLayoutKey(rowIndex, keyIndex,
-                                            keyboardState, altLayout)
+                            fontSize: _getAltLayoutKey(
+                                            rowIndex,
+                                            keyIndex,
+                                            keyboardState,
+                                            prefsState,
+                                            altLayout)
                                         .length >
                                     2
                                 ? keyboardState.keyFontSize * 0.6
@@ -412,9 +433,14 @@ class KeyboardScreen extends ConsumerWidget {
     }
   }
 
-  String _getAltLayoutKey(int rowIndex, int keyIndex,
-      KeyboardState keyboardState, KeyboardLayout? altLayout) {
-    keyIndex += keyboardState.fontWeight == FontWeight.w600 ? 1 : 0;
+  String _getAltLayoutKey(
+      int rowIndex,
+      int keyIndex,
+      KeyboardState keyboardState,
+      PreferencesState prefsState,
+      KeyboardLayout? altLayout) {
+    // Adjust key index for 6-column layouts when retrieving alternative layout keys
+    keyIndex += prefsState.use6ColLayout ? 1 : 0;
     if (altLayout == null || rowIndex >= altLayout.keys.length) {
       return "";
     }
@@ -436,9 +462,10 @@ class KeyboardScreen extends ConsumerWidget {
     return altKey;
   }
 
-  Color getFingerColor(
-      int rowIndex, int keyIndex, KeyboardState keyboardState) {
-    if (rowIndex == 0 && keyboardState.fontWeight != FontWeight.w600) {
+  Color getFingerColor(int rowIndex, int keyIndex, KeyboardState keyboardState,
+      PreferencesState prefsState) {
+    // On top row (row 0), adjust index by 1 unless using 6-column layout (which already accounts for it)
+    if (rowIndex == 0 && !prefsState.use6ColLayout) {
       keyIndex -= 1;
     }
     switch (keyIndex) {
