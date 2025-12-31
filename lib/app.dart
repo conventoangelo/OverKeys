@@ -322,8 +322,6 @@ class _MainAppState extends ConsumerState<MainApp>
 
   Future<void> _setupHotKeys() async {
     final appState = ref.read(appStateNotifierProvider);
-    final appNotifier = ref.read(appStateNotifierProvider.notifier);
-
     await _hotKeyService.setupHotKeys(
       autoHideHotKey: appState.autoHideHotKey,
       enableAutoHideHotKey: appState.enableAutoHideHotKey,
@@ -345,6 +343,7 @@ class _MainAppState extends ConsumerState<MainApp>
       onVisibilityTriggered: () => onTrayIconMouseDown(),
       onToggleMoveTriggered: () {
         final currentAppState = ref.read(appStateNotifierProvider);
+        final appNotifier = ref.read(appStateNotifierProvider.notifier);
         appNotifier.updateIgnoreMouseEvents(!currentAppState.ignoreMouseEvents);
         windowManager.setIgnoreMouseEvents(!currentAppState.ignoreMouseEvents);
         if (!currentAppState.ignoreMouseEvents) {
