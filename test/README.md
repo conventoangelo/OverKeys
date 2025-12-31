@@ -203,12 +203,12 @@ Always test:
 
 | Category  | Files  | Tests   | Notes                                        |
 | --------- | ------ | ------- | -------------------------------------------- |
-| Models    | 3      | 43      | Full coverage of data models                 |
-| Utils     | 3      | 62      | Key codes, fonts, and themes                 |
-| Providers | 3      | 78      | All three state providers covered            |
-| Services  | 4      | 37      | State, config, Kanata, startup               |
-| Widgets   | 6      | 77      | Options widgets and overlays                 |
-| **Total** | **19** | **277** | Comprehensive coverage of core functionality |
+| Models    | 3      | 36      | Full coverage of data models                 |
+| Utils     | 3      | 53      | Key codes, fonts, and themes                 |
+| Providers | 3      | 63      | All three state providers covered            |
+| Services  | 4      | 67      | State, config, Kanata, startup               |
+| Widgets   | 6      | 57      | Options widgets and overlays                 |
+| **Total** | **19** | **276** | Comprehensive coverage of core functionality |
 
 ### 4. Service Tests (`test/services/`)
 
@@ -216,8 +216,8 @@ Always test:
 
 **Coverage**:
 
-- `config_service_test.dart` (16 tests): Configuration file I/O and caching
-- `kanata_service_test.dart` (4 tests): Kanata message parsing and layout matching
+- `config_service_test.dart` (22 tests): Configuration file I/O and caching
+- `kanata_service_test.dart` (28 tests): Kanata message parsing and layout matching
 - `startup_service_test.dart` (3 tests): Startup service instantiation
 - `state_service_test.dart` (14 tests): Application state management, state transitions, and persistence/caching behavior
 

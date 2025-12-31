@@ -17,12 +17,11 @@ class KeyEventService {
   void setupKeyListener(ReceivePort Function() createReceivePort,
       Function(dynamic) handleKeyEvent) {
     final receivePort = createReceivePort();
-    Isolate.spawn(setHook, receivePort.sendPort)
-        .then((_) {})
-        .catchError((error) {
+    Isolate.spawn(setHook, receivePort.sendPort).catchError((error) {
       if (kDebugMode) {
         print('Error spawning Isolate: $error');
       }
+      throw error;
     });
 
     receivePort.listen(handleKeyEvent);
@@ -114,6 +113,7 @@ class KeyEventService {
       if (layout.type == 'toggle' && isPressed) {
         _handleToggleLayer(
           layout,
+          ref,
           keyboardState,
           keyboardNotifier,
           appState,
@@ -145,6 +145,7 @@ class KeyEventService {
 
   void _handleToggleLayer(
     KeyboardLayout layout,
+    WidgetRef ref,
     KeyboardState keyboardState,
     KeyboardNotifier keyboardNotifier,
     AppState appState,
@@ -160,8 +161,9 @@ class KeyEventService {
     }
 
     if (prefsState.hideOnDefaultLayer) {
+      final currentLayout = ref.read(keyboardNotifierProvider).layout;
       final isNowOnDefault = prefsState.defaultUserLayout != null &&
-          keyboardState.layout.name == prefsState.defaultUserLayout!.name;
+          currentLayout.name == prefsState.defaultUserLayout!.name;
 
       if (isNowOnDefault && appState.isWindowVisible) {
         appNotifier.updateIsWindowVisible(false);
@@ -199,7 +201,6 @@ class KeyEventService {
 
       if (prefsState.hideOnDefaultLayer &&
           prefsState.defaultUserLayout != null &&
-          keyboardState.layout.name == prefsState.defaultUserLayout!.name &&
           appState.isWindowVisible) {
         appNotifier.updateIsWindowVisible(false);
         cancelAutoHideTimer();

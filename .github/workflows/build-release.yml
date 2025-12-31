@@ -98,12 +98,17 @@ jobs:
               `These artifacts will be automatically uploaded to the release when this PR is merged.\n\n` +
               `**Retention:** Artifacts will be kept for 7 days.`;
 
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: comment
-            });
+            try {
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: comment
+              });
+            } catch (error) {
+              core.error(`Failed to post comment: ${error.message}`);
+              throw error;
+            }
 
   # Upload installers to release after PR is merged
   upload-release:
@@ -117,8 +122,10 @@ jobs:
 
       - name: Extract version from release tag
         id: version
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: |
-          $tag = "${{ github.event.release.tag_name }}"
+          $tag = $env:RELEASE_TAG
           $version = $tag -replace '^v', ''
           echo "VERSION=$version" >> $env:GITHUB_OUTPUT
           Write-Host "📌 Release version: $version"
