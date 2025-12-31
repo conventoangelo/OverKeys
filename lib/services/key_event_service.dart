@@ -160,7 +160,6 @@ class KeyEventService {
       if (layout.type == 'toggle' && isPressed) {
         _handleToggleLayer(
           layout,
-          key,
           ref,
           keyboardState,
           keyboardNotifier,
@@ -193,7 +192,6 @@ class KeyEventService {
 
   void _handleToggleLayer(
     KeyboardLayout layout,
-    String triggerKey,
     WidgetRef ref,
     KeyboardState keyboardState,
     KeyboardNotifier keyboardNotifier,
