@@ -17,8 +17,8 @@ class PreferencesService {
   Future<bool> getReactiveShiftEnabled() async =>
       await _prefs.getBool('reactiveShiftEnabled') ?? true;
   Future<double> getAutoHideDuration() async =>
-      await _prefs.getDouble('autoHideDuration') ?? 2.0;
-  Future<double> getOpacity() async => await _prefs.getDouble('opacity') ?? 0.6;
+      await _prefs.getDouble('autoHideDuration') ?? 0.5;
+  Future<double> getOpacity() async => await _prefs.getDouble('opacity') ?? 0.5;
   Future<String> getKeyboardLayoutName() async =>
       await _prefs.getString('layout') ?? 'QWERTY';
 
@@ -29,35 +29,35 @@ class PreferencesService {
       await _prefs.getBool('showTopRow') ?? false;
   Future<bool> getShowGraveKey() async =>
       await _prefs.getBool('showGraveKey') ?? false;
-  Future<double> getKeySize() async => await _prefs.getDouble('keySize') ?? 48;
+  Future<double> getKeySize() async => await _prefs.getDouble('keySize') ?? 52;
   Future<double> getKeyBorderRadius() async =>
-      await _prefs.getDouble('keyBorderRadius') ?? 12;
+      await _prefs.getDouble('keyBorderRadius') ?? 14;
   Future<double> getKeyBorderThickness() async =>
       await _prefs.getDouble('keyBorderThickness') ?? 0;
   Future<double> getKeyPadding() async =>
-      await _prefs.getDouble('keyPadding') ?? 3;
+      await _prefs.getDouble('keyPadding') ?? 2;
   Future<double> getSpaceWidth() async =>
-      await _prefs.getDouble('spaceWidth') ?? 320;
+      await _prefs.getDouble('spaceWidth') ?? 330;
   Future<double> getSplitWidth() async =>
-      await _prefs.getDouble('splitWidth') ?? 100;
+      await _prefs.getDouble('splitWidth') ?? 200;
   Future<double> getLastRowSplitWidth() async =>
-      await _prefs.getDouble('lastRowSplitWidth') ?? 100;
+      await _prefs.getDouble('lastRowSplitWidth') ?? 90;
   Future<double> getKeyShadowBlurRadius() async =>
-      await _prefs.getDouble('keyShadowBlurRadius') ?? 4;
+      await _prefs.getDouble('keyShadowBlurRadius') ?? 0;
   Future<double> getKeyShadowOffsetX() async =>
-      await _prefs.getDouble('keyShadowOffsetX') ?? 0;
+      await _prefs.getDouble('keyShadowOffsetX') ?? 2;
   Future<double> getKeyShadowOffsetY() async =>
       await _prefs.getDouble('keyShadowOffsetY') ?? 2;
 
   // Text settings
   Future<String> getFontFamily() async =>
-      await _prefs.getString('fontFamily') ?? 'GeistMono';
+      await _prefs.getString('fontFamily') ?? 'DM Mono';
   Future<FontWeight> getFontWeight() async => FontWeight
       .values[await _prefs.getInt('fontWeight') ?? FontWeight.w500.index];
   Future<double> getKeyFontSize() async =>
-      await _prefs.getDouble('keyFontSize') ?? 20;
+      await _prefs.getDouble('keyFontSize') ?? 22;
   Future<double> getSpaceFontSize() async =>
-      await _prefs.getDouble('spaceFontSize') ?? 14;
+      await _prefs.getDouble('spaceFontSize') ?? 21;
 
   // Markers settings
   Future<double> getMarkerOffset() async =>
@@ -65,23 +65,23 @@ class PreferencesService {
   Future<double> getMarkerWidth() async =>
       await _prefs.getDouble('markerWidth') ?? 10;
   Future<double> getMarkerHeight() async =>
-      await _prefs.getDouble('markerHeight') ?? 2;
+      await _prefs.getDouble('markerHeight') ?? 2.5;
   Future<double> getMarkerBorderRadius() async =>
-      await _prefs.getDouble('markerBorderRadius') ?? 10;
+      await _prefs.getDouble('markerBorderRadius') ?? 3;
 
   // Colors settings
   Future<Color> getKeyColorPressed() async =>
-      Color(await _prefs.getInt('keyColorPressed') ?? 0xFF1E1E1E);
+      Color(await _prefs.getInt('keyColorPressed') ?? 0xFFA87FFB);
   Future<Color> getKeyColorNotPressed() async =>
-      Color(await _prefs.getInt('keyColorNotPressed') ?? 0xFF77ABFF);
+      Color(await _prefs.getInt('keyColorNotPressed') ?? 0xFF10151D);
   Future<Color> getMarkerColor() async =>
-      Color(await _prefs.getInt('markerColor') ?? 0xFFFFFFFF);
+      Color(await _prefs.getInt('markerColor') ?? 0xFF10151D);
   Future<Color> getMarkerColorNotPressed() async =>
-      Color(await _prefs.getInt('markerColorNotPressed') ?? 0xFF000000);
+      Color(await _prefs.getInt('markerColorNotPressed') ?? 0xFFFAFBFE);
   Future<Color> getKeyTextColor() async =>
-      Color(await _prefs.getInt('keyTextColor') ?? 0xFFFFFFFF);
+      Color(await _prefs.getInt('keyTextColor') ?? 0xFF10151D);
   Future<Color> getKeyTextColorNotPressed() async =>
-      Color(await _prefs.getInt('keyTextColorNotPressed') ?? 0xFF000000);
+      Color(await _prefs.getInt('keyTextColorNotPressed') ?? 0xFFFAFBFE);
   Future<Color> getKeyBorderColorPressed() async =>
       Color(await _prefs.getInt('keyBorderColorPressed') ?? 0xFF000000);
   Future<Color> getKeyBorderColorNotPressed() async =>
@@ -89,11 +89,11 @@ class PreferencesService {
 
   // Animations settings
   Future<bool> getAnimationEnabled() async =>
-      await _prefs.getBool('animationEnabled') ?? false;
+      await _prefs.getBool('animationEnabled') ?? true;
   Future<String> getAnimationStyle() async =>
       await _prefs.getString('animationStyle') ?? 'Raise';
   Future<double> getAnimationDuration() async =>
-      await _prefs.getDouble('animationDuration') ?? 100;
+      await _prefs.getDouble('animationDuration') ?? 80;
   Future<double> getAnimationScale() async =>
       await _prefs.getDouble('animationScale') ?? 2.0;
 
@@ -115,7 +115,7 @@ class PreferencesService {
   }
 
   Future<bool> getHotKeysEnabled() async =>
-      await _prefs.getBool('enableHotKeys') ?? false;
+      await _prefs.getBool('enableHotKeys') ?? true;
   Future<HotKey?> getVisibilityHotKey() async => _getHotKey('visibilityHotKey',
       PhysicalKeyboardKey.keyQ, [HotKeyModifier.alt, HotKeyModifier.control]);
   Future<HotKey?> getAutoHideHotKey() async => _getHotKey('autoHideHotKey',
