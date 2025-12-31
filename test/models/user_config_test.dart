@@ -140,7 +140,7 @@ void main() {
         expect(json['customShiftMappings']['a'], 'A');
         expect(json['kanataHost'], '127.0.0.1');
         expect(json['kanataPort'], 4039);
-        expect(json['!']['key1'], 'value1');
+        expect(json['customKeys']['key1'], 'value1');
       });
 
       test('omits empty collections', () {
@@ -154,7 +154,7 @@ void main() {
 
         expect(json.containsKey('userLayouts'), isFalse);
         expect(json.containsKey('customShiftMappings'), isFalse);
-        expect(json.containsKey('!'), isFalse);
+        expect(json.containsKey('customKeys'), isFalse);
       });
     });
 

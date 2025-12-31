@@ -80,7 +80,8 @@ class UserConfig {
         'customShiftMappings': customShiftMappings,
       if (kanataHost != null) 'kanataHost': kanataHost,
       if (kanataPort != null) 'kanataPort': kanataPort,
-      if (customKeys != null && customKeys!.isNotEmpty) '!': customKeys,
+      if (customKeys != null && customKeys!.isNotEmpty)
+        'customKeys': customKeys,
     };
   }
 }
