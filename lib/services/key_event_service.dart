@@ -107,6 +107,8 @@ class KeyEventService {
 
       // Re-read keyboard state as it might have changed during layer switching
       final currentKeyboardState = ref.read(keyboardNotifierProvider);
+      // Re-read app state as it might have changed during layer switching (e.g. visibility)
+      final currentAppState = ref.read(appStateNotifierProvider);
 
       // Check if we're on the default layer
       final isOnDefaultLayer = _isOnDefaultLayer(
@@ -115,8 +117,13 @@ class KeyEventService {
       );
 
       if (prefsState.autoHideEnabled) {
-        if (!appState.isWindowVisible && isPressed) {
+        if (!currentAppState.isWindowVisible && isPressed) {
           fadeIn();
+          // If we just faded in, but we are NOT on the default layer, we should cancel the timer
+          // because fadeIn() starts it by default.
+          if (!isOnDefaultLayer) {
+            cancelAutoHideTimer();
+          }
         } else if (isOnDefaultLayer) {
           resetAutoHideTimer();
         } else if (isPressed) {
