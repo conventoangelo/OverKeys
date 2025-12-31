@@ -467,13 +467,20 @@ class MethodCallHandler {
 
       case 'updateCustomFontEnabled':
         final customFontEnabled = _safeArgument<bool>(call.arguments, false);
-        prefsNotifier.updateCustomFontEnabled(customFontEnabled);
         final keyboardState = ref.read(keyboardNotifierProvider);
+
         if (customFontEnabled) {
+          // Save the current font before switching to custom font
+          // so we can restore it when toggling off
+          keyboardNotifier.updateInitialFontFamily(keyboardState.fontFamily);
+          prefsNotifier.updateCustomFontEnabled(customFontEnabled);
           loadCustomFont();
         } else {
-          keyboardNotifier.updateFontFamily(
-              keyboardState.initialFontFamily ?? keyboardState.fontFamily);
+          prefsNotifier.updateCustomFontEnabled(customFontEnabled);
+          // Restore the font that was active before custom font was enabled
+          if (keyboardState.initialFontFamily != null) {
+            keyboardNotifier.updateFontFamily(keyboardState.initialFontFamily!);
+          }
         }
 
       case 'updateUse6ColLayout':
