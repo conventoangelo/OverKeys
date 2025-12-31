@@ -1,6 +1,7 @@
 import 'dart:isolate';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:overkeys/models/keyboard_layouts.dart';
 import 'package:overkeys/providers/keyboard_provider.dart';
 import 'package:overkeys/providers/app_state_provider.dart';
 import 'package:overkeys/providers/preferences_provider.dart';
@@ -97,14 +98,14 @@ class KeyEventService {
     String key,
     bool isPressed,
     WidgetRef ref,
-    dynamic keyboardState,
-    dynamic keyboardNotifier,
-    dynamic appState,
-    dynamic appNotifier,
-    dynamic prefsState,
-    Function fadeIn,
-    Function cancelAutoHideTimer,
-    Function updateAutoHideBasedOnLayer,
+    KeyboardState keyboardState,
+    KeyboardNotifier keyboardNotifier,
+    AppState appState,
+    AppStateNotifier appNotifier,
+    PreferencesState prefsState,
+    fadeIn,
+    cancelAutoHideTimer,
+    updateAutoHideBasedOnLayer,
   ) {
     final userLayers = prefsState.userLayers;
     final activeLayer = userLayers.where((l) => l.trigger == key);
@@ -142,14 +143,14 @@ class KeyEventService {
   }
 
   void _handleToggleLayer(
-    dynamic layout,
-    dynamic keyboardState,
-    dynamic keyboardNotifier,
-    dynamic appState,
-    dynamic appNotifier,
-    dynamic prefsState,
-    Function fadeIn,
-    Function cancelAutoHideTimer,
+    KeyboardLayout layout,
+    KeyboardState keyboardState,
+    KeyboardNotifier keyboardNotifier,
+    AppState appState,
+    AppStateNotifier appNotifier,
+    PreferencesState prefsState,
+    void Function() fadeIn,
+    void Function() cancelAutoHideTimer,
   ) {
     if (keyboardState.layout.name != layout.name) {
       keyboardNotifier.updateLayout(layout);
@@ -171,16 +172,16 @@ class KeyEventService {
   }
 
   void _handleHeldLayer(
-    dynamic layout,
+    KeyboardLayout layout,
     String key,
     bool isPressed,
-    dynamic keyboardState,
-    dynamic keyboardNotifier,
-    dynamic appState,
-    dynamic appNotifier,
-    dynamic prefsState,
-    Function fadeIn,
-    Function cancelAutoHideTimer,
+    KeyboardState keyboardState,
+    KeyboardNotifier keyboardNotifier,
+    AppState appState,
+    AppStateNotifier appNotifier,
+    PreferencesState prefsState,
+    void Function() fadeIn,
+    void Function() cancelAutoHideTimer,
   ) {
     if (isPressed && !_activeTriggers.contains(key)) {
       keyboardNotifier.updateLayout(layout);
