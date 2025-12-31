@@ -415,6 +415,8 @@ class MethodCallHandler {
           if (currentPrefsState.keyboardFollowsMouse) {
             stopMouseTracking();
           }
+          // Ensure keyboard is visible if it was hidden by advanced features
+          fadeIn();
         } else {
           // Clear cached config when re-enabling advanced settings
           // to ensure recent changes to the config file are reflected
@@ -541,6 +543,9 @@ class MethodCallHandler {
       case 'updateHideOnDefaultLayer':
         final hideOnDefaultLayer = _safeArgument<bool>(call.arguments, false);
         prefsNotifier.updateHideOnDefaultLayer(hideOnDefaultLayer);
+        if (!hideOnDefaultLayer) {
+          fadeIn();
+        }
 
       default:
         debugPrint('Warning: Unimplemented method ${call.method}');

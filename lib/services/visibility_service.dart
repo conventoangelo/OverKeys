@@ -14,8 +14,8 @@ class VisibilityService {
     // If hideOnDefaultLayer is disabled, always allow showing
     if (!prefsState.hideOnDefaultLayer) return false;
 
-    // If advanced settings are not enabled, we're always on default
-    if (!prefsState.advancedSettingsEnabled) return true;
+    // If advanced settings are not enabled, disable this feature
+    if (!prefsState.advancedSettingsEnabled) return false;
 
     // For Kanata or user layout mode
     if (prefsState.kanataEnabled || prefsState.useUserLayout) {
