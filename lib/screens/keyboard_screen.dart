@@ -41,6 +41,10 @@ class KeyboardScreen extends ConsumerWidget {
     PreferencesState prefsState,
   ) {
     List<Widget> rowWidgets = [];
+    final KeyboardLayout? effectiveAltLayout =
+        (prefsState.advancedSettingsEnabled && prefsState.showAltLayout)
+            ? prefsState.altLayout
+            : null;
 
     if (keyboardState.keymapStyle != 'Matrix' &&
         keyboardState.keymapStyle != 'Split Matrix') {
@@ -56,10 +60,7 @@ class KeyboardScreen extends ConsumerWidget {
           isLastKeyFirstRow: isLastKeyFirstRow,
           keyboardState: keyboardState,
           prefsState: prefsState,
-          altLayout:
-              (prefsState.advancedSettingsEnabled && prefsState.showAltLayout)
-                  ? prefsState.altLayout
-                  : null,
+          altLayout: effectiveAltLayout,
         ));
       }
     } else {
@@ -82,19 +83,13 @@ class KeyboardScreen extends ConsumerWidget {
         rowWidgets.add(buildKeys(rowIndex, keys[0], 0,
             keyboardState: keyboardState,
             prefsState: prefsState,
-            altLayout:
-                (prefsState.advancedSettingsEnabled && prefsState.showAltLayout)
-                    ? prefsState.altLayout
-                    : null));
+            altLayout: effectiveAltLayout));
 
         for (int i = 1; i < 6; i++) {
           rowWidgets.add(buildKeys(rowIndex, keys[i], i,
               keyboardState: keyboardState,
               prefsState: prefsState,
-              altLayout: (prefsState.advancedSettingsEnabled &&
-                      prefsState.showAltLayout)
-                  ? prefsState.altLayout
-                  : null));
+              altLayout: effectiveAltLayout));
         }
 
         rowWidgets.add(SizedBox(width: keyboardState.splitWidth));
@@ -103,19 +98,13 @@ class KeyboardScreen extends ConsumerWidget {
           rowWidgets.add(buildKeys(rowIndex, keys[i], i,
               keyboardState: keyboardState,
               prefsState: prefsState,
-              altLayout: (prefsState.advancedSettingsEnabled &&
-                      prefsState.showAltLayout)
-                  ? prefsState.altLayout
-                  : null));
+              altLayout: effectiveAltLayout));
         }
 
         rowWidgets.add(buildKeys(rowIndex, keys[11], 11,
             keyboardState: keyboardState,
             prefsState: prefsState,
-            altLayout:
-                (prefsState.advancedSettingsEnabled && prefsState.showAltLayout)
-                    ? prefsState.altLayout
-                    : null));
+            altLayout: effectiveAltLayout));
       } else {
         for (int i = startIndex; i < keys.length && i < endIndex; i++) {
           if (keyboardState.keymapStyle == 'Split Matrix') {
@@ -142,26 +131,17 @@ class KeyboardScreen extends ConsumerWidget {
             rowWidgets.add(buildKeys(rowIndex, keys[i], i,
                 keyboardState: keyboardState,
                 prefsState: prefsState,
-                altLayout: (prefsState.advancedSettingsEnabled &&
-                        prefsState.showAltLayout)
-                    ? prefsState.altLayout
-                    : null));
+                altLayout: effectiveAltLayout));
             rowWidgets.add(SizedBox(width: keyboardState.lastRowSplitWidth));
             rowWidgets.add(buildKeys(rowIndex, keys[i], i,
                 keyboardState: keyboardState,
                 prefsState: prefsState,
-                altLayout: (prefsState.advancedSettingsEnabled &&
-                        prefsState.showAltLayout)
-                    ? prefsState.altLayout
-                    : null));
+                altLayout: effectiveAltLayout));
           } else {
             rowWidgets.add(buildKeys(rowIndex, keys[i], i,
                 keyboardState: keyboardState,
                 prefsState: prefsState,
-                altLayout: (prefsState.advancedSettingsEnabled &&
-                        prefsState.showAltLayout)
-                    ? prefsState.altLayout
-                    : null));
+                altLayout: effectiveAltLayout));
           }
         }
       }
