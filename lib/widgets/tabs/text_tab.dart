@@ -59,7 +59,7 @@ class _TextTabState extends ConsumerState<TextTab> {
               widget.onUpdateMainWindow('updateFontFamily', value);
             },
             subtitle:
-                'Make sure that the font is installed in your system. Falls back to Geist Mono.'),
+                'Make sure that the font is installed in your system. Falls back to DM Mono.'),
         DropdownOption(
           label: 'Font weight',
           value: keyboardState.fontWeight == FontWeight.w100

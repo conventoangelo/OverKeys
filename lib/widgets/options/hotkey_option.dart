@@ -85,7 +85,7 @@ class HotKeyOption extends StatelessWidget {
                     formattedHotKey,
                     style: TextStyle(
                       fontWeight: FontWeight.w500,
-                      fontFamily: 'Geist Mono',
+                      fontFamily: 'DM Mono',
                       color: colorScheme.onSurfaceVariant,
                       fontSize: 14,
                     ),
