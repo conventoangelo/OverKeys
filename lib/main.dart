@@ -75,7 +75,7 @@ Future<void> _initMainWindow() async {
     titleBarStyle: TitleBarStyle.hidden,
   );
 
-  windowManager.waitUntilReadyToShow(windowOptions, () async {
+  await windowManager.waitUntilReadyToShow(windowOptions, () async {
     await windowManager.setAlwaysOnTop(true);
     await windowManager.setAsFrameless();
     await windowManager.setSize(Size(windowWidth, windowHeight));
@@ -97,7 +97,7 @@ Future<void> _initPreferencesWindow() async {
     size: Size(1280, 720),
   );
 
-  windowManager.waitUntilReadyToShow(windowOptions, () async {
+  await windowManager.waitUntilReadyToShow(windowOptions, () async {
     await windowManager.setTitle("Preferences");
     await windowManager.setIcon("assets/images/app_icon.ico");
     await windowManager.center();
