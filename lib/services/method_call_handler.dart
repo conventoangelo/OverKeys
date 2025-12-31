@@ -64,15 +64,11 @@ class MethodCallHandler {
         final layoutName = call.arguments as String;
         final prefsState = ref.read(preferencesNotifierProvider);
         final keyboardState = ref.read(keyboardNotifierProvider);
-        if ((keyboardState.kanataEnabled || prefsState.useUserLayout) &&
-            prefsState.advancedSettingsEnabled) {
-          final layout = availableLayouts
-              .firstWhere((layout) => layout.name == layoutName);
-          keyboardNotifier.updateLayout(layout);
-        } else {
-          final layout = availableLayouts
-              .firstWhere((layout) => layout.name == layoutName);
-          keyboardNotifier.updateLayout(layout);
+        final layout =
+            availableLayouts.firstWhere((layout) => layout.name == layoutName);
+        keyboardNotifier.updateLayout(layout);
+        if (!((keyboardState.kanataEnabled || prefsState.useUserLayout) &&
+            prefsState.advancedSettingsEnabled)) {
           keyboardNotifier.updateInitialLayout(layout);
         }
         fadeIn();
