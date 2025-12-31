@@ -162,18 +162,7 @@ class KeyboardScreen extends ConsumerWidget {
     required PreferencesState prefsState,
     KeyboardLayout? altLayout,
   }) {
-    bool isShiftPressed = (keyboardState.keyPressStates["LShift"] ?? false) ||
-        (keyboardState.keyPressStates["RShift"] ?? false);
-    if (isShiftPressed &&
-        prefsState.reactiveShiftEnabled &&
-        keyboardState.fontFamily != '') {
-      if (keyboardState.customShiftMappings != null &&
-          keyboardState.customShiftMappings!.containsKey(key)) {
-        key = keyboardState.customShiftMappings![key]!;
-      } else {
-        key = Mappings.getShiftedSymbol(key) ?? key;
-      }
-    }
+    key = _getShiftedKey(key, keyboardState, prefsState);
     String realKey = (keyboardState.layout.foreign ?? false)
         ? qwerty.keys[rowIndex][keyIndex]
         : key;
@@ -451,6 +440,26 @@ class KeyboardScreen extends ConsumerWidget {
     }
   }
 
+  String _getShiftedKey(
+    String key,
+    KeyboardState keyboardState,
+    PreferencesState prefsState,
+  ) {
+    bool isShiftPressed = (keyboardState.keyPressStates["LShift"] ?? false) ||
+        (keyboardState.keyPressStates["RShift"] ?? false);
+
+    if (isShiftPressed &&
+        prefsState.reactiveShiftEnabled &&
+        keyboardState.fontFamily != '') {
+      if (keyboardState.customShiftMappings != null &&
+          keyboardState.customShiftMappings!.containsKey(key)) {
+        return keyboardState.customShiftMappings![key]!;
+      }
+      return Mappings.getShiftedSymbol(key) ?? key;
+    }
+    return key;
+  }
+
   String _getAltLayoutKey(
       int rowIndex,
       int keyIndex,
@@ -469,18 +478,7 @@ class KeyboardScreen extends ConsumerWidget {
       return "";
     }
     String altKey = altRow[keyIndex];
-    bool isShiftPressed = (keyboardState.keyPressStates["LShift"] ?? false) ||
-        (keyboardState.keyPressStates["RShift"] ?? false);
-    if (isShiftPressed &&
-        prefsState.reactiveShiftEnabled &&
-        keyboardState.fontFamily != '') {
-      if (keyboardState.customShiftMappings != null &&
-          keyboardState.customShiftMappings!.containsKey(altKey)) {
-        altKey = keyboardState.customShiftMappings![altKey]!;
-      } else {
-        altKey = Mappings.getShiftedSymbol(altKey) ?? altKey;
-      }
-    }
+    altKey = _getShiftedKey(altKey, keyboardState, prefsState);
     return altKey;
   }
 
