@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../providers/keyboard_provider.dart';
@@ -23,7 +22,6 @@ class StateService {
       final Map<String, dynamic> json = jsonDecode(jsonString);
       return KeyboardState.fromJson(json);
     } catch (e) {
-      if (kDebugMode) print('Error loading keyboard state: $e');
       return null;
     }
   }
@@ -35,7 +33,7 @@ class StateService {
       final jsonString = jsonEncode(state.toJson());
       await prefs.setString(_keyboardStateKey, jsonString);
     } catch (e) {
-      if (kDebugMode) print('Error saving keyboard state: $e');
+      // Silently fail - state will not be persisted
     }
   }
 
@@ -49,7 +47,6 @@ class StateService {
       final Map<String, dynamic> json = jsonDecode(jsonString);
       return PreferencesState.fromJson(json);
     } catch (e) {
-      if (kDebugMode) print('Error loading preferences state: $e');
       return null;
     }
   }
@@ -61,7 +58,7 @@ class StateService {
       final jsonString = jsonEncode(state.toJson());
       await prefs.setString(_preferencesStateKey, jsonString);
     } catch (e) {
-      if (kDebugMode) print('Error saving preferences state: $e');
+      // Silently fail - state will not be persisted
     }
   }
 
@@ -75,7 +72,6 @@ class StateService {
       final Map<String, dynamic> json = jsonDecode(jsonString);
       return AppState.fromJson(json);
     } catch (e) {
-      if (kDebugMode) print('Error loading app state: $e');
       return null;
     }
   }
@@ -87,7 +83,7 @@ class StateService {
       final jsonString = jsonEncode(state.toJson());
       await prefs.setString(_appStateKey, jsonString);
     } catch (e) {
-      if (kDebugMode) print('Error saving app state: $e');
+      // Silently fail - state will not be persisted
     }
   }
 
