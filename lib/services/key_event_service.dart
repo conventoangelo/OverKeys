@@ -13,6 +13,9 @@ class KeyEventService {
   /// Active trigger keys for held layer switching
   final Set<String> _activeTriggers = {};
 
+  /// Stores the layer that was active before the held layer was activated
+  KeyboardLayout? _previousLayer;
+
   /// ReceivePort for keyboard events
   ReceivePort? _receivePort;
 
@@ -39,6 +42,7 @@ class KeyEventService {
     _receivePort?.close();
     _receivePort = null;
     _activeTriggers.clear();
+    _previousLayer = null;
   }
 
   /// Handles keyboard events from the receive port
@@ -138,6 +142,7 @@ class KeyEventService {
       if (layout.type == 'toggle' && isPressed) {
         _handleToggleLayer(
           layout,
+          key,
           ref,
           keyboardState,
           keyboardNotifier,
@@ -170,6 +175,7 @@ class KeyEventService {
 
   void _handleToggleLayer(
     KeyboardLayout layout,
+    String triggerKey,
     WidgetRef ref,
     KeyboardState keyboardState,
     KeyboardNotifier keyboardNotifier,
@@ -179,9 +185,15 @@ class KeyEventService {
     void Function() fadeIn,
     void Function() cancelAutoHideTimer,
   ) {
-    if (keyboardState.layout.name != layout.name) {
+    // Read the current keyboard state fresh to avoid stale data
+    final currentLayout = ref.read(keyboardNotifierProvider).layout;
+
+    // Check if we're currently NOT on this toggle layer
+    if (currentLayout.name != layout.name) {
+      // Switch to the toggle layer
       keyboardNotifier.updateLayout(layout);
     } else if (prefsState.defaultUserLayout != null) {
+      // Already on toggle layer, pressing trigger again reverts to default
       keyboardNotifier.updateLayout(prefsState.defaultUserLayout!);
     }
 
@@ -212,6 +224,8 @@ class KeyEventService {
     void Function() cancelAutoHideTimer,
   ) {
     if (isPressed && !_activeTriggers.contains(key)) {
+      // Store the current layer before switching to the held layer
+      _previousLayer = keyboardState.layout;
       keyboardNotifier.updateLayout(layout);
       _activeTriggers.add(key);
 
@@ -219,7 +233,11 @@ class KeyEventService {
         fadeIn();
       }
     } else if (!isPressed && _activeTriggers.contains(key)) {
-      if (prefsState.defaultUserLayout != null) {
+      // Revert to the previous layer, or default if not available
+      if (_previousLayer != null) {
+        keyboardNotifier.updateLayout(_previousLayer!);
+        _previousLayer = null;
+      } else if (prefsState.defaultUserLayout != null) {
         keyboardNotifier.updateLayout(prefsState.defaultUserLayout!);
       }
       _activeTriggers.remove(key);
@@ -227,8 +245,14 @@ class KeyEventService {
       if (prefsState.hideOnDefaultLayer &&
           prefsState.defaultUserLayout != null &&
           appState.isWindowVisible) {
-        appNotifier.updateIsWindowVisible(false);
-        cancelAutoHideTimer();
+        final currentLayout = keyboardState.layout;
+        final isNowOnDefault =
+            currentLayout.name == prefsState.defaultUserLayout!.name;
+
+        if (isNowOnDefault) {
+          appNotifier.updateIsWindowVisible(false);
+          cancelAutoHideTimer();
+        }
       }
     }
   }
@@ -236,5 +260,6 @@ class KeyEventService {
   /// Clears all active triggers
   void clearActiveTriggers() {
     _activeTriggers.clear();
+    _previousLayer = null;
   }
 }

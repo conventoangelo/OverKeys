@@ -51,9 +51,12 @@ class ConfigurationLoader {
     if (!prefsState.useUserLayout) return;
 
     final keyboardNotifier = ref.read(keyboardNotifierProvider.notifier);
+    final prefsNotifier = ref.read(preferencesNotifierProvider.notifier);
     final userLayout = await _configService.getUserLayout();
 
     if (userLayout != null) {
+      prefsNotifier.updateDefaultUserLayout(userLayout);
+
       // Don't update initialLayout here - it should preserve the previous layout
       // so we can restore it when user layout is toggled off
       if (!prefsState.kanataEnabled) {
