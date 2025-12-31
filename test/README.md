@@ -219,6 +219,7 @@ Always test:
 - `config_service_test.dart` (16 tests): Configuration file I/O and caching
 - `kanata_service_test.dart` (4 tests): Kanata message parsing and layout matching
 - `startup_service_test.dart` (3 tests): Startup service instantiation
+- `state_service_test.dart` (14 tests): Application state management, state transitions, and persistence/caching behavior
 
 **Key Test Patterns**:
 

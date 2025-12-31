@@ -138,8 +138,10 @@ jobs:
             --jq ".artifacts[] | select(.name == `"$artifactName`" and .expired == false)" | ConvertFrom-Json
 
           if ($artifacts) {
-            Write-Host "✅ Found artifact, downloading..."
-            gh run download --name $artifactName --dir "${{ runner.temp }}/downloaded"
+            # Extract the run ID from the first matching artifact
+            $runId = if ($artifacts -is [array]) { $artifacts[0].workflow_run.id } else { $artifacts.workflow_run.id }
+            Write-Host "✅ Found artifact from run ID: $runId, downloading..."
+            gh run download --run-id $runId --name $artifactName --dir "${{ runner.temp }}/downloaded"
             
             # Verify files exist
             $exeFile = "${{ runner.temp }}/downloaded/overkeys_${version}_x64_setup.exe"

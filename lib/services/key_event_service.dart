@@ -138,7 +138,8 @@ class KeyEventService {
       }
 
       updateAutoHideBasedOnLayer(
-          keyboardState.layout.name == prefsState.defaultUserLayout?.name);
+          ref.read(keyboardNotifierProvider).layout.name ==
+              prefsState.defaultUserLayout?.name);
     }
   }
 
