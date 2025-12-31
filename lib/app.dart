@@ -528,7 +528,7 @@ class _MainAppState extends ConsumerState<MainApp>
       title: 'OverKeys',
       theme: ThemeData(
           fontFamily: keyboardState.fontFamily,
-          fontFamilyFallback: const ['GeistMono', 'Manrope', 'sans-serif']),
+          fontFamilyFallback: const ['DM Mono', 'Manrope', 'sans-serif']),
       home: Scaffold(
         backgroundColor: Colors.transparent,
         body: Stack(
