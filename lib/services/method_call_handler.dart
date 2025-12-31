@@ -85,9 +85,15 @@ class MethodCallHandler {
         final keyboardState = ref.read(keyboardNotifierProvider);
         final layout =
             availableLayouts.firstWhere((layout) => layout.name == layoutName);
-        keyboardNotifier.updateLayout(layout);
-        if (!((keyboardState.kanataEnabled || prefsState.useUserLayout) &&
-            prefsState.advancedSettingsEnabled)) {
+
+        // If Kanata or user layout is active, only update the initialLayout
+        // (the layout to revert to when those features are disabled)
+        if ((keyboardState.kanataEnabled || prefsState.useUserLayout) &&
+            prefsState.advancedSettingsEnabled) {
+          keyboardNotifier.updateInitialLayout(layout);
+        } else {
+          // Otherwise, update both current and initial layout
+          keyboardNotifier.updateLayout(layout);
           keyboardNotifier.updateInitialLayout(layout);
         }
         fadeIn();
