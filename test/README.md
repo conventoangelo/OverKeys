@@ -216,12 +216,6 @@ Always test:
 
 **Coverage**:
 
-- `state_service_test.dart` (8 tests): ToggleOption widget, switch interactions
-- `slider_option_test.dart` (8 tests): SliderOption widget, value formatting
-- `dropdown_option_test.dart` (10 tests): DropdownOption widget, menu interaction
-- `color_option_test.dart` (10 tests): ColorOption widget, color picker dialog
-- `hotkey_option_test.dart` (13 tests): HotKeyOption widget, change button
-- `status_overlay_test.dart` (13 tests): StatusOverlay widget, animations
 - `config_service_test.dart` (16 tests): Configuration file I/O and caching
 - `kanata_service_test.dart` (4 tests): Kanata message parsing and layout matching
 - `startup_service_test.dart` (3 tests): Startup service instantiation
@@ -242,7 +236,27 @@ test('loads config from file', () async {
 
 **Purpose**: Test UI components, user interactions, and visual rendering.
 
-**Coverage**: Comprehensive tests for reusable option widgets (DropdownOption, SliderOption, etc.)
+**Coverage**:
+
+- `toggle_option_test.dart` (8 tests): ToggleOption widget, switch interactions
+- `slider_option_test.dart` (8 tests): SliderOption widget, value formatting
+- `dropdown_option_test.dart` (10 tests): DropdownOption widget, menu interaction
+- `color_option_test.dart` (10 tests): ColorOption widget, color picker dialog
+- `hotkey_option_test.dart` (13 tests): HotKeyOption widget, change button
+- `status_overlay_test.dart` (13 tests): StatusOverlay widget, animations
+
+**Key Test Patterns**:
+
+```dart
+// Widget interaction test
+testWidgets('widget updates on user interaction', (tester) async {
+  await tester.pumpWidget(TestWidget());
+  await tester.tap(find.byType(Switch));
+  await tester.pump();
+
+  expect(find.text('Updated'), findsOneWidget);
+});
+```
 
 ### Additional Services
 
@@ -279,7 +293,7 @@ test('loads config from file', () async {
 - [ ] Keyboard screen tests
 - [ ] Tab widgets tests
 
-### Phase 4: Integration Tests
+### Phase 3: Integration Tests
 
 - [ ] Layout switching workflow
 - [ ] Auto-hide with key events

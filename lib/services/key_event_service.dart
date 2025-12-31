@@ -32,10 +32,10 @@ class KeyEventService {
   void handleKeyEvent(
     dynamic message,
     WidgetRef ref,
-    Function fadeIn,
-    Function resetAutoHideTimer,
-    Function cancelAutoHideTimer,
-    Function updateAutoHideBasedOnLayer,
+    void Function() fadeIn,
+    void Function() resetAutoHideTimer,
+    void Function() cancelAutoHideTimer,
+    void Function(bool) updateAutoHideBasedOnLayer,
   ) {
     if (message is! List) return;
 
@@ -103,9 +103,9 @@ class KeyEventService {
     AppState appState,
     AppStateNotifier appNotifier,
     PreferencesState prefsState,
-    fadeIn,
-    cancelAutoHideTimer,
-    updateAutoHideBasedOnLayer,
+    void Function() fadeIn,
+    void Function() cancelAutoHideTimer,
+    void Function(bool) updateAutoHideBasedOnLayer,
   ) {
     final userLayers = prefsState.userLayers;
     final activeLayer = userLayers.where((l) => l.trigger == key);

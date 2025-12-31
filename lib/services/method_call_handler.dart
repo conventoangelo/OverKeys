@@ -16,6 +16,18 @@ import 'package:overkeys/services/startup_service.dart';
 class MethodCallHandler {
   final StartupService _startupService = StartupService();
 
+  /// Safely casts arguments with a fallback value
+  T _safeArgument<T>(dynamic value, T fallback) {
+    if (value is T) {
+      return value;
+    }
+    if (kDebugMode) {
+      debugPrint(
+          'Warning: Invalid argument type, expected $T, got ${value.runtimeType}');
+    }
+    return fallback;
+  }
+
   /// Handles method calls and routes them to appropriate state updates
   Future<void> handleMethodCall(
     MethodCall call,
@@ -37,7 +49,7 @@ class MethodCallHandler {
     switch (call.method) {
       // General settings
       case 'updateLaunchAtStartup':
-        final launchAtStartupValue = call.arguments as bool;
+        final launchAtStartupValue = _safeArgument<bool>(call.arguments, false);
         prefsNotifier.updateLaunchAtStartup(launchAtStartupValue);
         final success =
             await _startupService.handleStartupToggle(launchAtStartupValue);
@@ -47,7 +59,7 @@ class MethodCallHandler {
         }
 
       case 'updateHideAtStartup':
-        final hideAtStartup = call.arguments as bool;
+        final hideAtStartup = _safeArgument<bool>(call.arguments, false);
         prefsNotifier.updateHideAtStartup(hideAtStartup);
 
       case 'updateAutoHideEnabled':
@@ -55,19 +67,19 @@ class MethodCallHandler {
         break;
 
       case 'updateReactiveShiftEnabled':
-        final reactiveShiftEnabled = call.arguments as bool;
+        final reactiveShiftEnabled = _safeArgument<bool>(call.arguments, false);
         prefsNotifier.updateReactiveShiftEnabled(reactiveShiftEnabled);
 
       case 'updateAutoHideDuration':
-        final autoHideDuration = call.arguments as double;
+        final autoHideDuration = _safeArgument<double>(call.arguments, 3.0);
         prefsNotifier.updateAutoHideDuration(autoHideDuration);
 
       case 'updateOpacity':
-        final opacity = call.arguments as double;
+        final opacity = _safeArgument<double>(call.arguments, 1.0);
         prefsNotifier.updateOpacity(opacity);
 
       case 'updateLayout':
-        final layoutName = call.arguments as String;
+        final layoutName = _safeArgument<String>(call.arguments, 'QWERTY');
         final prefsState = ref.read(preferencesNotifierProvider);
         final keyboardState = ref.read(keyboardNotifierProvider);
         final layout =
@@ -81,60 +93,60 @@ class MethodCallHandler {
 
       // Keyboard settings
       case 'updateKeymapStyle':
-        final keymapStyle = call.arguments as String;
+        final keymapStyle = _safeArgument<String>(call.arguments, 'ISO');
         keyboardNotifier.updateKeymapStyle(keymapStyle);
 
       case 'updateShowTopRow':
-        final showTopRow = call.arguments as bool;
+        final showTopRow = _safeArgument<bool>(call.arguments, true);
         keyboardNotifier.updateShowTopRow(showTopRow);
 
       case 'updateShowGraveKey':
-        final showGraveKey = call.arguments as bool;
+        final showGraveKey = _safeArgument<bool>(call.arguments, true);
         keyboardNotifier.updateShowGraveKey(showGraveKey);
 
       case 'updateKeySize':
-        final keySize = call.arguments as double;
+        final keySize = _safeArgument<double>(call.arguments, 100.0);
         keyboardNotifier.updateKeySize(keySize);
 
       case 'updateKeyBorderRadius':
-        final keyBorderRadius = call.arguments as double;
+        final keyBorderRadius = _safeArgument<double>(call.arguments, 8.0);
         keyboardNotifier.updateKeyBorderRadius(keyBorderRadius);
 
       case 'updateKeyBorderThickness':
-        final keyBorderThickness = call.arguments as double;
+        final keyBorderThickness = _safeArgument<double>(call.arguments, 2.0);
         keyboardNotifier.updateKeyBorderThickness(keyBorderThickness);
 
       case 'updateKeyPadding':
-        final keyPadding = call.arguments as double;
+        final keyPadding = _safeArgument<double>(call.arguments, 8.0);
         keyboardNotifier.updateKeyPadding(keyPadding);
 
       case 'updateSpaceWidth':
-        final spaceWidth = call.arguments as double;
+        final spaceWidth = _safeArgument<double>(call.arguments, 100.0);
         keyboardNotifier.updateSpaceWidth(spaceWidth);
 
       case 'updateSplitWidth':
-        final splitWidth = call.arguments as double;
+        final splitWidth = _safeArgument<double>(call.arguments, 15.0);
         keyboardNotifier.updateSplitWidth(splitWidth);
 
       case 'updateLastRowSplitWidth':
-        final lastRowSplitWidth = call.arguments as double;
+        final lastRowSplitWidth = _safeArgument<double>(call.arguments, 15.0);
         keyboardNotifier.updateLastRowSplitWidth(lastRowSplitWidth);
 
       case 'updateKeyShadowBlurRadius':
-        final keyShadowBlurRadius = call.arguments as double;
+        final keyShadowBlurRadius = _safeArgument<double>(call.arguments, 0.0);
         keyboardNotifier.updateKeyShadowBlurRadius(keyShadowBlurRadius);
 
       case 'updateKeyShadowOffsetX':
-        final keyShadowOffsetX = call.arguments as double;
+        final keyShadowOffsetX = _safeArgument<double>(call.arguments, 0.0);
         keyboardNotifier.updateKeyShadowOffsetX(keyShadowOffsetX);
 
       case 'updateKeyShadowOffsetY':
-        final keyShadowOffsetY = call.arguments as double;
+        final keyShadowOffsetY = _safeArgument<double>(call.arguments, 0.0);
         keyboardNotifier.updateKeyShadowOffsetY(keyShadowOffsetY);
 
       // Text settings
       case 'updateFontFamily':
-        final fontFamily = call.arguments as String;
+        final fontFamily = _safeArgument<String>(call.arguments, '');
         final prefsState = ref.read(preferencesNotifierProvider);
         keyboardNotifier.updateFontFamily(fontFamily);
         if (!(prefsState.customFontEnabled &&
@@ -143,96 +155,101 @@ class MethodCallHandler {
         }
 
       case 'updateFontWeight':
-        final fontWeightIndex = call.arguments as int;
+        final fontWeightIndex = _safeArgument<int>(call.arguments, 3);
         keyboardNotifier.updateFontWeight(FontWeight.values[fontWeightIndex]);
 
       case 'updateKeyFontSize':
-        final keyFontSize = call.arguments as double;
+        final keyFontSize = _safeArgument<double>(call.arguments, 28.0);
         keyboardNotifier.updateKeyFontSize(keyFontSize);
 
       case 'updateSpaceFontSize':
-        final spaceFontSize = call.arguments as double;
+        final spaceFontSize = _safeArgument<double>(call.arguments, 20.0);
         keyboardNotifier.updateSpaceFontSize(spaceFontSize);
 
       // Markers settings
       case 'updateMarkerOffset':
-        final markerOffset = call.arguments as double;
+        final markerOffset = _safeArgument<double>(call.arguments, 0.0);
         keyboardNotifier.updateMarkerOffset(markerOffset);
 
       case 'updateMarkerWidth':
-        final markerWidth = call.arguments as double;
+        final markerWidth = _safeArgument<double>(call.arguments, 6.0);
         keyboardNotifier.updateMarkerWidth(markerWidth);
 
       case 'updateMarkerHeight':
-        final markerHeight = call.arguments as double;
+        final markerHeight = _safeArgument<double>(call.arguments, 6.0);
         keyboardNotifier.updateMarkerHeight(markerHeight);
 
       case 'updateMarkerBorderRadius':
-        final markerBorderRadius = call.arguments as double;
+        final markerBorderRadius = _safeArgument<double>(call.arguments, 3.0);
         keyboardNotifier.updateMarkerBorderRadius(markerBorderRadius);
 
       // Colors settings
       case 'updateKeyColorPressed':
-        final keyColorPressed = call.arguments as int;
+        final keyColorPressed = _safeArgument<int>(call.arguments, 0xFF2196F3);
         keyboardNotifier.updateKeyColorPressed(Color(keyColorPressed));
 
       case 'updateKeyColorNotPressed':
-        final keyColorNotPressed = call.arguments as int;
+        final keyColorNotPressed =
+            _safeArgument<int>(call.arguments, 0xFF212121);
         keyboardNotifier.updateKeyColorNotPressed(Color(keyColorNotPressed));
 
       case 'updateMarkerColor':
-        final markerColor = call.arguments as int;
+        final markerColor = _safeArgument<int>(call.arguments, 0xFF4CAF50);
         keyboardNotifier.updateMarkerColor(Color(markerColor));
 
       case 'updateMarkerColorNotPressed':
-        final markerColorNotPressed = call.arguments as int;
+        final markerColorNotPressed =
+            _safeArgument<int>(call.arguments, 0xFF9E9E9E);
         keyboardNotifier
             .updateMarkerColorNotPressed(Color(markerColorNotPressed));
 
       case 'updateKeyTextColor':
-        final keyTextColor = call.arguments as int;
+        final keyTextColor = _safeArgument<int>(call.arguments, 0xFFFFFFFF);
         keyboardNotifier.updateKeyTextColor(Color(keyTextColor));
 
       case 'updateKeyTextColorNotPressed':
-        final keyTextColorNotPressed = call.arguments as int;
+        final keyTextColorNotPressed =
+            _safeArgument<int>(call.arguments, 0xFFFFFFFF);
         keyboardNotifier
             .updateKeyTextColorNotPressed(Color(keyTextColorNotPressed));
 
       case 'updateKeyBorderColorPressed':
-        final keyBorderColorPressed = call.arguments as int;
+        final keyBorderColorPressed =
+            _safeArgument<int>(call.arguments, 0xFF2196F3);
         keyboardNotifier
             .updateKeyBorderColorPressed(Color(keyBorderColorPressed));
 
       case 'updateKeyBorderColorNotPressed':
-        final keyBorderColorNotPressed = call.arguments as int;
+        final keyBorderColorNotPressed =
+            _safeArgument<int>(call.arguments, 0xFF616161);
         keyboardNotifier
             .updateKeyBorderColorNotPressed(Color(keyBorderColorNotPressed));
 
       // Animations settings
       case 'updateAnimationEnabled':
-        final animationEnabled = call.arguments as bool;
+        final animationEnabled = _safeArgument<bool>(call.arguments, true);
         keyboardNotifier.updateAnimationEnabled(animationEnabled);
 
       case 'updateAnimationStyle':
-        final animationStyle = call.arguments as String;
+        final animationStyle = _safeArgument<String>(call.arguments, 'scale');
         keyboardNotifier.updateAnimationStyle(animationStyle);
 
       case 'updateAnimationDuration':
-        final animationDuration = call.arguments as double;
+        final animationDuration = _safeArgument<double>(call.arguments, 0.1);
         keyboardNotifier.updateAnimationDuration(animationDuration);
 
       case 'updateAnimationScale':
-        final animationScale = call.arguments as double;
+        final animationScale = _safeArgument<double>(call.arguments, 0.95);
         keyboardNotifier.updateAnimationScale(animationScale);
 
       // HotKey settings
       case 'updateHotKeysEnabled':
-        final hotKeysEnabled = call.arguments as bool;
+        final hotKeysEnabled = _safeArgument<bool>(call.arguments, true);
         appNotifier.updateHotKeysEnabled(hotKeysEnabled);
         await setupHotKeys();
 
       case 'updateVisibilityHotKey':
-        final hotKeyJson = call.arguments as String;
+        final hotKeyJson = _safeArgument<String>(call.arguments, '{}');
         final newHotKey = HotKey.fromJson(jsonDecode(hotKeyJson));
         final currentVisibilityHotKey =
             ref.read(appStateNotifierProvider).visibilityHotKey;
@@ -243,7 +260,7 @@ class MethodCallHandler {
         await setupHotKeys();
 
       case 'updateAutoHideHotKey':
-        final hotKeyJson = call.arguments as String;
+        final hotKeyJson = _safeArgument<String>(call.arguments, '{}');
         final newHotKey = HotKey.fromJson(jsonDecode(hotKeyJson));
         final currentAutoHideHotKey =
             ref.read(appStateNotifierProvider).autoHideHotKey;
@@ -254,7 +271,7 @@ class MethodCallHandler {
         await setupHotKeys();
 
       case 'updateToggleMoveHotKey':
-        final hotKeyJson = call.arguments as String;
+        final hotKeyJson = _safeArgument<String>(call.arguments, '{}');
         final newHotKey = HotKey.fromJson(jsonDecode(hotKeyJson));
         final currentToggleMoveHotKey =
             ref.read(appStateNotifierProvider).toggleMoveHotKey;
@@ -265,7 +282,7 @@ class MethodCallHandler {
         await setupHotKeys();
 
       case 'updatePreferencesHotKey':
-        final hotKeyJson = call.arguments as String;
+        final hotKeyJson = _safeArgument<String>(call.arguments, '{}');
         final newHotKey = HotKey.fromJson(jsonDecode(hotKeyJson));
         final currentPreferencesHotKey =
             ref.read(appStateNotifierProvider).preferencesHotKey;
@@ -276,7 +293,7 @@ class MethodCallHandler {
         await setupHotKeys();
 
       case 'updateIncreaseOpacityHotKey':
-        final hotKeyJson = call.arguments as String;
+        final hotKeyJson = _safeArgument<String>(call.arguments, '{}');
         final newHotKey = HotKey.fromJson(jsonDecode(hotKeyJson));
         final currentIncreaseOpacityHotKey =
             ref.read(appStateNotifierProvider).increaseOpacityHotKey;
@@ -287,7 +304,7 @@ class MethodCallHandler {
         await setupHotKeys();
 
       case 'updateDecreaseOpacityHotKey':
-        final hotKeyJson = call.arguments as String;
+        final hotKeyJson = _safeArgument<String>(call.arguments, '{}');
         final newHotKey = HotKey.fromJson(jsonDecode(hotKeyJson));
         final currentDecreaseOpacityHotKey =
             ref.read(appStateNotifierProvider).decreaseOpacityHotKey;
@@ -298,75 +315,76 @@ class MethodCallHandler {
         await setupHotKeys();
 
       case 'updateEnableVisibilityHotKey':
-        final enabled = call.arguments as bool;
+        final enabled = _safeArgument<bool>(call.arguments, true);
         appNotifier.updateEnableVisibilityHotKey(enabled);
         await setupHotKeys();
 
       case 'updateEnableAutoHideHotKey':
-        final enabled = call.arguments as bool;
+        final enabled = _safeArgument<bool>(call.arguments, true);
         appNotifier.updateEnableAutoHideHotKey(enabled);
         await setupHotKeys();
 
       case 'updateEnableToggleMoveHotKey':
-        final enabled = call.arguments as bool;
+        final enabled = _safeArgument<bool>(call.arguments, true);
         appNotifier.updateEnableToggleMoveHotKey(enabled);
         await setupHotKeys();
 
       case 'updateEnablePreferencesHotKey':
-        final enabled = call.arguments as bool;
+        final enabled = _safeArgument<bool>(call.arguments, true);
         appNotifier.updateEnablePreferencesHotKey(enabled);
         await setupHotKeys();
 
       case 'updateEnableIncreaseOpacityHotKey':
-        final enabled = call.arguments as bool;
+        final enabled = _safeArgument<bool>(call.arguments, true);
         appNotifier.updateEnableIncreaseOpacityHotKey(enabled);
         await setupHotKeys();
 
       case 'updateEnableDecreaseOpacityHotKey':
-        final enabled = call.arguments as bool;
+        final enabled = _safeArgument<bool>(call.arguments, true);
         appNotifier.updateEnableDecreaseOpacityHotKey(enabled);
         await setupHotKeys();
 
       // Learning mode settings
       case 'updateLearningModeEnabled':
-        final learningModeEnabled = call.arguments as bool;
+        final learningModeEnabled = _safeArgument<bool>(call.arguments, false);
         keyboardNotifier.updateLearningModeEnabled(learningModeEnabled);
 
       case 'updatePinkyLeftColor':
-        final color = call.arguments as int;
+        final color = _safeArgument<int>(call.arguments, 0xFFFF5722);
         keyboardNotifier.updatePinkyLeftColor(Color(color));
 
       case 'updateRingLeftColor':
-        final color = call.arguments as int;
+        final color = _safeArgument<int>(call.arguments, 0xFFFF9800);
         keyboardNotifier.updateRingLeftColor(Color(color));
 
       case 'updateMiddleLeftColor':
-        final color = call.arguments as int;
+        final color = _safeArgument<int>(call.arguments, 0xFFFFC107);
         keyboardNotifier.updateMiddleLeftColor(Color(color));
 
       case 'updateIndexLeftColor':
-        final color = call.arguments as int;
+        final color = _safeArgument<int>(call.arguments, 0xFF8BC34A);
         keyboardNotifier.updateIndexLeftColor(Color(color));
 
       case 'updateIndexRightColor':
-        final color = call.arguments as int;
+        final color = _safeArgument<int>(call.arguments, 0xFF2196F3);
         keyboardNotifier.updateIndexRightColor(Color(color));
 
       case 'updateMiddleRightColor':
-        final color = call.arguments as int;
+        final color = _safeArgument<int>(call.arguments, 0xFF3F51B5);
         keyboardNotifier.updateMiddleRightColor(Color(color));
 
       case 'updateRingRightColor':
-        final color = call.arguments as int;
+        final color = _safeArgument<int>(call.arguments, 0xFF9C27B0);
         keyboardNotifier.updateRingRightColor(Color(color));
 
       case 'updatePinkyRightColor':
-        final color = call.arguments as int;
+        final color = _safeArgument<int>(call.arguments, 0xFFE91E63);
         keyboardNotifier.updatePinkyRightColor(Color(color));
 
       // Advanced settings
       case 'updateAdvancedSettingsEnabled':
-        final advancedSettingsEnabled = call.arguments as bool;
+        final advancedSettingsEnabled =
+            _safeArgument<bool>(call.arguments, false);
         prefsNotifier.updateAdvancedSettingsEnabled(advancedSettingsEnabled);
         final keyboardState = ref.read(keyboardNotifierProvider);
         final currentPrefsState = ref.read(preferencesNotifierProvider);
@@ -390,9 +408,6 @@ class MethodCallHandler {
             stopMouseTracking();
           }
         } else {
-          if (keyboardState.showAltLayout) {
-            loadAltLayout();
-          }
           if (currentPrefsState.keyboardFollowsMouse) {
             startMouseTracking(true);
           }
@@ -416,7 +431,7 @@ class MethodCallHandler {
         }
 
       case 'updateUseUserLayout':
-        final useUserLayout = call.arguments as bool;
+        final useUserLayout = _safeArgument<bool>(call.arguments, false);
         prefsNotifier.updateUseUserLayout(useUserLayout);
         if (useUserLayout) {
           loadUserLayout();
@@ -430,7 +445,7 @@ class MethodCallHandler {
         }
 
       case 'updateShowAltLayout':
-        final showAltLayout = call.arguments as bool;
+        final showAltLayout = _safeArgument<bool>(call.arguments, false);
         keyboardNotifier.updateShowAltLayout(showAltLayout);
         if (showAltLayout) {
           loadAltLayout();
@@ -438,7 +453,7 @@ class MethodCallHandler {
         fadeIn();
 
       case 'updateCustomFontEnabled':
-        final customFontEnabled = call.arguments as bool;
+        final customFontEnabled = _safeArgument<bool>(call.arguments, false);
         prefsNotifier.updateCustomFontEnabled(customFontEnabled);
         final keyboardState = ref.read(keyboardNotifierProvider);
         if (customFontEnabled) {
@@ -449,12 +464,12 @@ class MethodCallHandler {
         }
 
       case 'updateUse6ColLayout':
-        final use6ColLayout = call.arguments as bool;
+        final use6ColLayout = _safeArgument<bool>(call.arguments, false);
         prefsNotifier.updateUse6ColLayout(use6ColLayout);
         fadeIn();
 
       case 'updateKanataEnabled':
-        final kanataEnabled = call.arguments as bool;
+        final kanataEnabled = _safeArgument<bool>(call.arguments, false);
         final keyboardState = ref.read(keyboardNotifierProvider);
         if (kanataEnabled && !keyboardState.kanataEnabled) {
           keyboardNotifier.updateInitialLayout(keyboardState.layout);
@@ -470,7 +485,7 @@ class MethodCallHandler {
         }
 
       case 'updateKeyboardFollowsMouse':
-        final keyboardFollowsMouse = call.arguments as bool;
+        final keyboardFollowsMouse = _safeArgument<bool>(call.arguments, false);
         prefsNotifier.updateKeyboardFollowsMouse(keyboardFollowsMouse);
         final currentPrefsState = ref.read(preferencesNotifierProvider);
         if (keyboardFollowsMouse && currentPrefsState.advancedSettingsEnabled) {
@@ -480,7 +495,7 @@ class MethodCallHandler {
         }
 
       case 'updateHideOnDefaultLayer':
-        final hideOnDefaultLayer = call.arguments as bool;
+        final hideOnDefaultLayer = _safeArgument<bool>(call.arguments, false);
         prefsNotifier.updateHideOnDefaultLayer(hideOnDefaultLayer);
 
       default:

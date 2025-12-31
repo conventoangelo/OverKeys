@@ -267,8 +267,14 @@ jobs:
               `You can now publish this draft release when ready! 🚀`;
 
             try {
-              // Get existing release body
-              const existingBody = '${{ github.event.release.body }}' || '';
+              // Fetch existing release to get body safely  
+              const release = await github.rest.repos.getRelease({  
+                owner: context.repo.owner,  
+                repo: context.repo.repo,                  
+                release_id: ${{ github.event.release.id }}  
+              });  
+              
+              const existingBody = release.data.body || ''; 
               
               // Append comment to existing body
               const newBody = existingBody + '\n\n---\n\n' + comment;

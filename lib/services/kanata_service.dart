@@ -18,6 +18,7 @@ class KanataService {
   bool _reconnectEnabled = true;
   List<KeyboardLayout> _userLayouts = [];
   String _defaultUserLayout = 'QWERTY';
+  final ConfigService _configService = ConfigService();
 
   // Constants
   static const Duration _reconnectDelay = Duration(seconds: 5);
@@ -28,8 +29,7 @@ class KanataService {
     _reconnectEnabled = true;
 
     try {
-      ConfigService configService = ConfigService();
-      final config = await configService.loadConfig();
+      final config = await _configService.loadConfig();
       _host = config.kanataHost ?? '127.0.0.1';
       _port = config.kanataPort ?? 4039;
       _userLayouts = config.userLayouts ?? [];

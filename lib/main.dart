@@ -11,9 +11,16 @@ import 'screens/preferences_screen.dart';
 import 'utils/window_controller_extension.dart';
 
 // Window type definitions
-class WindowType {
-  static const String main = 'main';
-  static const String preferences = 'preferences';
+enum WindowType {
+  main,
+  preferences;
+
+  static WindowType fromString(String value) {
+    return WindowType.values.firstWhere(
+      (e) => e.name == value,
+      orElse: () => WindowType.main,
+    );
+  }
 }
 
 Future<void> main(List<String> args) async {
@@ -36,25 +43,21 @@ Future<void> main(List<String> args) async {
       runApp(const ProviderScope(child: MainApp()));
       break;
     case WindowType.preferences:
-      await _initPreferencesWindow();
+      await _initPreferencesWindow(windowController);
       runApp(ProviderScope(
         child: PreferencesScreen(
           windowController: windowController,
         ),
       ));
       break;
-    default:
-      // Fallback to main window
-      await _initMainWindow();
-      runApp(const ProviderScope(child: MainApp()));
   }
 }
 
-String _parseWindowType(String arguments) {
+WindowType _parseWindowType(String arguments) {
   if (arguments.isEmpty) {
     return WindowType.main;
   }
-  return arguments;
+  return WindowType.fromString(arguments);
 }
 
 Future<void> _initMainWindow() async {
@@ -86,9 +89,8 @@ Future<void> _initMainWindow() async {
   });
 }
 
-Future<void> _initPreferencesWindow() async {
+Future<void> _initPreferencesWindow(WindowController windowController) async {
   // Initialize window controller methods
-  final windowController = await WindowController.fromCurrentEngine();
   await windowController.initializeWindowMethods();
 
   WindowOptions windowOptions = const WindowOptions(

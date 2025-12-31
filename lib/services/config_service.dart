@@ -14,7 +14,7 @@ class ConfigService {
 
   Future<String> get _configPath async {
     final directory = await getApplicationSupportDirectory();
-    return '${directory.path}\\$_configFileName';
+    return '${directory.path}${Platform.pathSeparator}$_configFileName';
   }
 
   Future<String> get configPath => _configPath;
@@ -112,8 +112,10 @@ class ConfigService {
     final config = await loadConfig();
 
     if (config.customFont == null) {
-      debugPrint(
-          'Cannot get custom font: customFont is not defined in the config file');
+      if (kDebugMode) {
+        debugPrint(
+            'Cannot get custom font: customFont is not defined in the config file');
+      }
       return null;
     }
 
@@ -125,7 +127,7 @@ class ConfigService {
     return config.customShiftMappings;
   }
 
-  Future<List<KeyboardLayout>?> getUserLayers() async {
+  Future<List<KeyboardLayout>> getUserLayers() async {
     final config = await loadConfig();
     List<KeyboardLayout> layers = [];
 
