@@ -17,12 +17,13 @@ Welcome to the OverKeys documentation! This guide will help you get started with
 
 - [Custom Font](advanced/custom-font.md) - Use a system-installed font not found in the dropdown
 - [Custom Layouts](advanced/custom-layouts.md) - Create and use your own keyboard layouts
-- [Alternative Layout Toggle](advanced/alternative-layouts.md) - Quickly switch between different layouts
+- [Alternative Layouts](advanced/alternative-layouts.md) - Quickly switch between different layouts
 - [6-Column Layouts](advanced/6-column-layouts.md) - Set up OverKeys for a 6-column split matrix keyboard
 - [Layer Switching](advanced/layer-switching.md) - Switch between multiple custom keyboard layers with custom triggers
 - [Kanata Integration](advanced/kanata-integration.md) - Connect OverKeys with Kanata for advanced functionality
 - [Shift Mappings](advanced/shift-mappings.md) - Customize shift-key behavior for specific characters
-- [Supported Keys Reference](advanced/supported-keys.md) - Complete list of keys you can use in custom layouts
+- [Supported Keys](advanced/supported-keys.md) - Complete list of keys you can use in custom layouts
+- [Locales](advanced/locales.md) - Add locale-specific keys in user configuration for key press recognition
 
 ## Additional Resources
 

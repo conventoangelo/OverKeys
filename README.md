@@ -136,7 +136,7 @@ This project was initially developed to help with the creator's system-wide prac
 - **[Layer switching (Kanata)](./docs/advanced/kanata-integration.md)**: Connect to [Kanata](https://github.com/jtroo/kanata) through TCP to dynamically display the active layer
 - **[Learning Mode](/docs/user-guide/learning-mode.md)**: Color-code keys based on proper finger positions for touch typing
 - **[Reactive Shift Mapping](/docs/advanced/shift-mappings.md)**: Display alternate key symbols when Shift key is pressed
-- **[Locales](/docs/advanced/locales.md)**: Add locale-specific keys in user configuration for key press recognition 
+- **[Locales](/docs/advanced/locales.md)**: Add locale-specific keys in user configuration for key press recognition
 
 For complete feature details, see the [documentation](docs/index.md).
 
@@ -150,11 +150,11 @@ OverKeys can be installed through several methods:
 
 1. **Using Winget (Recommended)**
 
-    ```pwsh
-    winget install AngeloConvento.OverKeys
-    ```
+   ```pwsh
+   winget install AngeloConvento.OverKeys
+   ```
 
-    <sub>Note: Please check if `winget` version is updated to the latest version as in the repo. Otherwise, use the [installer](https://github.com/conventoangelo/OverKeys/releases/latest) to have the latest version.</sub>
+   <sub>Note: Please check if `winget` version is updated to the latest version as in the repo. Otherwise, use the [installer](https://github.com/conventoangelo/OverKeys/releases/latest) to have the latest version.</sub>
 
 2. **Using the Installer**
 
@@ -188,7 +188,7 @@ Complete documentation for OverKeys is available in the [docs](docs/index.md) fo
 - [Custom Layouts](/docs/advanced/custom-layouts.md)
 - [Alternative Layouts](/docs/advanced/alternative-layouts.md)
 - [6-Column Layouts](/docs/advanced/6-column-layouts.md)
-- [Layer Switching](docs/advanced/layer-switching.md)
+- [Layer Switching](/docs/advanced/layer-switching.md)
 - [Kanata Integration](/docs/advanced/kanata-integration.md)
 - [Shift Mappings](/docs/advanced/shift-mappings.md)
 - [Supported Keys](/docs/advanced/supported-keys.md)
