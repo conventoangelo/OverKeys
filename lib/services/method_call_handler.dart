@@ -41,6 +41,7 @@ class MethodCallHandler {
     Function(bool) startMouseTracking,
     Function() stopMouseTracking,
     Function() fadeIn,
+    Function() clearConfigCache,
   ) async {
     final keyboardNotifier = ref.read(keyboardNotifierProvider.notifier);
     final prefsNotifier = ref.read(preferencesNotifierProvider.notifier);
@@ -409,6 +410,9 @@ class MethodCallHandler {
             stopMouseTracking();
           }
         } else {
+          // Clear cached config when re-enabling advanced settings
+          // to ensure recent changes to the config file are reflected
+          clearConfigCache();
           if (currentPrefsState.keyboardFollowsMouse) {
             startMouseTracking(true);
           }
