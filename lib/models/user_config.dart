@@ -68,6 +68,7 @@ class UserConfig {
                   'keys': userLayout.keys,
                   if (userLayout.trigger != null) 'trigger': userLayout.trigger,
                   if (userLayout.type != null) 'type': userLayout.type,
+                  if (userLayout.foreign != null) 'foreign': userLayout.foreign,
                 })
             .toList()
         : [];
