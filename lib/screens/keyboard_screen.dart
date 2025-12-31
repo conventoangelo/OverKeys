@@ -184,7 +184,9 @@ class KeyboardScreen extends ConsumerWidget {
   }) {
     bool isShiftPressed = (keyboardState.keyPressStates["LShift"] ?? false) ||
         (keyboardState.keyPressStates["RShift"] ?? false);
-    if (isShiftPressed && keyboardState.fontFamily != '') {
+    if (isShiftPressed &&
+        prefsState.reactiveShiftEnabled &&
+        keyboardState.fontFamily != '') {
       if (keyboardState.customShiftMappings != null &&
           keyboardState.customShiftMappings!.containsKey(key)) {
         key = keyboardState.customShiftMappings![key]!;
@@ -489,7 +491,9 @@ class KeyboardScreen extends ConsumerWidget {
     String altKey = altRow[keyIndex];
     bool isShiftPressed = (keyboardState.keyPressStates["LShift"] ?? false) ||
         (keyboardState.keyPressStates["RShift"] ?? false);
-    if (isShiftPressed && keyboardState.fontFamily != '') {
+    if (isShiftPressed &&
+        prefsState.reactiveShiftEnabled &&
+        keyboardState.fontFamily != '') {
       if (keyboardState.customShiftMappings != null &&
           keyboardState.customShiftMappings!.containsKey(altKey)) {
         altKey = keyboardState.customShiftMappings![altKey]!;
