@@ -48,7 +48,7 @@ class ConfigurationLoader {
 
     if (userLayout != null) {
       keyboardNotifier.updateInitialLayout(userLayout);
-      if (!ref.read(keyboardNotifierProvider).kanataEnabled) {
+      if (!prefsState.kanataEnabled) {
         keyboardNotifier.updateLayout(userLayout);
       }
     }
@@ -92,14 +92,13 @@ class ConfigurationLoader {
 
   Future<void> useKanata(WidgetRef ref) async {
     final keyboardNotifier = ref.read(keyboardNotifierProvider.notifier);
-    final keyboardState = ref.read(keyboardNotifierProvider);
     final prefsState = ref.read(preferencesNotifierProvider);
     final userLayout = await _configService.getUserLayout();
 
     if (userLayout != null) {
       keyboardNotifier.updateInitialLayout(userLayout);
     }
-    if (keyboardState.kanataEnabled && prefsState.advancedSettingsEnabled) {
+    if (prefsState.kanataEnabled && prefsState.advancedSettingsEnabled) {
       _kanataService.connect();
     }
   }
