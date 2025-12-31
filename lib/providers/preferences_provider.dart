@@ -117,6 +117,10 @@ class PreferencesState {
   }
 
   Map<String, dynamic> toJson() {
+    // Note: userLayers and userConfig are intentionally omitted from serialization.
+    // These fields are loaded separately from the user's config file (config.json)
+    // and are not persisted in the preferences file to avoid duplication and
+    // maintain a single source of truth for user-defined layouts and configurations.
     return {
       'launchAtStartup': launchAtStartup,
       'hideAtStartup': hideAtStartup,
@@ -142,6 +146,10 @@ class PreferencesState {
   }
 
   factory PreferencesState.fromJson(Map<String, dynamic> json) {
+    // Note: userLayers and userConfig are intentionally not deserialized here.
+    // These fields are loaded separately from the user's config file (config.json)
+    // by the ConfigService and injected into the state after preferences are loaded.
+    // This maintains separation between app preferences and user-defined layouts.
     final initialLayoutName = json['initialKeyboardLayoutName'] as String?;
     final initialLayout = initialLayoutName != null
         ? availableLayouts.firstWhere(
