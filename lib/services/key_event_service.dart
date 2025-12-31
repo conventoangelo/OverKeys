@@ -209,9 +209,16 @@ class KeyEventService {
     // Check if we're currently NOT on this toggle layer
     if (currentLayout.name != layout.name) {
       // Switch to the toggle layer
+      if (kDebugMode) {
+        print('Switching to toggle layer: ${layout.name}');
+      }
       keyboardNotifier.updateLayout(layout);
     } else if (prefsState.defaultUserLayout != null) {
       // Already on toggle layer, pressing trigger again reverts to default
+      if (kDebugMode) {
+        print(
+            'Reverting to default layer: ${prefsState.defaultUserLayout!.name}');
+      }
       keyboardNotifier.updateLayout(prefsState.defaultUserLayout!);
     }
 
@@ -244,6 +251,9 @@ class KeyEventService {
     if (isPressed && !_activeTriggers.contains(key)) {
       // Store the current layer before switching to the held layer
       _previousLayer = keyboardState.layout;
+      if (kDebugMode) {
+        print('Switching to held layer: ${layout.name}');
+      }
       keyboardNotifier.updateLayout(layout);
       _activeTriggers.add(key);
 
@@ -253,9 +263,16 @@ class KeyEventService {
     } else if (!isPressed && _activeTriggers.contains(key)) {
       // Revert to the previous layer, or default if not available
       if (_previousLayer != null) {
+        if (kDebugMode) {
+          print('Reverting to previous layer: ${_previousLayer!.name}');
+        }
         keyboardNotifier.updateLayout(_previousLayer!);
         _previousLayer = null;
       } else if (prefsState.defaultUserLayout != null) {
+        if (kDebugMode) {
+          print(
+              'Reverting to default layer: ${prefsState.defaultUserLayout!.name}');
+        }
         keyboardNotifier.updateLayout(prefsState.defaultUserLayout!);
       }
       _activeTriggers.remove(key);
