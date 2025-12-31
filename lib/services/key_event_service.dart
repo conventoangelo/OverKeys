@@ -173,6 +173,7 @@ class KeyEventService {
         _handleHeldLayer(
           layout,
           key,
+          ref,
           isPressed,
           keyboardState,
           keyboardNotifier,
@@ -237,6 +238,7 @@ class KeyEventService {
   void _handleHeldLayer(
     KeyboardLayout layout,
     String key,
+    WidgetRef ref,
     bool isPressed,
     KeyboardState keyboardState,
     KeyboardNotifier keyboardNotifier,
@@ -278,7 +280,7 @@ class KeyEventService {
       if (prefsState.hideOnDefaultLayer &&
           prefsState.defaultUserLayout != null &&
           appState.isWindowVisible) {
-        final currentLayout = keyboardState.layout;
+        final currentLayout = ref.read(keyboardNotifierProvider).layout;
         final isNowOnDefault =
             currentLayout.name == prefsState.defaultUserLayout!.name;
 
