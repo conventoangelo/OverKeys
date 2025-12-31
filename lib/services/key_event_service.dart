@@ -88,14 +88,6 @@ class KeyEventService {
       // Handle auto-hide and visibility
       if (appState.forceHide) return;
 
-      if (prefsState.autoHideEnabled &&
-          !appState.isWindowVisible &&
-          isPressed) {
-        fadeIn();
-      } else {
-        resetAutoHideTimer();
-      }
-
       // Handle user layer switching
       if (prefsState.useUserLayout && prefsState.advancedSettingsEnabled) {
         _handleUserLayerSwitching(
@@ -111,6 +103,25 @@ class KeyEventService {
           cancelAutoHideTimer,
           updateAutoHideBasedOnLayer,
         );
+      }
+
+      // Re-read keyboard state as it might have changed during layer switching
+      final currentKeyboardState = ref.read(keyboardNotifierProvider);
+
+      // Check if we're on the default layer
+      final isOnDefaultLayer = _isOnDefaultLayer(
+        currentKeyboardState,
+        prefsState,
+      );
+
+      if (prefsState.autoHideEnabled) {
+        if (!appState.isWindowVisible && isPressed) {
+          fadeIn();
+        } else if (isOnDefaultLayer) {
+          resetAutoHideTimer();
+        } else if (isPressed) {
+          cancelAutoHideTimer();
+        }
       }
     } catch (error, stackTrace) {
       // Log the error but keep the listener alive
@@ -255,6 +266,26 @@ class KeyEventService {
         }
       }
     }
+  }
+
+  /// Checks if the current layer is the default layer
+  bool _isOnDefaultLayer(
+    KeyboardState keyboardState,
+    PreferencesState prefsState,
+  ) {
+    // If user layout is enabled
+    if (prefsState.useUserLayout && prefsState.defaultUserLayout != null) {
+      return keyboardState.layout.name == prefsState.defaultUserLayout!.name;
+    }
+
+    // If no user layout, check against initial layout
+    if (prefsState.initialKeyboardLayout != null) {
+      return keyboardState.layout.name ==
+          prefsState.initialKeyboardLayout!.name;
+    }
+
+    // Default to true if no specific layout is configured
+    return true;
   }
 
   /// Clears all active triggers
