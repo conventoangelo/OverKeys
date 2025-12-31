@@ -1,272 +1,288 @@
 name: Build Release Installers
 
 on:
-    pull_request:
-        branches: [main]
-        types: [opened, synchronize, reopened]
-    release:
-        types: [created]
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+  release:
+    types: [created]
 
 jobs:
-    # Build installers on release-please PR changes
-    build-test:
-        runs-on: windows-latest
-        if: |
-            github.event_name == 'pull_request' && 
-            startsWith(github.event.pull_request.title, 'chore: release v')
-        timeout-minutes: 30
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v4
+  # Build installers on release-please PR changes
+  build-test:
+    runs-on: windows-latest
+    if: |
+      github.event_name == 'pull_request' && 
+      startsWith(github.event.pull_request.title, 'chore: release v')
+    timeout-minutes: 30
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-            - name: Extract version from PR title
-              id: version
-              run: |
-                  $title = "${{ github.event.pull_request.title }}"
-                  if ($title -match 'chore: release v(.+)') {
-                    $version = $matches[1]
-                    echo "VERSION=$version" >> $env:GITHUB_OUTPUT
-                    Write-Host "📌 Extracted version: $version"
-                  } else {
-                    Write-Host "❌ Failed to extract version from PR title: $title"
-                    exit 1
-                  }
-              shell: pwsh
+      - name: Extract version from PR title
+        id: version
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          $title = $env:PR_TITLE
+          if ($title -match 'chore: release v(.+)') {
+            $version = $matches[1]
+            echo "VERSION=$version" >> $env:GITHUB_OUTPUT
+            Write-Host "📌 Extracted version: $version"
+          } else {
+            Write-Host "❌ Failed to extract version from PR title: $title"
+            exit 1
+          }
+        shell: pwsh
 
-            - name: Setup Flutter
-              uses: subosito/flutter-action@v2
-              with:
-                  flutter-version: "3.35.5"
-                  channel: "stable"
-                  cache: true
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.35.5"
+          channel: "stable"
+          cache: true
 
-            - name: Install InnoSetup
-              run: |
-                  choco install innosetup -y
-                  Write-Host "✅ InnoSetup installed"
-              shell: pwsh
+      - name: Install InnoSetup
+        run: |
+          choco install innosetup -y
+          Write-Host "✅ InnoSetup installed"
+        shell: pwsh
 
-            - name: Build Flutter Windows app
-              run: |
-                  .\scripts\ci\build_windows.ps1 -StagingPath "${{ runner.temp }}\inno-staging"
-              shell: pwsh
+      - name: Build Flutter Windows app
+        run: |
+          .\scripts\ci\build_windows.ps1 -StagingPath "${{ runner.temp }}\inno-staging"
+        shell: pwsh
 
-            - name: Compile InnoSetup installer
-              run: |
-                  .\scripts\ci\compile_installer.ps1 `
-                    -StagingPath "${{ runner.temp }}\inno-staging" `
-                    -OutputPath "${{ runner.temp }}\output" `
-                    -Version "${{ steps.version.outputs.VERSION }}"
-              shell: pwsh
+      - name: Compile InnoSetup installer
+        run: |
+          .\scripts\ci\compile_installer.ps1 `
+            -StagingPath "${{ runner.temp }}\inno-staging" `
+            -OutputPath "${{ runner.temp }}\output" `
+            -Version "${{ steps.version.outputs.VERSION }}"
+        shell: pwsh
 
-            - name: Create portable ZIP archive
-              run: |
-                  # Re-add LICENSE for ZIP
-                  Copy-Item -Path "LICENSE" -Destination "${{ runner.temp }}\inno-staging"
+      - name: Create portable ZIP archive
+        run: |
+          # Re-add LICENSE for ZIP
+          Copy-Item -Path "LICENSE" -Destination "${{ runner.temp }}\inno-staging"
 
-                  .\scripts\ci\compile_zip.ps1 `
-                    -StagingPath "${{ runner.temp }}\inno-staging" `
-                    -OutputPath "${{ runner.temp }}\output" `
-                    -Version "${{ steps.version.outputs.VERSION }}"
-              shell: pwsh
+          .\scripts\ci\compile_zip.ps1 `
+            -StagingPath "${{ runner.temp }}\inno-staging" `
+            -OutputPath "${{ runner.temp }}\output" `
+            -Version "${{ steps.version.outputs.VERSION }}"
+        shell: pwsh
 
-            - name: Upload installers as artifacts
-              uses: actions/upload-artifact@v4
-              with:
-                  name: overkeys-installers-${{ steps.version.outputs.VERSION }}
-                  path: |
-                      ${{ runner.temp }}/output/overkeys_${{ steps.version.outputs.VERSION }}_x64_setup.exe
-                      ${{ runner.temp }}/output/overkeys_${{ steps.version.outputs.VERSION }}_x64.zip
-                  retention-days: 7
-                  if-no-files-found: error
+      - name: Upload installers as artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: overkeys-installers-${{ steps.version.outputs.VERSION }}
+          path: |
+            ${{ runner.temp }}/output/overkeys_${{ steps.version.outputs.VERSION }}_x64_setup.exe
+            ${{ runner.temp }}/output/overkeys_${{ steps.version.outputs.VERSION }}_x64.zip
+          retention-days: 7
+          if-no-files-found: error
 
-            - name: Comment on PR with build status
-              uses: actions/github-script@v7
-              with:
-                  script: |
-                      const version = '${{ steps.version.outputs.VERSION }}';
-                      const runUrl = `${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}`;
+      - name: Comment on PR with build status
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const version = '${{ steps.version.outputs.VERSION }}';
+            const runUrl = `${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}`;
 
-                      const comment = `## ✅ Release Installers Built Successfully\n\n` +
-                        `**Version:** \`v${version}\`\n` +
-                        `**Build Run:** [#${{ github.run_number }}](${runUrl})\n\n` +
-                        `### 📦 Artifacts Created:\n` +
-                        `- \`overkeys_${version}_x64_setup.exe\` (InnoSetup Installer)\n` +
-                        `- \`overkeys_${version}_x64.zip\` (Portable ZIP)\n\n` +
-                        `These artifacts will be automatically uploaded to the release when this PR is merged.\n\n` +
-                        `**Retention:** Artifacts will be kept for 7 days.`;
+            const comment = `## ✅ Release Installers Built Successfully\n\n` +
+              `**Version:** \`v${version}\`\n` +
+              `**Build Run:** [#${{ github.run_number }}](${runUrl})\n\n` +
+              `### 📦 Artifacts Created:\n` +
+              `- \`overkeys_${version}_x64_setup.exe\` (InnoSetup Installer)\n` +
+              `- \`overkeys_${version}_x64.zip\` (Portable ZIP)\n\n` +
+              `These artifacts will be automatically uploaded to the release when this PR is merged.\n\n` +
+              `**Retention:** Artifacts will be kept for 7 days.`;
 
-                      github.rest.issues.createComment({
-                        issue_number: context.issue.number,
-                        owner: context.repo.owner,
-                        repo: context.repo.repo,
-                        body: comment
-                      });
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
 
-    # Upload installers to release after PR is merged
-    upload-release:
-        runs-on: windows-latest
-        if: github.event_name == 'release'
-        timeout-minutes: 30
+  # Upload installers to release after PR is merged
+  upload-release:
+    runs-on: windows-latest
+    if: github.event_name == 'release'
+    timeout-minutes: 30
 
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v4
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-            - name: Extract version from release tag
-              id: version
-              run: |
-                  $tag = "${{ github.event.release.tag_name }}"
-                  $version = $tag -replace '^v', ''
-                  echo "VERSION=$version" >> $env:GITHUB_OUTPUT
-                  Write-Host "📌 Release version: $version"
-              shell: pwsh
+      - name: Extract version from release tag
+        id: version
+        run: |
+          $tag = "${{ github.event.release.tag_name }}"
+          $version = $tag -replace '^v', ''
+          echo "VERSION=$version" >> $env:GITHUB_OUTPUT
+          Write-Host "📌 Release version: $version"
+        shell: pwsh
 
-            - name: Try to download artifacts from PR build
-              id: download
-              continue-on-error: true
-              run: |
-                  $version = "${{ steps.version.outputs.VERSION }}"
-                  $artifactName = "overkeys-installers-$version"
+      - name: Try to download artifacts from PR build
+        id: download
+        continue-on-error: true
+        run: |
+          $version = "${{ steps.version.outputs.VERSION }}"
+          $artifactName = "overkeys-installers-$version"
 
-                  Write-Host "🔍 Searching for artifact: $artifactName"
+          Write-Host "🔍 Searching for artifact: $artifactName"
 
-                  # Use GitHub CLI to find and download artifacts
-                  $artifacts = gh api repos/${{ github.repository }}/actions/artifacts `
-                    --jq ".artifacts[] | select(.name == `"$artifactName`" and .expired == false)" | ConvertFrom-Json
+          # Use GitHub CLI to find and download artifacts
+          $artifacts = gh api repos/${{ github.repository }}/actions/artifacts `
+            --jq ".artifacts[] | select(.name == `"$artifactName`" and .expired == false)" | ConvertFrom-Json
 
-                  if ($artifacts) {
-                    Write-Host "✅ Found artifact, downloading..."
-                    gh run download --name $artifactName --dir "${{ runner.temp }}/downloaded"
-                    
-                    # Verify files exist
-                    $exeFile = "${{ runner.temp }}/downloaded/overkeys_${version}_x64_setup.exe"
-                    $zipFile = "${{ runner.temp }}/downloaded/overkeys_${version}_x64.zip"
-                    
-                    if ((Test-Path $exeFile) -and (Test-Path $zipFile)) {
-                      Write-Host "✅ Artifacts downloaded successfully"
-                      echo "ARTIFACTS_DOWNLOADED=true" >> $env:GITHUB_OUTPUT
-                    } else {
-                      Write-Host "⚠️ Artifact files not found after download"
-                      echo "ARTIFACTS_DOWNLOADED=false" >> $env:GITHUB_OUTPUT
-                    }
-                  } else {
-                    Write-Host "⚠️ No matching artifacts found"
-                    echo "ARTIFACTS_DOWNLOADED=false" >> $env:GITHUB_OUTPUT
-                  }
-              shell: pwsh
-              env:
-                  GH_TOKEN: ${{ github.token }}
+          if ($artifacts) {
+            Write-Host "✅ Found artifact, downloading..."
+            gh run download --name $artifactName --dir "${{ runner.temp }}/downloaded"
+            
+            # Verify files exist
+            $exeFile = "${{ runner.temp }}/downloaded/overkeys_${version}_x64_setup.exe"
+            $zipFile = "${{ runner.temp }}/downloaded/overkeys_${version}_x64.zip"
+            
+            if ((Test-Path $exeFile) -and (Test-Path $zipFile)) {
+              Write-Host "✅ Artifacts downloaded successfully"
+              echo "ARTIFACTS_DOWNLOADED=true" >> $env:GITHUB_OUTPUT
+            } else {
+              Write-Host "⚠️ Artifact files not found after download"
+              echo "ARTIFACTS_DOWNLOADED=false" >> $env:GITHUB_OUTPUT
+            }
+          } else {
+            Write-Host "⚠️ No matching artifacts found"
+            echo "ARTIFACTS_DOWNLOADED=false" >> $env:GITHUB_OUTPUT
+          }
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
 
-            - name: Setup Flutter (if rebuilding needed)
-              if: steps.download.outputs.ARTIFACTS_DOWNLOADED != 'true'
-              uses: subosito/flutter-action@v2
-              with:
-                  flutter-version: "3.35.5"
-                  channel: "stable"
-                  cache: true
+      - name: Setup Flutter (if rebuilding needed)
+        if: steps.download.outputs.ARTIFACTS_DOWNLOADED != 'true'
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.35.5"
+          channel: "stable"
+          cache: true
 
-            - name: Install InnoSetup (if rebuilding needed)
-              if: steps.download.outputs.ARTIFACTS_DOWNLOADED != 'true'
-              run: |
-                  Write-Host "⚠️ Artifacts not found, rebuilding from source..."
-                  choco install innosetup -y
-                  Write-Host "✅ InnoSetup installed"
-              shell: pwsh
+      - name: Install InnoSetup (if rebuilding needed)
+        if: steps.download.outputs.ARTIFACTS_DOWNLOADED != 'true'
+        run: |
+          Write-Host "⚠️ Artifacts not found, rebuilding from source..."
+          choco install innosetup -y
+          Write-Host "✅ InnoSetup installed"
+        shell: pwsh
 
-            - name: Build Flutter Windows app (fallback)
-              if: steps.download.outputs.ARTIFACTS_DOWNLOADED != 'true'
-              run: |
-                  .\scripts\ci\build_windows.ps1 -StagingPath "${{ runner.temp }}\inno-staging"
-              shell: pwsh
+      - name: Build Flutter Windows app (fallback)
+        if: steps.download.outputs.ARTIFACTS_DOWNLOADED != 'true'
+        run: |
+          .\scripts\ci\build_windows.ps1 -StagingPath "${{ runner.temp }}\inno-staging"
+        shell: pwsh
 
-            - name: Compile InnoSetup installer (fallback)
-              if: steps.download.outputs.ARTIFACTS_DOWNLOADED != 'true'
-              run: |
-                  .\scripts\ci\compile_installer.ps1 `
-                    -StagingPath "${{ runner.temp }}\inno-staging" `
-                    -OutputPath "${{ runner.temp }}\output" `
-                    -Version "${{ steps.version.outputs.VERSION }}"
-              shell: pwsh
+      - name: Compile InnoSetup installer (fallback)
+        if: steps.download.outputs.ARTIFACTS_DOWNLOADED != 'true'
+        run: |
+          .\scripts\ci\compile_installer.ps1 `
+            -StagingPath "${{ runner.temp }}\inno-staging" `
+            -OutputPath "${{ runner.temp }}\output" `
+            -Version "${{ steps.version.outputs.VERSION }}"
+        shell: pwsh
 
-            - name: Create portable ZIP archive (fallback)
-              if: steps.download.outputs.ARTIFACTS_DOWNLOADED != 'true'
-              run: |
-                  # Re-add LICENSE for ZIP
-                  Copy-Item -Path "LICENSE" -Destination "${{ runner.temp }}\inno-staging"
+      - name: Create portable ZIP archive (fallback)
+        if: steps.download.outputs.ARTIFACTS_DOWNLOADED != 'true'
+        run: |
+          # Re-add LICENSE for ZIP
+          Copy-Item -Path "LICENSE" -Destination "${{ runner.temp }}\inno-staging"
 
-                  .\scripts\ci\compile_zip.ps1 `
-                    -StagingPath "${{ runner.temp }}\inno-staging" `
-                    -OutputPath "${{ runner.temp }}\output" `
-                    -Version "${{ steps.version.outputs.VERSION }}"
-              shell: pwsh
+          .\scripts\ci\compile_zip.ps1 `
+            -StagingPath "${{ runner.temp }}\inno-staging" `
+            -OutputPath "${{ runner.temp }}\output" `
+            -Version "${{ steps.version.outputs.VERSION }}"
+        shell: pwsh
 
-            - name: Prepare files for upload
-              run: |
-                  $version = "${{ steps.version.outputs.VERSION }}"
+      - name: Prepare files for upload
+        run: |
+          $version = "${{ steps.version.outputs.VERSION }}"
 
-                  if ("${{ steps.download.outputs.ARTIFACTS_DOWNLOADED }}" -eq "true") {
-                    Write-Host "📦 Using downloaded artifacts"
-                    $sourceDir = "${{ runner.temp }}/downloaded"
-                  } else {
-                    Write-Host "📦 Using newly built artifacts"
-                    $sourceDir = "${{ runner.temp }}/output"
-                  }
+          if ("${{ steps.download.outputs.ARTIFACTS_DOWNLOADED }}" -eq "true") {
+            Write-Host "📦 Using downloaded artifacts"
+            $sourceDir = "${{ runner.temp }}/downloaded"
+          } else {
+            Write-Host "📦 Using newly built artifacts"
+            $sourceDir = "${{ runner.temp }}/output"
+          }
 
-                  # Create upload directory
-                  New-Item -ItemType Directory -Force -Path "${{ runner.temp }}/upload" | Out-Null
+          # Create upload directory
+          New-Item -ItemType Directory -Force -Path "${{ runner.temp }}/upload" | Out-Null
 
-                  # Copy files to upload directory
-                  Copy-Item "$sourceDir/overkeys_${version}_x64_setup.exe" `
-                    -Destination "${{ runner.temp }}/upload/"
-                  Copy-Item "$sourceDir/overkeys_${version}_x64.zip" `
-                    -Destination "${{ runner.temp }}/upload/"
+          # Copy files to upload directory
+          Copy-Item "$sourceDir/overkeys_${version}_x64_setup.exe" `
+            -Destination "${{ runner.temp }}/upload/"
+          Copy-Item "$sourceDir/overkeys_${version}_x64.zip" `
+            -Destination "${{ runner.temp }}/upload/"
 
-                  # Verify files
-                  $exeFile = "${{ runner.temp }}/upload/overkeys_${version}_x64_setup.exe"
-                  $zipFile = "${{ runner.temp }}/upload/overkeys_${version}_x64.zip"
+          # Verify files
+          $exeFile = "${{ runner.temp }}/upload/overkeys_${version}_x64_setup.exe"
+          $zipFile = "${{ runner.temp }}/upload/overkeys_${version}_x64.zip"
 
-                  if ((Test-Path $exeFile) -and (Test-Path $zipFile)) {
-                    $exeSize = (Get-Item $exeFile).Length / 1MB
-                    $zipSize = (Get-Item $zipFile).Length / 1MB
-                    Write-Host "✅ Files ready for upload:"
-                    Write-Host "   EXE: $([math]::Round($exeSize, 2)) MB"
-                    Write-Host "   ZIP: $([math]::Round($zipSize, 2)) MB"
-                  } else {
-                    Write-Host "❌ Files not found for upload"
-                    exit 1
-                  }
-              shell: pwsh
+          if ((Test-Path $exeFile) -and (Test-Path $zipFile)) {
+            $exeSize = (Get-Item $exeFile).Length / 1MB
+            $zipSize = (Get-Item $zipFile).Length / 1MB
+            Write-Host "✅ Files ready for upload:"
+            Write-Host "   EXE: $([math]::Round($exeSize, 2)) MB"
+            Write-Host "   ZIP: $([math]::Round($zipSize, 2)) MB"
+          } else {
+            Write-Host "❌ Files not found for upload"
+            exit 1
+          }
+        shell: pwsh
 
-            - name: Upload installers to release
-              uses: softprops/action-gh-release@v2
-              with:
-                  files: |
-                      ${{ runner.temp }}/upload/overkeys_${{ steps.version.outputs.VERSION }}_x64_setup.exe
-                      ${{ runner.temp }}/upload/overkeys_${{ steps.version.outputs.VERSION }}_x64.zip
-                  fail_on_unmatched_files: true
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload installers to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            ${{ runner.temp }}/upload/overkeys_${{ steps.version.outputs.VERSION }}_x64_setup.exe
+            ${{ runner.temp }}/upload/overkeys_${{ steps.version.outputs.VERSION }}_x64.zip
+          fail_on_unmatched_files: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-            - name: Add comment to release
-              uses: actions/github-script@v7
-              with:
-                  script: |
-                      const version = '${{ steps.version.outputs.VERSION }}';
-                      const wasDownloaded = '${{ steps.download.outputs.ARTIFACTS_DOWNLOADED }}' === 'true';
-                      const method = wasDownloaded ? 'downloaded from PR build artifacts' : 'rebuilt from source';
+      - name: Add comment to release
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const version = '${{ steps.version.outputs.VERSION }}';
+            const wasDownloaded = '${{ steps.download.outputs.ARTIFACTS_DOWNLOADED }}' === 'true';
+            const method = wasDownloaded ? 'downloaded from PR build artifacts' : 'rebuilt from source';
 
-                      const comment = `## 📦 Installers Uploaded\n\n` +
-                        `Installers for **v${version}** have been successfully uploaded to this release.\n\n` +
-                        `**Build Method:** ${method}\n\n` +
-                        `### Available Downloads:\n` +
-                        `- \`overkeys_${version}_x64_setup.exe\` - Windows Installer (InnoSetup)\n` +
-                        `- \`overkeys_${version}_x64.zip\` - Portable ZIP Archive\n\n` +
-                        `You can now publish this draft release when ready! 🚀`;
+            const comment = `## 📦 Installers Uploaded\n\n` +
+              `Installers for **v${version}** have been successfully uploaded to this release.\n\n` +
+              `**Build Method:** ${method}\n\n` +
+              `### Available Downloads:\n` +
+              `- \`overkeys_${version}_x64_setup.exe\` - Windows Installer (InnoSetup)\n` +
+              `- \`overkeys_${version}_x64.zip\` - Portable ZIP Archive\n\n` +
+              `You can now publish this draft release when ready! 🚀`;
 
-                      github.rest.repos.createReleaseComment({
-                        owner: context.repo.owner,
-                        repo: context.repo.repo,
-                        release_id: ${{ github.event.release.id }},
-                        body: comment
-                      });
+            try {
+              // Get existing release body
+              const existingBody = '${{ github.event.release.body }}' || '';
+              
+              // Append comment to existing body
+              const newBody = existingBody + '\n\n---\n\n' + comment;
+
+              // Update the release with the combined body
+              await github.rest.repos.updateRelease({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                release_id: ${{ github.event.release.id }},
+                body: newBody
+              });
+
+              console.log('✅ Release body updated successfully');
+            } catch (error) {
+              console.error('❌ Failed to update release:', error.message);
+              throw error;
+            }
