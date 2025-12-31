@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../providers/keyboard_provider.dart';
 import '../providers/preferences_provider.dart';
@@ -121,5 +122,28 @@ class StateService {
     }
 
     await Future.wait(futures);
+  }
+
+  /// Load states from persistence and update providers
+  Future<void> loadStatesIntoProviders(WidgetRef ref) async {
+    final states = await loadAllStates();
+
+    if (states['keyboard'] != null) {
+      ref
+          .read(keyboardNotifierProvider.notifier)
+          .updateKeyboardState(states['keyboard']!);
+    }
+
+    if (states['preferences'] != null) {
+      ref
+          .read(preferencesNotifierProvider.notifier)
+          .updatePreferencesState(states['preferences']!);
+    }
+
+    if (states['appState'] != null) {
+      ref
+          .read(appStateNotifierProvider.notifier)
+          .updateAppState(states['appState']!);
+    }
   }
 }

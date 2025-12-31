@@ -111,25 +111,7 @@ class _PreferencesScreenState extends ConsumerState<PreferencesScreen>
   }
 
   Future<void> _loadState() async {
-    final states = await _stateService.loadAllStates();
-
-    if (states['keyboard'] != null) {
-      ref
-          .read(keyboardNotifierProvider.notifier)
-          .updateKeyboardState(states['keyboard']!);
-    }
-
-    if (states['preferences'] != null) {
-      ref
-          .read(preferencesNotifierProvider.notifier)
-          .updatePreferencesState(states['preferences']!);
-    }
-
-    if (states['appState'] != null) {
-      ref
-          .read(appStateNotifierProvider.notifier)
-          .updateAppState(states['appState']!);
-    }
+    await _stateService.loadStatesIntoProviders(ref);
   }
 
   Future<void> _saveState() async {
