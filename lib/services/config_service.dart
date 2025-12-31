@@ -10,7 +10,7 @@ class ConfigService {
   static const String _configFileName = 'overkeys_config.json';
 
   /// Cached configuration to avoid repeated file reads
-  UserConfig? _cachedConfig;
+  static UserConfig? _cachedConfig;
 
   Future<String> get _configPath async {
     final directory = await getApplicationSupportDirectory();

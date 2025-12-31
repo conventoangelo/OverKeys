@@ -507,6 +507,7 @@ class _MainAppState extends ConsumerState<MainApp>
         _stopMouseTracking,
         _fadeIn,
         () => _configLoader.clearConfigCache(),
+        _loadConfiguration,
       );
 
       return null;

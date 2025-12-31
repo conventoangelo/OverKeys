@@ -42,6 +42,7 @@ class MethodCallHandler {
     Function() stopMouseTracking,
     Function() fadeIn,
     Function() clearConfigCache,
+    Function() loadAllConfiguration,
   ) async {
     final keyboardNotifier = ref.read(keyboardNotifierProvider.notifier);
     final prefsNotifier = ref.read(preferencesNotifierProvider.notifier);
@@ -426,18 +427,7 @@ class MethodCallHandler {
         }
 
         if (advancedSettingsEnabled) {
-          if (keyboardState.kanataEnabled) {
-            await useKanata();
-          }
-          if (currentPrefsState.useUserLayout && !keyboardState.kanataEnabled) {
-            loadUserLayout();
-          }
-          if (currentPrefsState.showAltLayout) {
-            loadAltLayout();
-          }
-          if (currentPrefsState.customFontEnabled) {
-            loadCustomFont();
-          }
+          await loadAllConfiguration();
         } else {
           fadeIn();
         }
