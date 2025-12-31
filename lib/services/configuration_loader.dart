@@ -65,14 +65,19 @@ class ConfigurationLoader {
   }
 
   Future<void> loadAltLayout(WidgetRef ref) async {
-    final keyboardState = ref.read(keyboardNotifierProvider);
-    if (!keyboardState.showAltLayout) return;
+    final prefsState = ref.read(preferencesNotifierProvider);
+    if (!prefsState.showAltLayout) return;
 
+    final prefsNotifier = ref.read(preferencesNotifierProvider.notifier);
     final keyboardNotifier = ref.read(keyboardNotifierProvider.notifier);
     final altLayout = await _configService.getAltLayout();
 
     if (altLayout != null) {
+      prefsNotifier.updateAltLayout(altLayout);
       keyboardNotifier.updateShowAltLayout(true);
+    } else {
+      prefsNotifier.updateAltLayout(null);
+      keyboardNotifier.updateShowAltLayout(false);
     }
   }
 
