@@ -109,7 +109,8 @@ class HotKeyService {
   String formatHotkey(HotKey? hotkey, bool enabled) {
     if (hotkey == null || !enabled) return '';
 
-    final modifiers = hotkey.modifiers?.map((m) {
+    final modifiersList = hotkey.modifiers ?? [];
+    final modifiersString = modifiersList.map((m) {
       switch (m) {
         case HotKeyModifier.alt:
           return '⌥';
@@ -125,7 +126,7 @@ class HotKeyService {
     }).join('');
 
     final keyName = hotkey.key.keyLabel;
-    return modifiers!.isNotEmpty ? '$modifiers$keyName' : keyName;
+    return modifiersString.isNotEmpty ? '$modifiersString$keyName' : keyName;
   }
 
   /// Unregisters a single hotkey
