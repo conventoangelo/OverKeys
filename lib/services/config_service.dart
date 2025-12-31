@@ -58,6 +58,11 @@ class ConfigService {
     }
   }
 
+  /// Clears the cached configuration, forcing the next loadConfig() call to read from file
+  void clearCache() {
+    _cachedConfig = null;
+  }
+
   Future<KeyboardLayout?> getUserLayout() async {
     final config = await loadConfig();
 

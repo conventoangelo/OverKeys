@@ -13,6 +13,11 @@ class ConfigurationLoader {
   ConfigurationLoader(this._kanataService, {ConfigService? configService})
       : _configService = configService ?? ConfigService();
 
+  /// Clears the cached configuration to force reload from file
+  void clearConfigCache() {
+    _configService.clearCache();
+  }
+
   Future<void> loadAllConfiguration(WidgetRef ref) async {
     final prefsState = ref.read(preferencesNotifierProvider);
     await loadCustomShiftMappings(ref);

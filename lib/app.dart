@@ -150,6 +150,8 @@ class _MainAppState extends ConsumerState<MainApp>
   }
 
   Future<void> _loadConfiguration() async {
+    // Clear the cached config to force reload from file
+    _configLoader.clearConfigCache();
     await _configLoader.loadAllConfiguration(ref);
   }
 
