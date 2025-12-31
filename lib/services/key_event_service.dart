@@ -13,18 +13,32 @@ class KeyEventService {
   /// Active trigger keys for held layer switching
   final Set<String> _activeTriggers = {};
 
+  /// ReceivePort for keyboard events
+  ReceivePort? _receivePort;
+
   /// Sets up the keyboard event listener
   void setupKeyListener(ReceivePort Function() createReceivePort,
       Function(dynamic) handleKeyEvent) {
-    final receivePort = createReceivePort();
-    Isolate.spawn(setHook, receivePort.sendPort).catchError((error) {
+    _receivePort = createReceivePort();
+    Isolate.spawn(setHook, _receivePort!.sendPort).then((_) {
+      // Only attach listener after isolate spawn succeeds
+      _receivePort!.listen(handleKeyEvent);
+    }).catchError((error) {
+      // Close the unused port before handling error
+      _receivePort?.close();
+      _receivePort = null;
       if (kDebugMode) {
         print('Error spawning Isolate: $error');
       }
       throw error;
     });
+  }
 
-    receivePort.listen(handleKeyEvent);
+  /// Disposes of resources and closes the receive port
+  void dispose() {
+    _receivePort?.close();
+    _receivePort = null;
+    _activeTriggers.clear();
   }
 
   /// Handles keyboard events from the receive port
@@ -36,60 +50,71 @@ class KeyEventService {
     void Function() cancelAutoHideTimer,
     void Function(bool) updateAutoHideBasedOnLayer,
   ) {
-    if (message is! List) return;
+    try {
+      if (message is! List) return;
 
-    final keyboardNotifier = ref.read(keyboardNotifierProvider.notifier);
-    final appNotifier = ref.read(appStateNotifierProvider.notifier);
-    final keyboardState = ref.read(keyboardNotifierProvider);
-    final appState = ref.read(appStateNotifierProvider);
-    final prefsState = ref.read(preferencesNotifierProvider);
+      final keyboardNotifier = ref.read(keyboardNotifierProvider.notifier);
+      final appNotifier = ref.read(appStateNotifierProvider.notifier);
+      final keyboardState = ref.read(keyboardNotifierProvider);
+      final appState = ref.read(appStateNotifierProvider);
+      final prefsState = ref.read(preferencesNotifierProvider);
 
-    // Handle session unlock
-    if (message[0] is String) {
-      if (message[0] == 'session_unlock') {
-        keyboardNotifier.clearKeyPressStates();
+      // Handle session unlock
+      if (message[0] is String) {
+        if (message[0] == 'session_unlock') {
+          keyboardNotifier.clearKeyPressStates();
+        }
+        return;
+      }
+
+      if (message[0] is! int) return;
+
+      final keyCode = message[0] as int;
+      final isPressed = message[1] as bool;
+      final isShiftDown = message[2] as bool;
+      final key = getKeyFromKeyCodeShift(keyCode, isShiftDown);
+
+      if (kDebugMode) {
+        print(
+            'Key: ${key.padRight(10)}\tKeyCode: ${keyCode.toString().padRight(5)}\tPressed: ${isPressed.toString().padRight(5)}\tShift: $isShiftDown');
+      }
+
+      keyboardNotifier.updateKeyPressState(key, isPressed);
+
+      // Handle auto-hide and visibility
+      if (appState.forceHide) return;
+
+      if (prefsState.autoHideEnabled &&
+          !appState.isWindowVisible &&
+          isPressed) {
+        fadeIn();
+      } else {
+        resetAutoHideTimer();
+      }
+
+      // Handle user layer switching
+      if (prefsState.useUserLayout && prefsState.advancedSettingsEnabled) {
+        _handleUserLayerSwitching(
+          key,
+          isPressed,
+          ref,
+          keyboardState,
+          keyboardNotifier,
+          appState,
+          appNotifier,
+          prefsState,
+          fadeIn,
+          cancelAutoHideTimer,
+          updateAutoHideBasedOnLayer,
+        );
+      }
+    } catch (error, stackTrace) {
+      // Log the error but keep the listener alive
+      if (kDebugMode) {
+        print('Error in handleKeyEvent: $error');
+        print('Stack trace: $stackTrace');
       }
       return;
-    }
-
-    if (message[0] is! int) return;
-
-    final keyCode = message[0] as int;
-    final isPressed = message[1] as bool;
-    final isShiftDown = message[2] as bool;
-    final key = getKeyFromKeyCodeShift(keyCode, isShiftDown);
-
-    if (kDebugMode) {
-      print(
-          'Key: ${key.padRight(10)}\tKeyCode: ${keyCode.toString().padRight(5)}\tPressed: ${isPressed.toString().padRight(5)}\tShift: $isShiftDown');
-    }
-
-    keyboardNotifier.updateKeyPressState(key, isPressed);
-
-    // Handle auto-hide and visibility
-    if (appState.forceHide) return;
-
-    if (prefsState.autoHideEnabled && !appState.isWindowVisible && isPressed) {
-      fadeIn();
-    } else {
-      resetAutoHideTimer();
-    }
-
-    // Handle user layer switching
-    if (prefsState.useUserLayout && prefsState.advancedSettingsEnabled) {
-      _handleUserLayerSwitching(
-        key,
-        isPressed,
-        ref,
-        keyboardState,
-        keyboardNotifier,
-        appState,
-        appNotifier,
-        prefsState,
-        fadeIn,
-        cancelAutoHideTimer,
-        updateAutoHideBasedOnLayer,
-      );
     }
   }
 

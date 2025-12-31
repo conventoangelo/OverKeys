@@ -73,7 +73,7 @@ flutter test --watch
 
 **Coverage**:
 
-- `user_config_test.dart` (15 tests): UserConfig JSON parsing, round-trip serialization
+- `user_config_test.dart` (8 tests): UserConfig JSON parsing, round-trip serialization
 - `keyboard_layouts_test.dart` (15 tests): Layout structure validation, built-in layouts integrity
 - `mappings_test.dart` (13 tests): Key symbol mappings, modifier key mappings
 
@@ -98,7 +98,7 @@ test('serialization and deserialization are symmetric', () {
 
 - `key_code_test.dart` (30 tests): Windows virtual key code mappings, shift key variations
 - `font_options_test.dart` (12 tests): Available font families validation
-- `theme_manager_test.dart` (20 tests): Light/dark color schemes
+- `theme_manager_test.dart` (11 tests): Light/dark color schemes
 
 **Key Test Patterns**:
 
@@ -117,8 +117,8 @@ test('maps letter keys correctly', () {
 **Coverage**:
 
 - `app_state_provider_test.dart` (15 tests): AppState class, copyWith logic, JSON serialization
-- `keyboard_provider_test.dart` (40 tests): KeyboardState class, layout management, colors, animations
-- `preferences_provider_test.dart` (23 tests): PreferencesState class, user preferences, feature toggles
+- `keyboard_provider_test.dart` (22 tests): KeyboardState class, layout management, colors, animations
+- `preferences_provider_test.dart` (26 tests): PreferencesState class, user preferences, feature toggles
 
 **Key Test Patterns**:
 
@@ -239,7 +239,7 @@ test('loads config from file', () async {
 
 **Coverage**:
 
-- `toggle_option_test.dart` (8 tests): ToggleOption widget, switch interactions
+- `toggle_option_test.dart` (3 tests): ToggleOption widget, switch interactions
 - `slider_option_test.dart` (8 tests): SliderOption widget, value formatting
 - `dropdown_option_test.dart` (10 tests): DropdownOption widget, menu interaction
 - `color_option_test.dart` (10 tests): ColorOption widget, color picker dialog
