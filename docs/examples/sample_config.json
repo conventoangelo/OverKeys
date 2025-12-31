@@ -89,6 +89,13 @@
 		"[": "<",
 		"]": ">"
 	},
+	"customAliases": {
+		"UNDO": ["Control", "Z"],
+		"PASTE": ["Control", "Shift", "V"],
+		"Ability 1": ["Q"],
+		"ULT": ["X"],
+		"Item 1": ["Alt", "Q"]
+	},
 	// Uncomment to test locale specific key codes in QWERTZ layout
 	// "customKeys": {
 	// 	"keyCodeMap": {
