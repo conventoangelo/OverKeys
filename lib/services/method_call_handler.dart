@@ -38,7 +38,12 @@ class MethodCallHandler {
       case 'updateLaunchAtStartup':
         final launchAtStartupValue = call.arguments as bool;
         prefsNotifier.updateLaunchAtStartup(launchAtStartupValue);
-        await _startupService.handleStartupToggle(launchAtStartupValue);
+        final success =
+            await _startupService.handleStartupToggle(launchAtStartupValue);
+        if (!success) {
+          // Revert the toggle on failure
+          prefsNotifier.updateLaunchAtStartup(!launchAtStartupValue);
+        }
 
       case 'updateHideAtStartup':
         final hideAtStartup = call.arguments as bool;
