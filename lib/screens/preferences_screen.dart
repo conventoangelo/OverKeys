@@ -39,6 +39,9 @@ class _PreferencesScreenState extends ConsumerState<PreferencesScreen>
   final StateService _stateService = StateService();
   Timer? _saveDebounceTimer;
 
+  // Constants
+  static const Duration _saveDebounceDuration = Duration(milliseconds: 500);
+
   // UI state
   Brightness _brightness = Brightness.dark;
   String _appVersion = '';
@@ -82,7 +85,12 @@ class _PreferencesScreenState extends ConsumerState<PreferencesScreen>
   @override
   void dispose() {
     _saveDebounceTimer?.cancel();
-    _saveState(); // Final save on dispose
+    // Attempt final save, but don't fail if providers are disposed
+    try {
+      _saveState();
+    } catch (_) {
+      // Providers may already be disposed
+    }
     windowManager.removeListener(this);
     super.dispose();
   }
@@ -126,7 +134,7 @@ class _PreferencesScreenState extends ConsumerState<PreferencesScreen>
 
   void _debouncedSave() {
     _saveDebounceTimer?.cancel();
-    _saveDebounceTimer = Timer(const Duration(milliseconds: 500), () {
+    _saveDebounceTimer = Timer(_saveDebounceDuration, () {
       _saveState();
     });
   }

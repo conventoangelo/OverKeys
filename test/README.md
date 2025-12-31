@@ -221,7 +221,7 @@ Always test:
 - `dropdown_option_test.dart` (10 tests): DropdownOption widget, menu interaction
 - `color_option_test.dart` (10 tests): ColorOption widget, color picker dialog
 - `hotkey_option_test.dart` (13 tests): HotKeyOption widget, change button
-- `status_overlay_test.dart` (13 tests): StatusOverlay widget, animationsg
+- `status_overlay_test.dart` (13 tests): StatusOverlay widget, animations
 - `config_service_test.dart` (16 tests): Configuration file I/O and caching
 - `kanata_service_test.dart` (4 tests): Kanata message parsing and layout matching
 - `startup_service_test.dart` (3 tests): Startup service instantiation
@@ -242,7 +242,9 @@ test('loads config from file', () async {
 
 **Purpose**: Test UI components, user interactions, and visual rendering.
 
-\*\*CoAdditional Services
+**Coverage**: Comprehensive tests for reusable option widgets (DropdownOption, SliderOption, etc.)
+
+### Additional Services
 
 - [ ] `visibility_service_test.dart` - Window visibility logic
 - [ ] `window_service_test.dart` - Window sizing and positioning
@@ -261,14 +263,6 @@ test('loads config from file', () async {
 - [ ] Layout switching workflow
 - [ ] Auto-hide with key events
 - [ ] Preferences persistence workflow
-      testWidgets('calls onChanged when tapped', (tester) async {
-      await tester.tap(find.byType(Switch));
-      await tester.pumpAndSettle();
-
-  expect(callbackCalled, true);
-  });
-
-``` text
 
 ## Future Testing Roadmap
 
@@ -333,4 +327,3 @@ When adding new features:
 - [Effective Dart: Testing](https://dart.dev/guides/language/effective-dart/testing)
 - [Mockito Documentation](https://pub.dev/packages/mockito)
 - [Riverpod Testing](https://riverpod.dev/docs/essentials/testing)
-```

@@ -19,6 +19,9 @@ class KanataService {
   List<KeyboardLayout> _userLayouts = [];
   String _defaultUserLayout = 'QWERTY';
 
+  // Constants
+  static const Duration _reconnectDelay = Duration(seconds: 5);
+
   Future<void> connect() async {
     _kanataSocket?.destroy();
     _kanataTimer?.cancel();
@@ -70,7 +73,7 @@ class KanataService {
     if (!_reconnectEnabled) return;
 
     _kanataTimer?.cancel();
-    _kanataTimer = Timer(const Duration(seconds: 5), connect);
+    _kanataTimer = Timer(_reconnectDelay, connect);
   }
 
   void _handleKanataMessage(String message) {

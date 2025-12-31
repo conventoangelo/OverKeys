@@ -12,7 +12,9 @@ class AutoHideManager {
   Timer? _overlayTimer;
   Timer? _mouseCheckTimer;
 
+  // Constants
   static const Duration _overlayDuration = Duration(milliseconds: 1000);
+  static const Duration _mouseCheckInterval = Duration(milliseconds: 500);
 
   /// Flag to track if auto-hide was active before moving the window
   bool autoHideBeforeMove = false;
@@ -72,8 +74,7 @@ class AutoHideManager {
     _mouseCheckTimer?.cancel();
     final prefsState = ref.read(preferencesNotifierProvider);
     if (prefsState.keyboardFollowsMouse && prefsState.advancedSettingsEnabled) {
-      _mouseCheckTimer =
-          Timer.periodic(const Duration(milliseconds: 500), (_) => onTick());
+      _mouseCheckTimer = Timer.periodic(_mouseCheckInterval, (_) => onTick());
     }
   }
 

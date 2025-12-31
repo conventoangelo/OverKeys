@@ -193,7 +193,7 @@ class HotKeysTab extends ConsumerWidget {
 
   String _formatHotKey(HotKey? hotKey) {
     if (hotKey == null) return 'Not set';
-    final modifiers = hotKey.modifiers?.map((m) {
+    final modifiers = (hotKey.modifiers ?? []).map((m) {
       switch (m) {
         case HotKeyModifier.alt:
           return 'Alt';
@@ -209,7 +209,7 @@ class HotKeysTab extends ConsumerWidget {
     }).join(' + ');
 
     final keyName = hotKey.key.keyLabel;
-    return modifiers!.isNotEmpty ? '$modifiers + $keyName' : keyName;
+    return modifiers.isNotEmpty ? '$modifiers + $keyName' : keyName;
   }
 
   void _showRecordHotKeyDialog(BuildContext context,

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/foundation.dart';
 import 'package:hotkey_manager/hotkey_manager.dart';
 import 'package:overkeys/models/keyboard_layouts.dart';
 import 'package:overkeys/providers/app_state_provider.dart';
@@ -135,11 +136,9 @@ class MethodCallHandler {
       case 'updateFontFamily':
         final fontFamily = call.arguments as String;
         final prefsState = ref.read(preferencesNotifierProvider);
-        if (prefsState.customFontEnabled &&
-            prefsState.advancedSettingsEnabled) {
-          keyboardNotifier.updateFontFamily(fontFamily);
-        } else {
-          keyboardNotifier.updateFontFamily(fontFamily);
+        keyboardNotifier.updateFontFamily(fontFamily);
+        if (!(prefsState.customFontEnabled &&
+            prefsState.advancedSettingsEnabled)) {
           keyboardNotifier.updateInitialFontFamily(fontFamily);
         }
 
@@ -485,7 +484,7 @@ class MethodCallHandler {
         prefsNotifier.updateHideOnDefaultLayer(hideOnDefaultLayer);
 
       default:
-        throw UnimplementedError('Unimplemented method ${call.method}');
+        debugPrint('Warning: Unimplemented method ${call.method}');
     }
   }
 }

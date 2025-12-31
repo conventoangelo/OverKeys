@@ -51,7 +51,10 @@ class ConfigService {
       await file.writeAsString(jsonString);
       _cachedConfig = config;
     } catch (e) {
-      // Silently fail - config will not be persisted
+      if (kDebugMode) {
+        debugPrint('Failed to save config: $e');
+      }
+      // Config will not be persisted, but cache is updated
     }
   }
 

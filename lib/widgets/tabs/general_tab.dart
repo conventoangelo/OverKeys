@@ -137,7 +137,10 @@ class _GeneralTabState extends ConsumerState<GeneralTab> {
           value: keyboardState.layout.name,
           options: availableLayouts.map((layout) => (layout.name)).toList(),
           onChanged: (value) {
-            final layout = availableLayouts.firstWhere((l) => l.name == value!);
+            final layout = availableLayouts.firstWhere(
+              (l) => l.name == value!,
+              orElse: () => availableLayouts.first,
+            );
             ref.read(keyboardNotifierProvider.notifier).updateLayout(layout);
             widget.onUpdateMainWindow('updateLayout', value!);
           },
