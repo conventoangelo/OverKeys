@@ -432,11 +432,19 @@ class MethodCallHandler {
 
       case 'updateUseUserLayout':
         final useUserLayout = _safeArgument<bool>(call.arguments, false);
-        prefsNotifier.updateUseUserLayout(useUserLayout);
+        final keyboardState = ref.read(keyboardNotifierProvider);
+
         if (useUserLayout) {
+          // Save the current layout before switching to user layout
+          // so we can restore it when toggling off
+          if (!keyboardState.kanataEnabled) {
+            keyboardNotifier.updateInitialLayout(keyboardState.layout);
+          }
+          prefsNotifier.updateUseUserLayout(useUserLayout);
           loadUserLayout();
         } else {
-          final keyboardState = ref.read(keyboardNotifierProvider);
+          prefsNotifier.updateUseUserLayout(useUserLayout);
+          // Restore the layout that was active before user layout was enabled
           if (keyboardState.initialLayout != null &&
               !keyboardState.kanataEnabled) {
             keyboardNotifier.updateLayout(keyboardState.initialLayout!);
