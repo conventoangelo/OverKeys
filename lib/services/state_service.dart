@@ -12,10 +12,17 @@ class StateService {
   static const String _preferencesStateKey = 'preferences_state';
   static const String _appStateKey = 'app_state';
 
+  final Future<SharedPreferences> Function() _prefsProvider;
+
+  /// Creates a StateService with an optional SharedPreferences provider
+  /// If no provider is given, uses the default SharedPreferences.getInstance
+  StateService({Future<SharedPreferences> Function()? prefsProvider})
+      : _prefsProvider = prefsProvider ?? SharedPreferences.getInstance;
+
   /// Load keyboard state from persistence
   Future<KeyboardState?> loadKeyboardState() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
+      final prefs = await _prefsProvider();
       final jsonString = prefs.getString(_keyboardStateKey);
       if (jsonString == null) return null;
 
@@ -29,7 +36,7 @@ class StateService {
   /// Save keyboard state to persistence
   Future<void> saveKeyboardState(KeyboardState state) async {
     try {
-      final prefs = await SharedPreferences.getInstance();
+      final prefs = await _prefsProvider();
       final jsonString = jsonEncode(state.toJson());
       await prefs.setString(_keyboardStateKey, jsonString);
     } catch (e) {
@@ -40,7 +47,7 @@ class StateService {
   /// Load preferences state from persistence
   Future<PreferencesState?> loadPreferencesState() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
+      final prefs = await _prefsProvider();
       final jsonString = prefs.getString(_preferencesStateKey);
       if (jsonString == null) return null;
 
@@ -54,7 +61,7 @@ class StateService {
   /// Save preferences state to persistence
   Future<void> savePreferencesState(PreferencesState state) async {
     try {
-      final prefs = await SharedPreferences.getInstance();
+      final prefs = await _prefsProvider();
       final jsonString = jsonEncode(state.toJson());
       await prefs.setString(_preferencesStateKey, jsonString);
     } catch (e) {
@@ -65,7 +72,7 @@ class StateService {
   /// Load app state from persistence
   Future<AppState?> loadAppState() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
+      final prefs = await _prefsProvider();
       final jsonString = prefs.getString(_appStateKey);
       if (jsonString == null) return null;
 
@@ -79,7 +86,7 @@ class StateService {
   /// Save app state to persistence
   Future<void> saveAppState(AppState state) async {
     try {
-      final prefs = await SharedPreferences.getInstance();
+      final prefs = await _prefsProvider();
       final jsonString = jsonEncode(state.toJson());
       await prefs.setString(_appStateKey, jsonString);
     } catch (e) {

@@ -61,11 +61,24 @@ void main() {
       });
 
       test('handles save errors gracefully', () async {
+        // Create a mock prefs provider that throws an exception
+        Future<SharedPreferences> failingPrefsProvider() async {
+          throw Exception('SharedPreferences save failed');
+        }
+
+        final failingStateService =
+            StateService(prefsProvider: failingPrefsProvider);
         final state = KeyboardState(layout: qwerty);
 
-        // Should not throw even if save fails
-        await stateService.saveKeyboardState(state);
-        // Test passes if no exception is thrown
+        // Should not throw even if save fails - just completes silently
+        await expectLater(
+          failingStateService.saveKeyboardState(state),
+          completes,
+        );
+
+        // Verify the state was not saved by checking with normal service
+        final loadedState = await stateService.loadKeyboardState();
+        expect(loadedState, isNull);
       });
     });
 
