@@ -52,8 +52,8 @@ class HotKeysTab extends ConsumerWidget {
             },
             appState.visibilityHotKey ??
                 HotKey(
-                    key: PhysicalKeyboardKey.keyV,
-                    modifiers: [HotKeyModifier.control]),
+                    key: PhysicalKeyboardKey.keyQ,
+                    modifiers: [HotKeyModifier.alt, HotKeyModifier.control]),
           ),
           isEnabled: appState.hotKeysEnabled,
         ),
@@ -78,8 +78,8 @@ class HotKeysTab extends ConsumerWidget {
             },
             appState.autoHideHotKey ??
                 HotKey(
-                    key: PhysicalKeyboardKey.keyH,
-                    modifiers: [HotKeyModifier.control]),
+                    key: PhysicalKeyboardKey.keyW,
+                    modifiers: [HotKeyModifier.alt, HotKeyModifier.control]),
           ),
           isEnabled: appState.hotKeysEnabled,
         ),
@@ -104,8 +104,8 @@ class HotKeysTab extends ConsumerWidget {
             },
             appState.toggleMoveHotKey ??
                 HotKey(
-                    key: PhysicalKeyboardKey.keyM,
-                    modifiers: [HotKeyModifier.control]),
+                    key: PhysicalKeyboardKey.keyE,
+                    modifiers: [HotKeyModifier.alt, HotKeyModifier.control]),
           ),
           isEnabled: appState.hotKeysEnabled,
         ),
@@ -130,8 +130,8 @@ class HotKeysTab extends ConsumerWidget {
             },
             appState.preferencesHotKey ??
                 HotKey(
-                    key: PhysicalKeyboardKey.keyP,
-                    modifiers: [HotKeyModifier.control]),
+                    key: PhysicalKeyboardKey.keyR,
+                    modifiers: [HotKeyModifier.alt, HotKeyModifier.control]),
           ),
           isEnabled: appState.hotKeysEnabled,
         ),
@@ -156,8 +156,8 @@ class HotKeysTab extends ConsumerWidget {
             },
             appState.increaseOpacityHotKey ??
                 HotKey(
-                    key: PhysicalKeyboardKey.equal,
-                    modifiers: [HotKeyModifier.control]),
+                    key: PhysicalKeyboardKey.arrowUp,
+                    modifiers: [HotKeyModifier.alt, HotKeyModifier.control]),
           ),
           isEnabled: appState.hotKeysEnabled,
         ),
@@ -182,8 +182,8 @@ class HotKeysTab extends ConsumerWidget {
             },
             appState.decreaseOpacityHotKey ??
                 HotKey(
-                    key: PhysicalKeyboardKey.minus,
-                    modifiers: [HotKeyModifier.control]),
+                    key: PhysicalKeyboardKey.arrowDown,
+                    modifiers: [HotKeyModifier.alt, HotKeyModifier.control]),
           ),
           isEnabled: appState.hotKeysEnabled,
         ),

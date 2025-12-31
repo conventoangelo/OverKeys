@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:hotkey_manager/hotkey_manager.dart';
 
@@ -42,12 +43,12 @@ class AppState {
     this.autoHideBeforeForceHide = false,
     this.autoHideBeforeMove = false,
     this.hotKeysEnabled = true,
-    this.visibilityHotKey,
-    this.autoHideHotKey,
-    this.toggleMoveHotKey,
-    this.preferencesHotKey,
-    this.increaseOpacityHotKey,
-    this.decreaseOpacityHotKey,
+    HotKey? visibilityHotKey,
+    HotKey? autoHideHotKey,
+    HotKey? toggleMoveHotKey,
+    HotKey? preferencesHotKey,
+    HotKey? increaseOpacityHotKey,
+    HotKey? decreaseOpacityHotKey,
     this.enableVisibilityHotKey = true,
     this.enableAutoHideHotKey = true,
     this.enableToggleMoveHotKey = true,
@@ -58,7 +59,30 @@ class AppState {
     this.overlayMessage = '',
     this.statusIcon = const Icon(Icons.visibility),
     this.activeTriggers = const {},
-  });
+  })  : visibilityHotKey = visibilityHotKey ??
+            HotKey(
+                key: PhysicalKeyboardKey.keyQ,
+                modifiers: [HotKeyModifier.alt, HotKeyModifier.control]),
+        autoHideHotKey = autoHideHotKey ??
+            HotKey(
+                key: PhysicalKeyboardKey.keyW,
+                modifiers: [HotKeyModifier.alt, HotKeyModifier.control]),
+        toggleMoveHotKey = toggleMoveHotKey ??
+            HotKey(
+                key: PhysicalKeyboardKey.keyE,
+                modifiers: [HotKeyModifier.alt, HotKeyModifier.control]),
+        preferencesHotKey = preferencesHotKey ??
+            HotKey(
+                key: PhysicalKeyboardKey.keyR,
+                modifiers: [HotKeyModifier.alt, HotKeyModifier.control]),
+        increaseOpacityHotKey = increaseOpacityHotKey ??
+            HotKey(
+                key: PhysicalKeyboardKey.arrowUp,
+                modifiers: [HotKeyModifier.alt, HotKeyModifier.control]),
+        decreaseOpacityHotKey = decreaseOpacityHotKey ??
+            HotKey(
+                key: PhysicalKeyboardKey.arrowDown,
+                modifiers: [HotKeyModifier.alt, HotKeyModifier.control]);
 
   AppState copyWith({
     bool? isWindowVisible,
@@ -141,22 +165,34 @@ class AppState {
       hotKeysEnabled: json['hotKeysEnabled'] as bool? ?? true,
       visibilityHotKey: json['visibilityHotKey'] != null
           ? HotKey.fromJson(json['visibilityHotKey'])
-          : null,
+          : HotKey(
+              key: PhysicalKeyboardKey.keyQ,
+              modifiers: [HotKeyModifier.alt, HotKeyModifier.control]),
       autoHideHotKey: json['autoHideHotKey'] != null
           ? HotKey.fromJson(json['autoHideHotKey'])
-          : null,
+          : HotKey(
+              key: PhysicalKeyboardKey.keyW,
+              modifiers: [HotKeyModifier.alt, HotKeyModifier.control]),
       toggleMoveHotKey: json['toggleMoveHotKey'] != null
           ? HotKey.fromJson(json['toggleMoveHotKey'])
-          : null,
+          : HotKey(
+              key: PhysicalKeyboardKey.keyE,
+              modifiers: [HotKeyModifier.alt, HotKeyModifier.control]),
       preferencesHotKey: json['preferencesHotKey'] != null
           ? HotKey.fromJson(json['preferencesHotKey'])
-          : null,
+          : HotKey(
+              key: PhysicalKeyboardKey.keyR,
+              modifiers: [HotKeyModifier.alt, HotKeyModifier.control]),
       increaseOpacityHotKey: json['increaseOpacityHotKey'] != null
           ? HotKey.fromJson(json['increaseOpacityHotKey'])
-          : null,
+          : HotKey(
+              key: PhysicalKeyboardKey.arrowUp,
+              modifiers: [HotKeyModifier.alt, HotKeyModifier.control]),
       decreaseOpacityHotKey: json['decreaseOpacityHotKey'] != null
           ? HotKey.fromJson(json['decreaseOpacityHotKey'])
-          : null,
+          : HotKey(
+              key: PhysicalKeyboardKey.arrowDown,
+              modifiers: [HotKeyModifier.alt, HotKeyModifier.control]),
       enableVisibilityHotKey: json['enableVisibilityHotKey'] as bool? ?? true,
       enableAutoHideHotKey: json['enableAutoHideHotKey'] as bool? ?? true,
       enableToggleMoveHotKey: json['enableToggleMoveHotKey'] as bool? ?? true,
