@@ -11,9 +11,11 @@ import 'package:overkeys/services/kanata_service.dart';
 import 'package:overkeys/services/startup_service.dart';
 
 /// Service for handling method calls from the preferences window
+/// Processes UI changes and updates to application state from the preferences screen
 class MethodCallHandler {
   final StartupService _startupService = StartupService();
 
+  /// Handles method calls and routes them to appropriate state updates
   Future<void> handleMethodCall(
     MethodCall call,
     WidgetRef ref,

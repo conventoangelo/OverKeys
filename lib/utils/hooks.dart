@@ -5,7 +5,13 @@ import 'package:ffi/ffi.dart';
 import 'package:flutter/foundation.dart';
 import 'package:win32/win32.dart';
 
+/// Low-level keyboard hook implementation using Windows API
+/// Captures global keyboard events and session lock/unlock notifications
+
+/// Pointer to the keyboard hook procedure
 final keyboardProc = Pointer.fromFunction<HOOKPROC>(lowLevelKeyboardProc, 0);
+
+/// Pointer to the session notification window procedure
 final sessionProc = Pointer.fromFunction<WNDPROC>(sessionNotificationProc, 0);
 late int hookId;
 late int sessionWindowHandle;

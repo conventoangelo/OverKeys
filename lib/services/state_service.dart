@@ -7,6 +7,7 @@ import '../providers/preferences_provider.dart';
 import '../providers/app_state_provider.dart';
 
 /// Service for loading and saving application state across sessions
+/// Uses SharedPreferences to persist keyboard, preferences, and app state
 class StateService {
   static const String _keyboardStateKey = 'keyboard_state';
   static const String _preferencesStateKey = 'preferences_state';

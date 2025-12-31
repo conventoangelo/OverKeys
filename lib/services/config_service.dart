@@ -8,6 +8,8 @@ import '../models/keyboard_layouts.dart';
 /// Service for managing user configuration files
 class ConfigService {
   static const String _configFileName = 'overkeys_config.json';
+  
+  /// Cached configuration to avoid repeated file reads
   UserConfig? _cachedConfig;
 
   Future<String> get _configPath async {

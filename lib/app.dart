@@ -20,7 +20,6 @@ import 'package:overkeys/services/method_call_handler.dart';
 import 'package:overkeys/services/window_service.dart';
 import 'package:overkeys/services/visibility_service.dart';
 import 'package:overkeys/services/key_event_service.dart';
-import 'package:overkeys/services/startup_service.dart';
 import 'package:overkeys/utils/window_controller_extension.dart';
 import 'package:overkeys/widgets/status_overlay.dart';
 import 'providers/keyboard_provider.dart';
@@ -54,7 +53,6 @@ class _MainAppState extends ConsumerState<MainApp>
   final WindowService _windowService = WindowService();
   final VisibilityService _visibilityService = VisibilityService();
   final KeyEventService _keyEventService = KeyEventService();
-  final StartupService _startupService = StartupService();
 
   @override
   void initState() {
@@ -73,7 +71,6 @@ class _MainAppState extends ConsumerState<MainApp>
     _setupKeyListener();
     _setupHotKeys();
     _setupMethodHandler();
-    _startupService.initStartup();
     _setupKanataLayerChangeHandler();
     _loadConfiguration();
     final prefsState = ref.read(preferencesNotifierProvider);

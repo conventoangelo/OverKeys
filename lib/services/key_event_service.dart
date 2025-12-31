@@ -9,6 +9,7 @@ import 'package:overkeys/utils/hooks.dart';
 
 /// Service for handling keyboard events and user layer switching
 class KeyEventService {
+  /// Active trigger keys for held layer switching
   final Set<String> _activeTriggers = {};
 
   /// Sets up the keyboard event listener

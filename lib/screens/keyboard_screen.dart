@@ -5,6 +5,8 @@ import '../models/mappings.dart';
 import '../providers/keyboard_provider.dart';
 import '../providers/preferences_provider.dart';
 
+/// Main keyboard overlay screen that displays the virtual keyboard
+/// Shows key press states in real-time with customizable styling and layouts
 class KeyboardScreen extends ConsumerWidget {
   const KeyboardScreen({super.key});
 

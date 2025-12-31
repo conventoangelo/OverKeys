@@ -4,6 +4,8 @@ import 'package:overkeys/models/keyboard_layouts.dart';
 
 part 'preferences_provider.g.dart';
 
+/// State class for user preferences and application settings
+/// Includes general settings, layout preferences, and advanced features
 class PreferencesState {
   // General settings
   final bool launchAtStartup;

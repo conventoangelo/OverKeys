@@ -5,8 +5,11 @@ import 'package:overkeys/providers/keyboard_provider.dart';
 
 /// Service for managing window size, position, and alignment
 class WindowService {
+  // Default window dimensions
   static const double defaultWindowWidth = 1000;
   static const double defaultWindowHeight = 330;
+  
+  // Extra dimensions when top row is shown
   static const double defaultTopRowExtraHeight = 80;
   static const double defaultTopRowExtraWidth = 160;
 

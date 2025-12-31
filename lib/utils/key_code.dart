@@ -1,7 +1,11 @@
 import 'package:win32/win32.dart';
 import '../services/config_service.dart';
 
-// https://learn.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
+/// Key code mapping utilities for converting Windows virtual key codes
+/// to displayable key names and handling shift key variations
+/// Reference: https://learn.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
+
+/// Default mapping from virtual key codes to key names
 final Map<int, String> defaultKeyCodeMap = {
   VK_A: 'A',
   VK_B: 'B',
@@ -97,6 +101,8 @@ final Map<int, String> defaultKeyCodeMap = {
   VK_DIVIDE: '/',
 };
 
+/// Mapping of (keyCode, isShiftDown) to display character
+/// Handles shifted vs unshifted characters (e.g., 1 vs !, [ vs {)
 Map<(int, bool), String> defaultKeyCodeShiftMap = {
   (0x30, false): '0',
   (0x30, true): ')',
@@ -142,9 +148,11 @@ Map<(int, bool), String> defaultKeyCodeShiftMap = {
   (VK_OEM_MINUS, true): '_',
 };
 
+/// Active key code mapping that can be overridden by user configuration
 Map<(int, bool), String> activeKeyCodeShiftMap =
     Map<(int, bool), String>.from(defaultKeyCodeShiftMap);
 
+/// Loads custom key mappings from user configuration
 Future<void> loadCustomKeys() async {
   final config = await ConfigService().loadConfig();
   activeKeyCodeShiftMap = Map<(int, bool), String>.from(defaultKeyCodeShiftMap);
@@ -169,6 +177,8 @@ Future<void> loadCustomKeys() async {
   }
 }
 
+/// Converts a Windows virtual key code to a displayable key name
+/// Takes into account whether shift is pressed
 String getKeyFromKeyCodeShift(int keyCode, bool isShiftDown) {
   return activeKeyCodeShiftMap[(keyCode, isShiftDown)] ??
       defaultKeyCodeMap[keyCode] ??

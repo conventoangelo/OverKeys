@@ -6,6 +6,7 @@ import 'package:overkeys/providers/keyboard_provider.dart';
 /// Service for managing window visibility and fade operations
 class VisibilityService {
   /// Checks if the current keyboard layout is the default layer
+  /// Returns true if we're on default layer and should hide the window
   bool isOnDefaultLayer(WidgetRef ref) {
     final keyboardState = ref.read(keyboardNotifierProvider);
     final prefsState = ref.read(preferencesNotifierProvider);

@@ -4,6 +4,8 @@ import 'package:overkeys/models/keyboard_layouts.dart';
 
 part 'keyboard_provider.g.dart';
 
+/// State class for keyboard display configuration and appearance
+/// Manages layout, styling, colors, animations, and key press states
 class KeyboardState {
   final KeyboardLayout layout;
   final KeyboardLayout? initialLayout;

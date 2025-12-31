@@ -6,6 +6,7 @@ import 'package:overkeys/providers/preferences_provider.dart';
 
 /// Service for managing auto-hide functionality and overlay status messages
 class AutoHideManager {
+  // Timers for various auto-hide operations
   Timer? _autoHideTimer;
   Timer? _opacityDebounceTimer;
   Timer? _overlayTimer;
@@ -13,8 +14,10 @@ class AutoHideManager {
 
   static const Duration _overlayDuration = Duration(milliseconds: 1000);
 
+  /// Flag to track if auto-hide was active before moving the window
   bool autoHideBeforeMove = false;
 
+  /// Resets the auto-hide timer based on user preferences
   void resetAutoHideTimer(WidgetRef ref) {
     final prefsState = ref.read(preferencesNotifierProvider);
     if (!prefsState.autoHideEnabled) return;

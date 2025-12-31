@@ -3,6 +3,7 @@ import 'package:hotkey_manager/hotkey_manager.dart';
 
 /// Service for managing global hotkeys and their registration
 class HotKeyService {
+  /// Registers all enabled hotkeys with their respective callbacks
   Future<void> setupHotKeys({
     required HotKey? autoHideHotKey,
     required bool enableAutoHideHotKey,
@@ -104,6 +105,7 @@ class HotKeyService {
     }
   }
 
+  /// Formats a hotkey for display with symbols (e.g., "⌃⇧Q")
   String formatHotkey(HotKey? hotkey, bool enabled) {
     if (hotkey == null || !enabled) return '';
 
@@ -126,6 +128,7 @@ class HotKeyService {
     return modifiers!.isNotEmpty ? '$modifiers$keyName' : keyName;
   }
 
+  /// Unregisters a single hotkey
   Future<void> unregisterHotKey(HotKey? hotKey) async {
     if (hotKey != null) {
       await hotKeyManager.unregister(hotKey);

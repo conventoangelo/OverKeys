@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+/// Centralized theme management for the preferences window
+/// Provides light and dark color schemes with consistent styling
 class ThemeManager {
   static final ColorScheme lightColorScheme = ColorScheme(
     brightness: Brightness.light,
@@ -73,6 +75,7 @@ class ThemeManager {
     inversePrimary: const Color(0xFF742020),
   );
 
+  /// Returns a ThemeData object based on the requested brightness
   static ThemeData getTheme(Brightness brightness) {
     final colorScheme =
         brightness == Brightness.light ? lightColorScheme : darkColorScheme;

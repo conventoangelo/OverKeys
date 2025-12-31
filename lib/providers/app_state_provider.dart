@@ -5,6 +5,7 @@ import 'package:hotkey_manager/hotkey_manager.dart';
 
 part 'app_state_provider.g.dart';
 
+/// Application state for window visibility, hotkeys, and UI overlays
 class AppState {
   // Window visibility
   final bool isWindowVisible;
