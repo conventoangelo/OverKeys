@@ -32,6 +32,7 @@ class UserConfig {
           ),
           trigger: userLayout['trigger'],
           type: userLayout['type'],
+          foreign: userLayout['foreign'],
         ));
       }
     }
