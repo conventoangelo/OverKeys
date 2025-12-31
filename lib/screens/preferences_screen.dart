@@ -37,6 +37,7 @@ class PreferencesScreen extends ConsumerStatefulWidget {
 class _PreferencesScreenState extends ConsumerState<PreferencesScreen>
     with WindowListener {
   final StateService _stateService = StateService();
+  Timer? _saveDebounceTimer;
 
   // UI state
   Brightness _brightness = Brightness.dark;
@@ -80,7 +81,8 @@ class _PreferencesScreenState extends ConsumerState<PreferencesScreen>
 
   @override
   void dispose() {
-    _saveState();
+    _saveDebounceTimer?.cancel();
+    _saveState(); // Final save on dispose
     windowManager.removeListener(this);
     super.dispose();
   }
@@ -122,6 +124,13 @@ class _PreferencesScreenState extends ConsumerState<PreferencesScreen>
     );
   }
 
+  void _debouncedSave() {
+    _saveDebounceTimer?.cancel();
+    _saveDebounceTimer = Timer(const Duration(milliseconds: 500), () {
+      _saveState();
+    });
+  }
+
   void _updateMainWindow(dynamic method, dynamic value) async {
     if (value is Color) {
       value = value.toARGB32();
@@ -145,20 +154,20 @@ class _PreferencesScreenState extends ConsumerState<PreferencesScreen>
     final ThemeData theme = ThemeManager.getTheme(_brightness);
     final FocusNode keyboardFocusNode = FocusNode();
 
-    // Listen to provider changes and auto-save
+    // Listen to provider changes and auto-save (debounced)
     ref.listen<KeyboardState>(keyboardNotifierProvider, (previous, next) {
       if (previous != null && previous != next) {
-        _saveState();
+        _debouncedSave();
       }
     });
     ref.listen<PreferencesState>(preferencesNotifierProvider, (previous, next) {
       if (previous != null && previous != next) {
-        _saveState();
+        _debouncedSave();
       }
     });
     ref.listen<AppState>(appStateNotifierProvider, (previous, next) {
       if (previous != null && previous != next) {
-        _saveState();
+        _debouncedSave();
       }
     });
 
