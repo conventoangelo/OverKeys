@@ -21,6 +21,7 @@ class ConfigurationLoader {
   Future<void> loadAllConfiguration(WidgetRef ref) async {
     final prefsState = ref.read(preferencesNotifierProvider);
     await loadCustomShiftMappings(ref);
+    await loadCustomAliases(ref);
 
     if (prefsState.advancedSettingsEnabled) {
       if (prefsState.useUserLayout) {
@@ -44,6 +45,11 @@ class ConfigurationLoader {
     ref
         .read(keyboardNotifierProvider.notifier)
         .updateCustomShiftMappings(mappings);
+  }
+
+  Future<void> loadCustomAliases(WidgetRef ref) async {
+    final aliases = await _configService.getCustomAliases();
+    ref.read(keyboardNotifierProvider.notifier).updateCustomAliases(aliases);
   }
 
   Future<void> loadUserLayout(WidgetRef ref) async {

@@ -85,6 +85,44 @@ class KeyEventService {
 
       keyboardNotifier.updateKeyPressState(key, isPressed);
 
+      // Handle custom aliases
+      final updatedKeyboardState = ref.read(keyboardNotifierProvider);
+      final customAliases = updatedKeyboardState.customAliases;
+
+      if (customAliases != null) {
+        customAliases.forEach((alias, keys) {
+          bool allPressed = true;
+          for (final k in keys) {
+            bool keyIsPressed = false;
+            if (k == 'Control') {
+              keyIsPressed =
+                  (updatedKeyboardState.keyPressStates['LControl'] == true) ||
+                      (updatedKeyboardState.keyPressStates['RControl'] == true);
+            } else if (k == 'Shift') {
+              keyIsPressed =
+                  (updatedKeyboardState.keyPressStates['LShift'] == true) ||
+                      (updatedKeyboardState.keyPressStates['RShift'] == true);
+            } else if (k == 'Alt') {
+              keyIsPressed =
+                  (updatedKeyboardState.keyPressStates['LAlt'] == true) ||
+                      (updatedKeyboardState.keyPressStates['RAlt'] == true);
+            } else if (k == 'Win') {
+              keyIsPressed =
+                  (updatedKeyboardState.keyPressStates['Win'] == true) ||
+                      (updatedKeyboardState.keyPressStates['RWin'] == true);
+            } else {
+              keyIsPressed = updatedKeyboardState.keyPressStates[k] == true;
+            }
+
+            if (!keyIsPressed) {
+              allPressed = false;
+              break;
+            }
+          }
+          keyboardNotifier.updateKeyPressState(alias, allPressed);
+        });
+      }
+
       // Handle auto-hide and visibility
       if (appState.forceHide) return;
 

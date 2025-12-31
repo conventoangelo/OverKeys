@@ -142,4 +142,22 @@ class ConfigService {
 
     return layers;
   }
+
+  Future<Map<String, List<String>>?> getCustomAliases() async {
+    final config = await loadConfig();
+    if (config.customAliases == null) {
+      return null;
+    }
+
+    try {
+      return config.customAliases!.map((key, value) {
+        return MapEntry(key, List<String>.from(value as List));
+      });
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('Error parsing customAliases: $e');
+      }
+      return null;
+    }
+  }
 }

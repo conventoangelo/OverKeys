@@ -56,6 +56,7 @@ class KeyboardState {
   final Map<String, String>? customShiftMappings;
   final bool kanataEnabled;
   final bool showAltLayout;
+  final Map<String, List<String>>? customAliases;
 
   KeyboardState({
     required this.layout,
@@ -107,6 +108,7 @@ class KeyboardState {
     this.customShiftMappings,
     this.kanataEnabled = false,
     this.showAltLayout = false,
+    this.customAliases,
   });
 
   KeyboardState copyWith({
@@ -159,6 +161,7 @@ class KeyboardState {
     Map<String, String>? customShiftMappings,
     bool? kanataEnabled,
     bool? showAltLayout,
+    Map<String, List<String>>? customAliases,
   }) {
     return KeyboardState(
       layout: layout ?? this.layout,
@@ -214,6 +217,7 @@ class KeyboardState {
       customShiftMappings: customShiftMappings ?? this.customShiftMappings,
       kanataEnabled: kanataEnabled ?? this.kanataEnabled,
       showAltLayout: showAltLayout ?? this.showAltLayout,
+      customAliases: customAliases ?? this.customAliases,
     );
   }
 
@@ -267,6 +271,7 @@ class KeyboardState {
       'customShiftMappings': customShiftMappings,
       'kanataEnabled': kanataEnabled,
       'showAltLayout': showAltLayout,
+      'customAliases': customAliases,
     };
   }
 
@@ -342,6 +347,14 @@ class KeyboardState {
           : null,
       kanataEnabled: json['kanataEnabled'] as bool? ?? false,
       showAltLayout: json['showAltLayout'] as bool? ?? false,
+      customAliases: json['customAliases'] != null
+          ? (json['customAliases'] as Map<String, dynamic>).map(
+              (key, value) => MapEntry(
+                key,
+                (value as List).map((e) => e as String).toList(),
+              ),
+            )
+          : null,
     );
   }
 }
@@ -355,6 +368,10 @@ class KeyboardNotifier extends _$KeyboardNotifier {
 
   void updateLayout(KeyboardLayout layout) {
     state = state.copyWith(layout: layout);
+  }
+
+  void updateCustomAliases(Map<String, List<String>>? aliases) {
+    state = state.copyWith(customAliases: aliases);
   }
 
   void updateKeyPressState(String key, bool isPressed) {
