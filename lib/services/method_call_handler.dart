@@ -399,6 +399,7 @@ class MethodCallHandler {
             keyboardNotifier.updateLayout(
                 keyboardState.initialLayout ?? keyboardState.layout);
           }
+          // Don't clear altLayout data - just hide it so it can be restored later
           keyboardNotifier.updateShowAltLayout(false);
           if (currentPrefsState.customFontEnabled) {
             keyboardNotifier.updateFontFamily(
@@ -420,7 +421,7 @@ class MethodCallHandler {
           if (currentPrefsState.useUserLayout && !keyboardState.kanataEnabled) {
             loadUserLayout();
           }
-          if (keyboardState.showAltLayout) {
+          if (currentPrefsState.showAltLayout) {
             loadAltLayout();
           }
           if (currentPrefsState.customFontEnabled) {
@@ -454,9 +455,13 @@ class MethodCallHandler {
 
       case 'updateShowAltLayout':
         final showAltLayout = _safeArgument<bool>(call.arguments, false);
-        keyboardNotifier.updateShowAltLayout(showAltLayout);
+        prefsNotifier.updateShowAltLayout(showAltLayout);
         if (showAltLayout) {
           loadAltLayout();
+        } else {
+          // Clear the alternative layout when toggling off
+          prefsNotifier.updateAltLayout(null);
+          keyboardNotifier.updateShowAltLayout(false);
         }
         fadeIn();
 
