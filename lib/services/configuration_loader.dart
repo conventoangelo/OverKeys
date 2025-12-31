@@ -105,12 +105,15 @@ class ConfigurationLoader {
 
   Future<void> useKanata(WidgetRef ref) async {
     final keyboardNotifier = ref.read(keyboardNotifierProvider.notifier);
+    final keyboardState = ref.read(keyboardNotifierProvider);
     final prefsState = ref.read(preferencesNotifierProvider);
-    final userLayout = await _configService.getUserLayout();
 
-    if (userLayout != null) {
-      keyboardNotifier.updateInitialLayout(userLayout);
+    // Save the current layout as initialLayout so we can restore it when Kanata is disabled
+    // This should be the layout that was displayed before Kanata takes control
+    if (keyboardState.initialLayout == null) {
+      keyboardNotifier.updateInitialLayout(keyboardState.layout);
     }
+
     if (prefsState.kanataEnabled && prefsState.advancedSettingsEnabled) {
       try {
         await _kanataService.connect();

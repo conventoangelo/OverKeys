@@ -496,16 +496,30 @@ class MethodCallHandler {
         final kanataEnabled = _safeArgument<bool>(call.arguments, false);
         final keyboardState = ref.read(keyboardNotifierProvider);
         if (kanataEnabled && !keyboardState.kanataEnabled) {
+          // Turning Kanata ON
+          if (kDebugMode) {
+            print(
+                'Enabling Kanata. Saving current layout: ${keyboardState.layout.name}');
+          }
           keyboardNotifier.updateInitialLayout(keyboardState.layout);
           keyboardNotifier.updateKanataEnabled(true);
+          prefsNotifier.updateKanataEnabled(true);
           await useKanata();
         } else if (!kanataEnabled && keyboardState.kanataEnabled) {
-          keyboardNotifier.updateKanataEnabled(false);
-          kanataService.disconnect();
+          // Turning Kanata OFF
+          if (kDebugMode) {
+            print(
+                'Disabling Kanata. Restoring layout: ${keyboardState.initialLayout?.name ?? "null"}');
+          }
+          // First, restore the layout that was active before Kanata was enabled
           if (keyboardState.initialLayout != null) {
             keyboardNotifier.updateLayout(keyboardState.initialLayout!);
-            fadeIn();
           }
+          // Then update states and disconnect
+          keyboardNotifier.updateKanataEnabled(false);
+          prefsNotifier.updateKanataEnabled(false);
+          kanataService.disconnect();
+          fadeIn();
         }
 
       case 'updateKeyboardFollowsMouse':

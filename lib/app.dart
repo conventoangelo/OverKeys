@@ -104,6 +104,20 @@ class _MainAppState extends ConsumerState<MainApp>
         _fadeIn();
       }
     };
+
+    // Set up disconnect callback to restore layout when Kanata connection is lost
+    _kanataService.onDisconnect = () {
+      final keyboardNotifier = ref.read(keyboardNotifierProvider.notifier);
+      final keyboardState = ref.read(keyboardNotifierProvider);
+      final prefsState = ref.read(preferencesNotifierProvider);
+
+      // Only restore layout if Kanata is still enabled in preferences
+      // (if user manually disabled it, the layout restore is handled elsewhere)
+      if (prefsState.kanataEnabled && keyboardState.initialLayout != null) {
+        keyboardNotifier.updateLayout(keyboardState.initialLayout!);
+        _fadeIn();
+      }
+    };
   }
 
   void _updateAutoHideBasedOnLayer(bool isDefaultUserLayout) {

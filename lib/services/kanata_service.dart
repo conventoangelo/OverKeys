@@ -7,6 +7,7 @@ import 'package:overkeys/models/keyboard_layouts.dart';
 
 typedef LayerChangeCallback = void Function(
     KeyboardLayout layout, bool isDefaultUserLayout);
+typedef DisconnectCallback = void Function();
 
 /// Service for integrating with Kanata keyboard layout manager
 class KanataService {
@@ -15,6 +16,7 @@ class KanataService {
   String _host = '127.0.0.1';
   int _port = 4039;
   LayerChangeCallback? onLayerChange;
+  DisconnectCallback? onDisconnect;
   bool _reconnectEnabled = true;
   List<KeyboardLayout> _userLayouts = [];
   String _defaultUserLayout = 'QWERTY';
@@ -26,6 +28,8 @@ class KanataService {
   Future<void> connect() async {
     _kanataSocket?.destroy();
     _kanataTimer?.cancel();
+    // Always enable reconnection when connect() is explicitly called
+    // This ensures that toggling Kanata on will keep trying to connect
     _reconnectEnabled = true;
 
     try {
@@ -62,6 +66,11 @@ class KanataService {
   void _onDisconnected() {
     if (kDebugMode) {
       print('Disconnected from Kanata server');
+    }
+
+    // Notify about disconnection so layout can be restored
+    if (onDisconnect != null && _reconnectEnabled) {
+      onDisconnect!();
     }
 
     if (_reconnectEnabled) {
