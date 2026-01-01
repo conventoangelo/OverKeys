@@ -178,7 +178,6 @@ class Mappings {
     'APP1': 'LaunchApp1',
     'APP2': 'LaunchApp2',
     'HELP': 'Help',
-    '?': 'Help',
     'SELECT': 'Select',
     'SEL': 'Select',
     'PRINT': 'Print',

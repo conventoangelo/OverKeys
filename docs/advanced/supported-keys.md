@@ -96,6 +96,48 @@ This document lists all keys supported by OverKeys for use in custom layouts. Us
 | `.` | `🔢．` |
 | `/` | `🔢⁄`  |
 
+## System & Application Keys
+
+| Key           | Aliases                      |
+| ------------- | ---------------------------- |
+| `Pause`       | `PAUSE`                      |
+| `Apps`        | `APPS`, `MENU`               |
+| `Sleep`       | `SLEEP`                      |
+| `PrintScreen` | `PRTSC`, `PRTSCRN`, `PRTSCR` |
+| `Help`        | `HELP`                       |
+| `Select`      | `SELECT`, `SEL`              |
+| `Print`       | `PRINT`, `PRT`               |
+| `Execute`     | `EXEC`, `EXE`                |
+| `Clear`       | `CLEAR`, `CLR`               |
+
+## Browser Keys
+
+| Key                | Aliases          |
+| ------------------ | ---------------- |
+| `BrowserBack`      | `BACK`           |
+| `BrowserForward`   | `FWD`            |
+| `BrowserRefresh`   | `RFRSH`          |
+| `BrowserStop`      | `STOP`           |
+| `BrowserSearch`    | `SEARCH`, `SRCH` |
+| `BrowserFavorites` | `FAV`, `FAVS`    |
+| `BrowserHome`      | `BHOME`          |
+
+## Media Keys
+
+| Key                 | Aliases               |
+| ------------------- | --------------------- |
+| `Mute`              | `MUTE`, `🔇`          |
+| `VolumeDown`        | `VOLDN`, `VOL-`, `🔉` |
+| `VolumeUp`          | `VOLUP`, `VOL+`, `🔊` |
+| `NextTrack`         | `NEXT`, `⏭`, `⏩`     |
+| `PrevTrack`         | `PREV`, `⏮`, `⏪`     |
+| `Stop`              | `⏹`                   |
+| `PlayPause`         | `PLAY`, `⏯`, `⏸`      |
+| `LaunchMail`        | `MAIL`, `✉`           |
+| `LaunchMediaSelect` | `MEDIA`               |
+| `LaunchApp1`        | `APP1`                |
+| `LaunchApp2`        | `APP2`                |
+
 ## Punctuation and Symbol Keys
 
 | Key     | Description       |
