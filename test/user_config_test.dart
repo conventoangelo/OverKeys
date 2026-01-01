@@ -26,11 +26,11 @@ void main() {
 
     expect(config.ignoredKeys, isNull);
   });
-  
+
   test('UserConfig toJson includes ignoredKeys', () {
     final config = UserConfig(ignoredKeys: ["X", "Y"]);
     final json = config.toJson();
-    
+
     expect(json['ignoredKeys'], isNotNull);
     expect(json['ignoredKeys'], ["X", "Y"]);
   });
