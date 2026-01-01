@@ -15,7 +15,7 @@ To configure ignored keys, add an `ignoredKeys` field to your configuration file
 
 ```json
 {
-	"ignoredKeys": ["PRTSC", "F13", "F14", "F15"]
+	"ignoredKeys": ["PrintScreen", "F13", "F14", "F15"]
 }
 ```
 
@@ -24,8 +24,8 @@ To configure ignored keys, add an `ignoredKeys` field to your configuration file
 Use the same key names that OverKeys recognizes for keyboard layouts. Common examples include:
 
 - Function keys: `F1`, `F2`, ..., `F24`
-- Special keys: `PRTSC`, `PAUSE`, `SCRLK`
-- Navigation keys: `HOME`, `END`, `PGUP`, `PGDN`, `INS`, `DEL`
+- Special keys: `PrintScreen`, `Pause`, `ScrollLock`
+- Navigation keys: `Home`, `End`, `PageUp`, `PageDown`, `Insert`, `Delete`
 - Media keys: Check the supported keys documentation for exact names
 
 See the [Supported Keys](./supported-keys.md) documentation for a complete list of recognized key names.
@@ -38,7 +38,7 @@ Here's a complete example showing ignored keys alongside other configuration opt
 {
 	"defaultUserLayout": "Canary",
 	"altLayout": "QWERTY",
-	"ignoredKeys": ["PRTSC", "F13", "F14", "F15", "PAUSE", "SCRLK"],
+	"ignoredKeys": ["PrintScreen", "F13", "F14", "F15", "Pause", "ScrollLock"],
 	"userLayouts": [
 		{
 			"name": "Extend",
@@ -58,9 +58,9 @@ Here's a complete example showing ignored keys alongside other configuration opt
 
 In this example:
 
-- `PRTSC` is ignored so the keyboard won't appear during screenshots
+- `PrintScreen` is ignored so the keyboard won't appear during screenshots
 - `F13`, `F14`, and `F15` are ignored because they're used as layer triggers
-- `PAUSE` and `SCRLK` are ignored as they're rarely used
+- `Pause` and `ScrollLock` are ignored as they're rarely used
 
 ## How It Works
 
@@ -76,7 +76,7 @@ This ensures that ignored keys have minimal interaction with the OverKeys overla
 ## Tips
 
 - If you're using layer switching with function keys, add those function keys to `ignoredKeys` to prevent the overlay from appearing when switching layers
-- For screenshot workflows, adding `PRTSC` (and possibly `WIN` + `Shift` + `S` combinations) ensures a clean capture
+- For screenshot workflows, adding `PrintScreen` ensures a clean capture
 - If you have keys on your keyboard that aren't in your active layout, add them to prevent unnecessary overlay appearances
 
 ## Editing the Configuration File
