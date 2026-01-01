@@ -153,6 +153,7 @@ class Mappings {
     'SRCH': 'BrowserSearch',
     'FAV': 'BrowserFavorites',
     'FAVS': 'BrowserFavorites',
+    'BHOME': 'BrowserHome',
     'MUTE': 'Mute',
     '🔇': 'Mute',
     'VOLDN': 'VolumeDown',
