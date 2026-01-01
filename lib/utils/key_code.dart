@@ -117,6 +117,15 @@ final Map<int, String> defaultKeyCodeMap = {
   VK_MEDIA_PREV_TRACK: 'PrevTrack',
   VK_MEDIA_STOP: 'Stop',
   VK_MEDIA_PLAY_PAUSE: 'PlayPause',
+  VK_LAUNCH_MAIL: 'LaunchMail',
+  VK_LAUNCH_MEDIA_SELECT: 'LaunchMediaSelect',
+  VK_LAUNCH_APP1: 'LaunchApp1',
+  VK_LAUNCH_APP2: 'LaunchApp2',
+  VK_HELP: 'Help',
+  VK_SELECT: 'Select',
+  VK_PRINT: 'Print',
+  VK_EXECUTE: 'Execute',
+  VK_CLEAR: 'Clear',
 };
 
 /// Mapping of (keyCode, isShiftDown) to display character
