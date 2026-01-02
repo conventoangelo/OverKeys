@@ -17,9 +17,6 @@ class AutoHideManager {
   static const Duration _overlayDuration = Duration(milliseconds: 1000);
   static const Duration _mouseCheckInterval = Duration(milliseconds: 500);
 
-  /// Flag to track if auto-hide was active before moving the window
-  bool autoHideBeforeMove = false;
-
   /// Resets the auto-hide timer based on user preferences
   void resetAutoHideTimer(WidgetRef ref) {
     final prefsState = ref.read(preferencesProvider);

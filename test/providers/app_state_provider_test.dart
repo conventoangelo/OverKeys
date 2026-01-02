@@ -13,7 +13,6 @@ void main() {
         expect(state.ignoreMouseEvents, true);
         expect(state.forceHide, false);
         expect(state.autoHideBeforeForceHide, false);
-        expect(state.autoHideBeforeMove, false);
         expect(state.hotKeysEnabled, true);
         expect(state.enableVisibilityHotKey, true);
         expect(state.enableAutoHideHotKey, true);

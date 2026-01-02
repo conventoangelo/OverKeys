@@ -12,7 +12,6 @@ class AppState {
   final bool ignoreMouseEvents;
   final bool forceHide;
   final bool autoHideBeforeForceHide;
-  final bool autoHideBeforeMove;
 
   // HotKey settings
   final bool hotKeysEnabled;
@@ -42,7 +41,6 @@ class AppState {
     this.ignoreMouseEvents = true,
     this.forceHide = false,
     this.autoHideBeforeForceHide = false,
-    this.autoHideBeforeMove = false,
     this.hotKeysEnabled = true,
     HotKey? visibilityHotKey,
     HotKey? autoHideHotKey,
@@ -90,7 +88,6 @@ class AppState {
     bool? ignoreMouseEvents,
     bool? forceHide,
     bool? autoHideBeforeForceHide,
-    bool? autoHideBeforeMove,
     bool? hotKeysEnabled,
     HotKey? visibilityHotKey,
     HotKey? autoHideHotKey,
@@ -115,7 +112,6 @@ class AppState {
       forceHide: forceHide ?? this.forceHide,
       autoHideBeforeForceHide:
           autoHideBeforeForceHide ?? this.autoHideBeforeForceHide,
-      autoHideBeforeMove: autoHideBeforeMove ?? this.autoHideBeforeMove,
       hotKeysEnabled: hotKeysEnabled ?? this.hotKeysEnabled,
       visibilityHotKey: visibilityHotKey ?? this.visibilityHotKey,
       autoHideHotKey: autoHideHotKey ?? this.autoHideHotKey,
@@ -227,10 +223,6 @@ class AppStateNotifier extends _$AppStateNotifier {
 
   void updateAutoHideBeforeForceHide(bool value) {
     state = state.copyWith(autoHideBeforeForceHide: value);
-  }
-
-  void updateAutoHideBeforeMove(bool value) {
-    state = state.copyWith(autoHideBeforeMove: value);
   }
 
   void updateHotKeysEnabled(bool value) {

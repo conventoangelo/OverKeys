@@ -52,7 +52,6 @@ class KeyEventService {
     void Function() fadeIn,
     void Function() resetAutoHideTimer,
     void Function() cancelAutoHideTimer,
-    void Function(bool) updateAutoHideBasedOnLayer,
   ) {
     try {
       if (message is! List) return;
@@ -147,8 +146,7 @@ class KeyEventService {
           appNotifier,
           prefsState,
           fadeIn,
-          cancelAutoHideTimer,
-          updateAutoHideBasedOnLayer,
+          cancelAutoHideTimer
         );
       }
 
@@ -198,7 +196,6 @@ class KeyEventService {
     PreferencesState prefsState,
     void Function() fadeIn,
     void Function() cancelAutoHideTimer,
-    void Function(bool) updateAutoHideBasedOnLayer,
   ) {
     final userLayers = prefsState.userLayers;
     final activeLayer = userLayers.where((l) => l.trigger == key);
@@ -228,8 +225,6 @@ class KeyEventService {
         );
       }
 
-      updateAutoHideBasedOnLayer(ref.read(keyboardProvider).layout.name ==
-          prefsState.defaultUserLayout?.name);
     }
   }
 
