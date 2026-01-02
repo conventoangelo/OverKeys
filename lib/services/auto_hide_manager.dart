@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:overkeys/providers/app_state_provider.dart';
+import 'package:overkeys/providers/keyboard_provider.dart';
 import 'package:overkeys/providers/preferences_provider.dart';
 
 /// Service for managing auto-hide functionality and overlay status messages
@@ -33,10 +34,20 @@ class AutoHideManager {
 
   void handleAutoHide(WidgetRef ref) {
     final prefsState = ref.read(preferencesProvider);
+    final keyboardState = ref.read(keyboardProvider);
     final appState = ref.read(appStateProvider);
-    if (prefsState.autoHideEnabled && appState.isWindowVisible) {
-      fadeOut(ref);
+
+    if (!prefsState.autoHideEnabled || !appState.isWindowVisible) {
+      return;
     }
+
+    // Don't auto-hide if we're on a non-default layer
+    final isOnDefaultLayer = _isOnDefaultLayer(keyboardState, prefsState);
+    if (!isOnDefaultLayer) {
+      return;
+    }
+
+    fadeOut(ref);
   }
 
   void fadeOut(WidgetRef ref) {
@@ -80,6 +91,31 @@ class AutoHideManager {
 
   void stopMouseTracking() {
     _mouseCheckTimer?.cancel();
+  }
+
+  /// Checks if the current layer is the default layer
+  bool _isOnDefaultLayer(
+    KeyboardState keyboardState,
+    PreferencesState prefsState,
+  ) {
+    // If user layout is enabled
+    if (prefsState.useUserLayout && prefsState.defaultUserLayout != null) {
+      return keyboardState.layout.name == prefsState.defaultUserLayout!.name;
+    }
+
+    // If Kanata is enabled and a default user layout is set
+    if (prefsState.kanataEnabled && prefsState.defaultUserLayout != null) {
+      return keyboardState.layout.name == prefsState.defaultUserLayout!.name;
+    }
+
+    // If no user layout, check against initial layout
+    if (prefsState.initialKeyboardLayout != null) {
+      return keyboardState.layout.name ==
+          prefsState.initialKeyboardLayout!.name;
+    }
+
+    // Default to true if no specific layout is configured
+    return true;
   }
 
   void dispose() {
