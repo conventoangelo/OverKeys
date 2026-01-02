@@ -1,5 +1,40 @@
 # Changelog
 
+## [0.3.3](https://github.com/conventoangelo/OverKeys/compare/v0.3.2...v0.3.3) (2026-01-02)
+
+
+### ✨ Features
+
+* add hide on default layer functionality ([#141](https://github.com/conventoangelo/OverKeys/issues/141)) ([55cb207](https://github.com/conventoangelo/OverKeys/commit/55cb207318fd976792bca2b42041fa32df0b6c23))
+* add ignored keys functionality to prevent overlay triggering ([135edb3](https://github.com/conventoangelo/OverKeys/commit/135edb3e5b0db507e27e985960b0fb209a87e636))
+* add support for additional key codes ([#151](https://github.com/conventoangelo/OverKeys/issues/151)) ([1935ff1](https://github.com/conventoangelo/OverKeys/commit/1935ff110d16c972e7d795c83ba60c548b5b20b6))
+* add support for custom aliases ([#150](https://github.com/conventoangelo/OverKeys/issues/150)) ([ca4f1ad](https://github.com/conventoangelo/OverKeys/commit/ca4f1adc344609fba91ca14cd0a59c2cdd7f603b))
+
+
+### 🐛 Bug Fixes
+
+* retest/revert advanced settings functionality after refactor ([#149](https://github.com/conventoangelo/OverKeys/issues/149)) ([c860aad](https://github.com/conventoangelo/OverKeys/commit/c860aad070728e03278e1bd9a038cf12380d8e5d))
+* set defaultUserLayout when using kanata ([216eb8a](https://github.com/conventoangelo/OverKeys/commit/216eb8aa24bb82cc7b5d340875cd82e2a77849bf))
+* update auto-hide behavior based on user layout (non-kanata) ([186362a](https://github.com/conventoangelo/OverKeys/commit/186362a3bc5058a469a96ecddde7de46ea5c6996))
+
+
+### 📚 Documentation
+
+* add locales feature in README.md ([728a4da](https://github.com/conventoangelo/OverKeys/commit/728a4dacfca7197eaef1064c9b2daf3eebb3d161))
+* update locales documentation with French AZERTY key mappings ([dd8b19f](https://github.com/conventoangelo/OverKeys/commit/dd8b19ff1fa3bc1494e55cceb123ff506557bf4e))
+* upload `overkeys_cover.png` ([605afa9](https://github.com/conventoangelo/OverKeys/commit/605afa9c2c76434c3f1e508a3584b03c6fbcb776))
+
+
+### ⚙️ CI/CD Pipeline
+
+* revamp cicd with nightly builds and approval gates ([8927470](https://github.com/conventoangelo/OverKeys/commit/8927470906c5dbb7410a289a1d85b150fc723119))
+* update permissions in build-release.yml and improve comment clarity in build_windows.ps1 ([97e3824](https://github.com/conventoangelo/OverKeys/commit/97e3824536f1f30e6af858c7391762cbccc53f1c))
+
+
+### 🔨 Refactoring
+
+* use riverpod for state management ([#147](https://github.com/conventoangelo/OverKeys/issues/147)) ([f800916](https://github.com/conventoangelo/OverKeys/commit/f80091640e5616018bd7a7d882aefcb559ff9063))
+
 ## [0.3.2](https://github.com/conventoangelo/OverKeys/compare/v0.3.1...v0.3.2) (2025-09-29)
 
 
