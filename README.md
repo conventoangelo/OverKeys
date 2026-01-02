@@ -6,6 +6,22 @@
   <img src="assets/images/OK.png" alt="OverKeys Logo" width="160" height="160">
   <h1 align="center">OverKeys</h1>
   
+  <!-- BADGES -->
+  <p align="center">
+    <a href="https://github.com/conventoangelo/OverKeys/releases/latest">
+      <img src="https://img.shields.io/github/v/release/conventoangelo/OverKeys?label=Release&style=for-the-badge&logo=github&logoColor=FAFBFE&labelColor=10151D&color=A87FFB" alt="Release (Inverted)">
+    </a>
+    <a href="https://github.com/conventoangelo/OverKeys/releases">
+      <img src="https://img.shields.io/github/downloads/conventoangelo/OverKeys/total?label=Downloads&style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNGQUZCRkUiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1kb3dubG9hZC1pY29uIGx1Y2lkZS1kb3dubG9hZCI+PHBhdGggZD0iTTEyIDE1VjMiLz48cGF0aCBkPSJNMjEgMTV2NGEyIDIgMCAwIDEtMiAySDVhMiAyIDAgMCAxLTItMnYtNCIvPjxwYXRoIGQ9Im03IDEwIDUgNSA1LTUiLz48L3N2Zz4=&logoColor=FAFBFE&labelColor=10151D&color=A87FFB" alt="Downloads (Inverted)">
+    </a>
+    <a href="https://github.com/conventoangelo/OverKeys/blob/main/LICENSE">
+      <img src="https://img.shields.io/github/license/conventoangelo/OverKeys?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNGQUZCRkUiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1jb3B5cmlnaHQtaWNvbiBsdWNpZGUtY29weXJpZ2h0Ij48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIxMCIvPjxwYXRoIGQ9Ik0xNC44MyAxNC44M2E0IDQgMCAxIDEgMC01LjY2Ii8+PC9zdmc+&logoColor=FAFBFE&labelColor=10151D&color=A87FFB" alt="License (Inverted)">
+    </a>
+    <a href="https://github.com/conventoangelo/OverKeys/stargazers">
+      <img src="https://img.shields.io/github/stars/conventoangelo/OverKeys?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSIjRkFGQkZFIiBzdHJva2U9IiNGQUZCRkUiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1zdGFyLWljb24gbHVjaWRlLXN0YXIiPjxwYXRoIGQ9Ik0xMS41MjUgMi4yOTVhLjUzLjUzIDAgMCAxIC45NSAwbDIuMzEgNC42NzlhMi4xMjMgMi4xMjMgMCAwIDAgMS41OTUgMS4xNmw1LjE2Ni43NTZhLjUzLjUzIDAgMCAxIC4yOTQuOTA0bC0zLjczNiAzLjYzOGEyLjEyMyAyLjEyMyAwIDAgMC0uNjExIDEuODc4bC44ODIgNS4xNGEuNTMuNTMgMCAwIDEtLjc3MS41NmwtNC42MTgtMi40MjhhMi4xMjIgMi4xMjIgMCAwIDAtMS45NzMgMEw2LjM5NiAyMS4wMWEuNTMuNTMgMCAwIDEtLjc3LS41NmwuODgxLTUuMTM5YTIuMTIyIDIuMTIyIDAgMCAwLS42MTEtMS44NzlMMi4xNiA5Ljc5NWEuNTMuNTMgMCAwIDEgLjI5NC0uOTA2bDUuMTY1LS43NTVhMi4xMjIgMi4xMjIgMCAwIDAgMS41OTctMS4xNnoiLz48L3N2Zz4=&logoColor=FAFBFE&labelColor=10151D&color=A87FFB" alt="GitHub stars (Inverted)">
+    </a>
+  </p>
+
   <h3 align="center">An open-source keyboard layout visualizer for Windows</h3>
 
   <p align="center">
@@ -50,6 +66,12 @@ This project was initially developed to help with the creator's system-wide prac
 ### Samples
 
 <table>
+    <tr>
+      <td colspan="2" style="text-align:center;">
+        <img src="assets/images/overkeys_cover.png" alt="overkeys cover" style="max-width:100%;height:auto;">
+        <p align="center">OverKeys Default</p>
+      </td>
+    </tr>
   <tr>
     <td>
       <img src="assets/images/aurora1.png" alt="aurora dark background">
