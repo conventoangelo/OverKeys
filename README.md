@@ -271,6 +271,18 @@ Email: <convento.angelo@gmail.com>
 
 Project Link: [https://github.com/conventoangelo/OverKeys](https://github.com/conventoangelo/OverKeys)
 
+## Supporting
+
+If you'd like to support the development of OverKeys, I accept contributions through Ko-fi and BuyMeACoffee. Thank you — your support helps fund development and hosting costs.
+
+<div>
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/H2H6CTQ6A)
+</div>
+
+<div>
+    <a href="https://www.buymeacoffee.com/conventoangelo">
+        <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 41px !important;width: 174px !important;" >
+    </a>
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Acknowledgments

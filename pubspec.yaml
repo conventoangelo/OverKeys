@@ -64,6 +64,8 @@ flutter:
     - assets/images/app_icon.png
     - assets/images/github-mark.png
     - assets/images/learn_mode.png
+    - assets/images/kofi_blue.png
+    - assets/images/bmac_yellow.png
 
 flutter_launcher_icons:
   image_path: "assets/images/OK.png"

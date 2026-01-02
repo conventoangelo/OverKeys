@@ -61,6 +61,35 @@ class AboutTab extends StatelessWidget {
                 ),
               ),
             ),
+            const SizedBox(height: 12),
+            ElevatedButton(
+              onPressed: () async {
+                await launchUrl(Uri.parse('https://ko-fi.com/H2H6CTQ6A'),
+                    mode: LaunchMode.externalApplication);
+              },
+              style: ElevatedButton.styleFrom(
+                maximumSize: const Size(double.infinity, 50),
+                padding: EdgeInsets.zero,
+              ),
+              child: Image.asset(
+                'assets/images/kofi_blue.png',
+              ),
+            ),
+            const SizedBox(height: 12),
+            ElevatedButton(
+              onPressed: () async {
+                await launchUrl(
+                    Uri.parse('https://www.buymeacoffee.com/conventoangelo'),
+                    mode: LaunchMode.externalApplication);
+              },
+              style: ElevatedButton.styleFrom(
+                maximumSize: const Size(double.infinity, 50),
+                padding: EdgeInsets.zero,
+              ),
+              child: Image.asset(
+                'assets/images/bmac_yellow.png',
+              ),
+            ),
           ],
         ),
       ),
