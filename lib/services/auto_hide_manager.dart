@@ -25,6 +25,15 @@ class AutoHideManager {
     final prefsState = ref.read(preferencesProvider);
     if (!prefsState.autoHideEnabled) return;
 
+    // Check if we're on the default layer
+    final isOnDefault = _isOnDefaultLayer(ref);
+
+    if (!isOnDefault) {
+      // If not on default layer, cancel any existing timer
+      _autoHideTimer?.cancel();
+      return;
+    }
+
     _autoHideTimer?.cancel();
     _autoHideTimer = Timer(
       Duration(milliseconds: (prefsState.autoHideDuration * 1000).round()),
@@ -32,22 +41,32 @@ class AutoHideManager {
     );
   }
 
+  /// Checks if the current layer is the default layer
+  bool _isOnDefaultLayer(WidgetRef ref) {
+    final keyboardState = ref.read(keyboardProvider);
+    final prefsState = ref.read(preferencesProvider);
+
+    // If user layout is enabled
+    if (prefsState.useUserLayout && prefsState.defaultUserLayout != null) {
+      return keyboardState.layout.name == prefsState.defaultUserLayout!.name;
+    }
+
+    // If no user layout, check against initial layout
+    if (prefsState.initialKeyboardLayout != null) {
+      return keyboardState.layout.name ==
+          prefsState.initialKeyboardLayout!.name;
+    }
+
+    // Default to true if no specific layout is configured
+    return true;
+  }
+
   void handleAutoHide(WidgetRef ref) {
     final prefsState = ref.read(preferencesProvider);
-    final keyboardState = ref.read(keyboardProvider);
     final appState = ref.read(appStateProvider);
-
-    if (!prefsState.autoHideEnabled || !appState.isWindowVisible) {
-      return;
+    if (prefsState.autoHideEnabled && appState.isWindowVisible) {
+      fadeOut(ref);
     }
-
-    // Don't auto-hide if we're on a non-default layer
-    final isOnDefaultLayer = _isOnDefaultLayer(keyboardState, prefsState);
-    if (!isOnDefaultLayer) {
-      return;
-    }
-
-    fadeOut(ref);
   }
 
   void fadeOut(WidgetRef ref) {
@@ -91,31 +110,6 @@ class AutoHideManager {
 
   void stopMouseTracking() {
     _mouseCheckTimer?.cancel();
-  }
-
-  /// Checks if the current layer is the default layer
-  bool _isOnDefaultLayer(
-    KeyboardState keyboardState,
-    PreferencesState prefsState,
-  ) {
-    // If user layout is enabled
-    if (prefsState.useUserLayout && prefsState.defaultUserLayout != null) {
-      return keyboardState.layout.name == prefsState.defaultUserLayout!.name;
-    }
-
-    // If Kanata is enabled and a default user layout is set
-    if (prefsState.kanataEnabled && prefsState.defaultUserLayout != null) {
-      return keyboardState.layout.name == prefsState.defaultUserLayout!.name;
-    }
-
-    // If no user layout, check against initial layout
-    if (prefsState.initialKeyboardLayout != null) {
-      return keyboardState.layout.name ==
-          prefsState.initialKeyboardLayout!.name;
-    }
-
-    // Default to true if no specific layout is configured
-    return true;
   }
 
   void dispose() {
