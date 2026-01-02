@@ -31,7 +31,7 @@ class AboutTab extends StatelessWidget {
                     fontSize: 16,
                     fontWeight: FontWeight.w600)),
             const SizedBox(height: 10),
-            Text('© 2024 Angelo Convento',
+            Text('© ${DateTime.now().year} Angelo Convento',
                 style: TextStyle(
                     color: colorScheme.onSurface.withAlpha(153),
                     fontSize: 15,
