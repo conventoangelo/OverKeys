@@ -137,17 +137,16 @@ class KeyEventService {
       // Handle user layer switching
       if (prefsState.useUserLayout && prefsState.advancedSettingsEnabled) {
         _handleUserLayerSwitching(
-          key,
-          isPressed,
-          ref,
-          keyboardState,
-          keyboardNotifier,
-          appState,
-          appNotifier,
-          prefsState,
-          fadeIn,
-          cancelAutoHideTimer
-        );
+            key,
+            isPressed,
+            ref,
+            keyboardState,
+            keyboardNotifier,
+            appState,
+            appNotifier,
+            prefsState,
+            fadeIn,
+            cancelAutoHideTimer);
       }
 
       // Re-read keyboard state as it might have changed during layer switching
@@ -224,7 +223,6 @@ class KeyEventService {
           cancelAutoHideTimer,
         );
       }
-
     }
   }
 

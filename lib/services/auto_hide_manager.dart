@@ -48,6 +48,11 @@ class AutoHideManager {
       return keyboardState.layout.name == prefsState.defaultUserLayout!.name;
     }
 
+    // If kanata is enabled
+    if (prefsState.kanataEnabled && prefsState.defaultUserLayout != null) {
+      return keyboardState.layout.name == prefsState.defaultUserLayout!.name;
+    }
+
     // If no user layout, check against initial layout
     if (prefsState.initialKeyboardLayout != null) {
       return keyboardState.layout.name ==

@@ -41,6 +41,7 @@ class ConfigurationLoader {
         await loadCustomFont(ref);
       }
       if (prefsState.kanataEnabled) {
+        await loadUserLayout(ref);
         await useKanata(ref);
       }
     }
@@ -58,14 +59,13 @@ class ConfigurationLoader {
 
   Future<void> loadUserLayout(WidgetRef ref) async {
     final prefsState = ref.read(preferencesProvider);
-    if (!prefsState.useUserLayout) return;
 
     final keyboardNotifier = ref.read(keyboardProvider.notifier);
     final prefsNotifier = ref.read(preferencesProvider.notifier);
     final userLayout = await _configService.getUserLayout();
 
     if (userLayout != null) {
-      prefsNotifier.updateDefaultUserLayout(userLayout);
+      prefsNotifier.updateDefaultUserLayout(userLayout.name);
 
       // Don't update initialLayout here - it should preserve the previous layout
       // so we can restore it when user layout is toggled off
@@ -94,7 +94,7 @@ class ConfigurationLoader {
     final altLayout = await _configService.getAltLayout();
 
     if (altLayout != null) {
-      prefsNotifier.updateAltLayout(altLayout);
+      prefsNotifier.updateAltLayout(altLayout.name);
       keyboardNotifier.updateShowAltLayout(true);
     } else {
       prefsNotifier.updateAltLayout(null);

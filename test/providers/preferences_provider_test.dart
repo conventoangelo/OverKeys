@@ -46,9 +46,9 @@ void main() {
 
       test('initializes with layouts', () {
         final state = PreferencesState(
-          initialKeyboardLayout: qwerty,
-          defaultUserLayout: colemak,
-          altLayout: dvorak,
+          initialKeyboardLayoutName: qwerty.name,
+          defaultUserLayoutName: colemak.name,
+          altLayoutName: dvorak.name,
         );
 
         expect(state.initialKeyboardLayout, qwerty);
@@ -109,7 +109,7 @@ void main() {
         final updated = original.copyWith(
           useUserLayout: true,
           showAltLayout: true,
-          defaultUserLayout: colemak,
+          defaultUserLayoutName: colemak.name,
         );
 
         expect(updated.useUserLayout, true);

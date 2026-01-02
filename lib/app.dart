@@ -93,7 +93,7 @@ class _MainAppState extends ConsumerState<MainApp>
       final appState = ref.read(appStateProvider);
 
       keyboardNotifier.updateLayout(newLayout);
-
+      
       // Handle hide on default layer functionality
       if (isDefaultUserLayout &&
           prefsState.hideOnDefaultLayer &&
