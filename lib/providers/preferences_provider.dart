@@ -23,6 +23,22 @@ class PreferencesState {
   final bool showAltLayout;
   final bool use6ColLayout;
 
+  /// Checks if the current layer is the default layer
+  bool isOnDefaultLayer(KeyboardLayout currentLayout) {
+    // If user layout or kanata is enabled with a default layout configured
+    if ((useUserLayout || kanataEnabled) && defaultUserLayout != null) {
+      return currentLayout.name == defaultUserLayout!.name;
+    }
+
+    // If no user layout, check against initial layout
+    if (initialKeyboardLayout != null) {
+      return currentLayout.name == initialKeyboardLayout!.name;
+    }
+
+    // Default to true if no specific layout is configured
+    return true;
+  }
+  
   // Getters to retrieve KeyboardLayout objects from names
   KeyboardLayout? get initialKeyboardLayout {
     if (initialKeyboardLayoutName == null) return null;

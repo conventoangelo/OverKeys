@@ -362,19 +362,7 @@ class KeyEventService {
     KeyboardState keyboardState,
     PreferencesState prefsState,
   ) {
-    // If user layout is enabled
-    if (prefsState.useUserLayout && prefsState.defaultUserLayout != null) {
-      return keyboardState.layout.name == prefsState.defaultUserLayout!.name;
-    }
-
-    // If no user layout, check against initial layout
-    if (prefsState.initialKeyboardLayout != null) {
-      return keyboardState.layout.name ==
-          prefsState.initialKeyboardLayout!.name;
-    }
-
-    // Default to true if no specific layout is configured
-    return true;
+    return prefsState.isOnDefaultLayer(keyboardState.layout);
   }
 
   /// Clears all active triggers

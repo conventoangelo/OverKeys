@@ -42,20 +42,7 @@ class AutoHideManager {
   bool _isOnDefaultLayer(WidgetRef ref) {
     final keyboardState = ref.read(keyboardProvider);
     final prefsState = ref.read(preferencesProvider);
-
-    // If user layout or kanata is enabled with a default layout configured
-    if ((prefsState.useUserLayout || prefsState.kanataEnabled) && prefsState.defaultUserLayout != null) {
-      return keyboardState.layout.name == prefsState.defaultUserLayout!.name;
-    }
-
-    // If no user layout, check against initial layout
-    if (prefsState.initialKeyboardLayout != null) {
-      return keyboardState.layout.name ==
-          prefsState.initialKeyboardLayout!.name;
-    }
-
-    // Default to true if no specific layout is configured
-    return true;
+    return prefsState.isOnDefaultLayer(keyboardState.layout);
   }
 
   void handleAutoHide(WidgetRef ref) {
