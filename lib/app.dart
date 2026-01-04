@@ -94,7 +94,7 @@ class _MainAppState extends ConsumerState<MainApp>
 
       keyboardNotifier.updateLayout(newLayout);
       _autoHideManager.resetAutoHideTimer(ref);
-      
+
       // Handle hide on default layer functionality
       if (isDefaultUserLayout &&
           prefsState.hideOnDefaultLayer &&
@@ -119,7 +119,6 @@ class _MainAppState extends ConsumerState<MainApp>
       }
     };
   }
-
 
   @override
   void dispose() {
@@ -189,13 +188,8 @@ class _MainAppState extends ConsumerState<MainApp>
   void _setupKeyListener() {
     _keyEventService.setupKeyListener(
       () => ReceivePort(),
-      (message) => _keyEventService.handleKeyEvent(
-        message,
-        ref,
-        _fadeIn,
-        _resetAutoHideTimer,
-        () => _autoHideManager.cancelAutoHideTimer()
-      ),
+      (message) => _keyEventService.handleKeyEvent(message, ref, _fadeIn,
+          _resetAutoHideTimer, () => _autoHideManager.cancelAutoHideTimer()),
     );
   }
 
