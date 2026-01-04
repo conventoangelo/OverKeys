@@ -440,6 +440,7 @@ class MethodCallHandler {
           // so we can restore it when toggling off
           if (!keyboardState.kanataEnabled) {
             keyboardNotifier.updateInitialLayout(keyboardState.layout);
+            kanataService.disconnect();
           }
           prefsNotifier.updateUseUserLayout(useUserLayout);
           loadUserLayout();

@@ -38,7 +38,7 @@ class PreferencesState {
     // Default to true if no specific layout is configured
     return true;
   }
-  
+
   // Getters to retrieve KeyboardLayout objects from names
   KeyboardLayout? get initialKeyboardLayout {
     if (initialKeyboardLayoutName == null) return null;
