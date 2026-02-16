@@ -72,6 +72,14 @@ class PreferencesState {
     try {
       return userLayers.firstWhere((l) => l.name == altLayoutName);
     } catch (_) {
+      // Also check in all userLayouts from config, not just layers with triggers
+      if (userConfig?.userLayouts != null) {
+        try {
+          return userConfig!.userLayouts!
+              .firstWhere((l) => l.name == altLayoutName);
+        } catch (_) {}
+      }
+
       return availableLayouts.firstWhere(
         (l) => l.name == altLayoutName,
         orElse: () => qwerty,
