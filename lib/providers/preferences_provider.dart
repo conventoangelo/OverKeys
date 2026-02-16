@@ -39,53 +39,25 @@ class PreferencesState {
     return true;
   }
 
+  // Helper method to find a layout by name across all sources
+  KeyboardLayout? _findLayout(String? layoutName) {
+    if (layoutName == null) return null;
+
+    return userLayers.where((l) => l.name == layoutName).firstOrNull ??
+        userConfig?.userLayouts
+            ?.where((l) => l.name == layoutName)
+            .firstOrNull ??
+        availableLayouts.where((l) => l.name == layoutName).firstOrNull ??
+        qwerty;
+  }
+
   // Getters to retrieve KeyboardLayout objects from names
-  KeyboardLayout? get initialKeyboardLayout {
-    if (initialKeyboardLayoutName == null) return null;
+  KeyboardLayout? get initialKeyboardLayout =>
+      _findLayout(initialKeyboardLayoutName);
 
-    try {
-      return userLayers.firstWhere((l) => l.name == initialKeyboardLayoutName);
-    } catch (_) {
-      return availableLayouts.firstWhere(
-        (l) => l.name == initialKeyboardLayoutName,
-        orElse: () => qwerty,
-      );
-    }
-  }
+  KeyboardLayout? get defaultUserLayout => _findLayout(defaultUserLayoutName);
 
-  KeyboardLayout? get defaultUserLayout {
-    if (defaultUserLayoutName == null) return null;
-
-    try {
-      return userLayers.firstWhere((l) => l.name == defaultUserLayoutName);
-    } catch (_) {
-      return availableLayouts.firstWhere(
-        (l) => l.name == defaultUserLayoutName,
-        orElse: () => qwerty,
-      );
-    }
-  }
-
-  KeyboardLayout? get altLayout {
-    if (altLayoutName == null) return null;
-
-    try {
-      return userLayers.firstWhere((l) => l.name == altLayoutName);
-    } catch (_) {
-      // Also check in all userLayouts from config, not just layers with triggers
-      if (userConfig?.userLayouts != null) {
-        try {
-          return userConfig!.userLayouts!
-              .firstWhere((l) => l.name == altLayoutName);
-        } catch (_) {}
-      }
-
-      return availableLayouts.firstWhere(
-        (l) => l.name == altLayoutName,
-        orElse: () => qwerty,
-      );
-    }
-  }
+  KeyboardLayout? get altLayout => _findLayout(altLayoutName);
 
   // Custom font settings
   final bool customFontEnabled;
