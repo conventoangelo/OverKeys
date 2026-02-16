@@ -47,13 +47,12 @@ class PreferencesState {
         userConfig?.userLayouts
             ?.where((l) => l.name == layoutName)
             .firstOrNull ??
-        availableLayouts.where((l) => l.name == layoutName).firstOrNull ??
-        qwerty;
+        availableLayouts.where((l) => l.name == layoutName).firstOrNull;
   }
 
   // Getters to retrieve KeyboardLayout objects from names
   KeyboardLayout? get initialKeyboardLayout =>
-      _findLayout(initialKeyboardLayoutName);
+      _findLayout(initialKeyboardLayoutName) ?? qwerty;
 
   KeyboardLayout? get defaultUserLayout => _findLayout(defaultUserLayoutName);
 
