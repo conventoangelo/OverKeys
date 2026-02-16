@@ -25,10 +25,8 @@ class VisibilityService {
             prefsState.defaultUserLayout!.name.toUpperCase();
       }
       // If no default user layout is set, check against initial layout
-      if (prefsState.initialKeyboardLayout != null) {
-        return keyboardState.layout.name.toUpperCase() ==
-            prefsState.initialKeyboardLayout!.name.toUpperCase();
-      }
+      return keyboardState.layout.name.toUpperCase() ==
+          prefsState.initialKeyboardLayout.name.toUpperCase();
     }
 
     // Default case: if we can't determine, don't hide

@@ -31,12 +31,7 @@ class PreferencesState {
     }
 
     // If no user layout, check against initial layout
-    if (initialKeyboardLayout != null) {
-      return currentLayout.name == initialKeyboardLayout!.name;
-    }
-
-    // Default to true if no specific layout is configured
-    return true;
+    return currentLayout.name == initialKeyboardLayout.name;
   }
 
   // Helper method to find a layout by name across all sources
@@ -51,7 +46,7 @@ class PreferencesState {
   }
 
   // Getters to retrieve KeyboardLayout objects from names
-  KeyboardLayout? get initialKeyboardLayout =>
+  KeyboardLayout get initialKeyboardLayout =>
       _findLayout(initialKeyboardLayoutName) ?? qwerty;
 
   KeyboardLayout? get defaultUserLayout => _findLayout(defaultUserLayoutName);
