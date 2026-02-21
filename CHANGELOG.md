@@ -1,5 +1,49 @@
 # Changelog
 
+## [0.3.4](https://github.com/conventoangelo/OverKeys/compare/v0.3.3...v0.3.4) (2026-02-21)
+
+
+### ✨ Features
+
+* update about tab to include current year and support ([#157](https://github.com/conventoangelo/OverKeys/issues/157)) ([5febaf4](https://github.com/conventoangelo/OverKeys/commit/5febaf428d62c6aa2d3e070d2a674abe3ab6914e))
+
+
+### 🐛 Bug Fixes
+
+* add ذ to Arabic keyboard layout ([#171](https://github.com/conventoangelo/OverKeys/issues/171)) ([2c60ed3](https://github.com/conventoangelo/OverKeys/commit/2c60ed35ccc959426f21b6814cceb5b490eebc7c))
+* close preferences before exiting application ([e1b7074](https://github.com/conventoangelo/OverKeys/commit/e1b7074c076f43e596a936219a8076f6e286dc88))
+* close preferences window on escape key press ([e2c9224](https://github.com/conventoangelo/OverKeys/commit/e2c92243287f8b918a31afc70705896c2e6ff829))
+* focus previously opened preferences window on hotkey trigger ([314b0b6](https://github.com/conventoangelo/OverKeys/commit/314b0b63602b4284a821a8fca36b00d8e8aec136))
+* improve auto-hide on non-default keyboard layers ([#158](https://github.com/conventoangelo/OverKeys/issues/158)) ([df734da](https://github.com/conventoangelo/OverKeys/commit/df734da63949c019de0126cdcbf5dc5690694341))
+* load user layers when use user layout is toggled ([6c34925](https://github.com/conventoangelo/OverKeys/commit/6c349253b62856d5ad4b61dd24f484556858a16d))
+* update font weight handling to use value instead of index ([6a69143](https://github.com/conventoangelo/OverKeys/commit/6a69143e96f5353ca97e5da6c8e9a4aa7c14979e))
+
+
+### 📚 Documentation
+
+* update workflow references and formatting in documentation ([79c7849](https://github.com/conventoangelo/OverKeys/commit/79c78490494df1cb308eaf0835a07a9d38e1ac4d))
+
+
+### ⚙️ CI/CD Pipeline
+
+* add changelog fetching from release-please PR for nightly builds ([10bb352](https://github.com/conventoangelo/OverKeys/commit/10bb3528106236035835c6d7eb14c2960207090d))
+* add manual test build workflow with version input for Windows ([df48884](https://github.com/conventoangelo/OverKeys/commit/df488846d266d5cdc90ace73fe7a0adee17106f9))
+* add manual workflow dispatch for testing of nightly-build ([cd27a1b](https://github.com/conventoangelo/OverKeys/commit/cd27a1b9c82f263201a138f6d5146b3c5515753c))
+* add release pipeline workflow for building and testing Windows installers ([29fa820](https://github.com/conventoangelo/OverKeys/commit/29fa8201a5f979cb6a7a13d81cfed8a46b5b04c1))
+* add verification for build output existence in Windows build script ([cef21b7](https://github.com/conventoangelo/OverKeys/commit/cef21b7d8798d55a971e30ba03319bb52799574c))
+* correct label name from 'approved-for-release' to 'approve-for-release' in release approval workflow ([a245b83](https://github.com/conventoangelo/OverKeys/commit/a245b830a6d5808c95399182dce3ef3a654df8b2))
+* correct powershell escape error ([2775417](https://github.com/conventoangelo/OverKeys/commit/2775417a0925147d58196d71920e887c9f665303))
+* correcting trigger on release-please PR without checking author ([bf7a7f6](https://github.com/conventoangelo/OverKeys/commit/bf7a7f61f42aed5db6055a6361164d83d0fe2e4b))
+* enhance release approval workflow with additional diagnostics and synchronization support ([6c54607](https://github.com/conventoangelo/OverKeys/commit/6c546072044975f1eea98d4ce63c927e2ecca44d))
+* fix changelog fetching and parsing ([8f24e70](https://github.com/conventoangelo/OverKeys/commit/8f24e70fc8013ba77bdc68e0d87c40ae52b0249f))
+* improve changelog handling by using EOF delimiter for multiline content ([f0546e9](https://github.com/conventoangelo/OverKeys/commit/f0546e94a33767f10f24348f3a762c7fb8c9ac7d))
+* improve ZIP integrity verification in release pipeline ([9726946](https://github.com/conventoangelo/OverKeys/commit/972694605edbbe971368733e89d574e0fa5052ef))
+* remove debug output for changelog extraction in nightly build ([7f8bcde](https://github.com/conventoangelo/OverKeys/commit/7f8bcde4266d9507ba0fc120e4e6f0449d006266))
+* remove installer integrity tests from nightly and release pipelines ([3960e52](https://github.com/conventoangelo/OverKeys/commit/3960e526c8d4ddc578f6928400576a5444ed6b48))
+* update author for fetching release-please PR changelog ([fb44c27](https://github.com/conventoangelo/OverKeys/commit/fb44c275b150aa6273fcc7757f96308ce29cc324))
+* update nightly build to run once per midnight ([c1d5030](https://github.com/conventoangelo/OverKeys/commit/c1d503057538f7fff236bfddf74c35c7f9425552))
+* update nightly build versioning and installer output to reflect CI version ([e56ea8d](https://github.com/conventoangelo/OverKeys/commit/e56ea8d12136ee64f597316a5a3c2c00cc6ab804))
+
 ## [0.3.3](https://github.com/conventoangelo/OverKeys/compare/v0.3.2...v0.3.3) (2026-01-02)
 
 
