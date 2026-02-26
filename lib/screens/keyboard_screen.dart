@@ -305,12 +305,12 @@ class KeyboardScreen extends ConsumerWidget {
 
     // Tactile Markers
     bool shouldShowMarker = _shouldShowTactileMarker(
-      rowIndex, 
-      keyIndex, 
+      rowIndex,
+      keyIndex,
       keyboardState,
       prefsState,
     );
-    
+
     if (shouldShowMarker) {
       keyWidget = Stack(
         alignment:
@@ -525,22 +525,16 @@ class KeyboardScreen extends ConsumerWidget {
     }
   }
 
-  // Uses custom tactileMarkers from layout if available, otherwise defaults to row 2, columns 3 and 6
+  // For wide mod layouts, tactile markers appear at [2,3] and [2,7], otherwise at [2,3] and [2,6]
   bool _shouldShowTactileMarker(
     int rowIndex,
     int keyIndex,
     KeyboardState keyboardState,
     PreferencesState prefsState,
   ) {
-    final tactileMarkers = keyboardState.layout.tactileMarkers;
-    
-    if (tactileMarkers != null) {
-      // Use custom marker positions from layout
-      return (rowIndex == tactileMarkers.left[0] && keyIndex == tactileMarkers.left[1]) ||
-             (rowIndex == tactileMarkers.right[0] && keyIndex == tactileMarkers.right[1]);
-    } else {
-      // Use default positions: row 2, columns 3 and 6
-      return rowIndex == 2 && (keyIndex == 3 || keyIndex == 6);
-    }
+    final isWide = keyboardState.layout.wide ?? false;
+    final rightColumn = isWide ? 7 : 6;
+
+    return rowIndex == 2 && (keyIndex == 3 || keyIndex == rightColumn);
   }
 }

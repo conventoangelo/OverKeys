@@ -37,9 +37,7 @@ class UserConfig {
           trigger: userLayout['trigger'],
           type: userLayout['type'],
           foreign: userLayout['foreign'],
-          tactileMarkers: userLayout['tactileMarkers'] != null
-              ? TactileMarkers.fromJson(userLayout['tactileMarkers'])
-              : null,
+          wide: userLayout['wide'],
         ));
       }
     }
@@ -88,8 +86,7 @@ class UserConfig {
                   if (userLayout.trigger != null) 'trigger': userLayout.trigger,
                   if (userLayout.type != null) 'type': userLayout.type,
                   if (userLayout.foreign != null) 'foreign': userLayout.foreign,
-                  if (userLayout.tactileMarkers != null)
-                    'tactileMarkers': userLayout.tactileMarkers?.toJson(),
+                  if (userLayout.wide != null) 'wide': userLayout.wide,
                 })
             .toList()
         : [];

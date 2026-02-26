@@ -81,10 +81,7 @@
 				["X", "C", "D", "V", "Z,", "/", "K", "H", ",", "."],
 				[" "]
 			],
-			"tactileMarkers": {
-				"left": [2, 3],
-				"right": [2, 7]
-			}
+			"wide": true
 		}
 	],
 	"customShiftMappings": {
