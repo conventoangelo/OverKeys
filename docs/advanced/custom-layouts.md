@@ -92,7 +92,7 @@ You can then set this layout as your default by updating the `defaultUserLayout`
 
 ## Wide Mod Layouts
 
-By default, tactile (homerow) markers appear on the home row at columns 3 and 6 (the F and J keys in QWERTY). For layouts with wide modifications, where the right side is shifted one column to the right, you can use the `wide` property to adjust the tactile marker positions:
+By default, tactile (home row) markers appear on the home row at columns 3 and 6 (the F and J keys in QWERTY). For layouts with wide modifications, where the right side is shifted one column to the right, you can use the `wide` property to adjust the tactile marker positions:
 
 ```jsonc
 {
@@ -101,7 +101,7 @@ By default, tactile (homerow) markers appear on the home row at columns 3 and 6 
 		["`", "1", "2", "3", "4", "5", "6", "=", "7", "8", "9", "0", "-", "BSPC"],
 		["Q", "W", "F", "P", "B", "[", "J", "L", "U", "Y", ";", "'"],
 		["A", "R", "S", "T", "G", "]", "M", "N", "E", "I", "O"],
-		["X", "C", "D", "V", "Z,", "/", "K", "H", ",", "."],
+		["X", "C", "D", "V", "Z", "/", "K", "H", ",", "."],
 		[" "],
 	],
 	"wide": true
