@@ -37,7 +37,9 @@ class UserConfig {
           trigger: userLayout['trigger'],
           type: userLayout['type'],
           foreign: userLayout['foreign'],
-          tactileMarkers: userLayout['tactileMarkers'],
+          tactileMarkers: userLayout['tactileMarkers'] != null
+              ? TactileMarkers.fromJson(userLayout['tactileMarkers'])
+              : null,
         ));
       }
     }
