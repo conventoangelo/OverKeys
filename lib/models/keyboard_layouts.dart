@@ -4,13 +4,15 @@ class KeyboardLayout {
   final String? trigger;
   final String? type;
   final bool? foreign;
+  final TactileMarkers? tactileMarkers;
 
   const KeyboardLayout(
       {required this.name,
       required this.keys,
       this.trigger,
       this.type,
-      this.foreign});
+      this.foreign,
+      this.tactileMarkers});
 }
 
 const qwerty = KeyboardLayout(
@@ -288,3 +290,27 @@ final List<KeyboardLayout> availableLayouts = [
   arabic,
   russian,
 ];
+
+class TactileMarkers {
+  final List<int> left; // [row, column]
+  final List<int> right; // [row, column]
+
+  const TactileMarkers({
+    required this.left,
+    required this.right,
+  });
+
+  factory TactileMarkers.fromJson(Map<String, dynamic> json) {
+    return TactileMarkers(
+      left: List<int>.from(json['left']),
+      right: List<int>.from(json['right']),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'left': left,
+      'right': right,
+    };
+  }
+}
