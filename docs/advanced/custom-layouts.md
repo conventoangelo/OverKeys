@@ -26,23 +26,23 @@ The custom layout feature in OverKeys allows you to use your own keyboard layout
 4. Click **Open Config**
 5. In the JSON file, edit the `userLayouts` array and set the `defaultUserLayout` field:
 
-    ```json
-    {
-        "userLayouts": [
-            {
-                "name": "MyCustomLayout",
-                "keys": [
-                    ["`", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "BSPC"],
-                    ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "[", "]"],
-                    ["A", "S", "D", "F", "G", "H", "J", "K", "L", ";", "'"],
-                    ["Z", "X", "C", "V", "B", "N", "M", ",", ".", "/"],
-                    [" "]
-                ]
-            }
-        ],
-        "defaultUserLayout": "MyCustomLayout"
-    }
-    ```
+   ```json
+   {
+   	"userLayouts": [
+   		{
+   			"name": "MyCustomLayout",
+   			"keys": [
+   				["`", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "BSPC"],
+   				["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "[", "]"],
+   				["A", "S", "D", "F", "G", "H", "J", "K", "L", ";", "'"],
+   				["Z", "X", "C", "V", "B", "N", "M", ",", ".", "/"],
+   				[" "]
+   			]
+   		}
+   	],
+   	"defaultUserLayout": "MyCustomLayout"
+   }
+   ```
 
 6. Save the file
 7. Right-click the tray icon and click **Reload config** to apply changes
@@ -64,21 +64,21 @@ You can create custom layouts by adding them to the `userLayouts` section in the
 
 ```jsonc
 {
-    "name": "MyCustomLayout",
-    "keys": [
-        // Top row (required)
-        ["`", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "BSPC"],
-        // Second row
-        ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "[", "]"],
-        // Third row
-        ["A", "S", "D", "F", "G", "H", "J", "K", "L", ";", "'"],
-        // Fourth row
-        ["Z", "X", "C", "V", "B", "N", "M", ",", ".", "/"],
-        // Fifth row
-        [" "]
-    ],
-    // Optional: Set to true if the layout is in a foreign language (non-English alphabet)
-    "foreign": false
+	"name": "MyCustomLayout",
+	"keys": [
+		// Top row (required)
+		["`", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "BSPC"],
+		// Second row
+		["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "[", "]"],
+		// Third row
+		["A", "S", "D", "F", "G", "H", "J", "K", "L", ";", "'"],
+		// Fourth row
+		["Z", "X", "C", "V", "B", "N", "M", ",", ".", "/"],
+		// Fifth row
+		[" "],
+	],
+	// Optional: Set to true if the layout is in a foreign language (non-English alphabet)
+	"foreign": false,
 }
 ```
 
@@ -86,9 +86,39 @@ You can then set this layout as your default by updating the `defaultUserLayout`
 
 ```json
 {
- "defaultUserLayout": "MyCustomLayout"
+	"defaultUserLayout": "MyCustomLayout"
 }
 ```
+
+## Customizing Tactile Marker Positions
+
+By default, tactile (homerow) markers appear on the home row at specific positions (row 2, columns 3 and 6 - the F and J keys in QWERTY). For layouts with modifications like wide mods or non-standard key arrangements, you can override these default positions using the `tactileMarkers` property:
+
+```jsonc
+{
+	"name": "Colemak-DH Wide Mod",
+	"keys": [
+		["`", "1", "2", "3", "4", "5", "6", "=", "7", "8", "9", "0", "-", "BSPC"],
+		["Q", "W", "F", "P", "B", "[", "]", "J", "L", "U", "Y", ";"],
+		["A", "R", "S", "T", "G", "'", "M", "N", "E", "I", "O"],
+		["Z", "X", "C", "D", "V", "/", "K", "H", ",", "."],
+		[" "],
+	],
+	"tactileMarkers": {
+		"left": [2, 3], // Row 2, Column 3 (T key)
+		"right": [2, 7], // Row 2, Column 7 (N key - shifted right for wide mod)
+	},
+}
+```
+
+The `tactileMarkers` property accepts:
+
+- `left`: A two-element array `[row, column]` for the left marker position
+- `right`: A two-element array `[row, column]` for the right marker position
+
+**Note:** Row and column indices are zero-based, meaning the first row is 0, the second row is 1, etc.
+
+If `tactileMarkers` is not specified, the default positions will be used (row 2, columns 3 and 6).
 
 ## Format Guidelines
 
@@ -97,18 +127,18 @@ You can then set this layout as your default by updating the `defaultUserLayout`
 3. **Language Support**: Unicode characters are supported for international layouts. You may use `foreign: true` especially if the language is mostly non-English alphabet characters (e.g., Russian, Greek, Arabic). Otherwise, refer to the [Locales](../advanced/locales.md) documentation for better handling of locale-specific keys (e.g., German QWERTZ).
 4. **Flexible Row Lengths**: Your custom layout doesn't need to follow standard row lengths. You can create layouts of any dimension. Here's an example of a compact 4×4 layout:
 
-    ```jsonc
-    {
-        "name": "Compact4x4",
-        "keys": [
-        [""], // Mandatory top row, show top row setting turned off
-        ["1", "2", "3", "A"],
-        ["4", "5", "6", "B"],
-        ["7", "8", "9", "C"],
-        ["*", "0", "#", "D"]
-        ]
-    }
-    ```
+   ```jsonc
+   {
+   	"name": "Compact4x4",
+   	"keys": [
+   		[""], // Mandatory top row, show top row setting turned off
+   		["1", "2", "3", "A"],
+   		["4", "5", "6", "B"],
+   		["7", "8", "9", "C"],
+   		["*", "0", "#", "D"],
+   	],
+   }
+   ```
 
 ## Row Length Guidelines
 
