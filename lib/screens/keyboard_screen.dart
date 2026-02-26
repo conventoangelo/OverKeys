@@ -491,38 +491,69 @@ class KeyboardScreen extends ConsumerWidget {
 
   Color getFingerColor(int rowIndex, int keyIndex, KeyboardState keyboardState,
       PreferencesState prefsState) {
-    // On top row (row 0), adjust index by 1 unless using 6-column layout (which already accounts for it)
+    // On top row (row 0), adjust index by 1 unless using 6-column layout
     if (rowIndex == 0 &&
         !(prefsState.use6ColLayout && prefsState.advancedSettingsEnabled)) {
       keyIndex -= 1;
     }
-    switch (keyIndex) {
-      case -1:
-        return keyboardState.pinkyLeftColor;
-      case 0:
-        return keyboardState.pinkyLeftColor;
-      case 1:
-        return keyboardState.ringLeftColor;
-      case 2:
-        return keyboardState.middleLeftColor;
-      case 3:
-      case 4:
-        return keyboardState.indexLeftColor;
-      case 5:
-      case 6:
-        return keyboardState.indexRightColor;
-      case 7:
-        return keyboardState.middleRightColor;
-      case 8:
-        return keyboardState.ringRightColor;
-      case 9:
-      case 10:
-      case 11:
-      case 12:
-        return keyboardState.pinkyRightColor;
-      default:
-        return keyboardState.keyColorNotPressed;
+
+    final isWide = keyboardState.layout.wide ?? false;
+
+    // Define finger color assignments for each key position
+    // Format: keyIndex -> (standardLayoutColor, wideRow0Color, wideOtherRowsColor)
+    final fingerMappings = {
+      -1: (keyboardState.pinkyLeftColor, null, null),
+      0: (keyboardState.pinkyLeftColor, null, null),
+      1: (keyboardState.ringLeftColor, null, null),
+      2: (keyboardState.middleLeftColor, null, null),
+      3: (keyboardState.indexLeftColor, keyboardState.middleLeftColor, null),
+      4: (keyboardState.indexLeftColor, null, null),
+      5: (
+        keyboardState.indexRightColor,
+        keyboardState.indexLeftColor,
+        keyboardState.keyColorNotPressed
+      ),
+      6: (
+        keyboardState.indexRightColor,
+        keyboardState.keyColorNotPressed,
+        null
+      ),
+      7: (
+        keyboardState.middleRightColor,
+        keyboardState.indexRightColor,
+        keyboardState.indexRightColor
+      ),
+      8: (
+        keyboardState.ringRightColor,
+        keyboardState.indexRightColor,
+        keyboardState.middleRightColor
+      ),
+      9: (
+        keyboardState.pinkyRightColor,
+        keyboardState.middleRightColor,
+        keyboardState.ringRightColor
+      ),
+      10: (keyboardState.pinkyRightColor, keyboardState.ringRightColor, null),
+      11: (keyboardState.pinkyRightColor, null, null),
+      12: (keyboardState.pinkyRightColor, null, null),
+    };
+
+    final mapping = fingerMappings[keyIndex];
+    if (mapping == null) {
+      return keyboardState.keyColorNotPressed;
     }
+
+    final (standardColor, wideRow0Color, wideOtherRowsColor) = mapping;
+
+    if (isWide) {
+      if (rowIndex == 0 && wideRow0Color != null) {
+        return wideRow0Color;
+      } else if (rowIndex != 0 && wideOtherRowsColor != null) {
+        return wideOtherRowsColor;
+      }
+    }
+
+    return standardColor;
   }
 
   // For wide mod layouts, tactile markers appear at [2,3] and [2,7], otherwise at [2,3] and [2,6]
