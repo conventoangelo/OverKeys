@@ -99,9 +99,9 @@ By default, tactile (homerow) markers appear on the home row at specific positio
 	"name": "Colemak-DH Wide Mod",
 	"keys": [
 		["`", "1", "2", "3", "4", "5", "6", "=", "7", "8", "9", "0", "-", "BSPC"],
-		["Q", "W", "F", "P", "B", "[", "]", "J", "L", "U", "Y", ";"],
-		["A", "R", "S", "T", "G", "'", "M", "N", "E", "I", "O"],
-		["Z", "X", "C", "D", "V", "/", "K", "H", ",", "."],
+		["Q", "W", "F", "P", "B", "[", "J", "L", "U", "Y", ";", "'"],
+		["A", "R", "S", "T", "G", "]", "M", "N", "E", "I", "O"],
+		["X", "C", "D", "V", "Z,", "/", "K", "H", ",", "."],
 		[" "],
 	],
 	"tactileMarkers": {
