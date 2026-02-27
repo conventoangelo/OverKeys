@@ -166,7 +166,8 @@ class KeyboardScreen extends ConsumerWidget {
     // For foreign layouts, map to Foreign QWERTY if the key exists, otherwise use the key itself
     String realKey = key;
     if (keyboardState.layout.foreign ?? false) {
-      if (rowIndex < qwertyForeign.keys.length && keyIndex < qwertyForeign.keys[rowIndex].length) {
+      if (rowIndex < qwertyForeign.keys.length &&
+          keyIndex < qwertyForeign.keys[rowIndex].length) {
         realKey = qwertyForeign.keys[rowIndex][keyIndex];
       }
     }
