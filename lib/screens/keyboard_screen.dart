@@ -163,9 +163,13 @@ class KeyboardScreen extends ConsumerWidget {
     KeyboardLayout? altLayout,
   }) {
     key = _getShiftedKey(key, keyboardState, prefsState);
-    String realKey = (keyboardState.layout.foreign ?? false)
-        ? qwerty.keys[rowIndex][keyIndex]
-        : key;
+    // For foreign layouts, map to Foreign QWERTY if the key exists, otherwise use the key itself
+    String realKey = key;
+    if (keyboardState.layout.foreign ?? false) {
+      if (rowIndex < qwertyForeign.keys.length && keyIndex < qwertyForeign.keys[rowIndex].length) {
+        realKey = qwertyForeign.keys[rowIndex][keyIndex];
+      }
+    }
 
     String keyStateKey = Mappings.getKeyForSymbol(realKey);
     bool isPressed = keyboardState.keyPressStates[keyStateKey] ?? false;
