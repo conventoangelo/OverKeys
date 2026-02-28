@@ -27,19 +27,11 @@ class _DebugViewerState extends State<DebugViewer> {
   @override
   void initState() {
     super.initState();
-    // Auto-scroll to bottom on new logs
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_autoScroll && _scrollController.hasClients) {
-        _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
-      }
-    });
 
     // Refresh log display every 500ms to capture new logs
     _refreshTimer = Timer.periodic(const Duration(milliseconds: 500), (_) {
       if (mounted) {
-        setState(() {
-          // Trigger rebuild to show new logs
-        });
+        setState(() {});
         if (_autoScroll && _scrollController.hasClients) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (_scrollController.hasClients) {
@@ -214,40 +206,29 @@ class _DebugViewerState extends State<DebugViewer> {
                 const SizedBox(height: 8),
                 // Status indicator
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: _logCapture.isInitialized
-                        ? Colors.green.withAlpha(26)
-                        : Colors.red.withAlpha(26),
+                    color: Colors.green.withAlpha(26),
                     borderRadius: BorderRadius.circular(6),
                     border: Border.all(
-                      color: _logCapture.isInitialized
-                          ? Colors.green.withAlpha(128)
-                          : Colors.red.withAlpha(128),
+                      color: Colors.green.withAlpha(128),
                     ),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(
-                        _logCapture.isInitialized
-                            ? LucideIcons.checkCircle2
-                            : LucideIcons.xCircle,
-                        size: 16,
-                        color: _logCapture.isInitialized
-                            ? Colors.green
-                            : Colors.red,
+                        LucideIcons.checkCircle2,
+                        size: 14,
+                        color: Colors.green,
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: 6),
                       Text(
-                        _logCapture.isInitialized
-                            ? 'Logger initialized • ${_logCapture.logCount} logs captured'
-                            : 'Logger not initialized',
+                        '${_logCapture.logCount} logs captured',
                         style: TextStyle(
-                          color: _logCapture.isInitialized
-                              ? Colors.green
-                              : Colors.red,
-                          fontSize: 12,
+                          color: Colors.green,
+                          fontSize: 11,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -321,8 +302,8 @@ class _DebugViewerState extends State<DebugViewer> {
                           child: SelectableText(
                             log.formattedMessage,
                             style: TextStyle(
-                              fontFamily: 'Courier New',
-                              fontSize: 12,
+                              fontFamily: 'Geist Mono',
+                              fontSize: 14,
                               color: _getColorForLevel(log.level, colorScheme),
                               height: 1.4,
                             ),

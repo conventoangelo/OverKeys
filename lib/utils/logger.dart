@@ -60,10 +60,8 @@ class LogCapture {
   LogCapture._internal() {
     if (!_initialized) {
       _initialized = true;
-      // Set up logging configuration
       Logger.root.level = Level.ALL;
       Logger.root.onRecord.listen(_handleLogRecord);
-      print('[LogCapture] Initialized and listening for logs');
     }
   }
 
@@ -82,25 +80,15 @@ class LogCapture {
       _logs.removeAt(0);
     }
 
-    // Also print to console
-    print(
-        '[${entry.formattedTimestamp}] [${record.loggerName}] ${entry.levelEmoji}${record.message}');
-    if (record.error != null) {
-      print(
-          '[${entry.formattedTimestamp}] [${record.loggerName}] ${entry.levelEmoji}Error: ${record.error}');
-    }
-    if (record.stackTrace != null) {
-      print(
-          '[${entry.formattedTimestamp}] [${record.loggerName}] ${entry.levelEmoji}StackTrace: ${record.stackTrace}');
-    }
+    // Print to console
+    print(entry.formattedMessage);
 
-    // Broadcast to other windows (for cross-isolate log viewing)
+    // Broadcast to other windows for cross-isolate log viewing
     _broadcastLog(entry);
   }
 
   void _broadcastLog(LogEntry entry) async {
     try {
-      final controllers = await WindowController.getAll();
       final logMap = {
         'timestamp': entry.timestamp.toIso8601String(),
         'loggerName': entry.loggerName,
@@ -110,37 +98,37 @@ class LogCapture {
         'stackTrace': entry.stackTrace?.toString(),
       };
 
+      final controllers = await WindowController.getAll();
       for (final controller in controllers) {
-        // Send to all windows
-        controller.invokeMethod('receiveLog', logMap).catchError((error) {
-          // Silently ignore errors - window might not have handler
-          return null;
-        });
+        controller.invokeMethod('receiveLog', logMap).catchError((_) => null);
       }
     } catch (_) {
-      // Silently ignore broadcast errors to avoid recursive logging
+      // Silently ignore broadcast errors
     }
   }
 
   void addReceivedLog(Map<String, dynamic> logData) {
     try {
-      final timestamp = logData['timestamp'];
-      final loggerName = logData['loggerName'];
-      final levelValue = logData['level'];
-      final message = logData['message'];
+      // Validate required fields
+      final timestamp = logData['timestamp'] as String?;
+      final loggerName = logData['loggerName'] as String?;
+      final levelValue = logData['level'] as int?;
+      final message = logData['message'] as String?;
 
       if (timestamp == null ||
           loggerName == null ||
           levelValue == null ||
           message == null) {
-        return; // Skip incomplete log data
+        return;
       }
 
       final entry = LogEntry(
         timestamp: DateTime.parse(timestamp),
         loggerName: loggerName,
-        level: Level.LEVELS
-            .firstWhere((l) => l.value == levelValue, orElse: () => Level.INFO),
+        level: Level.LEVELS.firstWhere(
+          (l) => l.value == levelValue,
+          orElse: () => Level.INFO,
+        ),
         message: message,
         error: logData['error'],
         stackTrace:
@@ -148,19 +136,22 @@ class LogCapture {
                 ? StackTrace.fromString(logData['stackTrace'])
                 : null,
       );
+
       _receivedLogs.add(entry);
       if (_receivedLogs.length > _maxLogs) {
         _receivedLogs.removeAt(0);
       }
-    } catch (e) {
-      // Silently ignore malformed log data to avoid recursive logging
+    } catch (_) {
+      // Silently ignore malformed log data
     }
   }
 
-  List<LogEntry> get logs => List.unmodifiable([..._logs, ..._receivedLogs]
-    ..sort((a, b) => a.timestamp.compareTo(b.timestamp)));
-
-  bool get isInitialized => _initialized;
+  List<LogEntry> get logs {
+    // Combine and sort logs from both sources
+    final combined = [..._logs, ..._receivedLogs];
+    combined.sort((a, b) => a.timestamp.compareTo(b.timestamp));
+    return List.unmodifiable(combined);
+  }
 
   int get logCount => _logs.length + _receivedLogs.length;
 
@@ -179,10 +170,7 @@ final _logCaptureInitializer = LogCapture();
 class SimplePrintLogger {
   final Logger _logger;
 
-  SimplePrintLogger(String name) : _logger = Logger(name) {
-    // Ensure LogCapture is initialized (though it should already be via _logCaptureInitializer)
-    LogCapture();
-  }
+  SimplePrintLogger(String name) : _logger = Logger(name);
 
   void debug(String message) {
     _logger.fine(message);
