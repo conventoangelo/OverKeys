@@ -42,7 +42,7 @@ When enabled, OverKeys will use the font specified in your configuration file fo
 
 - Custom fonts must be installed on your system
 - Font names are case-sensitive
-- If the specified font is not found, OverKeys will fall back to the default app font, i.e., Geist Mono
+- If the specified font is not found, OverKeys will fall back to the default app font, i.e., DM Mono
 - Custom fonts is applied to all layout types including alternative layouts and layers
 - Some fonts may not display certain special characters correctly
 

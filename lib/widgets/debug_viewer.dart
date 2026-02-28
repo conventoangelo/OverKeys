@@ -206,7 +206,7 @@ class _DebugViewerState extends State<DebugViewer> {
                           child: SelectableText(
                             log.formattedMessage,
                             style: TextStyle(
-                              fontFamily: 'Geist Mono',
+                              fontFamily: 'DM Mono',
                               fontSize: 14,
                               color: _getColorForLevel(log.level, colorScheme),
                               height: 1.4,
