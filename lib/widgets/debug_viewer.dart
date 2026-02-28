@@ -85,140 +85,129 @@ class _DebugViewerState extends State<DebugViewer> {
     final colorScheme = Theme.of(context).colorScheme;
     final logs = _logCapture.logs;
 
-    return Container(
-      decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: colorScheme.outline.withAlpha(128)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header with controls
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Header with controls
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
               children: [
-                Row(
-                  children: [
-                    Icon(LucideIcons.terminal, color: colorScheme.primary),
-                    const SizedBox(width: 8),
-                    Text(
-                      'Debug Logs',
-                      style: TextStyle(
-                        color: colorScheme.onSurface,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                      ),
+                Icon(LucideIcons.terminal, color: colorScheme.primary),
+                const SizedBox(width: 8),
+                Text(
+                  'Debug Logs',
+                  style: TextStyle(
+                    color: colorScheme.onSurface,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const Spacer(),
+                // Auto-scroll toggle
+                Tooltip(
+                  message: 'Auto-scroll to bottom',
+                  child: IconButton(
+                    icon: Icon(
+                      _autoScroll
+                          ? LucideIcons.arrowDown
+                          : LucideIcons.arrowDownToLine,
+                      size: 20,
                     ),
-                    const Spacer(),
-                    // Auto-scroll toggle
-                    Tooltip(
-                      message: 'Auto-scroll to bottom',
-                      child: IconButton(
-                        icon: Icon(
-                          _autoScroll
-                              ? LucideIcons.arrowDown
-                              : LucideIcons.arrowDownToLine,
-                          size: 20,
-                        ),
-                        color: _autoScroll
-                            ? colorScheme.primary
-                            : colorScheme.onSurface.withAlpha(153),
-                        onPressed: () {
-                          setState(() {
-                            _autoScroll = !_autoScroll;
-                            if (_autoScroll && _scrollController.hasClients) {
-                              _scrollController.animateTo(
-                                _scrollController.position.maxScrollExtent,
-                                duration: const Duration(milliseconds: 300),
-                                curve: Curves.easeOut,
-                              );
-                            }
-                          });
-                        },
-                      ),
-                    ),
-                    // Copy button
-                    Tooltip(
-                      message: 'Copy logs to clipboard',
-                      child: IconButton(
-                        icon: const Icon(LucideIcons.copy, size: 20),
-                        color: colorScheme.onSurface.withAlpha(153),
-                        onPressed: _copyAllLogsToClipboard,
-                      ),
-                    ),
-                    // Clear button
-                    Tooltip(
-                      message: 'Clear logs',
-                      child: IconButton(
-                        icon: const Icon(LucideIcons.trash2, size: 20),
-                        color: colorScheme.onSurface.withAlpha(153),
-                        onPressed: _clearLogs,
-                      ),
-                    ),
-                  ],
+                    color: _autoScroll
+                        ? colorScheme.primary
+                        : colorScheme.onSurface.withAlpha(153),
+                    onPressed: () {
+                      setState(() {
+                        _autoScroll = !_autoScroll;
+                        if (_autoScroll && _scrollController.hasClients) {
+                          _scrollController.animateTo(
+                            _scrollController.position.maxScrollExtent,
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeOut,
+                          );
+                        }
+                      });
+                    },
+                  ),
+                ),
+                // Copy button
+                Tooltip(
+                  message: 'Copy logs to clipboard',
+                  child: IconButton(
+                    icon: const Icon(LucideIcons.copy, size: 20),
+                    color: colorScheme.onSurface.withAlpha(153),
+                    onPressed: _copyAllLogsToClipboard,
+                  ),
+                ),
+                // Clear button
+                Tooltip(
+                  message: 'Clear logs',
+                  child: IconButton(
+                    icon: const Icon(LucideIcons.trash2, size: 20),
+                    color: colorScheme.onSurface.withAlpha(153),
+                    onPressed: _clearLogs,
+                  ),
                 ),
               ],
             ),
-          ),
-          // Log display area
-          Expanded(
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16.0) +
-                  const EdgeInsets.only(bottom: 16.0),
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: colorScheme.surface,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: colorScheme.outline.withAlpha(64)),
-              ),
-              child: logs.isEmpty
-                  ? Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            LucideIcons.inbox,
-                            size: 48,
-                            color: colorScheme.onSurface.withAlpha(77),
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            'No logs to display',
-                            style: TextStyle(
-                              color: colorScheme.onSurface.withAlpha(153),
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                  : ListView.builder(
-                      controller: _scrollController,
-                      itemCount: logs.length,
-                      itemBuilder: (context, index) {
-                        final log = logs[index];
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 2.0),
-                          child: SelectableText(
-                            log.formattedMessage,
-                            style: TextStyle(
-                              fontFamily: 'DM Mono',
-                              fontSize: 14,
-                              color: _getColorForLevel(log.level, colorScheme),
-                              height: 1.4,
-                            ),
-                          ),
-                        );
-                      },
-                    ),
+          ],
+        ),
+        // Log display area
+        Expanded(
+          child: Container(
+            margin: const EdgeInsets.only(top: 8),
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: colorScheme.surface,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: colorScheme.outline.withAlpha(64)),
             ),
+            child: logs.isEmpty
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          LucideIcons.inbox,
+                          size: 48,
+                          color: colorScheme.onSurface.withAlpha(77),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          'No logs to display',
+                          style: TextStyle(
+                            color: colorScheme.onSurface.withAlpha(153),
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : ListView.builder(
+                    controller: _scrollController,
+                    itemCount: logs.length,
+                    itemBuilder: (context, index) {
+                      final log = logs[index];
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 2.0),
+                        child: SelectableText(
+                          log.formattedMessage,
+                          style: TextStyle(
+                            fontFamily: 'DM Mono',
+                            fontSize: 14,
+                            color: _getColorForLevel(log.level, colorScheme),
+                            height: 1.4,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

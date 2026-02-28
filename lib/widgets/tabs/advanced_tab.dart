@@ -135,9 +135,11 @@ class AdvancedTab extends ConsumerWidget {
                 },
               ),
               _buildOpenConfigButton(context),
-              SizedBox(
-                height: 500,
-                child: const DebugViewer(),
+              OptionContainer(
+                child: SizedBox(
+                  height: 500,
+                  child: const DebugViewer(),
+                ),
               ),
             ],
           ),
