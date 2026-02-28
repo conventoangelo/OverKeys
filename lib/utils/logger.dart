@@ -22,17 +22,21 @@ class SimplePrintLogger {
 
   void warning(String message, {Object? error, StackTrace? stackTrace}) {
     if (kDebugMode) {
-      print('[${_timestamp()}] [$name] ⚠️ $message');
-      if (error != null) print('Error: $error');
-      if (stackTrace != null) print('StackTrace: $stackTrace');
+      print('[${_timestamp()}] [$name] 🚧 $message');
+      if (error != null) print('[${_timestamp()}] [$name] 🚧 Error: $error');
+      if (stackTrace != null) {
+        print('[${_timestamp()}] [$name] 🚧 StackTrace: $stackTrace');
+      }
     }
   }
 
   void error(String message, {Object? error, StackTrace? stackTrace}) {
     if (kDebugMode) {
       print('[${_timestamp()}] [$name] ❌ $message');
-      if (error != null) print('Error: $error');
-      if (stackTrace != null) print('StackTrace: $stackTrace');
+      if (error != null) print('[${_timestamp()}] [$name] ❌ Error: $error');
+      if (stackTrace != null) {
+        print('[${_timestamp()}] [$name] ❌ StackTrace: $stackTrace');
+      }
     }
   }
 }
