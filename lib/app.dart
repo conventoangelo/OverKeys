@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:isolate';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:desktop_multi_window/desktop_multi_window.dart'
@@ -22,6 +21,7 @@ import 'package:overkeys/services/visibility_service.dart';
 import 'package:overkeys/services/key_event_service.dart';
 import 'package:overkeys/utils/window_controller_extension.dart';
 import 'package:overkeys/widgets/status_overlay.dart';
+import 'package:overkeys/utils/logger.dart';
 import 'providers/keyboard_provider.dart';
 import 'providers/preferences_provider.dart';
 import 'providers/app_state_provider.dart';
@@ -37,6 +37,8 @@ class MainApp extends ConsumerStatefulWidget {
 
 class _MainAppState extends ConsumerState<MainApp>
     with TrayListener, WindowListener {
+  /// Logger instance for this widget
+  final _log = SimplePrintLogger('MainApp');
   static const Duration _fadeDuration = Duration(milliseconds: 200);
   static const double _opacityStep = 0.05;
   static const double _minOpacity = 0.1;
@@ -386,9 +388,7 @@ class _MainAppState extends ConsumerState<MainApp>
         }
       }
     } catch (error) {
-      if (kDebugMode) {
-        print('Error closing preferences window: $error');
-      }
+      _log.error('Error closing preferences window', error: error);
     }
 
     try {
@@ -453,9 +453,7 @@ class _MainAppState extends ConsumerState<MainApp>
         ),
       );
     } catch (e) {
-      if (kDebugMode) {
-        print('Error handling preferences window: $e');
-      }
+      _log.error('Error handling preferences window', error: e);
     }
   }
 

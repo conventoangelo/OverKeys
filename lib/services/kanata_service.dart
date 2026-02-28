@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/foundation.dart';
 import 'package:overkeys/services/config_service.dart';
 import 'package:overkeys/models/keyboard_layouts.dart';
+import '../utils/logger.dart';
 
 typedef LayerChangeCallback = void Function(
     KeyboardLayout layout, bool isDefaultUserLayout);
@@ -11,6 +11,8 @@ typedef DisconnectCallback = void Function();
 
 /// Service for integrating with Kanata keyboard layout manager
 class KanataService {
+  /// Logger instance for this service
+  final _log = SimplePrintLogger('KanataService');
   Socket? _kanataSocket;
   Timer? _kanataTimer;
   String _host = '127.0.0.1';
@@ -39,9 +41,7 @@ class KanataService {
       _userLayouts = config.userLayouts ?? [];
       _defaultUserLayout = config.defaultUserLayout ?? 'QWERTY';
       _kanataSocket = await Socket.connect(_host, _port);
-      if (kDebugMode) {
-        print('Connected to Kanata server at $_host:$_port');
-      }
+      _log.info('Connected to Kanata server at $_host:$_port');
       _kanataSocket!.listen(
         (data) {
           String message = String.fromCharCodes(data).trim();
@@ -49,24 +49,18 @@ class KanataService {
         },
         onDone: _onDisconnected,
         onError: (error) {
-          if (kDebugMode) {
-            print('Socket error: $error');
-          }
+          _log.error('Socket error', error: error);
           _onDisconnected();
         },
       );
     } catch (e) {
-      if (kDebugMode) {
-        print('Failed to connect to Kanata server: $e');
-      }
+      _log.warning('Failed to connect to Kanata server', error: e);
       _scheduleReconnect();
     }
   }
 
   void _onDisconnected() {
-    if (kDebugMode) {
-      print('Disconnected from Kanata server');
-    }
+    _log.info('Disconnected from Kanata server');
 
     // Notify about disconnection so layout can be restored
     if (onDisconnect != null && _reconnectEnabled) {
@@ -110,20 +104,14 @@ class KanataService {
 
             onLayerChange!(newLayout, isDefaultUserLayout);
 
-            if (kDebugMode) {
-              print('Switched to layout: ${newLayout.name}');
-            }
+            _log.debug('Switched to layout: ${newLayout.name}');
           } catch (e) {
-            if (kDebugMode) {
-              print('Unknown layout: $layoutName');
-            }
+            _log.warning('Unknown layout: $layoutName');
           }
         }
       }
     } catch (e) {
-      if (kDebugMode) {
-        print('Failed to parse Kanata message: $e');
-      }
+      _log.error('Failed to parse Kanata message', error: e);
     }
   }
 

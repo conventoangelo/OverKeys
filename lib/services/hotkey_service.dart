@@ -1,8 +1,12 @@
-import 'package:flutter/foundation.dart';
 import 'package:hotkey_manager/hotkey_manager.dart';
+import 'package:flutter/foundation.dart';
+import '../utils/logger.dart';
 
 /// Service for managing global hotkeys and their registration
 class HotKeyService {
+  /// Logger instance for this service
+  final _log = SimplePrintLogger('HotKeyService');
+
   /// Registers all enabled hotkeys with their respective callbacks
   Future<void> setupHotKeys({
     required HotKey? autoHideHotKey,
@@ -35,9 +39,7 @@ class HotKeyService {
       await hotKeyManager.register(
         autoHideHotKey,
         keyDownHandler: (hotKey) {
-          if (kDebugMode) {
-            print('Auto-hide hotkey triggered.');
-          }
+          _log.debug('Auto-hide hotkey triggered.');
           onAutoHideTriggered();
         },
       );
@@ -47,9 +49,7 @@ class HotKeyService {
       await hotKeyManager.register(
         visibilityHotKey,
         keyDownHandler: (hotKey) {
-          if (kDebugMode) {
-            print('Visibility hotkey triggered.');
-          }
+          _log.debug('Visibility hotkey triggered.');
           onVisibilityTriggered();
         },
       );
@@ -59,9 +59,7 @@ class HotKeyService {
       await hotKeyManager.register(
         toggleMoveHotKey,
         keyDownHandler: (hotKey) {
-          if (kDebugMode) {
-            print('Move hotkey triggered.');
-          }
+          _log.debug('Move hotkey triggered.');
           onToggleMoveTriggered();
         },
       );
@@ -71,10 +69,8 @@ class HotKeyService {
       await hotKeyManager.register(
         preferencesHotKey,
         keyDownHandler: (hotKey) {
-          if (kDebugMode) {
-            print(
-                'Preferences hotkey triggered. Opening/Focusing Preferences Window.');
-          }
+          _log.debug(
+              'Preferences hotkey triggered. Opening/Focusing Preferences Window.');
           onPreferencesTriggered();
         },
       );
@@ -84,9 +80,7 @@ class HotKeyService {
       await hotKeyManager.register(
         increaseOpacityHotKey,
         keyDownHandler: (hotKey) {
-          if (kDebugMode) {
-            print('Increase opacity hotkey triggered.');
-          }
+          _log.debug('Increase opacity hotkey triggered.');
           onIncreaseOpacityTriggered();
         },
       );
@@ -96,9 +90,7 @@ class HotKeyService {
       await hotKeyManager.register(
         decreaseOpacityHotKey,
         keyDownHandler: (hotKey) {
-          if (kDebugMode) {
-            print('Decrease opacity hotkey triggered.');
-          }
+          _log.debug('Decrease opacity hotkey triggered.');
           onDecreaseOpacityTriggered();
         },
       );

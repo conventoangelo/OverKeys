@@ -1,12 +1,14 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:overkeys/services/config_service.dart';
 import 'package:overkeys/services/kanata_service.dart';
 import 'package:overkeys/providers/keyboard_provider.dart';
 import 'package:overkeys/providers/preferences_provider.dart';
+import '../utils/logger.dart';
 
 /// Service for loading user configurations (layouts, fonts, Kanata integration)
 class ConfigurationLoader {
+  /// Logger instance for this service
+  final _log = SimplePrintLogger('ConfigurationLoader');
   final ConfigService _configService;
   final KanataService _kanataService;
 
@@ -133,9 +135,7 @@ class ConfigurationLoader {
       } catch (e) {
         // Connection will be retried by the KanataService
         // Log error but don't throw to avoid disrupting app initialization
-        if (kDebugMode) {
-          print('Failed to connect to Kanata: $e');
-        }
+        _log.warning('Failed to connect to Kanata', error: e);
       }
     }
   }

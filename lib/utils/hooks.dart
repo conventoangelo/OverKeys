@@ -2,11 +2,14 @@ import 'dart:io';
 import 'dart:isolate';
 import 'dart:ffi';
 import 'package:ffi/ffi.dart';
-import 'package:flutter/foundation.dart';
 import 'package:win32/win32.dart';
+import 'logger.dart';
 
 /// Low-level keyboard hook implementation using Windows API
 /// Captures global keyboard events and session lock/unlock notifications
+
+/// Logger instance for hooks
+final _log = SimplePrintLogger('Hooks');
 
 /// Pointer to the keyboard hook procedure
 final keyboardProc = Pointer.fromFunction<HOOKPROC>(lowLevelKeyboardProc, 0);
@@ -62,9 +65,7 @@ int sessionNotificationProc(int hwnd, int message, int wParam, int lParam) {
 void registerSessionNotification(int hwnd) {
   final result = WTSRegisterSessionNotification(hwnd, NOTIFY_FOR_THIS_SESSION);
   if (result == 0) {
-    if (kDebugMode) {
-      print('Failed to register session notification');
-    }
+    _log.error('Failed to register session notification');
     exit(1);
   }
 }
@@ -97,9 +98,7 @@ int createSessionNotificationWindow() {
     );
 
     if (hwnd == 0) {
-      if (kDebugMode) {
-        print('Failed to create notification window: ${GetLastError()}');
-      }
+      _log.error('Failed to create notification window: ${GetLastError()}');
       exit(1);
     }
 
@@ -116,9 +115,7 @@ void setHook(SendPort port) {
   hookId = SetWindowsHookEx(
       WH_KEYBOARD_LL, keyboardProc, GetModuleHandle(nullptr), 0);
   if (hookId == 0) {
-    if (kDebugMode) {
-      print('Failed to install hook.');
-    }
+    _log.error('Failed to install hook.');
     exit(1);
   }
 

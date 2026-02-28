@@ -1,12 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
-import 'package:flutter/foundation.dart';
 import '../models/user_config.dart';
 import '../models/keyboard_layouts.dart';
+import '../utils/logger.dart';
 
 /// Service for managing user configuration files
 class ConfigService {
+  /// Logger instance for this service
+  final _log = SimplePrintLogger('ConfigService');
   static const String _configFileName = 'overkeys_config.json';
 
   /// Cached configuration to avoid repeated file reads
@@ -51,9 +53,7 @@ class ConfigService {
       await file.writeAsString(jsonString);
       _cachedConfig = config;
     } catch (e) {
-      if (kDebugMode) {
-        debugPrint('Failed to save config: $e');
-      }
+      _log.error('Failed to save config', error: e);
       // Config will not be persisted, but cache is updated
     }
   }
@@ -117,10 +117,8 @@ class ConfigService {
     final config = await loadConfig();
 
     if (config.customFont == null) {
-      if (kDebugMode) {
-        debugPrint(
-            'Cannot get custom font: customFont is not defined in the config file');
-      }
+      _log.warning(
+          'Cannot get custom font: customFont is not defined in the config file');
       return null;
     }
 
@@ -154,9 +152,7 @@ class ConfigService {
         return MapEntry(key, List<String>.from(value as List));
       });
     } catch (e) {
-      if (kDebugMode) {
-        debugPrint('Error parsing customAliases: $e');
-      }
+      _log.error('Error parsing customAliases', error: e);
       return null;
     }
   }

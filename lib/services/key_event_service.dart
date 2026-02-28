@@ -1,5 +1,4 @@
 import 'dart:isolate';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:overkeys/models/keyboard_layouts.dart';
 import 'package:overkeys/providers/keyboard_provider.dart';
@@ -7,9 +6,13 @@ import 'package:overkeys/providers/app_state_provider.dart';
 import 'package:overkeys/providers/preferences_provider.dart';
 import 'package:overkeys/utils/key_code.dart';
 import 'package:overkeys/utils/hooks.dart';
+import 'package:overkeys/utils/logger.dart';
 
 /// Service for handling keyboard events and user layer switching
 class KeyEventService {
+  /// Logger instance for this service
+  final _log = SimplePrintLogger('KeyEventService');
+
   /// Active trigger keys for held layer switching
   final Set<String> _activeTriggers = {};
 
@@ -30,9 +33,7 @@ class KeyEventService {
       // Close the unused port before handling error
       _receivePort?.close();
       _receivePort = null;
-      if (kDebugMode) {
-        print('Error spawning Isolate: $error');
-      }
+      _log.error('Error spawning Isolate', error: error);
       throw error;
     });
   }
@@ -87,9 +88,7 @@ class KeyEventService {
       // Check if key should be ignored - stop all processing if it is
       final ignoredKeys = prefsState.userConfig?.ignoredKeys;
       if (ignoredKeys != null && ignoredKeys.contains(key)) {
-        if (kDebugMode) {
-          print('Key "$key" is in ignored list, stopping key event flow');
-        }
+        _log.debug('Key "$key" is in ignored list, stopping key event flow');
         return;
       }
 
@@ -176,10 +175,8 @@ class KeyEventService {
       }
     } catch (error, stackTrace) {
       // Log the error but keep the listener alive
-      if (kDebugMode) {
-        print('Error in handleKeyEvent: $error');
-        print('Stack trace: $stackTrace');
-      }
+      _log.error('Error in handleKeyEvent',
+          error: error, stackTrace: stackTrace);
       return;
     }
   }
@@ -242,23 +239,17 @@ class KeyEventService {
     if (currentLayout.name != layout.name) {
       // Switch to the toggle layer
       _previousLayerStack.add(currentLayout);
-      if (kDebugMode) {
-        print('Switching to toggle layer: ${layout.name}');
-      }
+      _log.debug('Switching to toggle layer: ${layout.name}');
       keyboardNotifier.updateLayout(layout);
     } else {
       // Already on toggle layer, revert to previous layer
       if (_previousLayerStack.isNotEmpty) {
         final previousLayer = _previousLayerStack.removeLast();
-        if (kDebugMode) {
-          print('Reverting toggle layer to: ${previousLayer.name}');
-        }
+        _log.debug('Reverting toggle layer to: ${previousLayer.name}');
         keyboardNotifier.updateLayout(previousLayer);
       } else if (prefsState.defaultUserLayout != null) {
-        if (kDebugMode) {
-          print(
-              'Reverting to default layer: ${prefsState.defaultUserLayout!.name}');
-        }
+        _log.debug(
+            'Reverting to default layer: ${prefsState.defaultUserLayout!.name}');
         keyboardNotifier.updateLayout(prefsState.defaultUserLayout!);
       }
     }
@@ -294,9 +285,7 @@ class KeyEventService {
       final currentLayout = ref.read(keyboardProvider).layout;
       _previousLayerStack.add(currentLayout);
 
-      if (kDebugMode) {
-        print('Switching to held layer: ${layout.name}');
-      }
+      _log.debug('Switching to held layer: ${layout.name}');
       keyboardNotifier.updateLayout(layout);
       _activeTriggers.add(key);
 
@@ -310,15 +299,11 @@ class KeyEventService {
       if (currentLayout.name == layout.name) {
         if (_previousLayerStack.isNotEmpty) {
           final previousLayer = _previousLayerStack.removeLast();
-          if (kDebugMode) {
-            print('Reverting to previous layer: ${previousLayer.name}');
-          }
+          _log.debug('Reverting to previous layer: ${previousLayer.name}');
           keyboardNotifier.updateLayout(previousLayer);
         } else if (prefsState.defaultUserLayout != null) {
-          if (kDebugMode) {
-            print(
-                'Reverting to default layer: ${prefsState.defaultUserLayout!.name}');
-          }
+          _log.debug(
+              'Reverting to default layer: ${prefsState.defaultUserLayout!.name}');
           keyboardNotifier.updateLayout(prefsState.defaultUserLayout!);
         }
       } else {
@@ -332,10 +317,8 @@ class KeyEventService {
             _previousLayerStack.lastIndexWhere((l) => l.name == layout.name);
         if (index != -1) {
           _previousLayerStack.removeAt(index);
-          if (kDebugMode) {
-            print(
-                'Removed held layer from stack (out-of-order release): ${layout.name}');
-          }
+          _log.debug(
+              'Removed held layer from stack (out-of-order release): ${layout.name}');
         }
       }
       _activeTriggers.remove(key);

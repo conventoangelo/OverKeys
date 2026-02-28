@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter/foundation.dart';
 import 'package:hotkey_manager/hotkey_manager.dart';
 import 'package:overkeys/models/keyboard_layouts.dart';
 import 'package:overkeys/providers/app_state_provider.dart';
@@ -10,10 +9,13 @@ import 'package:overkeys/providers/keyboard_provider.dart';
 import 'package:overkeys/providers/preferences_provider.dart';
 import 'package:overkeys/services/kanata_service.dart';
 import 'package:overkeys/services/startup_service.dart';
+import '../utils/logger.dart';
 
 /// Service for handling method calls from the preferences window
 /// Processes UI changes and updates to application state from the preferences screen
 class MethodCallHandler {
+  /// Logger instance for this service
+  final _log = SimplePrintLogger('MethodCallHandler');
   final StartupService _startupService = StartupService();
 
   /// Safely casts arguments with a fallback value
@@ -21,10 +23,8 @@ class MethodCallHandler {
     if (value is T) {
       return value;
     }
-    if (kDebugMode) {
-      debugPrint(
-          'Warning: Invalid argument type, expected $T, got ${value.runtimeType}');
-    }
+    _log.warning(
+        'Invalid argument type, expected $T, got ${value.runtimeType}');
     return fallback;
   }
 
@@ -496,20 +496,16 @@ class MethodCallHandler {
         final keyboardState = ref.read(keyboardProvider);
         if (kanataEnabled && !keyboardState.kanataEnabled) {
           // Turning Kanata ON
-          if (kDebugMode) {
-            print(
-                'Enabling Kanata. Saving current layout: ${keyboardState.layout.name}');
-          }
+          _log.debug(
+              'Enabling Kanata. Saving current layout: ${keyboardState.layout.name}');
           keyboardNotifier.updateInitialLayout(keyboardState.layout);
           keyboardNotifier.updateKanataEnabled(true);
           prefsNotifier.updateKanataEnabled(true);
           await useKanata();
         } else if (!kanataEnabled && keyboardState.kanataEnabled) {
           // Turning Kanata OFF
-          if (kDebugMode) {
-            print(
-                'Disabling Kanata. Restoring layout: ${keyboardState.initialLayout?.name ?? "null"}');
-          }
+          _log.debug(
+              'Disabling Kanata. Restoring layout: ${keyboardState.initialLayout?.name ?? "null"}');
           // First, restore the layout that was active before Kanata was enabled
           if (keyboardState.initialLayout != null) {
             keyboardNotifier.updateLayout(keyboardState.initialLayout!);
@@ -539,7 +535,7 @@ class MethodCallHandler {
         }
 
       default:
-        debugPrint('Warning: Unimplemented method ${call.method}');
+        _log.warning('Unimplemented method ${call.method}');
     }
   }
 }
