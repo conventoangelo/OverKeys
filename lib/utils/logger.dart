@@ -62,14 +62,14 @@ class LogCapture {
   final List<LogEntry> _receivedLogs =
       []; // For logs received from other windows
   static const int _maxLogs = 1000; // Keep last 1000 logs
-  bool _initialized = false;
+
+  // Cache for combined logs
+  List<LogEntry>? _cachedCombinedLogs;
+  bool _isCacheValid = false;
 
   LogCapture._internal() {
-    if (!_initialized) {
-      _initialized = true;
-      Logger.root.level = Level.ALL;
-      Logger.root.onRecord.listen(_handleLogRecord);
-    }
+    Logger.root.level = Level.ALL;
+    Logger.root.onRecord.listen(_handleLogRecord);
   }
 
   void _handleLogRecord(LogRecord record) {
@@ -86,6 +86,7 @@ class LogCapture {
     if (_logs.length > _maxLogs) {
       _logs.removeAt(0);
     }
+    _isCacheValid = false;
 
     // Print to console
     if (kDebugMode) {
@@ -131,13 +132,28 @@ class LogCapture {
         return;
       }
 
+      final parsedTimestamp = DateTime.parse(timestamp);
+      final level = Level.LEVELS.firstWhere(
+        (l) => l.value == levelValue,
+        orElse: () => Level.INFO,
+      );
+
+      // Check if this log already exists in _logs to avoid duplicates
+      // This happens when a window broadcasts to all windows including itself
+      final isDuplicate = _logs.any((log) =>
+          log.timestamp == parsedTimestamp &&
+          log.loggerName == loggerName &&
+          log.level == level &&
+          log.message == message);
+
+      if (isDuplicate) {
+        return; // Skip adding duplicate from broadcast
+      }
+
       final entry = LogEntry(
-        timestamp: DateTime.parse(timestamp),
+        timestamp: parsedTimestamp,
         loggerName: loggerName,
-        level: Level.LEVELS.firstWhere(
-          (l) => l.value == levelValue,
-          orElse: () => Level.INFO,
-        ),
+        level: level,
         message: message,
         error: logData['error'],
         stackTrace:
@@ -150,16 +166,23 @@ class LogCapture {
       if (_receivedLogs.length > _maxLogs) {
         _receivedLogs.removeAt(0);
       }
+      _isCacheValid = false;
     } catch (_) {
       // Silently ignore malformed log data
     }
   }
 
   List<LogEntry> get logs {
+    if (_isCacheValid && _cachedCombinedLogs != null) {
+      return _cachedCombinedLogs!;
+    }
+
     // Combine and sort logs from both sources
     final combined = [..._logs, ..._receivedLogs];
     combined.sort((a, b) => a.timestamp.compareTo(b.timestamp));
-    return List.unmodifiable(combined);
+    _cachedCombinedLogs = List.unmodifiable(combined);
+    _isCacheValid = true;
+    return _cachedCombinedLogs!;
   }
 
   int get logCount => _logs.length + _receivedLogs.length;
@@ -167,6 +190,7 @@ class LogCapture {
   void clear() {
     _logs.clear();
     _receivedLogs.clear();
+    _isCacheValid = false;
   }
 }
 
