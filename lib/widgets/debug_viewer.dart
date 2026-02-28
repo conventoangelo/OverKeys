@@ -15,12 +15,6 @@ class DebugViewer extends StatefulWidget {
 class _DebugViewerState extends State<DebugViewer> {
   final LogCapture _logCapture = LogCapture();
   final ScrollController _scrollController = ScrollController();
-  Set<Level> _selectedLevels = {
-    Level.FINE,
-    Level.INFO,
-    Level.WARNING,
-    Level.SEVERE
-  };
   bool _autoScroll = true;
   Timer? _refreshTimer;
 
@@ -55,10 +49,7 @@ class _DebugViewerState extends State<DebugViewer> {
   }
 
   void _copyAllLogsToClipboard() {
-    final logs = _logCapture.logs
-        .where((log) => _selectedLevels.contains(log.level))
-        .map((log) => log.formattedMessage)
-        .join('\n');
+    final logs = _logCapture.logs.map((log) => log.formattedMessage).join('\n');
 
     Clipboard.setData(ClipboardData(text: logs));
 
@@ -74,21 +65,6 @@ class _DebugViewerState extends State<DebugViewer> {
     setState(() {
       _logCapture.clear();
     });
-  }
-
-  void _generateTestLogs() {
-    final testLogger = SimplePrintLogger('TestLogger');
-    testLogger.debug('Test DEBUG message');
-    testLogger.info('Test INFO message');
-    testLogger.warning('Test WARNING message');
-    testLogger.error('Test ERROR message');
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Test logs generated'),
-        duration: Duration(seconds: 2),
-      ),
-    );
   }
 
   Color _getColorForLevel(Level level, ColorScheme colorScheme) {
@@ -107,9 +83,7 @@ class _DebugViewerState extends State<DebugViewer> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final filteredLogs = _logCapture.logs
-        .where((log) => _selectedLevels.contains(log.level))
-        .toList();
+    final logs = _logCapture.logs;
 
     return Container(
       decoration: BoxDecoration(
@@ -138,24 +112,7 @@ class _DebugViewerState extends State<DebugViewer> {
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-                    const SizedBox(width: 8),
-                    Text(
-                      '(${_logCapture.logs.length} total)',
-                      style: TextStyle(
-                        color: colorScheme.onSurface.withAlpha(153),
-                        fontSize: 14,
-                      ),
-                    ),
                     const Spacer(),
-                    // Test button
-                    Tooltip(
-                      message: 'Generate test logs',
-                      child: IconButton(
-                        icon: const Icon(LucideIcons.flaskConical, size: 20),
-                        color: colorScheme.onSurface.withAlpha(153),
-                        onPressed: _generateTestLogs,
-                      ),
-                    ),
                     // Auto-scroll toggle
                     Tooltip(
                       message: 'Auto-scroll to bottom',
@@ -203,55 +160,9 @@ class _DebugViewerState extends State<DebugViewer> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
-                // Status indicator
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: Colors.green.withAlpha(26),
-                    borderRadius: BorderRadius.circular(6),
-                    border: Border.all(
-                      color: Colors.green.withAlpha(128),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        LucideIcons.checkCircle2,
-                        size: 14,
-                        color: Colors.green,
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        '${_logCapture.logCount} logs captured',
-                        style: TextStyle(
-                          color: Colors.green,
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
               ],
             ),
           ),
-          // Filter chips
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Wrap(
-              spacing: 8,
-              children: [
-                _buildFilterChip(Level.FINE, 'DEBUG', colorScheme),
-                _buildFilterChip(Level.INFO, 'INFO', colorScheme),
-                _buildFilterChip(Level.WARNING, 'WARNING', colorScheme),
-                _buildFilterChip(Level.SEVERE, 'ERROR', colorScheme),
-              ],
-            ),
-          ),
-          const SizedBox(height: 8),
           // Log display area
           Expanded(
             child: Container(
@@ -262,7 +173,7 @@ class _DebugViewerState extends State<DebugViewer> {
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(color: colorScheme.outline.withAlpha(64)),
               ),
-              child: filteredLogs.isEmpty
+              child: logs.isEmpty
                   ? Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -281,22 +192,14 @@ class _DebugViewerState extends State<DebugViewer> {
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'Click the flask icon above to generate test logs',
-                            style: TextStyle(
-                              color: colorScheme.onSurface.withAlpha(128),
-                              fontSize: 13,
-                            ),
-                          ),
                         ],
                       ),
                     )
                   : ListView.builder(
                       controller: _scrollController,
-                      itemCount: filteredLogs.length,
+                      itemCount: logs.length,
                       itemBuilder: (context, index) {
-                        final log = filteredLogs[index];
+                        final log = logs[index];
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 2.0),
                           child: SelectableText(
@@ -313,50 +216,7 @@ class _DebugViewerState extends State<DebugViewer> {
                     ),
             ),
           ),
-          // Footer with log count
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-            child: Text(
-              '${filteredLogs.length} log entries (${_logCapture.logs.length} total)',
-              style: TextStyle(
-                color: colorScheme.onSurface.withAlpha(128),
-                fontSize: 12,
-              ),
-            ),
-          ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildFilterChip(Level level, String label, ColorScheme colorScheme) {
-    final isSelected = _selectedLevels.contains(level);
-    return FilterChip(
-      label: Text(label),
-      selected: isSelected,
-      onSelected: (selected) {
-        setState(() {
-          if (selected) {
-            _selectedLevels.add(level);
-          } else {
-            _selectedLevels.remove(level);
-          }
-        });
-      },
-      labelStyle: TextStyle(
-        fontSize: 12,
-        fontWeight: FontWeight.w600,
-        color: isSelected
-            ? colorScheme.onSecondaryContainer
-            : colorScheme.onSurface.withAlpha(153),
-      ),
-      backgroundColor: colorScheme.surface,
-      selectedColor: _getColorForLevel(level, colorScheme).withAlpha(64),
-      checkmarkColor: _getColorForLevel(level, colorScheme),
-      side: BorderSide(
-        color: isSelected
-            ? _getColorForLevel(level, colorScheme)
-            : colorScheme.outline.withAlpha(128),
       ),
     );
   }
