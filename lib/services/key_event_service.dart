@@ -78,10 +78,10 @@ class KeyEventService {
       final isShiftDown = message[2] as bool;
       final key = getKeyFromKeyCodeShift(keyCode, isShiftDown);
 
-      if (kDebugMode) {
-        print(
-            'Key: ${key.padRight(10)}\tKeyCode: ${keyCode.toString().padRight(5)}\tPressed: ${isPressed.toString().padRight(5)}\tShift: $isShiftDown');
-      }
+      // Display "Space" in logs for better readability instead of blank
+      final displayKey = key == ' ' ? 'Space' : key;
+      _log.debug(
+          'Key: ${displayKey.padRight(10)}\tKeyCode: ${keyCode.toString().padRight(5)}\tPressed: ${isPressed.toString().padRight(5)}\tShift: $isShiftDown');
 
       keyboardNotifier.updateKeyPressState(key, isPressed);
 
