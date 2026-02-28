@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 import 'package:desktop_multi_window/desktop_multi_window.dart';
 
@@ -87,7 +88,9 @@ class LogCapture {
     }
 
     // Print to console
-    print(entry.formattedMessage);
+    if (kDebugMode) {
+      print(entry.formattedMessage);
+    }
 
     // Broadcast to other windows for cross-isolate log viewing
     _broadcastLog(entry);
