@@ -22,8 +22,8 @@ class _DebugViewerState extends State<DebugViewer> {
   void initState() {
     super.initState();
 
-    // Refresh log display every 500ms to capture new logs
-    _refreshTimer = Timer.periodic(const Duration(milliseconds: 500), (_) {
+    // Refresh log display every 100ms to capture new logs
+    _refreshTimer = Timer.periodic(const Duration(milliseconds: 100), (_) {
       if (mounted) {
         setState(() {});
         if (_autoScroll && _scrollController.hasClients) {
