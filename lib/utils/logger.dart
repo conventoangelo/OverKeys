@@ -61,15 +61,34 @@ class LogCapture {
   final List<LogEntry> _logs = [];
   final List<LogEntry> _receivedLogs =
       []; // For logs received from other windows
-  static const int _maxLogs = 1000; // Keep last 1000 logs
+  static const int _maxLogs =
+      1000; // Keep last 1000 combined logs across both buffers
 
   // Cache for combined logs
   List<LogEntry>? _cachedCombinedLogs;
   bool _isCacheValid = false;
 
   LogCapture._internal() {
-    Logger.root.level = Level.ALL;
+    Logger.root.level = kDebugMode ? Level.ALL : Level.INFO;
     Logger.root.onRecord.listen(_handleLogRecord);
+  }
+
+  void _trimLogsToLimit() {
+    while (_logs.length + _receivedLogs.length > _maxLogs) {
+      // Remove the oldest entry from either buffer
+      if (_logs.isEmpty) {
+        _receivedLogs.removeAt(0);
+      } else if (_receivedLogs.isEmpty) {
+        _logs.removeAt(0);
+      } else {
+        // Both have entries, remove from the one with the older timestamp
+        if (_logs.first.timestamp.isBefore(_receivedLogs.first.timestamp)) {
+          _logs.removeAt(0);
+        } else {
+          _receivedLogs.removeAt(0);
+        }
+      }
+    }
   }
 
   void _handleLogRecord(LogRecord record) {
@@ -83,9 +102,7 @@ class LogCapture {
     );
 
     _logs.add(entry);
-    if (_logs.length > _maxLogs) {
-      _logs.removeAt(0);
-    }
+    _trimLogsToLimit();
     _isCacheValid = false;
 
     // Print to console
@@ -138,13 +155,19 @@ class LogCapture {
         orElse: () => Level.INFO,
       );
 
-      // Check if this log already exists in _logs to avoid duplicates
+      // Check if this log already exists in _logs or _receivedLogs to avoid duplicates
       // This happens when a window broadcasts to all windows including itself
+      // or when the same remote log is received multiple times
       final isDuplicate = _logs.any((log) =>
-          log.timestamp == parsedTimestamp &&
-          log.loggerName == loggerName &&
-          log.level == level &&
-          log.message == message);
+              log.timestamp == parsedTimestamp &&
+              log.loggerName == loggerName &&
+              log.level == level &&
+              log.message == message) ||
+          _receivedLogs.any((log) =>
+              log.timestamp == parsedTimestamp &&
+              log.loggerName == loggerName &&
+              log.level == level &&
+              log.message == message);
 
       if (isDuplicate) {
         return; // Skip adding duplicate from broadcast
@@ -163,9 +186,7 @@ class LogCapture {
       );
 
       _receivedLogs.add(entry);
-      if (_receivedLogs.length > _maxLogs) {
-        _receivedLogs.removeAt(0);
-      }
+      _trimLogsToLimit();
       _isCacheValid = false;
     } catch (_) {
       // Silently ignore malformed log data
