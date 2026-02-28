@@ -5,6 +5,7 @@ import '../utils/logger.dart';
 class StartupService {
   /// Logger instance for this service
   final _log = SimplePrintLogger('StartupService');
+
   /// Enables or disables the application from launching at system startup
   /// Returns true if successful, false if an error occurred
   Future<bool> handleStartupToggle(bool enable) async {
@@ -16,10 +17,8 @@ class StartupService {
       }
       return true;
     } catch (e, stackTrace) {
-      _log.error(
-          'Error ${enable ? 'enabling' : 'disabling'} launch at startup',
-          error: e,
-          stackTrace: stackTrace);
+      _log.error('Error ${enable ? 'enabling' : 'disabling'} launch at startup',
+          error: e, stackTrace: stackTrace);
       // Return false to indicate failure so the UI can revert the toggle
       return false;
     }
