@@ -77,14 +77,19 @@ class LogCapture {
   }
 
   void _trimLogsToLimit() {
-    while (_logs.length + _receivedLogs.length > _maxLogs) {
-      // Remove the oldest entry from either buffer
+    final totalLogs = _logs.length + _receivedLogs.length;
+    if (totalLogs <= _maxLogs) return;
+
+    final toRemove = totalLogs - _maxLogs;
+
+    // Remove oldest logs efficiently
+    for (var i = 0; i < toRemove; i++) {
       if (_logs.isEmpty) {
         _receivedLogs.removeAt(0);
       } else if (_receivedLogs.isEmpty) {
         _logs.removeAt(0);
       } else {
-        // Both have entries, remove from the one with the older timestamp
+        // Remove from the buffer with the older timestamp
         if (_logs.first.timestamp.isBefore(_receivedLogs.first.timestamp)) {
           _logs.removeAt(0);
         } else {
@@ -159,18 +164,21 @@ class LogCapture {
         orElse: () => Level.INFO,
       );
 
-      // Check if this log already exists in _logs or _receivedLogs to avoid duplicates
-      // This happens when a window broadcasts to all windows including itself
-      // or when the same remote log is received multiple times
-      final isDuplicate = _logs.any((log) =>
+      // Check recent logs for duplicates (broadcasts typically arrive quickly)
+      // Only check last 50 logs instead of all logs for better performance
+      final recentLogsToCheck =
+          _logs.length > 50 ? _logs.sublist(_logs.length - 50) : _logs;
+      final recentReceivedToCheck = _receivedLogs.length > 50
+          ? _receivedLogs.sublist(_receivedLogs.length - 50)
+          : _receivedLogs;
+
+      final isDuplicate = recentLogsToCheck.any((log) =>
               log.timestamp == parsedTimestamp &&
               log.loggerName == loggerName &&
-              log.level == level &&
               log.message == message) ||
-          _receivedLogs.any((log) =>
+          recentReceivedToCheck.any((log) =>
               log.timestamp == parsedTimestamp &&
               log.loggerName == loggerName &&
-              log.level == level &&
               log.message == message);
 
       if (isDuplicate) {

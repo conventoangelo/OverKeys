@@ -18,30 +18,33 @@ class _DebugViewerState extends State<DebugViewer> {
   bool _autoScroll = true;
   Timer? _refreshTimer;
   int _lastRevision = -1;
+  List<LogEntry> _cachedLogs = [];
 
   @override
   void initState() {
     super.initState();
+    _cachedLogs = _logCapture.logs;
 
     // Refresh log display every 100ms to capture new logs
     _refreshTimer = Timer.periodic(const Duration(milliseconds: 100), (_) {
-      if (mounted) {
-        final currentRevision = _logCapture.revision;
-        if (currentRevision != _lastRevision) {
-          _lastRevision = currentRevision;
-          setState(() {});
+      if (!mounted) return;
 
-          if (_autoScroll && _scrollController.hasClients) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (_scrollController.hasClients) {
-                _scrollController.animateTo(
-                  _scrollController.position.maxScrollExtent,
-                  duration: const Duration(milliseconds: 100),
-                  curve: Curves.easeOut,
-                );
-              }
-            });
-          }
+      final currentRevision = _logCapture.revision;
+      if (currentRevision != _lastRevision) {
+        _lastRevision = currentRevision;
+        _cachedLogs = _logCapture.logs;
+        setState(() {});
+
+        if (_autoScroll && _scrollController.hasClients) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (_scrollController.hasClients) {
+              _scrollController.animateTo(
+                _scrollController.position.maxScrollExtent,
+                duration: const Duration(milliseconds: 100),
+                curve: Curves.easeOut,
+              );
+            }
+          });
         }
       }
     });
@@ -55,7 +58,7 @@ class _DebugViewerState extends State<DebugViewer> {
   }
 
   void _copyAllLogsToClipboard() {
-    final logs = _logCapture.logs.map((log) => log.formattedMessage).join('\n');
+    final logs = _cachedLogs.map((log) => log.formattedMessage).join('\n');
 
     Clipboard.setData(ClipboardData(text: logs));
 
@@ -68,9 +71,9 @@ class _DebugViewerState extends State<DebugViewer> {
   }
 
   void _clearLogs() {
-    setState(() {
-      _logCapture.clear();
-    });
+    _logCapture.clear();
+    _cachedLogs = [];
+    setState(() {});
   }
 
   Color _getColorForLevel(Level level, ColorScheme colorScheme) {
@@ -89,74 +92,68 @@ class _DebugViewerState extends State<DebugViewer> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final logs = _logCapture.logs;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Header with controls
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        Row(
           children: [
-            Row(
-              children: [
-                Icon(LucideIcons.terminal, color: colorScheme.primary),
-                const SizedBox(width: 8),
-                Text(
-                  'Debug Logs',
-                  style: TextStyle(
-                    color: colorScheme.onSurface,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                  ),
+            Icon(LucideIcons.terminal, color: colorScheme.primary),
+            const SizedBox(width: 8),
+            Text(
+              'Debug Logs',
+              style: TextStyle(
+                color: colorScheme.onSurface,
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const Spacer(),
+            // Auto-scroll toggle
+            Tooltip(
+              message: 'Auto-scroll to bottom',
+              child: IconButton(
+                icon: Icon(
+                  _autoScroll
+                      ? LucideIcons.arrowDown
+                      : LucideIcons.arrowDownToLine,
+                  size: 20,
                 ),
-                const Spacer(),
-                // Auto-scroll toggle
-                Tooltip(
-                  message: 'Auto-scroll to bottom',
-                  child: IconButton(
-                    icon: Icon(
-                      _autoScroll
-                          ? LucideIcons.arrowDown
-                          : LucideIcons.arrowDownToLine,
-                      size: 20,
-                    ),
-                    color: _autoScroll
-                        ? colorScheme.primary
-                        : colorScheme.onSurface.withAlpha(153),
-                    onPressed: () {
-                      setState(() {
-                        _autoScroll = !_autoScroll;
-                        if (_autoScroll && _scrollController.hasClients) {
-                          _scrollController.animateTo(
-                            _scrollController.position.maxScrollExtent,
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeOut,
-                          );
-                        }
-                      });
-                    },
-                  ),
-                ),
-                // Copy button
-                Tooltip(
-                  message: 'Copy logs to clipboard',
-                  child: IconButton(
-                    icon: const Icon(LucideIcons.copy, size: 20),
-                    color: colorScheme.onSurface.withAlpha(153),
-                    onPressed: _copyAllLogsToClipboard,
-                  ),
-                ),
-                // Clear button
-                Tooltip(
-                  message: 'Clear logs',
-                  child: IconButton(
-                    icon: const Icon(LucideIcons.trash2, size: 20),
-                    color: colorScheme.onSurface.withAlpha(153),
-                    onPressed: _clearLogs,
-                  ),
-                ),
-              ],
+                color: _autoScroll
+                    ? colorScheme.primary
+                    : colorScheme.onSurface.withAlpha(153),
+                onPressed: () {
+                  setState(() {
+                    _autoScroll = !_autoScroll;
+                  });
+                  if (_autoScroll && _scrollController.hasClients) {
+                    _scrollController.animateTo(
+                      _scrollController.position.maxScrollExtent,
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeOut,
+                    );
+                  }
+                },
+              ),
+            ),
+            // Copy button
+            Tooltip(
+              message: 'Copy logs to clipboard',
+              child: IconButton(
+                icon: const Icon(LucideIcons.copy, size: 20),
+                color: colorScheme.onSurface.withAlpha(153),
+                onPressed: _copyAllLogsToClipboard,
+              ),
+            ),
+            // Clear button
+            Tooltip(
+              message: 'Clear logs',
+              child: IconButton(
+                icon: const Icon(LucideIcons.trash2, size: 20),
+                color: colorScheme.onSurface.withAlpha(153),
+                onPressed: _clearLogs,
+              ),
             ),
           ],
         ),
@@ -170,7 +167,7 @@ class _DebugViewerState extends State<DebugViewer> {
               borderRadius: BorderRadius.circular(8),
               border: Border.all(color: colorScheme.outline.withAlpha(64)),
             ),
-            child: logs.isEmpty
+            child: _cachedLogs.isEmpty
                 ? Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -192,28 +189,53 @@ class _DebugViewerState extends State<DebugViewer> {
                       ],
                     ),
                   )
-                : ListView.builder(
-                    controller: _scrollController,
-                    itemCount: logs.length,
-                    itemBuilder: (context, index) {
-                      final log = logs[index];
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 2.0),
-                        child: Text(
-                          log.formattedMessage,
-                          style: TextStyle(
-                            fontFamily: 'DM Mono',
-                            fontSize: 14,
-                            color: _getColorForLevel(log.level, colorScheme),
-                            height: 1.4,
-                          ),
-                        ),
-                      );
-                    },
+                : _LogListView(
+                    logs: _cachedLogs,
+                    scrollController: _scrollController,
+                    colorScheme: colorScheme,
+                    getColorForLevel: _getColorForLevel,
                   ),
           ),
         ),
       ],
+    );
+  }
+}
+
+/// Separated log list for better performance (avoids rebuilding header)
+class _LogListView extends StatelessWidget {
+  final List<LogEntry> logs;
+  final ScrollController scrollController;
+  final ColorScheme colorScheme;
+  final Color Function(Level, ColorScheme) getColorForLevel;
+
+  const _LogListView({
+    required this.logs,
+    required this.scrollController,
+    required this.colorScheme,
+    required this.getColorForLevel,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      controller: scrollController,
+      itemCount: logs.length,
+      itemBuilder: (context, index) {
+        final log = logs[index];
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 2.0),
+          child: Text(
+            log.formattedMessage,
+            style: TextStyle(
+              fontFamily: 'DM Mono',
+              fontSize: 14,
+              color: getColorForLevel(log.level, colorScheme),
+              height: 1.4,
+            ),
+          ),
+        );
+      },
     );
   }
 }
