@@ -166,7 +166,8 @@ class _DebugViewerState extends State<DebugViewer> {
           // Log display area
           Expanded(
             child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16.0) + const EdgeInsets.only(bottom: 16.0),
+              margin: const EdgeInsets.symmetric(horizontal: 16.0) +
+                  const EdgeInsets.only(bottom: 16.0),
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: colorScheme.surface,
