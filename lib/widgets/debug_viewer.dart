@@ -17,7 +17,7 @@ class _DebugViewerState extends State<DebugViewer> {
   final ScrollController _scrollController = ScrollController();
   bool _autoScroll = true;
   Timer? _refreshTimer;
-  int _lastLogCount = 0;
+  int _lastRevision = -1;
 
   @override
   void initState() {
@@ -26,9 +26,9 @@ class _DebugViewerState extends State<DebugViewer> {
     // Refresh log display every 100ms to capture new logs
     _refreshTimer = Timer.periodic(const Duration(milliseconds: 100), (_) {
       if (mounted) {
-        final currentLogCount = _logCapture.logCount;
-        if (currentLogCount != _lastLogCount) {
-          _lastLogCount = currentLogCount;
+        final currentRevision = _logCapture.revision;
+        if (currentRevision != _lastRevision) {
+          _lastRevision = currentRevision;
           setState(() {});
 
           if (_autoScroll && _scrollController.hasClients) {
@@ -199,7 +199,7 @@ class _DebugViewerState extends State<DebugViewer> {
                       final log = logs[index];
                       return Padding(
                         padding: const EdgeInsets.symmetric(vertical: 2.0),
-                        child: SelectableText(
+                        child: Text(
                           log.formattedMessage,
                           style: TextStyle(
                             fontFamily: 'DM Mono',

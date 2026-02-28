@@ -68,6 +68,9 @@ class LogCapture {
   List<LogEntry>? _cachedCombinedLogs;
   bool _isCacheValid = false;
 
+  // Revision counter to track changes even when log count stays the same
+  int _revision = 0;
+
   LogCapture._internal() {
     Logger.root.level = Level.ALL;
     Logger.root.onRecord.listen(_handleLogRecord);
@@ -104,6 +107,7 @@ class LogCapture {
     _logs.add(entry);
     _trimLogsToLimit();
     _isCacheValid = false;
+    _revision++;
 
     // Print to console
     if (kDebugMode) {
@@ -188,6 +192,7 @@ class LogCapture {
       _receivedLogs.add(entry);
       _trimLogsToLimit();
       _isCacheValid = false;
+      _revision++;
     } catch (_) {
       // Silently ignore malformed log data
     }
@@ -208,10 +213,13 @@ class LogCapture {
 
   int get logCount => _logs.length + _receivedLogs.length;
 
+  int get revision => _revision;
+
   void clear() {
     _logs.clear();
     _receivedLogs.clear();
     _isCacheValid = false;
+    _revision++;
   }
 }
 
