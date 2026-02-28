@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 import 'package:desktop_multi_window/desktop_multi_window.dart';
@@ -58,9 +59,9 @@ class LogCapture {
   static final LogCapture _instance = LogCapture._internal();
   factory LogCapture() => _instance;
 
-  final List<LogEntry> _logs = [];
-  final List<LogEntry> _receivedLogs =
-      []; // For logs received from other windows
+  final ListQueue<LogEntry> _logs = ListQueue<LogEntry>();
+  final ListQueue<LogEntry> _receivedLogs =
+      ListQueue<LogEntry>(); // For logs received from other windows
   static const int _maxLogs =
       1000; // Keep last 1000 combined logs across both buffers
 
@@ -82,18 +83,18 @@ class LogCapture {
 
     final toRemove = totalLogs - _maxLogs;
 
-    // Remove oldest logs efficiently
+    // Remove oldest logs efficiently (O(1) per removal with ListQueue)
     for (var i = 0; i < toRemove; i++) {
       if (_logs.isEmpty) {
-        _receivedLogs.removeAt(0);
+        _receivedLogs.removeFirst();
       } else if (_receivedLogs.isEmpty) {
-        _logs.removeAt(0);
+        _logs.removeFirst();
       } else {
         // Remove from the buffer with the older timestamp
         if (_logs.first.timestamp.isBefore(_receivedLogs.first.timestamp)) {
-          _logs.removeAt(0);
+          _logs.removeFirst();
         } else {
-          _receivedLogs.removeAt(0);
+          _receivedLogs.removeFirst();
         }
       }
     }
@@ -166,19 +167,22 @@ class LogCapture {
 
       // Check recent logs for duplicates (broadcasts typically arrive quickly)
       // Only check last 50 logs instead of all logs for better performance
-      final recentLogsToCheck =
-          _logs.length > 50 ? _logs.sublist(_logs.length - 50) : _logs;
+      final recentLogsToCheck = _logs.length > 50
+          ? _logs.toList().sublist(_logs.length - 50)
+          : _logs.toList();
       final recentReceivedToCheck = _receivedLogs.length > 50
-          ? _receivedLogs.sublist(_receivedLogs.length - 50)
-          : _receivedLogs;
+          ? _receivedLogs.toList().sublist(_receivedLogs.length - 50)
+          : _receivedLogs.toList();
 
       final isDuplicate = recentLogsToCheck.any((log) =>
               log.timestamp == parsedTimestamp &&
               log.loggerName == loggerName &&
+              log.level == level &&
               log.message == message) ||
           recentReceivedToCheck.any((log) =>
               log.timestamp == parsedTimestamp &&
               log.loggerName == loggerName &&
+              log.level == level &&
               log.message == message);
 
       if (isDuplicate) {

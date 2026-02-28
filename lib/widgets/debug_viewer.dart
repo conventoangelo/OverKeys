@@ -19,11 +19,13 @@ class _DebugViewerState extends State<DebugViewer> {
   Timer? _refreshTimer;
   int _lastRevision = -1;
   List<LogEntry> _cachedLogs = [];
+  bool _scrollPending = false;
 
   @override
   void initState() {
     super.initState();
     _cachedLogs = _logCapture.logs;
+    _lastRevision = _logCapture.revision;
 
     // Refresh log display every 100ms to capture new logs
     _refreshTimer = Timer.periodic(const Duration(milliseconds: 100), (_) {
@@ -35,7 +37,8 @@ class _DebugViewerState extends State<DebugViewer> {
         _cachedLogs = _logCapture.logs;
         setState(() {});
 
-        if (_autoScroll && _scrollController.hasClients) {
+        if (_autoScroll && _scrollController.hasClients && !_scrollPending) {
+          _scrollPending = true;
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (_scrollController.hasClients) {
               _scrollController.animateTo(
@@ -44,6 +47,7 @@ class _DebugViewerState extends State<DebugViewer> {
                 curve: Curves.easeOut,
               );
             }
+            _scrollPending = false;
           });
         }
       }
@@ -73,6 +77,7 @@ class _DebugViewerState extends State<DebugViewer> {
   void _clearLogs() {
     _logCapture.clear();
     _cachedLogs = [];
+    _lastRevision = _logCapture.revision;
     setState(() {});
   }
 
