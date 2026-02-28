@@ -16,7 +16,7 @@ class _DebugViewerState extends State<DebugViewer> {
   final LogCapture _logCapture = LogCapture();
   final ScrollController _scrollController = ScrollController();
   bool _autoScroll = true;
-  Timer? _refreshTimer;
+  StreamSubscription<int>? _logSubscription;
   int _lastRevision = -1;
   List<LogEntry> _cachedLogs = [];
   bool _scrollPending = false;
@@ -27,13 +27,12 @@ class _DebugViewerState extends State<DebugViewer> {
     _cachedLogs = _logCapture.logs;
     _lastRevision = _logCapture.revision;
 
-    // Refresh log display every 100ms to capture new logs
-    _refreshTimer = Timer.periodic(const Duration(milliseconds: 100), (_) {
+    // Subscribe to log revision updates for event-driven updates
+    _logSubscription = _logCapture.revisionStream.listen((revision) {
       if (!mounted) return;
 
-      final currentRevision = _logCapture.revision;
-      if (currentRevision != _lastRevision) {
-        _lastRevision = currentRevision;
+      if (revision != _lastRevision) {
+        _lastRevision = revision;
         _cachedLogs = _logCapture.logs;
         setState(() {});
 
@@ -56,7 +55,7 @@ class _DebugViewerState extends State<DebugViewer> {
 
   @override
   void dispose() {
-    _refreshTimer?.cancel();
+    _logSubscription?.cancel();
     _scrollController.dispose();
     super.dispose();
   }

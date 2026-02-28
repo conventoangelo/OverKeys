@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:collection';
 import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
@@ -72,6 +73,13 @@ class LogCapture {
   // Revision counter to track changes even when log count stays the same
   int _revision = 0;
 
+  // Stream controller for event-driven log updates
+  final StreamController<int> _revisionController =
+      StreamController<int>.broadcast();
+
+  /// Stream of revision updates for event-driven log monitoring
+  Stream<int> get revisionStream => _revisionController.stream;
+
   LogCapture._internal() {
     Logger.root.level = Level.ALL;
     Logger.root.onRecord.listen(_handleLogRecord);
@@ -114,6 +122,7 @@ class LogCapture {
     _trimLogsToLimit();
     _isCacheValid = false;
     _revision++;
+    _revisionController.add(_revision);
 
     // Print to console
     if (kDebugMode) {
@@ -167,12 +176,12 @@ class LogCapture {
 
       // Check recent logs for duplicates (broadcasts typically arrive quickly)
       // Only check last 50 logs instead of all logs for better performance
-      final recentLogsToCheck = _logs.length > 50
-          ? _logs.toList().sublist(_logs.length - 50)
-          : _logs.toList();
+      // Use skip() to avoid creating full list copies
+      final recentLogsToCheck =
+          _logs.length > 50 ? _logs.skip(_logs.length - 50) : _logs;
       final recentReceivedToCheck = _receivedLogs.length > 50
-          ? _receivedLogs.toList().sublist(_receivedLogs.length - 50)
-          : _receivedLogs.toList();
+          ? _receivedLogs.skip(_receivedLogs.length - 50)
+          : _receivedLogs;
 
       final isDuplicate = recentLogsToCheck.any((log) =>
               log.timestamp == parsedTimestamp &&
@@ -205,6 +214,7 @@ class LogCapture {
       _trimLogsToLimit();
       _isCacheValid = false;
       _revision++;
+      _revisionController.add(_revision);
     } catch (_) {
       // Silently ignore malformed log data
     }
@@ -232,6 +242,7 @@ class LogCapture {
     _receivedLogs.clear();
     _isCacheValid = false;
     _revision++;
+    _revisionController.add(_revision);
   }
 }
 
