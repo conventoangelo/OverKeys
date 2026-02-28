@@ -81,7 +81,7 @@ class KeyEventService {
       // Display "Space" in logs for better readability instead of blank
       final displayKey = key == ' ' ? 'Space' : key;
       _log.debug(
-          'Key: ${displayKey.padRight(10)}\tKeyCode: ${keyCode.toString().padRight(5)}\tPressed: ${isPressed.toString().padRight(7   )}\tShift: $isShiftDown');
+          'Key: ${displayKey.padRight(10)}\tKeyCode: ${keyCode.toString().padRight(5)}\tPressed: ${isPressed.toString().padRight(7)}\tShift: $isShiftDown');
 
       keyboardNotifier.updateKeyPressState(key, isPressed);
 
