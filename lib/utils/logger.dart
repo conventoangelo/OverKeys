@@ -19,7 +19,13 @@ class LogEntry {
     this.stackTrace,
   });
 
-  String get formattedTimestamp => timestamp.toString().substring(11, 23);
+  String get formattedTimestamp {
+    final str = timestamp.toString();
+    if (str.length >= 23) {
+      return str.substring(11, 23);
+    }
+    return str.length > 11 ? str.substring(11) : str;
+  }
 
   String get levelEmoji {
     if (level == Level.INFO) return 'ℹ️ ';
