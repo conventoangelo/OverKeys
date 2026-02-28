@@ -69,7 +69,7 @@ class LogCapture {
   bool _isCacheValid = false;
 
   LogCapture._internal() {
-    Logger.root.level = kDebugMode ? Level.ALL : Level.INFO;
+    Logger.root.level = Level.ALL;
     Logger.root.onRecord.listen(_handleLogRecord);
   }
 
