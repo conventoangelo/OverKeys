@@ -24,6 +24,7 @@ import 'package:overkeys/widgets/tabs/hotkeys_tab.dart';
 import 'package:overkeys/widgets/tabs/learn_tab.dart';
 import 'package:overkeys/widgets/tabs/advanced_tab.dart';
 import 'package:overkeys/widgets/tabs/about_tab.dart';
+import 'package:overkeys/utils/logger.dart';
 
 class PreferencesScreen extends ConsumerStatefulWidget {
   const PreferencesScreen({super.key, required this.windowController});
@@ -112,6 +113,17 @@ class _PreferencesScreenState extends ConsumerState<PreferencesScreen>
       if (call.method == 'requestFocus') {
         await windowManager.focus();
       }
+
+      if (call.method == 'receiveLog' && mounted) {
+        // Receive logs from other windows (like main window)
+        try {
+          final logData = Map<String, dynamic>.from(call.arguments as Map);
+          LogCapture().addReceivedLog(logData);
+        } catch (_) {
+          // Ignore malformed log data
+        }
+      }
+
       return null;
     });
   }

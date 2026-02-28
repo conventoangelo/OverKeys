@@ -6,6 +6,7 @@ import 'package:overkeys/widgets/options/options.dart';
 import 'package:overkeys/services/config_service.dart';
 import 'package:overkeys/models/user_config.dart';
 import 'package:overkeys/providers/preferences_provider.dart';
+import 'package:overkeys/widgets/debug_viewer.dart';
 
 class AdvancedTab extends ConsumerWidget {
   final Function(String method, dynamic value) onUpdateMainWindow;
@@ -134,6 +135,11 @@ class AdvancedTab extends ConsumerWidget {
                 },
               ),
               _buildOpenConfigButton(context),
+              const SizedBox(height: 20),
+              SizedBox(
+                height: 500,
+                child: const DebugViewer(),
+              ),
             ],
           ),
           crossFadeState: prefsState.advancedSettingsEnabled

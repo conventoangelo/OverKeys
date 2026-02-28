@@ -474,6 +474,17 @@ class _MainAppState extends ConsumerState<MainApp>
         return null;
       }
 
+      if (call.method == 'receiveLog') {
+        // Receive logs from other windows for log capture
+        try {
+          final logData = Map<String, dynamic>.from(call.arguments as Map);
+          LogCapture().addReceivedLog(logData);
+        } catch (_) {
+          // Ignore malformed log data
+        }
+        return null;
+      }
+
       await _methodCallHandler.handleMethodCall(
         call,
         ref,

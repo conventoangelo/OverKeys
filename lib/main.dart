@@ -9,6 +9,7 @@ import 'package:hotkey_manager/hotkey_manager.dart';
 import 'app.dart';
 import 'screens/preferences_screen.dart';
 import 'utils/window_controller_extension.dart';
+import 'utils/logger.dart';
 
 // Window type definitions
 enum WindowType {
@@ -25,6 +26,9 @@ enum WindowType {
 
 Future<void> main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize log capture early to catch all logs
+  LogCapture();
 
   // Get the current window controller
   final windowController = await WindowController.fromCurrentEngine();
