@@ -1,298 +1,101 @@
-<a id="readme-top"></a>
+# OverKeys for macOS
 
-<br />
-<div align="center">
-  <!-- PROJECT LOGO -->
-  <img src="assets/images/OK.png" alt="OverKeys Logo" width="160" height="160">
-  <h1 align="center">OverKeys</h1>
-  
-  <!-- BADGES -->
-  <p align="center">
-    <a href="https://github.com/conventoangelo/OverKeys/releases/latest">
-      <img src="https://img.shields.io/github/v/release/conventoangelo/OverKeys?label=Release&style=for-the-badge&logo=github&logoColor=FAFBFE&labelColor=10151D&color=A87FFB" alt="Release (Inverted)">
-    </a>
-    <a href="https://github.com/conventoangelo/OverKeys/releases">
-      <img src="https://img.shields.io/github/downloads/conventoangelo/OverKeys/total?label=Downloads&style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNGQUZCRkUiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1kb3dubG9hZC1pY29uIGx1Y2lkZS1kb3dubG9hZCI+PHBhdGggZD0iTTEyIDE1VjMiLz48cGF0aCBkPSJNMjEgMTV2NGEyIDIgMCAwIDEtMiAySDVhMiAyIDAgMCAxLTItMnYtNCIvPjxwYXRoIGQ9Im03IDEwIDUgNSA1LTUiLz48L3N2Zz4=&logoColor=FAFBFE&labelColor=10151D&color=A87FFB" alt="Downloads (Inverted)">
-    </a>
-    <a href="https://github.com/conventoangelo/OverKeys/blob/main/LICENSE">
-      <img src="https://img.shields.io/github/license/conventoangelo/OverKeys?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNGQUZCRkUiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1jb3B5cmlnaHQtaWNvbiBsdWNpZGUtY29weXJpZ2h0Ij48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIxMCIvPjxwYXRoIGQ9Ik0xNC44MyAxNC44M2E0IDQgMCAxIDEgMC01LjY2Ii8+PC9zdmc+&logoColor=FAFBFE&labelColor=10151D&color=A87FFB" alt="License (Inverted)">
-    </a>
-    <a href="https://github.com/conventoangelo/OverKeys/stargazers">
-      <img src="https://img.shields.io/github/stars/conventoangelo/OverKeys?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSIjRkFGQkZFIiBzdHJva2U9IiNGQUZCRkUiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1zdGFyLWljb24gbHVjaWRlLXN0YXIiPjxwYXRoIGQ9Ik0xMS41MjUgMi4yOTVhLjUzLjUzIDAgMCAxIC45NSAwbDIuMzEgNC42NzlhMi4xMjMgMi4xMjMgMCAwIDAgMS41OTUgMS4xNmw1LjE2Ni43NTZhLjUzLjUzIDAgMCAxIC4yOTQuOTA0bC0zLjczNiAzLjYzOGEyLjEyMyAyLjEyMyAwIDAgMC0uNjExIDEuODc4bC44ODIgNS4xNGEuNTMuNTMgMCAwIDEtLjc3MS41NmwtNC42MTgtMi40MjhhMi4xMjIgMi4xMjIgMCAwIDAtMS45NzMgMEw2LjM5NiAyMS4wMWEuNTMuNTMgMCAwIDEtLjc3LS41NmwuODgxLTUuMTM5YTIuMTIyIDIuMTIyIDAgMCAwLS42MTEtMS44NzlMMi4xNiA5Ljc5NWEuNTMuNTMgMCAwIDEgLjI5NC0uOTA2bDUuMTY1LS43NTVhMi4xMjIgMi4xMjIgMCAwIDAgMS41OTctMS4xNnoiLz48L3N2Zz4=&logoColor=FAFBFE&labelColor=10151D&color=A87FFB" alt="GitHub stars (Inverted)">
-    </a>
-  </p>
+A native macOS keyboard overlay that highlights keys in real time as you type. Built specifically for the **MoErgo Glove80** split ergonomic keyboard with full layer visualization, but also supports standard staggered, matrix, and split matrix layouts.
 
-  <h3 align="center">An open-source keyboard layout visualizer for Windows</h3>
-
-  <p align="center">
-    <a href="#getting-started">Install Now</a>
-    ·
-    <a href="https://github.com/conventoangelo/OverKeys/issues/new?template=bug_report.md">Report Bug</a>
-    ·
-    <a href="https://github.com/conventoangelo/OverKeys/issues/new?template=feature_request.md">Request a Feature</a>
-    ·
-    <a href="https://github.com/conventoangelo/OverKeys/discussions/new?category=q-a">Ask a Question</a>
-  </p>
-</div>
-
-<!-- TABLE OF CONTENTS -->
-<details>
-  <summary>Table of Contents</summary>
-  <ol>
-    <li><a href="#about-the-project">About The Project</a></li>
-    <li><a href="#features">Features</a></li>
-    <li><a href="#getting-started">Getting Started</a></li>
-    <li><a href="#documentation">Documentation</a></li>
-    <li><a href="#contributing">Contributing</a></li>
-    <li><a href="#building-from-source">Building from Source</a></li>
-    <li><a href="#license">License</a></li>
-    <li><a href="#contact">Contact</a></li>
-    <li><a href="#acknowledgments">Acknowledgments</a></li>
-  </ol>
-</details>
-
-<!-- ABOUT THE PROJECT -->
-
-## About The Project
-
-![OverKeys Demo](https://github.com/conventoangelo/OverKeys/blob/main/assets/images/OverKeysDemo.gif)
-
-<https://github.com/user-attachments/assets/c687a448-52b0-41bc-9b6b-07e61c2d3b31>
-
-OverKeys is a free and open-source keyboard layout visualizer designed for users to practice alternative keyboard layouts, such as **Colemak**, **Dvorak**, **Graphite**, **Focal**, and many more. Learn and practice your layouts system-wide, personalize keyboard appearance, and improve your typing.
-
-This project was initially developed to help with the creator's system-wide practice of the **Canary layout**, but has since evolved to support user-defined layouts, layer switching integration, and customization options.
-
-### Samples
-
-<table>
-    <tr>
-      <td colspan="2" style="text-align:center;">
-        <img src="assets/images/overkeys_cover.png" alt="overkeys cover" style="max-width:100%;height:auto;">
-        <p align="center">OverKeys Default</p>
-      </td>
-    </tr>
-  <tr>
-    <td>
-      <img src="assets/images/aurora1.png" alt="aurora dark background">
-      <p align="center">Aurora (On Dark Background)</p>
-    </td>
-    <td>
-      <img src="assets/images/aurora2.png" alt="aurora light background">
-      <p align="center">Aurora (On Light Background)</p>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <img src="assets/images/eyco1.png" alt="custom dark background">
-      <p align="center">Custom (On Dark Background)</p>
-    </td>
-    <td>
-      <img src="assets/images/eyco2.png" alt="custom light background">
-      <p align="center">Custom (On Light Background)</p>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <img src="assets/images/catpuccin.png" alt="catpuccin">
-      <p align="center">Catppuccin</p>
-    </td>
-    <td>
-      <img src="assets/images/redsamurai.png" alt="split matrix">
-      <p align="center">Red Samurai</p>
-    </td>
-    </tr>
-    <tr>
-    <td>
-      <img src="assets/images/splitmatrix.png" alt="red samurai">
-      <p align="center">Split Matrix Style</p>
-    </td>
-    <td>
-      <img src="assets/images/matrix.png" alt="matrix">
-      <p align="center">Matrix Style</p>
-    </td>
-  </tr>
-</table>
-<sub>Note: The themes are not provided by default and were instead manually configured. Colors were based on the MonkeyType themes of the same name.</sub>
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<!-- TODO: Add screenshot/gif of the overlay in action -->
 
 ## Features
 
-- **Multi-layout support**: The following layouts are currently natively supported.
-  <details>
-  <summary>Layouts</summary>
-    <ul>
-      <li>QWERTY</li>
-      <li>Colemak</li>
-      <li>Dvorak</li>
-      <li>Canaria</li>
-      <li>Canary</li>
-      <li>Canary Matrix</li>
-      <li>Colemak DH</li>
-      <li>Colemak DH Matrix</li>
-      <li>Engram</li>
-      <li>Focal</li>
-      <li>Gallium (Col-Stag)</li>
-      <li>Gallium V2 (Row-Stag)</li>
-      <li>Graphite</li>
-      <li>Halmak</li>
-      <li>Hands Down</li>
-      <li>NERPS</li>
-      <li>Norman</li>
-      <li>Sturdy</li>
-      <li>Sturdy Angle (Staggered)</li>
-      <li>Workman</li>
-      <li>Greek</li>
-      <li>Arabic</li>
-      <li>Russian</li>
-    </ul>
-  </details>
-- **Customizable styles**: Change colors, fonts, sizes, offsets, and key styles
-- **Auto-hide**: The keyboard hides automatically when not in use
-- **Keymap styles**: Supports staggered, matrix, and split matrix (5-col and [6-col](/docs/advanced/6-column-layouts.md)) styles
-- **User configurations**: Add and use [custom keyboard layouts](/docs/advanced/custom-layouts.md) through configuration files
-- **Side-by-side layouts**: Display [alternative layouts](/docs/advanced/alternative-layouts.md) alongside the default layout
-- **Top row/Number row**: Optional row above the main keyboard for numbers or user-configured keys
-- **[Layer switching](/docs/advanced/layer-switching.md)**: Switch between multiple custom keyboard layers for QMK, ZMK, or other programmable keyboard firmware using configurable triggers and toggle modes
-- **[Layer switching (Kanata)](./docs/advanced/kanata-integration.md)**: Connect to [Kanata](https://github.com/jtroo/kanata) through TCP to dynamically display the active layer
-- **[Ignored Keys](/docs/advanced/ignored-keys.md)**: Prevent specific keys from triggering the keyboard overlay (e.g., Print Screen, layer triggers)
-- **[Learning Mode](/docs/user-guide/learning-mode.md)**: Color-code keys based on proper finger positions for touch typing
-- **[Reactive Shift Mapping](/docs/advanced/shift-mappings.md)**: Display alternate key symbols when Shift key is pressed
-- **[Locales](/docs/advanced/locales.md)**: Add locale-specific keys in user configuration for key press recognition
+- **Real-time key highlighting** -- see exactly which keys you press as you type
+- **Glove80 layout** -- accurate column-staggered rendering with thumb clusters
+- **Layer visualization** -- hold a thumb key to peek at Cursor, Symbol, or Mouse layers
+- **Symbol layer badges** -- small corner labels show what each key does on the Symbol layer without activating it
+- **Layer auto-inference** -- detects active layers from unique keycodes (e.g. arrow keys infer Cursor layer)
+- **Customizable appearance** -- key size, colors, fonts, animations, opacity, and more
+- **Click-through overlay** -- sits on top of all windows without intercepting clicks
+- **All Spaces** -- overlay follows you across virtual desktops
+- **Menu bar app** -- no Dock icon, lives quietly in the menu bar
+- **JSON config** -- compatible with the original OverKeys config format for custom layouts
 
-For complete feature details, see the [documentation](docs/index.md).
+## Installation
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+### From DMG (recommended)
 
-## Getting Started
+1. Download the latest `.dmg` from [Releases](../../releases)
+2. Open the DMG and drag **OverKeys** to your Applications folder
+3. Launch OverKeys
+4. **Grant Accessibility permission** (required -- see below)
 
-### Installation
+### Grant Accessibility Permission
 
-OverKeys can be installed through several methods:
+OverKeys uses macOS Accessibility APIs to detect global key presses. Without this permission, the overlay cannot react to your typing.
 
-1. **Using Winget (Recommended)**
+1. On first launch, macOS will prompt you to grant Accessibility access
+2. If the prompt doesn't appear, go to **System Settings > Privacy & Security > Accessibility**
+3. Click the **+** button and add OverKeys (or toggle it on if already listed)
+4. **Restart OverKeys** after granting permission
 
-   ```pwsh
-   winget install AngeloConvento.OverKeys
-   ```
+> **Note:** If you rebuild or update the app binary, macOS may revoke the permission. You'll need to toggle it off and back on in System Settings, then restart the app.
 
-   <sub>Note: Please check if `winget` version is updated to the latest version as in the repo. Otherwise, use the [installer](https://github.com/conventoangelo/OverKeys/releases/latest) to have the latest version.</sub>
+### Build from Source
 
-2. **Using the Installer**
+**Requirements:**
+- macOS 13.0+
+- Xcode 14+ with Command Line Tools
+- [XcodeGen](https://github.com/yonaskolb/XcodeGen) (`brew install xcodegen`)
 
-   - Download and run the latest [EXE installer](https://github.com/conventoangelo/OverKeys/releases/latest).
+```bash
+# Clone the repo
+git clone https://github.com/conventoangelo/OverKeys.git
+cd OverKeys
 
-3. **Portable Version**
-   - Downloade and extract the [portable ZIP file](https://github.com/conventoangelo/OverKeys/releases/latest)
+# Generate the Xcode project
+cd OverKeysMac
+xcodegen generate --spec project.yml
 
-For detailed installation instructions, see the [Installation Guide](/docs/getting-started/installation.md).
+# Build (universal binary)
+xcodebuild -project OverKeysMac.xcodeproj \
+  -scheme OverKeysMac \
+  -configuration Release \
+  -archivePath ../build/OverKeysMac.xcarchive \
+  archive \
+  ONLY_ACTIVE_ARCH=NO
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+# Or use the dev deploy script (builds, installs to ~/Applications, launches)
+cd ..
+bash scripts/deploy.sh
+```
 
-## Documentation
+## Configuration
 
-Complete documentation for OverKeys is available in the [docs](docs/index.md) folder:
+OverKeys reads its configuration from:
 
-### Getting Started (Docs)
+```
+~/Library/Application Support/OverKeysMac/config.json
+```
 
-- [Installation Guide](/docs/getting-started/installation.md)
-- [Basic Usage](/docs/getting-started/basic-usage.md)
+On first launch, a default config is seeded. You can edit it to define custom layouts, layer triggers, key aliases, ignored keys, and shift mappings. The format is compatible with the original [OverKeys](https://github.com/conventoangelo/OverKeys) config schema.
 
-### User Guide
+Access the config file from the app: **Settings > Advanced > Open Config File**.
 
-- [Preferences](/docs/user-guide/preferences.md)
-- [Learning Mode](/docs/user-guide/learning-mode.md)
-- [Built-in Layouts](#features)
+## Glove80 / TailorKey Setup
 
-### Advanced Features
+If you use a Glove80 with TailorKey firmware:
 
-- [Custom Font](/docs/advanced/custom-font.md)
-- [Custom Layouts](/docs/advanced/custom-layouts.md)
-- [Alternative Layouts](/docs/advanced/alternative-layouts.md)
-- [6-Column Layouts](/docs/advanced/6-column-layouts.md)
-- [Layer Switching](/docs/advanced/layer-switching.md)
-- [Kanata Integration](/docs/advanced/kanata-integration.md)
-- [Shift Mappings](/docs/advanced/shift-mappings.md)
-- [Supported Keys](/docs/advanced/supported-keys.md)
-- [Locales](/docs/advanced/locales.md)
+1. Set **Keymap Style** to "Glove80" in Settings > Keyboard
+2. Define your layers in `config.json` with trigger keys matching your firmware (F16, F17, F19, =)
+3. The overlay will automatically show layer diffs when you hold thumb keys
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+Supported layers: TK Cursor (BSPC), TK Symbol (SPC), TK Mouse (ENTER), TK Lower (=).
 
-## Contributing
+## Scripts
 
-Contributions are what make the open-source community such an amazing place to learn and collaborate. Any contributions to **OverKeys** are greatly appreciated.
-
-1. Fork the Project.
-2. Create your Feature Branch (`git checkout -b feat/amazing-feature`).
-3. Commit your Changes (`git commit -m 'feat: add some amazing feature'`).
-4. Push to the Branch (`git push origin feat/amazing-feature`).
-5. Open a Pull Request.
-
-### Top contributors
-
-<a href="https://github.com/conventoangelo/OverKeys/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=conventoangelo/OverKeys" alt="contrib.rocks image" />
-</a>
-
-## Building from Source
-
-1. **Prerequisites**:
-
-   - Install [Flutter](https://flutter.dev/docs/get-started/install)
-   - Install [Git](https://git-scm.com/downloads/win)
-
-2. **Clone and Build**:
-
-   ```pwsh
-   git clone https://github.com/conventoangelo/OverKeys.git
-   cd OverKeys
-   flutter pub get
-   flutter run -d windows  # For testing
-   # OR
-   flutter build windows   # For release build
-   # Release executable is located at `build\windows\x64\runner\Release`
-   ```
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+| Script | Purpose |
+|---|---|
+| `scripts/deploy.sh` | Dev workflow: build, install to ~/Applications, test, launch |
+| `scripts/install_dev.sh` | Full test suite: startup, event tap, key reaction, layer triggers |
+| `scripts/package_dmg.sh` | Release: build, sign, notarize, create DMG |
 
 ## License
 
-Distributed under the GPL-3.0 License. See `LICENSE` file for more information.
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-## Contact
-
-### Angelo Convento
-
-GitHub: [conventoangelo](https://github.com/conventoangelo)  
-Email: <convento.angelo@gmail.com>
-
-Project Link: [https://github.com/conventoangelo/OverKeys](https://github.com/conventoangelo/OverKeys)
-
-## Supporting
-
-If you'd like to support the development of OverKeys, I accept contributions through Ko-fi and BuyMeACoffee. Thank you — your support helps fund development and living costs.
-
-<div>
-    <a href="https://ko-fi.com/H2H6CTQ6A">
-      <img src="https://storage.ko-fi.com/cdn/brandasset/v2/support_me_on_kofi_blue.png" alt="Support me on Ko-fi" style="height:41px!important;">
-    </a>
-    &nbsp;&nbsp;
-    <a href="https://www.buymeacoffee.com/conventoangelo">
-      <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 41px !important;" >
-    </a>
-</div>
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-## Acknowledgments
-
-- [win32](https://win32.pub/) - Enable direct Win32 API access from Dart using FFI without requiring C code
-- [leanflutter.dev](https://leanflutter.dev/our-packages/) - Provider of several essential Flutter desktop packages used in this project
-- [desktop_multi_window](https://pub.dev/packages/desktop_multi_window) - Flutter plugin for creating and managing multiple windows in desktop applications
-- [flex_color_picker](https://github.com/rydmike/flex_color_picker) - Highly customizable and versatile color picker for Flutter applications
-- Alaine - for creating the beautiful OverKeys logo with love and care.
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+[GPL-3.0](LICENSE)
