@@ -1,0 +1,86 @@
+name: Build & Release DMG
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build Universal DMG
+    runs-on: macos-14
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Install create-dmg
+        run: brew install create-dmg
+
+      - name: Generate Xcode project
+        working-directory: OverKeysMac
+        run: xcodegen generate --spec project.yml
+
+      - name: Extract version from tag
+        id: version
+        run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Build universal binary
+        working-directory: OverKeysMac
+        run: |
+          xcodebuild \
+            -project OverKeysMac.xcodeproj \
+            -scheme OverKeysMac \
+            -configuration Release \
+            -derivedDataPath ../build/DerivedData \
+            CODE_SIGN_IDENTITY="-" \
+            CODE_SIGNING_REQUIRED=NO \
+            ONLY_ACTIVE_ARCH=NO \
+            ARCHS="arm64 x86_64" \
+            build
+
+      - name: Prepare .app bundle
+        run: |
+          mkdir -p build/Artifacts
+          cp -R build/DerivedData/Build/Products/Release/OverKeysMac.app build/Artifacts/OverKeys.app
+
+      - name: Verify universal binary
+        run: |
+          lipo -info build/Artifacts/OverKeys.app/Contents/MacOS/OverKeysMac
+          file build/Artifacts/OverKeys.app/Contents/MacOS/OverKeysMac
+
+      - name: Create DMG
+        run: |
+          create-dmg \
+            --volname "OverKeys ${{ steps.version.outputs.version }}" \
+            --volicon "build/Artifacts/OverKeys.app/Contents/Resources/AppIcon.icns" \
+            --window-pos 200 120 \
+            --window-size 600 400 \
+            --icon-size 100 \
+            --icon "OverKeys.app" 150 190 \
+            --hide-extension "OverKeys.app" \
+            --app-drop-link 450 190 \
+            "build/Artifacts/OverKeys-${{ steps.version.outputs.version }}.dmg" \
+            "build/Artifacts/OverKeys.app" \
+          || {
+            # create-dmg exits 2 when it can't set the icon (no .icns).
+            # Fall back to hdiutil.
+            echo "create-dmg failed, falling back to hdiutil"
+            hdiutil create \
+              -volname "OverKeys ${{ steps.version.outputs.version }}" \
+              -srcfolder build/Artifacts/OverKeys.app \
+              -ov -format UDZO \
+              "build/Artifacts/OverKeys-${{ steps.version.outputs.version }}.dmg"
+          }
+
+      - name: Upload DMG to Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build/Artifacts/OverKeys-${{ steps.version.outputs.version }}.dmg
+          generate_release_notes: true
