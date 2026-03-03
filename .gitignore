@@ -1,35 +1,48 @@
-# Miscellaneous
-*.class
-*.log
-*.pyc
-*.swp
+# macOS
 .DS_Store
-.atom/
-.buildlog/
-.history
-.svn/
-migrate_working_dir/
+.AppleDouble
+.LSOverride
 
-# IntelliJ related
-*.iml
-*.ipr
-*.iws
+# Xcode
+build/
+DerivedData/
+*.xcuserdata
+xcuserdata/
+*.xcscmblueprint
+*.xccheckout
+*.moved-aside
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+
+# Generated Xcode project (recreated via xcodegen)
+OverKeysMac/OverKeysMac.xcodeproj
+
+# Swift Package Manager
+.swiftpm/
+Packages/
+Package.resolved
+
+# Build artifacts
+*.app
+*.dSYM.zip
+*.dSYM
+*.dmg
+*.ipa
+
+# IDE
 .idea/
-
 .vscode/
+*.swp
+*.swo
 
-# Flutter/Dart/Pub related
-**/doc/api/
-.dart_tool/
-.flutter-plugins
-.flutter-plugins-dependencies
-.pub-cache/
-.pub/
-/build/
-
-# Local build and release script
-build.ps1
-release-notes.md
-
+# Secrets / local config
 /secrets
-.fvm/
+
+# Misc
+*.log
