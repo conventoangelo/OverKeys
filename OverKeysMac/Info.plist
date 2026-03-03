@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleName</key>
+    <string>OverKeys</string>
+    <key>CFBundleDisplayName</key>
+    <string>OverKeys</string>
+    <key>CFBundleIdentifier</key>
+    <string>com.overkeys.mac</string>
+    <key>CFBundleVersion</key>
+    <string>1</string>
+    <key>CFBundleShortVersionString</key>
+    <string>1.0.0</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>CFBundleExecutable</key>
+    <string>OverKeysMac</string>
+    <key>CFBundleIconName</key>
+    <string>AppIcon</string>
+    <key>NSPrincipalClass</key>
+    <string>NSApplication</string>
+
+    <!-- Hide Dock icon at launch; AppDelegate sets policy to .accessory -->
+    <key>LSUIElement</key>
+    <true/>
+
+    <!-- macOS 13.0 minimum -->
+    <key>LSMinimumSystemVersion</key>
+    <string>13.0</string>
+
+    <!-- Usage descriptions shown in System Settings -->
+    <key>NSAccessibilityUsageDescription</key>
+    <string>OverKeys needs Accessibility access to detect key presses globally and highlight keys on the overlay.</string>
+
+    <!-- No camera, microphone, or location needed -->
+    <key>NSHumanReadableCopyright</key>
+    <string>Copyright © 2024 OverKeys. All rights reserved.</string>
+
+    <!-- Support Retina / high-DPI displays -->
+    <key>NSHighResolutionCapable</key>
+    <true/>
+
+    <!-- Opt out of automatic window tabbing -->
+    <key>NSWindowCollectionBehavior</key>
+    <array>
+        <string>NSWindowCollectionBehaviorCanJoinAllSpaces</string>
+    </array>
+</dict>
+</plist>

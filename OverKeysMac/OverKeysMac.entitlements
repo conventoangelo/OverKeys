@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- Hardened runtime required for notarization -->
+    <key>com.apple.security.app-sandbox</key>
+    <false/>
+
+    <!-- Accessibility API access (required for CGEventTapCreate) -->
+    <!-- Note: sandbox must be false for accessibility event taps -->
+
+    <!-- Network client (optional, for Kanata TCP connection) -->
+    <key>com.apple.security.network.client</key>
+    <true/>
+
+    <!-- Allow reading/writing ~/Library/Application Support -->
+    <key>com.apple.security.files.user-selected.read-write</key>
+    <true/>
+
+    <!-- Hardened runtime: allow unsigned executable memory (not needed here) -->
+    <!-- Hardened runtime: allow JIT (not needed) -->
+
+    <!--
+        IMPORTANT: Because this app uses CGEventTapCreate at kCGSessionEventTap,
+        it requires Accessibility permission from the user. This cannot be granted
+        via entitlements — the user must grant it in System Settings.
+
+        The app CANNOT be sandboxed if it needs session-level event taps.
+        For distribution outside the Mac App Store, use Developer ID signing.
+    -->
+</dict>
+</plist>

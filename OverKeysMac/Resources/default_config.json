@@ -1,0 +1,113 @@
+{
+  "defaultUserLayout": "QWERTY",
+  "userLayouts": [
+    {
+      "name": "Extend",
+      "keys": [
+        ["`", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "BSPC"],
+        ["TAB", "Q", "W", "E", "R", "T", "←", "↑", "→", "", "", "[", "]", "\\"],
+        ["CAPS", "A", "S", "D", "F", "G", "HOME", "↓", "END", "", "", "'", "ENTER"],
+        ["LSFT", "Z", "X", "C", "V", "B", "N", "PGUP", "PGDN", ",", ".", "RSFT"],
+        ["LCTRL", "WIN", "LALT", " ", "RALT", "FN", "RCTRL"]
+      ],
+      "trigger": "F14",
+      "type": "held"
+    },
+
+    {
+      "_comment": "=== TailorKey / Glove80 layers — set keymapStyle to 'Glove80' in Preferences ===",
+      "name": "Glove80 Base",
+      "keys": [
+        ["=",    "1",    "2",    "3",    "4",    "5",    "6",    "7",    "8",    "9",    "0",    "-"],
+        ["TAB",  "Q",    "W",    "E",    "R",    "T",    "Y",    "U",    "I",    "O",    "P",    "\\"],
+        ["ESC",  "A",    "S",    "D",    "F",    "G",    "H",    "J",    "K",    "L",    ";",    "'"],
+        ["`",    "Z",    "X",    "C",    "V",    "B",    "N",    "M",    ",",    ".",    "/",    "PGUP"],
+        ["Magic","HOME", "END",  "←",    "→",    "↑",    "↓",    "[",    "]",    "PGDN"],
+        ["CapsW","LCTRL","LOWER","WIN",  "RCTRL","CapsW"],
+        ["BSPC", "DEL",  "LALT", "RALT", "ENTER","SPC"]
+      ]
+    },
+
+    {
+      "_comment": "TK Cursor layer — hold BSPC thumb key activates navigation on RIGHT hand",
+      "name": "TK Cursor",
+      "keys": [
+        ["",      "ESC",  "INS",  "S⇥",  "DEL",  "",     "",     "",     "",     "",     "",     ""],
+        ["",      "ENTER","SPC",  "TAB",  "BSPC", "Cut",  "Cut",  "S⇥",  "Undo", "Redo", "TAB",  ""],
+        ["LSFT",  "WIN",  "LALT", "LCTRL","LSFT", "Copy", "Copy", "←",   "↑",    "↓",    "→",    "RSFT"],
+        ["C-L",   "SelAl","SelLn","SelWd","Find", "Paste","Paste","HOME", "PGUP", "PGDN", "END",  "C-L"],
+        ["C-K",   "Undo", "Redo", "PrFd", "NxFd", "Find", "PrFd", "NxFd","Repl", "C-K"],
+        ["A⇥",   "G⇥",  "PRTSC","Desel","ExtLn","ExtWd"],
+        ["",      "C⇥",  "G-D",  "SelAl","SelLn","SelWd"]
+      ],
+      "trigger": "F19",
+      "type": "held"
+    },
+
+    {
+      "_comment": "TK Symbol layer — hold SPC thumb key activates symbols on LEFT hand",
+      "name": "TK Symbol",
+      "keys": [
+        ["`",    "]",    "(",    ")",    ",",    ".",    "",     "",     "",     "",     "",     ""],
+        ["[",    "!",    "{",    "}",    ";",    "?",    "`",    "RSFT", "RCTRL","RALT", "RGUI", ""],
+        ["#",    "^",    "=",    "_",    "$",    "*",    "\"",   "BSPC", "TAB",  "SPC",  "ENTER",""],
+        ["~",    "<",    "|",    "-",    ">",    "/",    "'",    "DEL",  "S⇥",  "INS",  "ESC",  ""],
+        ["..",    "&",    "'",    "\"",   "+",    "",     "",     "",     "",     ""],
+        ["\\",   ".",    "*",    "",     "",     ""],
+        ["%",    ":",    "@",    "",     "",     ""]
+      ],
+      "trigger": "F17",
+      "type": "held"
+    },
+
+    {
+      "_comment": "TK Lower layer — hold LOWER thumb key activates numpad on RIGHT hand",
+      "name": "TK Lower",
+      "keys": [
+        ["",     "",     "",     "",     "",     "HOME", "(",    "Num",  "=",    "/",    "*",    "PRTSC"],
+        ["",     "",     "",     "↑",    "",     "END",  ")",    "7",    "8",    "9",    "-",    "ScrLk"],
+        ["",     "",     "←",    "↓",    "→",    "PGUP", "%",    "4",    "5",    "6",    "+",    ""],
+        ["",     "APP",  "",     "F11",  "F12",  "PGDN", ",",    "1",    "2",    "3",    "ENTER",""],
+        ["Magic","CAPS", "INS",  "F11",  "F12",  "0",    "0",    ".",    "ENTER",""],
+        ["",     "",     "Base", "",     "",     ""],
+        ["",     "",     "",     "",     "",     ""]
+      ],
+      "trigger": "=",
+      "type": "held"
+    },
+
+    {
+      "_comment": "TK Mouse layer — hold ENTER thumb key activates mouse emulation",
+      "name": "TK Mouse",
+      "keys": [
+        ["",     "",     "",     "",     "",     "",     "",     "",     "",     "",     "",     ""],
+        ["",     "",     "ScrL", "↑",    "ScrR", "",     "",     "RSFT", "RCTRL","RALT", "RGUI", ""],
+        ["",     "ScrU", "←",    "↓",    "→",    "ScrU", "ScrU", "Slow", "Fast", "Warp", "LClk", "MB4"],
+        ["",     "ScrD", "Warp", "Fast", "Slow", "ScrD", "ScrD", "ScrL", "↑",    "ScrR", "RClk", "MB5"],
+        ["",     "",     "",     "",     "",     "←",    "↓",    "→",    "MClk", "APP"],
+        ["MClk", "APP",  "MB5",  "Cut",  "Copy", "Paste"],
+        ["LClk", "RClk", "MB4",  "",     "",     ""]
+      ],
+      "trigger": "F16",
+      "type": "held"
+    },
+
+    {
+      "_comment": "TK Magic layer — hold Magic key (no signal to host, display only)",
+      "name": "TK Magic",
+      "keys": [
+        ["Base", "",     "Typi", "",     "",     "Game", "",     "",     "",     "",     "",     ""],
+        ["",     "SpiU", "SatU", "HueU", "BriU", "RGB",  "",     "",     "",     "",     "",     ""],
+        ["Boot", "SpiD", "SatD", "HueD", "BriD", "Efct", "",     "",     "",     "",     "",     "Boot"],
+        ["Reset","",     "",     "",     "",     "",     "",     "",     "",     "",     "",     "Reset"],
+        ["",     "",     "",     "",     "",     "",     "",     "",     "",     ""],
+        ["BT2",  "BT3",  "",     "",     "",     ""],
+        ["BT0",  "BT1",  "USB",  "",     "",     ""]
+      ],
+      "type": "held"
+    }
+  ],
+  "customShiftMappings": {},
+  "customAliases": {},
+  "ignoredKeys": ["F13", "F14", "F15", "F16", "F17", "F18", "F19", "PRTSC"]
+}

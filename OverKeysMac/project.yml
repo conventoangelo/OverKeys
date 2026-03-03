@@ -1,0 +1,63 @@
+# project.yml — XcodeGen specification for OverKeysMac
+# Run: cd OverKeysMac && xcodegen generate
+
+name: OverKeysMac
+
+options:
+  bundleIdPrefix: com.overkeys
+  deploymentTarget:
+    macOS: "13.0"
+  generateEmptyDirectories: true
+  defaultConfig: Debug
+
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    MACOSX_DEPLOYMENT_TARGET: "13.0"
+
+targets:
+  OverKeysMac:
+    type: application
+    platform: macOS
+    deploymentTarget: "12.0"
+
+    sources:
+      - path: Sources
+      - path: Resources/default_config.json
+      - path: Assets.xcassets
+
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.overkeys.mac
+        MARKETING_VERSION: "1.0.0"
+        CURRENT_PROJECT_VERSION: "1"
+        SWIFT_VERSION: "6.0"
+        MACOSX_DEPLOYMENT_TARGET: "13.0"
+        INFOPLIST_FILE: Info.plist
+        CODE_SIGN_ENTITLEMENTS: OverKeysMac.entitlements
+        CODE_SIGN_STYLE: Automatic
+        DEVELOPMENT_TEAM: ""
+        ENABLE_HARDENED_RUNTIME: YES
+        ENABLE_APP_SANDBOX: NO
+        ARCHS: "arm64 x86_64"
+        ONLY_ACTIVE_ARCH: NO
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/../Frameworks"
+      configs:
+        Debug:
+          SWIFT_OPTIMIZATION_LEVEL: "-Onone"
+          SWIFT_ACTIVE_COMPILATION_CONDITIONS: DEBUG
+          ENABLE_DEBUG_DYLIB: NO
+        Release:
+          SWIFT_OPTIMIZATION_LEVEL: "-O"
+          DEAD_CODE_STRIPPING: YES
+
+schemes:
+  OverKeysMac:
+    build:
+      targets:
+        OverKeysMac: all
+    run:
+      config: Debug
+    archive:
+      config: Release
