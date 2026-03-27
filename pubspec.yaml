@@ -15,7 +15,7 @@ dependencies:
   ffi: ^2.1.5
   win32: ^5.5.4
   desktop_multi_window: ^0.3.0
-  shared_preferences: ^2.3.2
+  shared_preferences: ^2.5.5
   flex_color_picker: ^3.7.2
   flutter_localizations:
     sdk: flutter
