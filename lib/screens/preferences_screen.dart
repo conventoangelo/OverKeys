@@ -110,6 +110,12 @@ class _PreferencesScreenState extends ConsumerState<PreferencesScreen>
         await _stateService.savePreferencesState(ref.read(preferencesProvider));
       }
 
+      if (call.method == 'updateShowTopRowFromMainWindow' && mounted) {
+        final showTopRow = call.arguments as bool;
+        ref.read(keyboardProvider.notifier).updateShowTopRow(showTopRow);
+        await _stateService.saveKeyboardState(ref.read(keyboardProvider));
+      }
+
       if (call.method == 'requestFocus') {
         await windowManager.focus();
       }

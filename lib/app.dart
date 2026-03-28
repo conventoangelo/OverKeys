@@ -233,6 +233,32 @@ class _MainAppState extends ConsumerState<MainApp>
     _setupTray();
   }
 
+  void _toggleTopRow() {
+    final keyboardState = ref.read(keyboardProvider);
+    final keyboardNotifier = ref.read(keyboardProvider.notifier);
+    final newShowTopRow = !keyboardState.showTopRow;
+
+    keyboardNotifier.updateShowTopRow(newShowTopRow);
+    _adjustWindowSize();
+    _autoHideManager.showOverlay(
+      ref,
+      newShowTopRow ? 'Top row shown' : 'Top row hidden',
+      newShowTopRow
+          ? const Icon(LucideIcons.chevronUp)
+          : const Icon(LucideIcons.chevronDown),
+    );
+
+    WindowController.getAll().then((controllers) {
+      for (final controller in controllers) {
+        if (controller.arguments == 'preferences') {
+          controller.invokeMethod('updateShowTopRowFromMainWindow', newShowTopRow);
+        }
+      }
+    });
+
+    _saveAllPreferences();
+  }
+
   void _adjustOpacity(bool increase) {
     final appState = ref.read(appStateProvider);
     final prefsState = ref.read(preferencesProvider);
@@ -332,6 +358,8 @@ class _MainAppState extends ConsumerState<MainApp>
       enableVisibilityHotKey: appState.enableVisibilityHotKey,
       toggleMoveHotKey: appState.toggleMoveHotKey,
       enableToggleMoveHotKey: appState.enableToggleMoveHotKey,
+      toggleTopRowHotKey: appState.toggleTopRowHotKey,
+      enableToggleTopRowHotKey: appState.enableToggleTopRowHotKey,
       preferencesHotKey: appState.preferencesHotKey,
       enablePreferencesHotKey: appState.enablePreferencesHotKey,
       increaseOpacityHotKey: appState.increaseOpacityHotKey,
@@ -358,6 +386,7 @@ class _MainAppState extends ConsumerState<MainApp>
               ref, 'Move enabled', const Icon(LucideIcons.move));
         }
       },
+      onToggleTopRowTriggered: _toggleTopRow,
       onPreferencesTriggered: () {
         _autoHideManager.showOverlay(
             ref, 'Opening Preferences', const Icon(LucideIcons.appWindow));

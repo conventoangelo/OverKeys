@@ -18,12 +18,14 @@ class AppState {
   final HotKey? visibilityHotKey;
   final HotKey? autoHideHotKey;
   final HotKey? toggleMoveHotKey;
+  final HotKey? toggleTopRowHotKey;
   final HotKey? preferencesHotKey;
   final HotKey? increaseOpacityHotKey;
   final HotKey? decreaseOpacityHotKey;
   final bool enableVisibilityHotKey;
   final bool enableAutoHideHotKey;
   final bool enableToggleMoveHotKey;
+  final bool enableToggleTopRowHotKey;
   final bool enablePreferencesHotKey;
   final bool enableIncreaseOpacityHotKey;
   final bool enableDecreaseOpacityHotKey;
@@ -45,12 +47,14 @@ class AppState {
     HotKey? visibilityHotKey,
     HotKey? autoHideHotKey,
     HotKey? toggleMoveHotKey,
+    HotKey? toggleTopRowHotKey,
     HotKey? preferencesHotKey,
     HotKey? increaseOpacityHotKey,
     HotKey? decreaseOpacityHotKey,
     this.enableVisibilityHotKey = true,
     this.enableAutoHideHotKey = true,
     this.enableToggleMoveHotKey = true,
+    this.enableToggleTopRowHotKey = true,
     this.enablePreferencesHotKey = true,
     this.enableIncreaseOpacityHotKey = true,
     this.enableDecreaseOpacityHotKey = true,
@@ -70,9 +74,13 @@ class AppState {
             HotKey(
                 key: PhysicalKeyboardKey.keyE,
                 modifiers: [HotKeyModifier.alt, HotKeyModifier.control]),
+        toggleTopRowHotKey = toggleTopRowHotKey ??
+            HotKey(
+            key: PhysicalKeyboardKey.keyR,
+                modifiers: [HotKeyModifier.alt, HotKeyModifier.control]),
         preferencesHotKey = preferencesHotKey ??
             HotKey(
-                key: PhysicalKeyboardKey.keyR,
+            key: PhysicalKeyboardKey.keyT,
                 modifiers: [HotKeyModifier.alt, HotKeyModifier.control]),
         increaseOpacityHotKey = increaseOpacityHotKey ??
             HotKey(
@@ -92,12 +100,14 @@ class AppState {
     HotKey? visibilityHotKey,
     HotKey? autoHideHotKey,
     HotKey? toggleMoveHotKey,
+    HotKey? toggleTopRowHotKey,
     HotKey? preferencesHotKey,
     HotKey? increaseOpacityHotKey,
     HotKey? decreaseOpacityHotKey,
     bool? enableVisibilityHotKey,
     bool? enableAutoHideHotKey,
     bool? enableToggleMoveHotKey,
+    bool? enableToggleTopRowHotKey,
     bool? enablePreferencesHotKey,
     bool? enableIncreaseOpacityHotKey,
     bool? enableDecreaseOpacityHotKey,
@@ -116,6 +126,7 @@ class AppState {
       visibilityHotKey: visibilityHotKey ?? this.visibilityHotKey,
       autoHideHotKey: autoHideHotKey ?? this.autoHideHotKey,
       toggleMoveHotKey: toggleMoveHotKey ?? this.toggleMoveHotKey,
+      toggleTopRowHotKey: toggleTopRowHotKey ?? this.toggleTopRowHotKey,
       preferencesHotKey: preferencesHotKey ?? this.preferencesHotKey,
       increaseOpacityHotKey:
           increaseOpacityHotKey ?? this.increaseOpacityHotKey,
@@ -126,6 +137,8 @@ class AppState {
       enableAutoHideHotKey: enableAutoHideHotKey ?? this.enableAutoHideHotKey,
       enableToggleMoveHotKey:
           enableToggleMoveHotKey ?? this.enableToggleMoveHotKey,
+      enableToggleTopRowHotKey:
+          enableToggleTopRowHotKey ?? this.enableToggleTopRowHotKey,
       enablePreferencesHotKey:
           enablePreferencesHotKey ?? this.enablePreferencesHotKey,
       enableIncreaseOpacityHotKey:
@@ -145,12 +158,14 @@ class AppState {
       'visibilityHotKey': visibilityHotKey?.toJson(),
       'autoHideHotKey': autoHideHotKey?.toJson(),
       'toggleMoveHotKey': toggleMoveHotKey?.toJson(),
+      'toggleTopRowHotKey': toggleTopRowHotKey?.toJson(),
       'preferencesHotKey': preferencesHotKey?.toJson(),
       'increaseOpacityHotKey': increaseOpacityHotKey?.toJson(),
       'decreaseOpacityHotKey': decreaseOpacityHotKey?.toJson(),
       'enableVisibilityHotKey': enableVisibilityHotKey,
       'enableAutoHideHotKey': enableAutoHideHotKey,
       'enableToggleMoveHotKey': enableToggleMoveHotKey,
+      'enableToggleTopRowHotKey': enableToggleTopRowHotKey,
       'enablePreferencesHotKey': enablePreferencesHotKey,
       'enableIncreaseOpacityHotKey': enableIncreaseOpacityHotKey,
       'enableDecreaseOpacityHotKey': enableDecreaseOpacityHotKey,
@@ -175,10 +190,15 @@ class AppState {
           : HotKey(
               key: PhysicalKeyboardKey.keyE,
               modifiers: [HotKeyModifier.alt, HotKeyModifier.control]),
+      toggleTopRowHotKey: json['toggleTopRowHotKey'] != null
+          ? HotKey.fromJson(json['toggleTopRowHotKey'])
+          : HotKey(
+            key: PhysicalKeyboardKey.keyR,
+              modifiers: [HotKeyModifier.alt, HotKeyModifier.control]),
       preferencesHotKey: json['preferencesHotKey'] != null
           ? HotKey.fromJson(json['preferencesHotKey'])
           : HotKey(
-              key: PhysicalKeyboardKey.keyR,
+            key: PhysicalKeyboardKey.keyT,
               modifiers: [HotKeyModifier.alt, HotKeyModifier.control]),
       increaseOpacityHotKey: json['increaseOpacityHotKey'] != null
           ? HotKey.fromJson(json['increaseOpacityHotKey'])
@@ -193,6 +213,8 @@ class AppState {
       enableVisibilityHotKey: json['enableVisibilityHotKey'] as bool? ?? true,
       enableAutoHideHotKey: json['enableAutoHideHotKey'] as bool? ?? true,
       enableToggleMoveHotKey: json['enableToggleMoveHotKey'] as bool? ?? true,
+      enableToggleTopRowHotKey:
+          json['enableToggleTopRowHotKey'] as bool? ?? true,
       enablePreferencesHotKey: json['enablePreferencesHotKey'] as bool? ?? true,
       enableIncreaseOpacityHotKey:
           json['enableIncreaseOpacityHotKey'] as bool? ?? true,
@@ -241,6 +263,10 @@ class AppStateNotifier extends _$AppStateNotifier {
     state = state.copyWith(toggleMoveHotKey: hotKey);
   }
 
+  void updateToggleTopRowHotKey(HotKey hotKey) {
+    state = state.copyWith(toggleTopRowHotKey: hotKey);
+  }
+
   void updatePreferencesHotKey(HotKey hotKey) {
     state = state.copyWith(preferencesHotKey: hotKey);
   }
@@ -263,6 +289,10 @@ class AppStateNotifier extends _$AppStateNotifier {
 
   void updateEnableToggleMoveHotKey(bool value) {
     state = state.copyWith(enableToggleMoveHotKey: value);
+  }
+
+  void updateEnableToggleTopRowHotKey(bool value) {
+    state = state.copyWith(enableToggleTopRowHotKey: value);
   }
 
   void updateEnablePreferencesHotKey(bool value) {

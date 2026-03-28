@@ -130,6 +130,7 @@ void main() {
           hotKeysEnabled: false,
           enableVisibilityHotKey: false,
           enableAutoHideHotKey: true,
+          enableToggleTopRowHotKey: false,
         );
 
         await stateService.saveAppState(originalState);
@@ -141,6 +142,8 @@ void main() {
             originalState.enableVisibilityHotKey);
         expect(loadedState.enableAutoHideHotKey,
             originalState.enableAutoHideHotKey);
+        expect(loadedState.enableToggleTopRowHotKey,
+          originalState.enableToggleTopRowHotKey);
       });
 
       test('returns null when no app state is saved', () async {

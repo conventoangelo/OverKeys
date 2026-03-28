@@ -289,6 +289,17 @@ class MethodCallHandler {
         appNotifier.updateToggleMoveHotKey(newHotKey);
         await setupHotKeys();
 
+      case 'updateToggleTopRowHotKey':
+        final hotKeyJson = _safeArgument<String>(call.arguments, '{}');
+        final newHotKey = HotKey.fromJson(jsonDecode(hotKeyJson));
+        final currentToggleTopRowHotKey =
+            ref.read(appStateProvider).toggleTopRowHotKey;
+        if (currentToggleTopRowHotKey != null) {
+          await hotKeyManager.unregister(currentToggleTopRowHotKey);
+        }
+        appNotifier.updateToggleTopRowHotKey(newHotKey);
+        await setupHotKeys();
+
       case 'updatePreferencesHotKey':
         final hotKeyJson = _safeArgument<String>(call.arguments, '{}');
         final newHotKey = HotKey.fromJson(jsonDecode(hotKeyJson));
@@ -335,6 +346,11 @@ class MethodCallHandler {
       case 'updateEnableToggleMoveHotKey':
         final enabled = _safeArgument<bool>(call.arguments, true);
         appNotifier.updateEnableToggleMoveHotKey(enabled);
+        await setupHotKeys();
+
+      case 'updateEnableToggleTopRowHotKey':
+        final enabled = _safeArgument<bool>(call.arguments, true);
+        appNotifier.updateEnableToggleTopRowHotKey(enabled);
         await setupHotKeys();
 
       case 'updateEnablePreferencesHotKey':

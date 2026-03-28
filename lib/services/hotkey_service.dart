@@ -15,6 +15,8 @@ class HotKeyService {
     required bool enableVisibilityHotKey,
     required HotKey? toggleMoveHotKey,
     required bool enableToggleMoveHotKey,
+    required HotKey? toggleTopRowHotKey,
+    required bool enableToggleTopRowHotKey,
     required HotKey? preferencesHotKey,
     required bool enablePreferencesHotKey,
     required HotKey? increaseOpacityHotKey,
@@ -25,6 +27,7 @@ class HotKeyService {
     required VoidCallback onAutoHideTriggered,
     required VoidCallback onVisibilityTriggered,
     required VoidCallback onToggleMoveTriggered,
+    required VoidCallback onToggleTopRowTriggered,
     required VoidCallback onPreferencesTriggered,
     required VoidCallback onIncreaseOpacityTriggered,
     required VoidCallback onDecreaseOpacityTriggered,
@@ -61,6 +64,16 @@ class HotKeyService {
         keyDownHandler: (hotKey) {
           _log.debug('Move hotkey triggered.');
           onToggleMoveTriggered();
+        },
+      );
+    }
+
+    if (enableToggleTopRowHotKey && toggleTopRowHotKey != null) {
+      await hotKeyManager.register(
+        toggleTopRowHotKey,
+        keyDownHandler: (hotKey) {
+          _log.debug('Toggle top row hotkey triggered.');
+          onToggleTopRowTriggered();
         },
       );
     }

@@ -102,6 +102,32 @@ class HotKeysTab extends ConsumerWidget {
           isEnabled: appState.hotKeysEnabled,
         ),
         HotKeyOption(
+          label: 'Toggle Top Row',
+          subtitle: 'Show or hide the top number row',
+          formattedHotKey: _formatHotKey(appState.toggleTopRowHotKey),
+          enabled: appState.enableToggleTopRowHotKey,
+          onToggleChanged: (value) {
+            ref
+                .read(appStateProvider.notifier)
+                .updateEnableToggleTopRowHotKey(value);
+            onUpdateMainWindow('updateEnableToggleTopRowHotKey', value);
+          },
+          onChangePressed: () => _showRecordHotKeyDialog(
+            context,
+            (value) {
+              ref
+                  .read(appStateProvider.notifier)
+                  .updateToggleTopRowHotKey(value);
+              onUpdateMainWindow('updateToggleTopRowHotKey', value);
+            },
+            appState.toggleTopRowHotKey ??
+                HotKey(
+                    key: PhysicalKeyboardKey.keyR,
+                    modifiers: [HotKeyModifier.alt, HotKeyModifier.control]),
+          ),
+          isEnabled: appState.hotKeysEnabled,
+        ),
+        HotKeyOption(
           label: 'Open Preferences',
           subtitle: 'Show/focus the preferences window',
           formattedHotKey: _formatHotKey(appState.preferencesHotKey),
@@ -122,7 +148,7 @@ class HotKeysTab extends ConsumerWidget {
             },
             appState.preferencesHotKey ??
                 HotKey(
-                    key: PhysicalKeyboardKey.keyR,
+                    key: PhysicalKeyboardKey.keyT,
                     modifiers: [HotKeyModifier.alt, HotKeyModifier.control]),
           ),
           isEnabled: appState.hotKeysEnabled,

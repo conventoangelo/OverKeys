@@ -17,6 +17,7 @@ void main() {
         expect(state.enableVisibilityHotKey, true);
         expect(state.enableAutoHideHotKey, true);
         expect(state.enableToggleMoveHotKey, true);
+        expect(state.enableToggleTopRowHotKey, true);
         expect(state.enablePreferencesHotKey, true);
         expect(state.showStatusOverlay, false);
         expect(state.overlayMessage, '');
@@ -49,6 +50,7 @@ void main() {
         expect(state.visibilityHotKey, isNotNull);
         expect(state.autoHideHotKey, isNotNull);
         expect(state.toggleMoveHotKey, isNotNull);
+        expect(state.toggleTopRowHotKey, isNotNull);
         expect(state.preferencesHotKey, isNotNull);
         expect(state.increaseOpacityHotKey, isNotNull);
         expect(state.decreaseOpacityHotKey, isNotNull);
@@ -87,17 +89,21 @@ void main() {
         final original = AppState(
           enableVisibilityHotKey: true,
           enableAutoHideHotKey: true,
+          enableToggleTopRowHotKey: true,
         );
 
         final updated = original.copyWith(
           enableVisibilityHotKey: false,
           enableAutoHideHotKey: false,
+          enableToggleTopRowHotKey: false,
         );
 
         expect(updated.enableVisibilityHotKey, false);
         expect(updated.enableAutoHideHotKey, false);
+        expect(updated.enableToggleTopRowHotKey, false);
         expect(original.enableVisibilityHotKey, true);
         expect(original.enableAutoHideHotKey, true);
+        expect(original.enableToggleTopRowHotKey, true);
       });
 
       test('creates copy with updated overlay state', () {
@@ -159,6 +165,7 @@ void main() {
           hotKeysEnabled: false,
           enableVisibilityHotKey: false,
           enableAutoHideHotKey: true,
+          enableToggleTopRowHotKey: false,
         );
 
         final json = state.toJson();
@@ -167,6 +174,7 @@ void main() {
         expect(json['hotKeysEnabled'], false);
         expect(json['enableVisibilityHotKey'], false);
         expect(json['enableAutoHideHotKey'], true);
+        expect(json['enableToggleTopRowHotKey'], false);
         expect(json.containsKey('isWindowVisible'), false); // Not serialized
         expect(json.containsKey('forceHide'), false); // Not serialized
       });
@@ -176,6 +184,7 @@ void main() {
           'hotKeysEnabled': false,
           'enableVisibilityHotKey': false,
           'enableAutoHideHotKey': true,
+          'enableToggleTopRowHotKey': false,
         };
 
         final state = AppState.fromJson(json);
@@ -184,6 +193,7 @@ void main() {
         expect(state.hotKeysEnabled, false);
         expect(state.enableVisibilityHotKey, false);
         expect(state.enableAutoHideHotKey, true);
+        expect(state.enableToggleTopRowHotKey, false);
       });
 
       test('round-trip serialization preserves state', () {
@@ -191,6 +201,7 @@ void main() {
           hotKeysEnabled: false,
           enableVisibilityHotKey: true,
           enableAutoHideHotKey: false,
+          enableToggleTopRowHotKey: false,
         );
 
         final json = original.toJson();
@@ -201,6 +212,8 @@ void main() {
         expect(
             roundTrip.enableVisibilityHotKey, original.enableVisibilityHotKey);
         expect(roundTrip.enableAutoHideHotKey, original.enableAutoHideHotKey);
+        expect(roundTrip.enableToggleTopRowHotKey,
+          original.enableToggleTopRowHotKey);
       });
 
       test('handles empty JSON', () {
@@ -249,6 +262,7 @@ void main() {
           enableVisibilityHotKey: true,
           enableAutoHideHotKey: true,
           enableToggleMoveHotKey: true,
+          enableToggleTopRowHotKey: true,
         );
 
         state = state.copyWith(
@@ -259,6 +273,7 @@ void main() {
         expect(state.enableVisibilityHotKey, false);
         expect(state.enableAutoHideHotKey, false);
         expect(state.enableToggleMoveHotKey, true); // Unchanged
+        expect(state.enableToggleTopRowHotKey, true); // Unchanged
       });
     });
   });
