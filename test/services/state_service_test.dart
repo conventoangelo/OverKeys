@@ -143,7 +143,7 @@ void main() {
         expect(loadedState.enableAutoHideHotKey,
             originalState.enableAutoHideHotKey);
         expect(loadedState.enableToggleTopRowHotKey,
-          originalState.enableToggleTopRowHotKey);
+            originalState.enableToggleTopRowHotKey);
       });
 
       test('returns null when no app state is saved', () async {

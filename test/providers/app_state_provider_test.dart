@@ -213,7 +213,7 @@ void main() {
             roundTrip.enableVisibilityHotKey, original.enableVisibilityHotKey);
         expect(roundTrip.enableAutoHideHotKey, original.enableAutoHideHotKey);
         expect(roundTrip.enableToggleTopRowHotKey,
-          original.enableToggleTopRowHotKey);
+            original.enableToggleTopRowHotKey);
       });
 
       test('handles empty JSON', () {

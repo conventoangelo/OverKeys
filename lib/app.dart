@@ -251,7 +251,8 @@ class _MainAppState extends ConsumerState<MainApp>
     WindowController.getAll().then((controllers) {
       for (final controller in controllers) {
         if (controller.arguments == 'preferences') {
-          controller.invokeMethod('updateShowTopRowFromMainWindow', newShowTopRow);
+          controller.invokeMethod(
+              'updateShowTopRowFromMainWindow', newShowTopRow);
         }
       }
     });

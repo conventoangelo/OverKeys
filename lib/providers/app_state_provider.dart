@@ -76,11 +76,11 @@ class AppState {
                 modifiers: [HotKeyModifier.alt, HotKeyModifier.control]),
         toggleTopRowHotKey = toggleTopRowHotKey ??
             HotKey(
-            key: PhysicalKeyboardKey.keyR,
+                key: PhysicalKeyboardKey.keyR,
                 modifiers: [HotKeyModifier.alt, HotKeyModifier.control]),
         preferencesHotKey = preferencesHotKey ??
             HotKey(
-            key: PhysicalKeyboardKey.keyT,
+                key: PhysicalKeyboardKey.keyT,
                 modifiers: [HotKeyModifier.alt, HotKeyModifier.control]),
         increaseOpacityHotKey = increaseOpacityHotKey ??
             HotKey(
@@ -193,12 +193,12 @@ class AppState {
       toggleTopRowHotKey: json['toggleTopRowHotKey'] != null
           ? HotKey.fromJson(json['toggleTopRowHotKey'])
           : HotKey(
-            key: PhysicalKeyboardKey.keyR,
+              key: PhysicalKeyboardKey.keyR,
               modifiers: [HotKeyModifier.alt, HotKeyModifier.control]),
       preferencesHotKey: json['preferencesHotKey'] != null
           ? HotKey.fromJson(json['preferencesHotKey'])
           : HotKey(
-            key: PhysicalKeyboardKey.keyT,
+              key: PhysicalKeyboardKey.keyT,
               modifiers: [HotKeyModifier.alt, HotKeyModifier.control]),
       increaseOpacityHotKey: json['increaseOpacityHotKey'] != null
           ? HotKey.fromJson(json['increaseOpacityHotKey'])
