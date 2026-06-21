@@ -187,7 +187,7 @@ OverKeys can be installed through several methods:
    - Download and extract the [portable ZIP file](https://github.com/conventoangelo/OverKeys/releases/latest)
 
 4. **Using the macOS DMG**
-   - Download the latest macOS DMG from [GitHub releases](https://github.com/conventoangelo/OverKeys/releases/latest).
+   - Download the unsigned macOS DMG from the GitHub Actions build artifact or a release that includes it.
    - Grant Accessibility and Input Monitoring in System Settings > Privacy & Security.
    - For unsigned builds, remove quarantine with `xattr -d com.apple.quarantine /Applications/OverKeys.app`.
 

@@ -30,7 +30,7 @@ For a portable version without installation:
 
 ## macOS
 
-1. Download the latest macOS DMG from the [GitHub releases page](https://github.com/conventoangelo/OverKeys/releases).
+1. Download the unsigned macOS DMG from the GitHub Actions build artifact or a release that includes it.
 2. Open the DMG and drag `OverKeys.app` into `/Applications`.
 3. If macOS blocks the unsigned app because it was downloaded from the internet, run:
 
@@ -48,9 +48,9 @@ OverKeys cannot highlight global keystrokes until both macOS permissions are gra
 
 After installation:
 
-1. OverKeys will launch automatically
-2. The application will appear in your system tray or macOS menu bar
-3. Right-click the OverKeys icon to access preferences and configuration options
+1. Launch OverKeys from the Start menu, extracted folder, or `/Applications`.
+2. The application will appear in your system tray or macOS menu bar.
+3. Right-click the OverKeys icon to access preferences and configuration options.
 
 ## Updating OverKeys
 
