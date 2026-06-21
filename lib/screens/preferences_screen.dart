@@ -38,6 +38,8 @@ class PreferencesScreen extends ConsumerStatefulWidget {
 class _PreferencesScreenState extends ConsumerState<PreferencesScreen>
     with WindowListener {
   final StateService _stateService = StateService();
+  final FocusNode _keyboardFocusNode =
+      FocusNode(debugLabel: 'Preferences keyboard shortcuts');
   Timer? _saveDebounceTimer;
 
   // Constants
@@ -58,6 +60,7 @@ class _PreferencesScreenState extends ConsumerState<PreferencesScreen>
     // Load state after other setup is complete
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadState();
+      _requestKeyboardFocus();
     });
   }
 
@@ -93,6 +96,7 @@ class _PreferencesScreenState extends ConsumerState<PreferencesScreen>
       // Providers may already be disposed
     }
     windowManager.removeListener(this);
+    _keyboardFocusNode.dispose();
     super.dispose();
   }
 
@@ -117,7 +121,9 @@ class _PreferencesScreenState extends ConsumerState<PreferencesScreen>
       }
 
       if (call.method == 'requestFocus') {
+        await widget.windowController.show();
         await windowManager.focus();
+        _requestKeyboardFocus();
       }
 
       if (call.method == 'receiveLog' && mounted) {
@@ -153,6 +159,12 @@ class _PreferencesScreenState extends ConsumerState<PreferencesScreen>
     });
   }
 
+  void _requestKeyboardFocus() {
+    if (mounted) {
+      _keyboardFocusNode.requestFocus();
+    }
+  }
+
   void _updateMainWindow(dynamic method, dynamic value) async {
     if (value is Color) {
       value = value.toARGB32();
@@ -174,7 +186,6 @@ class _PreferencesScreenState extends ConsumerState<PreferencesScreen>
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = ThemeManager.getTheme(_brightness);
-    final FocusNode keyboardFocusNode = FocusNode();
 
     // Listen to provider changes and auto-save (debounced)
     ref.listen<KeyboardState>(keyboardProvider, (previous, next) {
@@ -193,10 +204,6 @@ class _PreferencesScreenState extends ConsumerState<PreferencesScreen>
       }
     });
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      keyboardFocusNode.requestFocus();
-    });
-
     return MaterialApp(
       theme: theme,
       localizationsDelegates: const [
@@ -209,7 +216,8 @@ class _PreferencesScreenState extends ConsumerState<PreferencesScreen>
       ],
       home: Builder(builder: (context) {
         return KeyboardListener(
-          focusNode: keyboardFocusNode,
+          focusNode: _keyboardFocusNode,
+          autofocus: true,
           onKeyEvent: (KeyEvent keyEvent) async {
             if (keyEvent is KeyDownEvent &&
                 keyEvent.logicalKey == LogicalKeyboardKey.escape) {

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:isolate';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:desktop_multi_window/desktop_multi_window.dart'
     hide MethodCallHandler;
@@ -26,6 +27,8 @@ import 'providers/keyboard_provider.dart';
 import 'providers/preferences_provider.dart';
 import 'providers/app_state_provider.dart';
 import 'screens/keyboard_screen.dart';
+
+const MethodChannel _windowChannel = MethodChannel('overkeys/window');
 
 class MainApp extends ConsumerStatefulWidget {
   const MainApp({super.key});
@@ -59,6 +62,7 @@ class _MainAppState extends ConsumerState<MainApp>
   void initState() {
     super.initState();
     _configLoader = ConfigurationLoader(_kanataService);
+    _setupNativeWindowChannel();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _initialize();
     });
@@ -128,6 +132,7 @@ class _MainAppState extends ConsumerState<MainApp>
     _keyEventService.dispose();
     _kanataService.dispose();
     _autoHideManager.dispose();
+    _windowChannel.setMethodCallHandler(null);
     _saveAllPreferences();
     super.dispose();
   }
@@ -396,6 +401,19 @@ class _MainAppState extends ConsumerState<MainApp>
     );
 
     _setupTray();
+  }
+
+  void _setupNativeWindowChannel() {
+    _windowChannel.setMethodCallHandler((call) async {
+      switch (call.method) {
+        case 'openPreferences':
+          await _showPreferences();
+          return null;
+        default:
+          throw MissingPluginException(
+              'Not implemented method: ${call.method}');
+      }
+    });
   }
 
   @override

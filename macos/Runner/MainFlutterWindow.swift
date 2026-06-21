@@ -5,31 +5,25 @@ import desktop_multi_window
 
 class MainFlutterWindow: NSWindow {
   private let keyboardMonitor = KeyboardMonitor()
+  private weak var flutterViewController: FlutterViewController?
+  private var windowMethodChannel: FlutterMethodChannel?
+  private var isKeyboardOverlayWindow = false
 
   override var canBecomeKey: Bool {
-    return false
+    return !isKeyboardOverlayWindow
   }
 
   override var canBecomeMain: Bool {
-    return false
+    return !isKeyboardOverlayWindow
   }
 
   override func awakeFromNib() {
     let flutterViewController = FlutterViewController()
-    flutterViewController.backgroundColor = NSColor.clear
+    self.flutterViewController = flutterViewController
 
     let windowFrame = self.frame
     self.contentViewController = flutterViewController
     self.setFrame(windowFrame, display: true)
-    self.backgroundColor = NSColor.clear
-    self.isOpaque = false
-    self.hasShadow = false
-    self.collectionBehavior.insert(.canJoinAllSpaces)
-    self.collectionBehavior.insert(.fullScreenAuxiliary)
-
-    flutterViewController.view.wantsLayer = true
-    flutterViewController.view.layer?.backgroundColor = NSColor.clear.cgColor
-    flutterViewController.view.layer?.isOpaque = false
 
     RegisterGeneratedPlugins(registry: flutterViewController)
 
@@ -48,6 +42,22 @@ class MainFlutterWindow: NSWindow {
       binaryMessenger: flutterViewController.engine.binaryMessenger
     )
     keyboardMethodChannel.setMethodCallHandler(keyboardMonitor.handleMethodCall)
+
+    let windowMethodChannel = FlutterMethodChannel(
+      name: "overkeys/window",
+      binaryMessenger: flutterViewController.engine.binaryMessenger
+    )
+    self.windowMethodChannel = windowMethodChannel
+    windowMethodChannel.setMethodCallHandler { [weak self] call, result in
+      switch call.method {
+      case "configureKeyboardOverlay":
+        self?.configureKeyboardOverlay()
+        result(nil)
+      default:
+        result(FlutterMethodNotImplemented)
+      }
+    }
+    configurePreferencesMenu()
 
     let launchAtStartupChannel = FlutterMethodChannel(
       name: "launch_at_startup",
@@ -69,5 +79,35 @@ class MainFlutterWindow: NSWindow {
     }
 
     super.awakeFromNib()
+  }
+
+  private func configureKeyboardOverlay() {
+    isKeyboardOverlayWindow = true
+    backgroundColor = NSColor.clear
+    isOpaque = false
+    hasShadow = false
+    collectionBehavior.insert(.canJoinAllSpaces)
+    collectionBehavior.insert(.fullScreenAuxiliary)
+
+    flutterViewController?.backgroundColor = NSColor.clear
+    flutterViewController?.view.wantsLayer = true
+    flutterViewController?.view.layer?.backgroundColor = NSColor.clear.cgColor
+    flutterViewController?.view.layer?.isOpaque = false
+  }
+
+  private func configurePreferencesMenu() {
+    guard let appMenu = NSApp.mainMenu?.items.first?.submenu else {
+      return
+    }
+
+    if let preferencesItem = appMenu.items.first(where: { $0.keyEquivalent == "," }) {
+      preferencesItem.target = self
+      preferencesItem.action = #selector(openPreferencesFromMenu(_:))
+      preferencesItem.isEnabled = true
+    }
+  }
+
+  @objc private func openPreferencesFromMenu(_ sender: Any?) {
+    windowMethodChannel?.invokeMethod("openPreferences", arguments: nil)
   }
 }

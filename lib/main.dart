@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:desktop_multi_window/desktop_multi_window.dart';
@@ -10,6 +11,8 @@ import 'app.dart';
 import 'screens/preferences_screen.dart';
 import 'utils/window_controller_extension.dart';
 import 'utils/logger.dart';
+
+const MethodChannel _windowChannel = MethodChannel('overkeys/window');
 
 // Window type definitions
 enum WindowType {
@@ -30,19 +33,23 @@ Future<void> main(List<String> args) async {
   // Initialize log capture early to catch all logs
   LogCapture();
 
-  // Get the current window controller
-  final windowController = await WindowController.fromCurrentEngine();
+  final windowController = _controllerFromEntrypointArgs(args) ??
+      await WindowController.fromCurrentEngine();
 
-  // Parse window arguments to determine which window to show
-  final windowType = _parseWindowType(windowController.arguments);
+  final entrypointArguments = windowArgumentsFromEntrypointArgs(args);
+  final windowType = parseWindowType(
+    entrypointArguments.isNotEmpty
+        ? entrypointArguments
+        : windowController.arguments,
+  );
 
   // Initialize window manager
   await windowManager.ensureInitialized();
-  await hotKeyManager.unregisterAll();
 
   // Run different apps based on the window type
   switch (windowType) {
     case WindowType.main:
+      await hotKeyManager.unregisterAll();
       await _initMainWindow();
       runApp(const ProviderScope(child: MainApp()));
       break;
@@ -57,7 +64,21 @@ Future<void> main(List<String> args) async {
   }
 }
 
-WindowType _parseWindowType(String arguments) {
+WindowController? _controllerFromEntrypointArgs(List<String> args) {
+  if (args.length >= 2 && args.first == 'multi_window') {
+    return WindowController.fromWindowId(args[1]);
+  }
+  return null;
+}
+
+String windowArgumentsFromEntrypointArgs(List<String> args) {
+  if (args.length >= 3 && args.first == 'multi_window') {
+    return args[2];
+  }
+  return '';
+}
+
+WindowType parseWindowType(String arguments) {
   if (arguments.isEmpty) {
     return WindowType.main;
   }
@@ -82,6 +103,8 @@ Future<void> _initMainWindow() async {
     titleBarStyle: TitleBarStyle.hidden,
   );
 
+  await _configureNativeKeyboardOverlay();
+
   await windowManager.waitUntilReadyToShow(windowOptions, () async {
     await windowManager.setAlwaysOnTop(true);
     await windowManager.setAsFrameless();
@@ -91,6 +114,18 @@ Future<void> _initMainWindow() async {
     await windowManager.setSkipTaskbar(true);
     await windowManager.show();
   });
+}
+
+Future<void> _configureNativeKeyboardOverlay() async {
+  if (!Platform.isMacOS) {
+    return;
+  }
+
+  try {
+    await _windowChannel.invokeMethod<void>('configureKeyboardOverlay');
+  } on MissingPluginException {
+    // Unit tests and non-bundled runners do not register the macOS channel.
+  }
 }
 
 Future<void> _initPreferencesWindow(WindowController windowController) async {
@@ -105,10 +140,12 @@ Future<void> _initPreferencesWindow(WindowController windowController) async {
 
   await windowManager.waitUntilReadyToShow(windowOptions, () async {
     await windowManager.setTitle("Preferences");
-    await windowManager.setIcon("assets/images/app_icon.ico");
+    if (Platform.isWindows) {
+      await windowManager.setIcon("assets/images/app_icon.ico");
+    }
     await windowManager.center();
     await windowManager.setMinimumSize(const Size(828, 621));
+    await windowController.show();
     await windowManager.focus();
-    await windowManager.show();
   });
 }
