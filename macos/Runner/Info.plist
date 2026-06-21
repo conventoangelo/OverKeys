@@ -24,6 +24,10 @@
 	<string>$(MACOSX_DEPLOYMENT_TARGET)</string>
 	<key>NSHumanReadableCopyright</key>
 	<string>$(PRODUCT_COPYRIGHT)</string>
+	<key>NSAccessibilityUsageDescription</key>
+	<string>OverKeys needs Accessibility permission to monitor global keyboard events for the on-screen overlay.</string>
+	<key>NSInputMonitoringUsageDescription</key>
+	<string>OverKeys needs Input Monitoring permission to highlight keys pressed in other apps.</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>

@@ -1,15 +1,19 @@
+import 'dart:async';
 import 'dart:isolate';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:overkeys/models/keyboard_layouts.dart';
 import 'package:overkeys/providers/keyboard_provider.dart';
 import 'package:overkeys/providers/app_state_provider.dart';
 import 'package:overkeys/providers/preferences_provider.dart';
+import 'package:overkeys/services/keyboard_event_source.dart';
 import 'package:overkeys/utils/key_code.dart';
-import 'package:overkeys/utils/hooks.dart';
 import 'package:overkeys/utils/logger.dart';
 
 /// Service for handling keyboard events and user layer switching
 class KeyEventService {
+  KeyEventService({KeyboardEventSource? eventSource})
+      : _eventSource = eventSource;
+
   /// Logger instance for this service
   final _log = SimplePrintLogger('KeyEventService');
 
@@ -19,29 +23,59 @@ class KeyEventService {
   /// Stores the stack of layers that were active before held layers were activated
   final List<KeyboardLayout> _previousLayerStack = [];
 
-  /// ReceivePort for keyboard events
-  ReceivePort? _receivePort;
+  /// Source for platform-normalized keyboard events
+  KeyboardEventSource? _eventSource;
+
+  /// Subscription to keyboard events
+  StreamSubscription<dynamic>? _eventSubscription;
 
   /// Sets up the keyboard event listener
-  void setupKeyListener(ReceivePort Function() createReceivePort,
-      Function(dynamic) handleKeyEvent) {
-    _receivePort = createReceivePort();
-    Isolate.spawn(setHook, _receivePort!.sendPort).then((_) {
-      // Only attach listener after isolate spawn succeeds
-      _receivePort!.listen(handleKeyEvent);
-    }).catchError((error) {
-      // Close the unused port before handling error
-      _receivePort?.close();
-      _receivePort = null;
-      _log.error('Error spawning Isolate', error: error);
-      throw error;
-    });
+  void setupKeyListener(
+    ReceivePort Function() createReceivePort,
+    Function(dynamic) handleKeyEvent,
+  ) {
+    final source = _eventSource ??
+        createPlatformKeyboardEventSource(createReceivePort: createReceivePort);
+    _eventSource = source;
+
+    _eventSubscription = source.events.listen(
+      handleKeyEvent,
+      onError: (Object error, StackTrace stackTrace) {
+        _log.error(
+          'Error from keyboard event source',
+          error: error,
+          stackTrace: stackTrace,
+        );
+      },
+    );
+
+    unawaited(
+      source.start().catchError((Object error, StackTrace stackTrace) {
+        _log.error(
+          'Error starting keyboard event source',
+          error: error,
+          stackTrace: stackTrace,
+        );
+      }),
+    );
   }
 
   /// Disposes of resources and closes the receive port
   void dispose() {
-    _receivePort?.close();
-    _receivePort = null;
+    unawaited(_eventSubscription?.cancel());
+    _eventSubscription = null;
+    final source = _eventSource;
+    if (source != null) {
+      unawaited(
+        source.stop().catchError((Object error, StackTrace stackTrace) {
+          _log.error(
+            'Error stopping keyboard event source',
+            error: error,
+            stackTrace: stackTrace,
+          );
+        }),
+      );
+    }
     _activeTriggers.clear();
     _previousLayerStack.clear();
   }
@@ -63,10 +97,10 @@ class KeyEventService {
       final appState = ref.read(appStateProvider);
       final prefsState = ref.read(preferencesProvider);
 
-      // Handle session unlock
       if (message[0] is String) {
-        if (message[0] == 'session_unlock') {
+        if (message[0] == 'session_unlock' || message[0] == 'session_lock') {
           keyboardNotifier.clearKeyPressStates();
+          clearActiveTriggers();
         }
         return;
       }
@@ -81,7 +115,8 @@ class KeyEventService {
       // Display "Space" in logs for better readability instead of blank
       final displayKey = key == ' ' ? 'Space' : key;
       _log.debug(
-          'Key: ${displayKey.padRight(10)}\tKeyCode: ${keyCode.toString().padRight(5)}\tPressed: ${isPressed.toString().padRight(7)}\tShift: $isShiftDown');
+        'Key: ${displayKey.padRight(10)}\tKeyCode: ${keyCode.toString().padRight(5)}\tPressed: ${isPressed.toString().padRight(7)}\tShift: $isShiftDown',
+      );
 
       keyboardNotifier.updateKeyPressState(key, isPressed);
 
@@ -136,16 +171,17 @@ class KeyEventService {
       // Handle user layer switching
       if (prefsState.useUserLayout && prefsState.advancedSettingsEnabled) {
         _handleUserLayerSwitching(
-            key,
-            isPressed,
-            ref,
-            keyboardState,
-            keyboardNotifier,
-            appState,
-            appNotifier,
-            prefsState,
-            fadeIn,
-            cancelAutoHideTimer);
+          key,
+          isPressed,
+          ref,
+          keyboardState,
+          keyboardNotifier,
+          appState,
+          appNotifier,
+          prefsState,
+          fadeIn,
+          cancelAutoHideTimer,
+        );
       }
 
       // Re-read keyboard state as it might have changed during layer switching
@@ -175,8 +211,11 @@ class KeyEventService {
       }
     } catch (error, stackTrace) {
       // Log the error but keep the listener alive
-      _log.error('Error in handleKeyEvent',
-          error: error, stackTrace: stackTrace);
+      _log.error(
+        'Error in handleKeyEvent',
+        error: error,
+        stackTrace: stackTrace,
+      );
       return;
     }
   }
@@ -249,7 +288,8 @@ class KeyEventService {
         keyboardNotifier.updateLayout(previousLayer);
       } else if (prefsState.defaultUserLayout != null) {
         _log.debug(
-            'Reverting to default layer: ${prefsState.defaultUserLayout!.name}');
+          'Reverting to default layer: ${prefsState.defaultUserLayout!.name}',
+        );
         keyboardNotifier.updateLayout(prefsState.defaultUserLayout!);
       }
     }
@@ -303,7 +343,8 @@ class KeyEventService {
           keyboardNotifier.updateLayout(previousLayer);
         } else if (prefsState.defaultUserLayout != null) {
           _log.debug(
-              'Reverting to default layer: ${prefsState.defaultUserLayout!.name}');
+            'Reverting to default layer: ${prefsState.defaultUserLayout!.name}',
+          );
           keyboardNotifier.updateLayout(prefsState.defaultUserLayout!);
         }
       } else {
@@ -313,12 +354,14 @@ class KeyEventService {
         // Example: If on T1 (toggled from H1), stack is [Default, H1].
         // Removing H1 ensures T1 falls back to Default, not H1.
 
-        final index =
-            _previousLayerStack.lastIndexWhere((l) => l.name == layout.name);
+        final index = _previousLayerStack.lastIndexWhere(
+          (l) => l.name == layout.name,
+        );
         if (index != -1) {
           _previousLayerStack.removeAt(index);
           _log.debug(
-              'Removed held layer from stack (out-of-order release): ${layout.name}');
+            'Removed held layer from stack (out-of-order release): ${layout.name}',
+          );
         }
       }
       _activeTriggers.remove(key);

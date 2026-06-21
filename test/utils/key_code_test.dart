@@ -1,13 +1,15 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:overkeys/utils/key_code.dart';
+import 'package:overkeys/utils/key_code_macos.dart';
+import 'package:overkeys/utils/key_code_windows.dart';
 import 'package:win32/win32.dart';
 
 void main() {
   group('Key Code Utilities', () {
     setUp(() {
       // Reset active map before each test
-      activeKeyCodeShiftMap =
-          Map<(int, bool), String>.from(defaultKeyCodeShiftMap);
+      activeKeyCodeShiftMap = Map<(int, bool), String>.from(
+        defaultKeyCodeShiftMap,
+      );
     });
 
     group('defaultKeyCodeMap', () {
@@ -122,39 +124,39 @@ void main() {
       });
     });
 
-    group('getKeyFromKeyCodeShift', () {
+    group('getWindowsKeyFromKeyCodeShift', () {
       test('returns correct key for letter without shift', () {
-        final result = getKeyFromKeyCodeShift(VK_A, false);
+        final result = getWindowsKeyFromKeyCodeShift(VK_A, false);
         expect(result, 'A');
       });
 
       test('returns correct key for letter with shift', () {
-        final result = getKeyFromKeyCodeShift(VK_A, true);
+        final result = getWindowsKeyFromKeyCodeShift(VK_A, true);
         expect(result, 'A'); // Letters use defaultKeyCodeMap
       });
 
       test('returns correct character for number without shift', () {
-        final result = getKeyFromKeyCodeShift(0x31, false);
+        final result = getWindowsKeyFromKeyCodeShift(0x31, false);
         expect(result, '1');
       });
 
       test('returns correct character for number with shift', () {
-        final result = getKeyFromKeyCodeShift(0x31, true);
+        final result = getWindowsKeyFromKeyCodeShift(0x31, true);
         expect(result, '!');
       });
 
       test('returns correct character for punctuation without shift', () {
-        final result = getKeyFromKeyCodeShift(VK_OEM_COMMA, false);
+        final result = getWindowsKeyFromKeyCodeShift(VK_OEM_COMMA, false);
         expect(result, ',');
       });
 
       test('returns correct character for punctuation with shift', () {
-        final result = getKeyFromKeyCodeShift(VK_OEM_COMMA, true);
+        final result = getWindowsKeyFromKeyCodeShift(VK_OEM_COMMA, true);
         expect(result, '<');
       });
 
       test('returns empty string for unknown key code', () {
-        final result = getKeyFromKeyCodeShift(0xFF, false);
+        final result = getWindowsKeyFromKeyCodeShift(0xFF, false);
         expect(result, '');
       });
 
@@ -163,15 +165,15 @@ void main() {
         activeKeyCodeShiftMap[(0x31, false)] = 'Custom1';
         activeKeyCodeShiftMap[(0x31, true)] = 'Custom!';
 
-        expect(getKeyFromKeyCodeShift(0x31, false), 'Custom1');
-        expect(getKeyFromKeyCodeShift(0x31, true), 'Custom!');
+        expect(getWindowsKeyFromKeyCodeShift(0x31, false), 'Custom1');
+        expect(getWindowsKeyFromKeyCodeShift(0x31, true), 'Custom!');
       });
 
       test('falls back to defaultKeyCodeMap when not in shift map', () {
         // Remove from shift map, should fall back to default
         activeKeyCodeShiftMap.remove((VK_A, false));
 
-        final result = getKeyFromKeyCodeShift(VK_A, false);
+        final result = getWindowsKeyFromKeyCodeShift(VK_A, false);
         expect(result, 'A'); // Falls back to defaultKeyCodeMap
       });
     });
@@ -187,10 +189,62 @@ void main() {
 
       test('reset works correctly', () {
         activeKeyCodeShiftMap[(0x31, false)] = 'Modified';
-        activeKeyCodeShiftMap =
-            Map<(int, bool), String>.from(defaultKeyCodeShiftMap);
+        activeKeyCodeShiftMap = Map<(int, bool), String>.from(
+          defaultKeyCodeShiftMap,
+        );
 
         expect(activeKeyCodeShiftMap[(0x31, false)], '1');
+      });
+    });
+
+    group('getMacOSKeyFromKeyCodeShift', () {
+      void check(int keyCode, bool isShiftDown, String expected) {
+        final result = getMacOSKeyFromKeyCodeShift(keyCode, isShiftDown);
+        expect(result, expected, reason: 'keyCode=$keyCode shift=$isShiftDown');
+      }
+
+      test('maps letters and digits', () {
+        check(0x00, false, 'A');
+        check(0x0B, true, 'B');
+        check(0x12, false, '1');
+        check(0x12, true, '!');
+        check(0x1D, false, '0');
+        check(0x1D, true, ')');
+      });
+
+      test('maps punctuation with shifted variants', () {
+        check(0x2B, false, ',');
+        check(0x2B, true, '<');
+        check(0x2F, false, '.');
+        check(0x2F, true, '>');
+        check(0x2A, false, '\\');
+        check(0x2A, true, '|');
+        check(0x32, false, '`');
+        check(0x32, true, '~');
+      });
+
+      test('maps modifier and navigation keys', () {
+        check(0x38, false, 'LShift');
+        check(0x3C, false, 'RShift');
+        check(0x3B, false, 'LControl');
+        check(0x3E, false, 'RControl');
+        check(0x3A, false, 'LAlt');
+        check(0x3D, false, 'RAlt');
+        check(0x37, false, 'Win');
+        check(0x36, false, 'RWin');
+        check(0x7B, false, 'Left');
+        check(0x7C, false, 'Right');
+      });
+
+      test('maps space and non-US keys', () {
+        check(0x31, false, ' ');
+        check(0x0A, false, 'IntlBackslash');
+        check(0x5D, false, 'IntlYen');
+        check(0x5E, false, 'IntlRo');
+      });
+
+      test('returns empty string for unknown key code', () {
+        check(0xFF, false, '');
       });
     });
   });

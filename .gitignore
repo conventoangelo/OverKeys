@@ -5,9 +5,11 @@
 *.swp
 .DS_Store
 .atom/
+.build/
 .buildlog/
 .history
 .svn/
+.swiftpm/
 migrate_working_dir/
 
 # IntelliJ related
@@ -32,4 +34,5 @@ build.ps1
 release-notes.md
 
 /secrets
+.refs/
 .fvm/
