@@ -13,6 +13,7 @@ import 'utils/window_controller_extension.dart';
 import 'utils/logger.dart';
 
 const MethodChannel _windowChannel = MethodChannel('overkeys/window');
+final _log = SimplePrintLogger('Main');
 
 // Window type definitions
 enum WindowType {
@@ -123,8 +124,12 @@ Future<void> _configureNativeKeyboardOverlay() async {
 
   try {
     await _windowChannel.invokeMethod<void>('configureKeyboardOverlay');
-  } on MissingPluginException {
-    // Unit tests and non-bundled runners do not register the macOS channel.
+  } on MissingPluginException catch (error, stackTrace) {
+    _log.warning(
+      'macOS native overlay configuration channel is unavailable',
+      error: error,
+      stackTrace: stackTrace,
+    );
   }
 }
 

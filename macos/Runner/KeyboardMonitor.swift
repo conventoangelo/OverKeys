@@ -17,7 +17,6 @@ final class KeyboardMonitor: NSObject, FlutterStreamHandler {
       result(Self.permissionStatus())
     case "requestPermissions":
       Self.requestPermissions()
-      Self.presentPermissionHelpIfNeeded()
       result(nil)
     case "openAccessibilitySettings":
       Self.openAccessibilitySettings()
@@ -43,7 +42,6 @@ final class KeyboardMonitor: NSObject, FlutterStreamHandler {
       try startMonitoring()
       return nil
     } catch {
-      Self.presentPermissionHelpIfNeeded()
       return FlutterError(
         code: "KEYBOARD_MONITOR_UNAVAILABLE",
         message: error.localizedDescription,
@@ -237,30 +235,6 @@ final class KeyboardMonitor: NSObject, FlutterStreamHandler {
     if #available(macOS 10.15, *) {
       if !hasInputMonitoringPermission() {
         IOHIDRequestAccess(kIOHIDRequestTypeListenEvent)
-      }
-    }
-  }
-
-  private static func presentPermissionHelpIfNeeded() {
-    let status = permissionStatus()
-    guard status["accessibility"] != true || status["inputMonitoring"] != true else {
-      return
-    }
-
-    DispatchQueue.main.async {
-      let alert = NSAlert()
-      alert.messageText = "Keyboard Monitoring Permission Required"
-      alert.informativeText =
-        "OverKeys needs Accessibility and Input Monitoring permission to highlight global keystrokes. Grant access in System Settings > Privacy & Security, then restart OverKeys."
-      alert.addButton(withTitle: "Open Accessibility")
-      alert.addButton(withTitle: "Open Input Monitoring")
-      alert.addButton(withTitle: "Not Now")
-
-      let response = alert.runModal()
-      if response == .alertFirstButtonReturn {
-        Self.openAccessibilitySettings()
-      } else if response == .alertSecondButtonReturn {
-        Self.openInputMonitoringSettings()
       }
     }
   }

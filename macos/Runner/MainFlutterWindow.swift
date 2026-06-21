@@ -57,7 +57,9 @@ class MainFlutterWindow: NSWindow {
         result(FlutterMethodNotImplemented)
       }
     }
-    configurePreferencesMenu()
+    DispatchQueue.main.async { [weak self] in
+      self?.configurePreferencesMenu()
+    }
 
     let launchAtStartupChannel = FlutterMethodChannel(
       name: "launch_at_startup",
@@ -95,8 +97,9 @@ class MainFlutterWindow: NSWindow {
     flutterViewController?.view.layer?.isOpaque = false
   }
 
-  private func configurePreferencesMenu() {
+  private func configurePreferencesMenu(retryCount: Int = 1) {
     guard let appMenu = NSApp.mainMenu?.items.first?.submenu else {
+      retryConfigurePreferencesMenu(retryCount: retryCount)
       return
     }
 
@@ -104,10 +107,29 @@ class MainFlutterWindow: NSWindow {
       preferencesItem.target = self
       preferencesItem.action = #selector(openPreferencesFromMenu(_:))
       preferencesItem.isEnabled = true
+    } else {
+      NSLog("OverKeys: could not find Preferences menu item to wire Settings")
+    }
+  }
+
+  private func retryConfigurePreferencesMenu(retryCount: Int) {
+    guard retryCount > 0 else {
+      NSLog("OverKeys: app menu was unavailable while wiring Settings")
+      return
+    }
+
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+      self?.configurePreferencesMenu(retryCount: retryCount - 1)
     }
   }
 
   @objc private func openPreferencesFromMenu(_ sender: Any?) {
-    windowMethodChannel?.invokeMethod("openPreferences", arguments: nil)
+    windowMethodChannel?.invokeMethod("openPreferences", arguments: nil) { result in
+      if let error = result as? FlutterError {
+        NSLog("OverKeys: Settings menu failed to open Preferences: \(error.message ?? error.code)")
+      } else if let value = result as? NSObject, value == FlutterMethodNotImplemented {
+        NSLog("OverKeys: Settings menu handler is not registered in Flutter")
+      }
+    }
   }
 }
