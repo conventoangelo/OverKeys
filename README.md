@@ -22,7 +22,7 @@
     </a>
   </p>
 
-  <h3 align="center">An open-source keyboard layout visualizer for Windows</h3>
+  <h3 align="center">An open-source keyboard layout visualizer for Windows and macOS</h3>
 
   <p align="center">
     <a href="#getting-started">Install Now</a>
@@ -171,7 +171,7 @@ For complete feature details, see the [documentation](docs/index.md).
 
 OverKeys can be installed through several methods:
 
-1. **Using Winget (Recommended)**
+1. **Using Winget on Windows (Recommended)**
 
    ```pwsh
    winget install AngeloConvento.OverKeys
@@ -179,12 +179,17 @@ OverKeys can be installed through several methods:
 
    <sub>Note: Please check if `winget` version is updated to the latest version as in the repo. Otherwise, use the [installer](https://github.com/conventoangelo/OverKeys/releases/latest) to have the latest version.</sub>
 
-2. **Using the Installer**
+2. **Using the Windows Installer**
 
    - Download and run the latest [EXE installer](https://github.com/conventoangelo/OverKeys/releases/latest).
 
 3. **Portable Version**
    - Download and extract the [portable ZIP file](https://github.com/conventoangelo/OverKeys/releases/latest)
+
+4. **Using the macOS DMG**
+   - Download the latest macOS DMG from [GitHub releases](https://github.com/conventoangelo/OverKeys/releases/latest).
+   - Grant Accessibility and Input Monitoring in System Settings > Privacy & Security.
+   - For unsigned builds, remove quarantine with `xattr -d com.apple.quarantine /Applications/OverKeys.app`.
 
 For detailed installation instructions, see the [Installation Guide](/docs/getting-started/installation.md).
 

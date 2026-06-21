@@ -1,8 +1,8 @@
 # Installation
 
-This guide will walk you through installing OverKeys on your Windows system.
+This guide covers Windows and macOS installation.
 
-## Methods
+## Windows
 
 ### 1. Using Winget (Recommended)
 
@@ -12,7 +12,7 @@ The recommended installation method is using Windows Package Manager (winget), a
 winget install AngeloConvento.OverKeys
 ```
 
-### 2. Using EXE Intstaller
+### 2. Using EXE Installer
 
 If you prefer manual installation:
 
@@ -28,13 +28,29 @@ For a portable version without installation:
 2. Extract the ZIP file to any location of your choice
 3. Run `OverKeys.exe` from the extracted folder
 
+## macOS
+
+1. Download the latest macOS DMG from the [GitHub releases page](https://github.com/conventoangelo/OverKeys/releases).
+2. Open the DMG and drag `OverKeys.app` into `/Applications`.
+3. If macOS blocks the unsigned app because it was downloaded from the internet, run:
+
+   ```sh
+   xattr -d com.apple.quarantine /Applications/OverKeys.app
+   ```
+
+4. Launch OverKeys.
+5. Grant both **Accessibility** and **Input Monitoring** in System Settings > Privacy & Security.
+6. Restart OverKeys after granting permissions.
+
+OverKeys cannot highlight global keystrokes until both macOS permissions are granted.
+
 ## First Launch
 
 After installation:
 
 1. OverKeys will launch automatically
-2. The application will appear in your system tray
-3. Right-click the OverKeys icon in the system tray to access preferences and configuration options
+2. The application will appear in your system tray or macOS menu bar
+3. Right-click the OverKeys icon to access preferences and configuration options
 
 ## Updating OverKeys
 

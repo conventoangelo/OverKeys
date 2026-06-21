@@ -1,0 +1,60 @@
+name: macOS Build
+
+on:
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches: [main, develop]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-macos:
+    runs-on: macos-15
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+          cache: true
+
+      - name: Enable macOS desktop
+        run: flutter config --enable-macos-desktop
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Build macOS app
+        run: flutter build macos --release
+
+      - name: Verify app signature
+        run: codesign --verify --deep --strict --verbose=2 build/macos/Build/Products/Release/overkeys.app
+
+      - name: Install create-dmg
+        run: brew install create-dmg
+
+      - name: Create unsigned DMG
+        run: |
+          create-dmg \
+            --volname "OverKeys" \
+            --window-pos 200 120 \
+            --window-size 800 400 \
+            --icon-size 100 \
+            --app-drop-link 600 185 \
+            "OverKeys-macOS-unsigned.dmg" \
+            "build/macos/Build/Products/Release/overkeys.app"
+
+      - name: Upload macOS artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: overkeys-macos-unsigned
+          path: OverKeys-macOS-unsigned.dmg
+          retention-days: 14
+          if-no-files-found: error
