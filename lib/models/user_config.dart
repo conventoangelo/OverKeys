@@ -30,37 +30,53 @@ class UserConfig {
     if (json['userLayouts'] != null) {
       for (var userLayout in json['userLayouts']) {
         final parsedRows = <List<String>>[];
-        final alwaysPressedKeys = <String>{};
+        final keySpecs = <List<KeyboardKeySpec?>>[];
 
         final rawRows = userLayout['keys'] as List<dynamic>;
         for (int rowIndex = 0; rowIndex < rawRows.length; rowIndex++) {
           final rawRow = rawRows[rowIndex] as List<dynamic>;
           final parsedRow = <String>[];
+          final parsedSpecs = <KeyboardKeySpec?>[];
 
           for (int keyIndex = 0; keyIndex < rawRow.length; keyIndex++) {
             final rawKey = rawRow[keyIndex];
 
             if (rawKey is String) {
               parsedRow.add(rawKey);
+              parsedSpecs.add(null);
               continue;
             }
 
-            if (rawKey is Map && rawKey['P'] is String) {
-              parsedRow.add(rawKey['P'] as String);
-              alwaysPressedKeys.add('$rowIndex:$keyIndex');
+            if (rawKey is Map) {
+              final topLabel = rawKey['h'] as String?;
+              final trackedKey =
+                  (rawKey['t'] as String?) ?? topLabel ?? rawKey.toString();
+              final type = rawKey['type'] as String?;
+
+              parsedRow.add(trackedKey);
+              parsedSpecs.add(
+                KeyboardKeySpec(
+                  trackedKey: trackedKey,
+                  topLabel: topLabel,
+                  type: type,
+                ),
+              );
               continue;
             }
 
-            parsedRow.add(rawKey?.toString() ?? '');
+            final fallbackKey = rawKey?.toString() ?? '';
+            parsedRow.add(fallbackKey);
+            parsedSpecs.add(null);
           }
 
           parsedRows.add(parsedRow);
+          keySpecs.add(parsedSpecs);
         }
 
         userLayouts.add(KeyboardLayout(
           name: userLayout['name'],
           keys: parsedRows,
-          alwaysPressedKeys: alwaysPressedKeys,
+          keySpecs: keySpecs,
           trigger: userLayout['trigger'],
           type: userLayout['type'],
           foreign: userLayout['foreign'],
@@ -109,22 +125,24 @@ class UserConfig {
         ? userLayouts!
             .map((userLayout) => {
                   'name': userLayout.name,
-                  'keys': userLayout.keys
-                      .asMap()
-                      .entries
-                      .map(
-                        (rowEntry) => rowEntry.value
-                            .asMap()
-                            .entries
-                            .map(
-                              (keyEntry) => userLayout.isKeyAlwaysPressed(
-                                      rowEntry.key, keyEntry.key)
-                                  ? {'P': keyEntry.value}
-                                  : keyEntry.value,
-                            )
-                            .toList(),
-                      )
-                      .toList(),
+                  'keys': userLayout.keys.asMap().entries.map((rowEntry) {
+                    return rowEntry.value.asMap().entries.map((keyEntry) {
+                      final keySpec = userLayout.keySpecAt(
+                        rowEntry.key,
+                        keyEntry.key,
+                      );
+
+                      if (keySpec == null) {
+                        return keyEntry.value;
+                      }
+
+                      return {
+                        if (keySpec.topLabel != null) 'h': keySpec.topLabel,
+                        't': keySpec.trackedKey,
+                        if (keySpec.type != null) 'type': keySpec.type,
+                      };
+                    }).toList();
+                  }).toList(),
                   if (userLayout.trigger != null) 'trigger': userLayout.trigger,
                   if (userLayout.type != null) 'type': userLayout.type,
                   if (userLayout.foreign != null) 'foreign': userLayout.foreign,

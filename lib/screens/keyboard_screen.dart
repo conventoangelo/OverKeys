@@ -162,12 +162,14 @@ class KeyboardScreen extends ConsumerWidget {
     required PreferencesState prefsState,
     KeyboardLayout? altLayout,
   }) {
+    final keySpec = keyboardState.layout.keySpecAt(rowIndex, keyIndex);
     key = _getShiftedKey(key, keyboardState, prefsState);
     final layoutKeyIndex = keyIndex;
+    final trackedKey = keySpec?.trackedKey ?? key;
 
     // For foreign layouts, map to Foreign QWERTY if the key exists, otherwise use the key itself
-    String realKey = key;
-    if (keyboardState.layout.foreign ?? false) {
+    String realKey = trackedKey;
+    if (keySpec == null && (keyboardState.layout.foreign ?? false)) {
       if (rowIndex < qwertyForeign.keys.length &&
           keyIndex < qwertyForeign.keys[rowIndex].length) {
         realKey = qwertyForeign.keys[rowIndex][keyIndex];
@@ -175,8 +177,9 @@ class KeyboardScreen extends ConsumerWidget {
     }
 
     String keyStateKey = Mappings.getKeyForSymbol(realKey);
-    bool isPressed = (keyboardState.keyPressStates[keyStateKey] ?? false) ||
-        keyboardState.layout.isKeyAlwaysPressed(rowIndex, layoutKeyIndex);
+    bool isPressed =
+        keyboardState.layout.isKeyPressedType(rowIndex, layoutKeyIndex) ||
+            (keyboardState.keyPressStates[keyStateKey] ?? false);
 
     // Adjust key index for 6-column layouts (extra backtick column shifts indices by 1)
     keyIndex -= (prefsState.use6ColLayout && prefsState.advancedSettingsEnabled)
@@ -206,6 +209,14 @@ class KeyboardScreen extends ConsumerWidget {
         : (isLastKeyFirstRow
             ? keyboardState.keySize * 2 + keyboardState.keyPadding / 2
             : keyboardState.keySize);
+    final hasTopLabel = keySpec?.hasTopLabel ?? false;
+    final keyFontSize = key.length > 2
+        ? keyboardState.keyFontSize * 0.7
+        : keyboardState.keyFontSize;
+    final topLabel = keySpec?.topLabel;
+    final topLabelFontSize = topLabel != null && topLabel.length > 2
+        ? keyboardState.keyFontSize * 0.5
+        : keyboardState.keyFontSize * 0.6;
 
     Widget keyWidget = Padding(
       padding: EdgeInsets.all(keyboardState.keyPadding),
@@ -250,49 +261,78 @@ class KeyboardScreen extends ConsumerWidget {
                   ),
                 ),
               )
-            : altLayout != null
+            : (altLayout != null || hasTopLabel)
                 ? Stack(
                     children: [
-                      // Primary layout key (top left)
-                      Positioned(
-                        top: 4,
-                        left: 8,
-                        child: Text(
-                          key,
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                            color: textColor,
-                            fontSize: key.length > 2
-                                ? keyboardState.keyFontSize * 0.6
-                                : keyboardState.keyFontSize * 0.85,
-                            fontWeight: keyboardState.fontWeight,
+                      if (altLayout != null)
+                        Positioned(
+                          top: 4,
+                          left: 8,
+                          child: Text(
+                            key,
+                            textAlign: TextAlign.left,
+                            style: TextStyle(
+                              color: textColor,
+                              fontSize: key.length > 2
+                                  ? keyboardState.keyFontSize * 0.6
+                                  : keyboardState.keyFontSize * 0.85,
+                              fontWeight: keyboardState.fontWeight,
+                            ),
+                          ),
+                        )
+                      else
+                        Center(
+                          child: Text(
+                            key,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: textColor,
+                              fontSize: keyFontSize,
+                              fontWeight: keyboardState.fontWeight,
+                            ),
                           ),
                         ),
-                      ),
-                      // Alt layout key (bottom right)
-                      Positioned(
-                        bottom: 4,
-                        right: 8,
-                        child: Text(
-                          _getAltLayoutKey(rowIndex, keyIndex, keyboardState,
-                              prefsState, altLayout),
-                          textAlign: TextAlign.right,
-                          style: TextStyle(
-                            color: textColor,
-                            fontSize: _getAltLayoutKey(
-                                            rowIndex,
-                                            keyIndex,
-                                            keyboardState,
-                                            prefsState,
-                                            altLayout)
-                                        .length >
-                                    2
-                                ? keyboardState.keyFontSize * 0.6
-                                : keyboardState.keyFontSize * 0.85,
-                            fontWeight: keyboardState.fontWeight,
+                      if (hasTopLabel)
+                        Positioned(
+                          top: 2,
+                          left: 0,
+                          right: 0,
+                          child: Center(
+                            child: Text(
+                              topLabel!,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: textColor,
+                                fontSize: topLabelFontSize,
+                                fontWeight: keyboardState.fontWeight,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
+                      if (altLayout != null)
+                        Positioned(
+                          bottom: 4,
+                          right: 8,
+                          child: Text(
+                            _getAltLayoutKey(rowIndex, keyIndex, keyboardState,
+                                prefsState, altLayout),
+                            textAlign: TextAlign.right,
+                            style: TextStyle(
+                              color: textColor,
+                              fontSize: _getAltLayoutKey(
+                                              rowIndex,
+                                              keyIndex,
+                                              keyboardState,
+                                              prefsState,
+                                              altLayout)
+                                          .length >
+                                      2
+                                  ? keyboardState.keyFontSize * 0.6
+                                  : keyboardState.keyFontSize * 0.85,
+                              fontWeight: keyboardState.fontWeight,
+                            ),
+                          ),
+                        ),
                     ],
                   )
                 : Center(
@@ -301,9 +341,7 @@ class KeyboardScreen extends ConsumerWidget {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: textColor,
-                        fontSize: key.length > 2
-                            ? keyboardState.keyFontSize * 0.7
-                            : keyboardState.keyFontSize,
+                        fontSize: keyFontSize,
                         fontWeight: keyboardState.fontWeight,
                       ),
                     ),
@@ -492,7 +530,8 @@ class KeyboardScreen extends ConsumerWidget {
     if (keyIndex >= altRow.length) {
       return "";
     }
-    String altKey = altRow[keyIndex];
+    final altSpec = altLayout.keySpecAt(rowIndex, keyIndex);
+    String altKey = altSpec?.trackedKey ?? altRow[keyIndex];
     altKey = _getShiftedKey(altKey, keyboardState, prefsState);
     return altKey;
   }

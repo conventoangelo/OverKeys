@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:overkeys/models/keyboard_layouts.dart';
 import 'package:overkeys/models/user_config.dart';
 
 void main() {
@@ -33,5 +34,54 @@ void main() {
 
     expect(json['ignoredKeys'], isNotNull);
     expect(json['ignoredKeys'], ["X", "Y"]);
+  });
+
+  test('UserConfig parses typed key objects with top labels', () {
+    final jsonString = '''
+    {
+      "userLayouts": [
+        {
+          "name": "Layer",
+          "keys": [
+            ["A", {"h": "Shift", "t": "T", "type": "pressed"}]
+          ]
+        }
+      ]
+    }
+    ''';
+    final json = jsonDecode(jsonString);
+    final config = UserConfig.fromJson(json);
+
+    final layout = config.userLayouts!.first;
+    expect(layout.keys[0][1], 'T');
+    expect(layout.keySpecAt(0, 1), isNotNull);
+    expect(layout.keySpecAt(0, 1)!.topLabel, 'Shift');
+    expect(layout.keySpecAt(0, 1)!.trackedKey, 'T');
+    expect(layout.isKeyPressedType(0, 1), isTrue);
+  });
+
+  test('UserConfig toJson preserves typed key objects', () {
+    const layout = KeyboardLayout(
+      name: 'Layer',
+      keys: [
+        ['A', 'T']
+      ],
+      keySpecs: [
+        [
+          null,
+          KeyboardKeySpec(trackedKey: 'T', topLabel: 'Shift', type: 'held')
+        ]
+      ],
+    );
+    final config = UserConfig(userLayouts: [layout]);
+    final json = config.toJson();
+
+    final userLayouts = json['userLayouts'] as List<dynamic>;
+    final keys = userLayouts.first['keys'] as List<dynamic>;
+    final typedKey = keys[0][1] as Map<String, dynamic>;
+
+    expect(typedKey['h'], 'Shift');
+    expect(typedKey['t'], 'T');
+    expect(typedKey['type'], 'held');
   });
 }
