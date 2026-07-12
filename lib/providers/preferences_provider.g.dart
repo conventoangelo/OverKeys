@@ -48,13 +48,13 @@ abstract class _$PreferencesNotifier extends $Notifier<PreferencesState> {
   PreferencesState build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<PreferencesState, PreferencesState>;
     final element = ref.element as $ClassProviderElement<
         AnyNotifier<PreferencesState, PreferencesState>,
         PreferencesState,
         Object?,
         Object?>;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
