@@ -1,5 +1,35 @@
 # Changelog
 
+## [0.3.5](https://github.com/conventoangelo/OverKeys/compare/v0.3.4...v0.3.5) (2026-07-12)
+
+
+### ✨ Features
+
+* add hotkey to toggle top row visibility ([#186](https://github.com/conventoangelo/OverKeys/issues/186)) ([da2f6b9](https://github.com/conventoangelo/OverKeys/commit/da2f6b998bd789d1b3c8493def8e2d8b77990644))
+* add native debug viewer in advanced tab ([#177](https://github.com/conventoangelo/OverKeys/issues/177)) ([5cc5810](https://github.com/conventoangelo/OverKeys/commit/5cc5810a43081eb05356c03ed0f8fb8420b88407))
+* add support and implement wide-mod adjustments ([#174](https://github.com/conventoangelo/OverKeys/issues/174)) ([328201b](https://github.com/conventoangelo/OverKeys/commit/328201b47acd6a778f4980cc9047809865bcc0fa))
+* add timestamps to logger for better debugging ([#176](https://github.com/conventoangelo/OverKeys/issues/176)) ([26650b8](https://github.com/conventoangelo/OverKeys/commit/26650b8bdda22310c7ff2d3cc8fa764d4ddb0c9c))
+
+
+### 🐛 Bug Fixes
+
+* enhance foreign keyboard layout and key mapping ([#175](https://github.com/conventoangelo/OverKeys/issues/175)) ([902bf48](https://github.com/conventoangelo/OverKeys/commit/902bf484640ecab6919051744e730b04dad8e052))
+* enhance logging with comprehensive levels and revision tracking ([#178](https://github.com/conventoangelo/OverKeys/issues/178)) ([cd8c031](https://github.com/conventoangelo/OverKeys/commit/cd8c03142e11ed94a3dd9302a74a5302bfcb36b7))
+
+
+### 📚 Documentation
+
+* add CONTRIBUTING.md ([ba882be](https://github.com/conventoangelo/OverKeys/commit/ba882bef50034cfbcf2b24661e89511f4bf7fb26))
+* correct typos in README and link to contribution guidelines ([f238153](https://github.com/conventoangelo/OverKeys/commit/f2381535364b34608197e8bc4e2d96f87d1b4c88))
+* update fallback font name from Geist Mono to DM Mono ([6af500b](https://github.com/conventoangelo/OverKeys/commit/6af500b8c285bd16e5b8e3cae5c871694b1cb1f0))
+
+
+### ⚙️ CI/CD Pipeline
+
+* remove release approval workflow ([0c4a769](https://github.com/conventoangelo/OverKeys/commit/0c4a7697a6bc00f63f95f9cc6fd71fe5f070805f))
+* update PR fetching logic to filter by title for release-please ([8aa77b5](https://github.com/conventoangelo/OverKeys/commit/8aa77b5c4b6ef7f7cb9f38642e60037b99833304))
+* update release-please workflow to use RELEASE_PLEASE_TOKEN for triggering workflows ([7ce7a56](https://github.com/conventoangelo/OverKeys/commit/7ce7a56e2943e345a080317d046bd5182fab7de7))
+
 ## [0.3.4](https://github.com/conventoangelo/OverKeys/compare/v0.3.3...v0.3.4) (2026-02-21)
 
 
