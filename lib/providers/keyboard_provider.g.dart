@@ -47,13 +47,13 @@ abstract class _$KeyboardNotifier extends $Notifier<KeyboardState> {
   KeyboardState build();
   @$mustCallSuper
   @override
-  WhenComplete runBuild() {
+  void runBuild() {
     final ref = this.ref as $Ref<KeyboardState, KeyboardState>;
     final element = ref.element as $ClassProviderElement<
         AnyNotifier<KeyboardState, KeyboardState>,
         KeyboardState,
         Object?,
         Object?>;
-    return element.handleCreate(ref, build);
+    element.handleCreate(ref, build);
   }
 }

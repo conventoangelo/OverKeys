@@ -42,19 +42,19 @@ final class PreferencesNotifierProvider
 }
 
 String _$preferencesNotifierHash() =>
-    r'c7d2af5d8a149036739504737fb53667c14a47a3';
+    r'93fcdbcdf48599b6ff9a013e3bb98d4c15f778de';
 
 abstract class _$PreferencesNotifier extends $Notifier<PreferencesState> {
   PreferencesState build();
   @$mustCallSuper
   @override
-  WhenComplete runBuild() {
+  void runBuild() {
     final ref = this.ref as $Ref<PreferencesState, PreferencesState>;
     final element = ref.element as $ClassProviderElement<
         AnyNotifier<PreferencesState, PreferencesState>,
         PreferencesState,
         Object?,
         Object?>;
-    return element.handleCreate(ref, build);
+    element.handleCreate(ref, build);
   }
 }
