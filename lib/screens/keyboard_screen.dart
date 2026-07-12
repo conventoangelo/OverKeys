@@ -163,6 +163,8 @@ class KeyboardScreen extends ConsumerWidget {
     KeyboardLayout? altLayout,
   }) {
     key = _getShiftedKey(key, keyboardState, prefsState);
+    final layoutKeyIndex = keyIndex;
+
     // For foreign layouts, map to Foreign QWERTY if the key exists, otherwise use the key itself
     String realKey = key;
     if (keyboardState.layout.foreign ?? false) {
@@ -173,7 +175,8 @@ class KeyboardScreen extends ConsumerWidget {
     }
 
     String keyStateKey = Mappings.getKeyForSymbol(realKey);
-    bool isPressed = keyboardState.keyPressStates[keyStateKey] ?? false;
+    bool isPressed = (keyboardState.keyPressStates[keyStateKey] ?? false) ||
+        keyboardState.layout.isKeyAlwaysPressed(rowIndex, layoutKeyIndex);
 
     // Adjust key index for 6-column layouts (extra backtick column shifts indices by 1)
     keyIndex -= (prefsState.use6ColLayout && prefsState.advancedSettingsEnabled)

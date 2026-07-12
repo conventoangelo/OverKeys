@@ -1,6 +1,7 @@
 class KeyboardLayout {
   final String name;
   final List<List<String>> keys;
+  final Set<String> alwaysPressedKeys;
   final String? trigger;
   final String? type;
   final bool? foreign;
@@ -9,10 +10,15 @@ class KeyboardLayout {
   const KeyboardLayout(
       {required this.name,
       required this.keys,
+      this.alwaysPressedKeys = const <String>{},
       this.trigger,
       this.type,
       this.foreign,
       this.wide});
+
+  bool isKeyAlwaysPressed(int rowIndex, int keyIndex) {
+    return alwaysPressedKeys.contains('$rowIndex:$keyIndex');
+  }
 }
 
 const qwerty = KeyboardLayout(
