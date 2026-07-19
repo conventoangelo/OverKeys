@@ -56,7 +56,11 @@ Customize the text appearance on keys:
 - **Font family**: Choose the typeface used for key labels
 - **Font weight**: Adjust how bold the text appears
 - **Key font size**: Set the text size for regular keys
+- **Long key font size**: Set the text size for longer labels and alternate labels
+- **Top label font size**: Set the text size for top labels used by key modifiers
 - **Space font size**: Set the text size for the spacebar
+
+For a dedicated reference, see [Text Settings](./text.md).
 
 ## Markers Tab
 

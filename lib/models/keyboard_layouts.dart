@@ -1,6 +1,22 @@
+class KeyboardKeySpec {
+  final String trackedKey;
+  final String? topLabel;
+  final String? type;
+
+  const KeyboardKeySpec({
+    required this.trackedKey,
+    this.topLabel,
+    this.type,
+  });
+
+  bool get isPressedType => type == 'held';
+  bool get hasTopLabel => topLabel != null && topLabel!.isNotEmpty;
+}
+
 class KeyboardLayout {
   final String name;
   final List<List<String>> keys;
+  final List<List<KeyboardKeySpec?>>? keySpecs;
   final String? trigger;
   final String? type;
   final bool? foreign;
@@ -9,10 +25,28 @@ class KeyboardLayout {
   const KeyboardLayout(
       {required this.name,
       required this.keys,
+      this.keySpecs,
       this.trigger,
       this.type,
       this.foreign,
       this.wide});
+
+  KeyboardKeySpec? keySpecAt(int rowIndex, int keyIndex) {
+    if (keySpecs == null || rowIndex >= keySpecs!.length) {
+      return null;
+    }
+
+    final rowSpecs = keySpecs![rowIndex];
+    if (keyIndex >= rowSpecs.length) {
+      return null;
+    }
+
+    return rowSpecs[keyIndex];
+  }
+
+  bool isKeyPressedType(int rowIndex, int keyIndex) {
+    return keySpecAt(rowIndex, keyIndex)?.isPressedType ?? false;
+  }
 }
 
 const qwerty = KeyboardLayout(

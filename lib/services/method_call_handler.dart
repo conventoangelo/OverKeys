@@ -171,6 +171,14 @@ class MethodCallHandler {
         final keyFontSize = _safeArgument<double>(call.arguments, 28.0);
         keyboardNotifier.updateKeyFontSize(keyFontSize);
 
+      case 'updateLongKeyFontSize':
+        final longKeyFontSize = _safeArgument<double>(call.arguments, 18.0);
+        keyboardNotifier.updateLongKeyFontSize(longKeyFontSize);
+
+      case 'updateTopLabelFontSize':
+        final topLabelFontSize = _safeArgument<double>(call.arguments, 12.0);
+        keyboardNotifier.updateTopLabelFontSize(topLabelFontSize);
+
       case 'updateSpaceFontSize':
         final spaceFontSize = _safeArgument<double>(call.arguments, 20.0);
         keyboardNotifier.updateSpaceFontSize(spaceFontSize);

@@ -152,6 +152,7 @@ This project was initially developed to help with the creator's system-wide prac
 - **Auto-hide**: The keyboard hides automatically when not in use
 - **Keymap styles**: Supports staggered, matrix, and split matrix (5-col and [6-col](/docs/advanced/6-column-layouts.md)) styles
 - **User configurations**: Add and use [custom keyboard layouts](/docs/advanced/custom-layouts.md) through configuration files
+- **Key modifiers**: Add top labels and held-state keys to custom layouts with [key modifier objects](/docs/advanced/key-modifiers.md)
 - **Side-by-side layouts**: Display [alternative layouts](/docs/advanced/alternative-layouts.md) alongside the default layout
 - **Top row/Number row**: Optional row above the main keyboard for numbers or user-configured keys
 - **[Layer switching](/docs/advanced/layer-switching.md)**: Switch between multiple custom keyboard layers for QMK, ZMK, or other programmable keyboard firmware using configurable triggers and toggle modes
@@ -180,7 +181,6 @@ OverKeys can be installed through several methods:
    <sub>Note: Please check if `winget` version is updated to the latest version as in the repo. Otherwise, use the [installer](https://github.com/conventoangelo/OverKeys/releases/latest) to have the latest version.</sub>
 
 2. **Using the Installer**
-
    - Download and run the latest [EXE installer](https://github.com/conventoangelo/OverKeys/releases/latest).
 
 3. **Portable Version**
@@ -202,6 +202,7 @@ Complete documentation for OverKeys is available in the [docs](docs/index.md) fo
 ### User Guide
 
 - [Preferences](/docs/user-guide/preferences.md)
+- [Text Settings](/docs/user-guide/text.md)
 - [Learning Mode](/docs/user-guide/learning-mode.md)
 - [Built-in Layouts](#features)
 
@@ -209,6 +210,7 @@ Complete documentation for OverKeys is available in the [docs](docs/index.md) fo
 
 - [Custom Font](/docs/advanced/custom-font.md)
 - [Custom Layouts](/docs/advanced/custom-layouts.md)
+- [Key Modifiers](/docs/advanced/key-modifiers.md)
 - [Alternative Layouts](/docs/advanced/alternative-layouts.md)
 - [6-Column Layouts](/docs/advanced/6-column-layouts.md)
 - [Layer Switching](/docs/advanced/layer-switching.md)
@@ -222,7 +224,6 @@ Complete documentation for OverKeys is available in the [docs](docs/index.md) fo
 ## Contributing
 
 Contributions are what make the open-source community such an amazing place to learn and collaborate. Any contributions to **OverKeys** are greatly appreciated. If you have suggestions for improvements, bug fixes, or new features, please feel free to open an issue or submit a pull request. For detailed contribution guidelines, see the [CONTRIBUTING.md](.github/CONTRIBUTING.md) file.
-
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

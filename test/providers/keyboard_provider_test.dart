@@ -15,6 +15,9 @@ void main() {
         expect(state.showTopRow, false);
         expect(state.showGraveKey, false);
         expect(state.keySize, 52);
+        expect(state.keyFontSize, 22);
+        expect(state.longKeyFontSize, 16);
+        expect(state.topLabelFontSize, 13);
         expect(state.keyBorderRadius, 14);
         expect(state.animationEnabled, true);
         expect(state.learningModeEnabled, false);
@@ -167,6 +170,9 @@ void main() {
           layout: qwerty,
           keymapStyle: 'Matrix',
           keySize: 60,
+          keyFontSize: 24,
+          longKeyFontSize: 17,
+          topLabelFontSize: 12,
           animationEnabled: false,
         );
 
@@ -175,6 +181,9 @@ void main() {
         expect(json['layoutName'], 'QWERTY');
         expect(json['keymapStyle'], 'Matrix');
         expect(json['keySize'], 60);
+        expect(json['keyFontSize'], 24);
+        expect(json['longKeyFontSize'], 17);
+        expect(json['topLabelFontSize'], 12);
         expect(json['animationEnabled'], false);
       });
 
@@ -183,6 +192,9 @@ void main() {
           'layoutName': 'Colemak',
           'keymapStyle': 'Split Matrix',
           'keySize': 65.0,
+          'keyFontSize': 25.0,
+          'longKeyFontSize': 18.0,
+          'topLabelFontSize': 11.0,
           'animationEnabled': true,
           'learningModeEnabled': true,
         };
@@ -192,6 +204,9 @@ void main() {
         expect(state.layout.name, 'Colemak');
         expect(state.keymapStyle, 'Split Matrix');
         expect(state.keySize, 65);
+        expect(state.keyFontSize, 25);
+        expect(state.longKeyFontSize, 18);
+        expect(state.topLabelFontSize, 11);
         expect(state.animationEnabled, true);
         expect(state.learningModeEnabled, true);
       });

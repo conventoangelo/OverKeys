@@ -10,6 +10,7 @@ Welcome to the OverKeys documentation! This guide will help you get started with
 ## User Guide
 
 - [Preferences](user-guide/preferences.md) - Configure OverKeys to match your needs
+- [Text Settings](user-guide/text.md) - Tune key label sizing for long labels and top labels
 - [Learning Mode](user-guide/learning-mode.md) - Use the specialized color scheme for learning new layouts
 - [Supported Layouts](../README.md#features) - View the list of built-in keyboard layouts
 
@@ -17,6 +18,7 @@ Welcome to the OverKeys documentation! This guide will help you get started with
 
 - [Custom Font](advanced/custom-font.md) - Use a system-installed font not found in the dropdown
 - [Custom Layouts](advanced/custom-layouts.md) - Create and use your own keyboard layouts
+- [Key Modifiers](advanced/key-modifiers.md) - Add top labels and held-state keys to custom layouts
 - [Alternative Layouts](advanced/alternative-layouts.md) - Quickly switch between different layouts
 - [6-Column Layouts](advanced/6-column-layouts.md) - Set up OverKeys for a 6-column split matrix keyboard
 - [Layer Switching](advanced/layer-switching.md) - Switch between multiple custom keyboard layers with custom triggers
