@@ -12,9 +12,11 @@ In `userLayouts`, each key can still be a plain string. You can also use an obje
 
 Plain string entries continue to work exactly as before, so you can mix both formats within the same layout.
 
-![Space as tracked key and shift as the top label.](image.png "Space as tracked key and shift as the top label.")
+![Space as tracked key and shift as the top label.](image.png)
+*Space as tracked key and shift as the top label.*
 
-![NUM layer change key with type pressed](image-1.png "NUM layer change key with type pressed")
+![NUM layer change key with type pressed](image-1.png)
+*NUM layer change key with type pressed*
 
 ## Example
 
