@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 class OptionContainer extends StatelessWidget {
@@ -8,7 +10,7 @@ class OptionContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    return Container(
+    final container = Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -18,5 +20,17 @@ class OptionContainer extends StatelessWidget {
       ),
       child: child,
     );
+
+    // Disable splash effects during widget tests to avoid engine shader
+    // runtime issues (ink_sparkle.frag mismatches). Only override in test
+    // environment so production behavior isn't changed.
+    if (Platform.environment.containsKey('FLUTTER_TEST')) {
+      return Theme(
+        data: Theme.of(context).copyWith(splashFactory: NoSplash.splashFactory),
+        child: container,
+      );
+    }
+
+    return container;
   }
 }

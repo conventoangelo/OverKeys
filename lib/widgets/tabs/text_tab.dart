@@ -18,6 +18,8 @@ class TextTab extends ConsumerStatefulWidget {
 
 class _TextTabState extends ConsumerState<TextTab> {
   late double _localKeyFontSize;
+  late double _localLongKeyFontSize;
+  late double _localTopLabelFontSize;
   late double _localSpaceFontSize;
 
   @override
@@ -26,6 +28,8 @@ class _TextTabState extends ConsumerState<TextTab> {
     // Initialize with current provider values
     final keyboardState = ref.read(keyboardProvider);
     _localKeyFontSize = keyboardState.keyFontSize;
+    _localLongKeyFontSize = keyboardState.longKeyFontSize;
+    _localTopLabelFontSize = keyboardState.topLabelFontSize;
     _localSpaceFontSize = keyboardState.spaceFontSize;
   }
 
@@ -38,6 +42,12 @@ class _TextTabState extends ConsumerState<TextTab> {
       if (previous != null) {
         if (_localKeyFontSize != next.keyFontSize) {
           setState(() => _localKeyFontSize = next.keyFontSize);
+        }
+        if (_localLongKeyFontSize != next.longKeyFontSize) {
+          setState(() => _localLongKeyFontSize = next.longKeyFontSize);
+        }
+        if (_localTopLabelFontSize != next.topLabelFontSize) {
+          setState(() => _localTopLabelFontSize = next.topLabelFontSize);
         }
         if (_localSpaceFontSize != next.spaceFontSize) {
           setState(() => _localSpaceFontSize = next.spaceFontSize);
@@ -138,6 +148,34 @@ class _TextTabState extends ConsumerState<TextTab> {
           onChangeEnd: (value) {
             ref.read(keyboardProvider.notifier).updateKeyFontSize(value);
             widget.onUpdateMainWindow('updateKeyFontSize', value);
+          },
+        ),
+        SliderOption(
+          label: 'Long key font size',
+          value: _localLongKeyFontSize,
+          min: 8,
+          max: 24,
+          divisions: 32,
+          onChanged: (value) {
+            setState(() => _localLongKeyFontSize = value);
+          },
+          onChangeEnd: (value) {
+            ref.read(keyboardProvider.notifier).updateLongKeyFontSize(value);
+            widget.onUpdateMainWindow('updateLongKeyFontSize', value);
+          },
+        ),
+        SliderOption(
+          label: 'Top label font size',
+          value: _localTopLabelFontSize,
+          min: 6,
+          max: 20,
+          divisions: 28,
+          onChanged: (value) {
+            setState(() => _localTopLabelFontSize = value);
+          },
+          onChangeEnd: (value) {
+            ref.read(keyboardProvider.notifier).updateTopLabelFontSize(value);
+            widget.onUpdateMainWindow('updateTopLabelFontSize', value);
           },
         ),
         SliderOption(

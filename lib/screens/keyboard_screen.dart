@@ -211,12 +211,10 @@ class KeyboardScreen extends ConsumerWidget {
             : keyboardState.keySize);
     final hasTopLabel = keySpec?.hasTopLabel ?? false;
     final keyFontSize = key.length > 2
-        ? keyboardState.keyFontSize * 0.7
+        ? keyboardState.longKeyFontSize
         : keyboardState.keyFontSize;
     final topLabel = keySpec?.topLabel;
-    final topLabelFontSize = topLabel != null && topLabel.length > 2
-        ? keyboardState.keyFontSize * 0.5
-        : keyboardState.keyFontSize * 0.6;
+    final topLabelFontSize = keyboardState.topLabelFontSize;
 
     Widget keyWidget = Padding(
       padding: EdgeInsets.all(keyboardState.keyPadding),
@@ -274,8 +272,8 @@ class KeyboardScreen extends ConsumerWidget {
                             style: TextStyle(
                               color: textColor,
                               fontSize: key.length > 2
-                                  ? keyboardState.keyFontSize * 0.6
-                                  : keyboardState.keyFontSize * 0.85,
+                                  ? keyboardState.longKeyFontSize
+                                  : keyboardState.keyFontSize,
                               fontWeight: keyboardState.fontWeight,
                             ),
                           ),
@@ -327,8 +325,8 @@ class KeyboardScreen extends ConsumerWidget {
                                               altLayout)
                                           .length >
                                       2
-                                  ? keyboardState.keyFontSize * 0.6
-                                  : keyboardState.keyFontSize * 0.85,
+                                  ? keyboardState.longKeyFontSize
+                                  : keyboardState.keyFontSize,
                               fontWeight: keyboardState.fontWeight,
                             ),
                           ),

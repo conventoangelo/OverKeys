@@ -43,7 +43,7 @@ void main() {
         {
           "name": "Layer",
           "keys": [
-            ["A", {"h": "Shift", "t": "T", "type": "pressed"}]
+            ["A", {"h": "Shift", "t": "T", "type": "held"}]
           ]
         }
       ]

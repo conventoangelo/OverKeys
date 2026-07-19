@@ -27,6 +27,8 @@ class KeyboardState {
   final String? initialFontFamily;
   final FontWeight fontWeight;
   final double keyFontSize;
+  final double longKeyFontSize;
+  final double topLabelFontSize;
   final double spaceFontSize;
   final double markerOffset;
   final double markerWidth;
@@ -79,6 +81,8 @@ class KeyboardState {
     this.initialFontFamily,
     this.fontWeight = FontWeight.w500,
     this.keyFontSize = 22,
+    this.longKeyFontSize = 16,
+    this.topLabelFontSize = 13,
     this.spaceFontSize = 21,
     this.markerOffset = 10,
     this.markerWidth = 10,
@@ -132,6 +136,8 @@ class KeyboardState {
     String? initialFontFamily,
     FontWeight? fontWeight,
     double? keyFontSize,
+    double? longKeyFontSize,
+    double? topLabelFontSize,
     double? spaceFontSize,
     double? markerOffset,
     double? markerWidth,
@@ -184,6 +190,8 @@ class KeyboardState {
       initialFontFamily: initialFontFamily ?? this.initialFontFamily,
       fontWeight: fontWeight ?? this.fontWeight,
       keyFontSize: keyFontSize ?? this.keyFontSize,
+      longKeyFontSize: longKeyFontSize ?? this.longKeyFontSize,
+      topLabelFontSize: topLabelFontSize ?? this.topLabelFontSize,
       spaceFontSize: spaceFontSize ?? this.spaceFontSize,
       markerOffset: markerOffset ?? this.markerOffset,
       markerWidth: markerWidth ?? this.markerWidth,
@@ -242,6 +250,8 @@ class KeyboardState {
       'initialFontFamily': initialFontFamily,
       'fontWeightIndex': fontWeight.value,
       'keyFontSize': keyFontSize,
+      'longKeyFontSize': longKeyFontSize,
+      'topLabelFontSize': topLabelFontSize,
       'spaceFontSize': spaceFontSize,
       'markerOffset': markerOffset,
       'markerWidth': markerWidth,
@@ -337,6 +347,8 @@ class KeyboardState {
       initialFontFamily: json['initialFontFamily'] as String?,
       fontWeight: fontWeightFromValue(json['fontWeightIndex'] as int? ?? 500),
       keyFontSize: (json['keyFontSize'] as num?)?.toDouble() ?? 22,
+      longKeyFontSize: (json['longKeyFontSize'] as num?)?.toDouble() ?? 16,
+      topLabelFontSize: (json['topLabelFontSize'] as num?)?.toDouble() ?? 13,
       spaceFontSize: (json['spaceFontSize'] as num?)?.toDouble() ?? 21,
       markerOffset: (json['markerOffset'] as num?)?.toDouble() ?? 10,
       markerWidth: (json['markerWidth'] as num?)?.toDouble() ?? 10,
@@ -472,6 +484,14 @@ class KeyboardNotifier extends _$KeyboardNotifier {
 
   void updateKeyFontSize(double size) {
     state = state.copyWith(keyFontSize: size);
+  }
+
+  void updateLongKeyFontSize(double size) {
+    state = state.copyWith(longKeyFontSize: size);
+  }
+
+  void updateTopLabelFontSize(double size) {
+    state = state.copyWith(topLabelFontSize: size);
   }
 
   void updateSpaceFontSize(double size) {
