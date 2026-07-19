@@ -49,8 +49,7 @@ class UserConfig {
 
             if (rawKey is Map) {
               final topLabel = rawKey['h'] as String?;
-              final trackedKey =
-                  (rawKey['t'] as String?) ?? topLabel ?? '';
+              final trackedKey = (rawKey['t'] as String?) ?? topLabel ?? '';
               final type = rawKey['type'] as String?;
 
               parsedRow.add(trackedKey);
