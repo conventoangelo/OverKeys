@@ -19,7 +19,7 @@ dependencies:
   flex_color_picker: ^3.7.2
   flutter_localizations:
     sdk: flutter
-  intl: any
+  intl: 0.20.3
   launch_at_startup: ^0.5.1
   package_info_plus: ^9.0.1
   path_provider: ^2.1.2
