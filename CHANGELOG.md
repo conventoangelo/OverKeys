@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.6](https://github.com/conventoangelo/OverKeys/compare/v0.3.5...v0.3.6) (2026-08-16)
+
+
+### ✨ Features
+
+* add key modifiers to layout configuration ([#202](https://github.com/conventoangelo/OverKeys/issues/202)) ([6d9d1f2](https://github.com/conventoangelo/OverKeys/commit/6d9d1f2cd3b543281b52f75748efe25dd1703408))
+
 ## [0.3.5](https://github.com/conventoangelo/OverKeys/compare/v0.3.4...v0.3.5) (2026-07-12)
 
 
