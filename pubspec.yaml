@@ -28,7 +28,7 @@ dependencies:
   flutter_riverpod: ^3.1.0
   riverpod_annotation: ^4.0.6
   logging: ^1.3.0
-  lucide_icons_flutter: ^3.1.15
+  lucide_icons_flutter: ^3.1.17
 
 dev_dependencies:
   flutter_test:
