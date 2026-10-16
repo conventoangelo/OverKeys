@@ -23,7 +23,7 @@ dependencies:
   launch_at_startup: ^0.5.1
   package_info_plus: ^9.0.1
   path_provider: ^2.1.2
-  url_launcher: ^6.3.1
+  url_launcher: ^6.3.3
   hotkey_manager: ^0.2.3
   flutter_riverpod: ^3.1.0
   riverpod_annotation: ^4.0.7
