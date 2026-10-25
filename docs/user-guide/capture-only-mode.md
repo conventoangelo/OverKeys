@@ -18,7 +18,7 @@ The setting is saved with your other preferences and applied automatically when 
 2. In OBS, add a new source: **Window Capture**.
 3. Select the window `[OverKeys.exe]: OverKeys`.
 4. Set **Capture Method** to **Windows 10 (1903 and up)**.
-5. Disable **Capture Cursor**. If available, enable **Allow Transparency**.
+5. Disable **Capture Cursor**.
 6. Place the source above your game or display source and position it where the keyboard should appear.
 7. Switch **Only visible in recordings** on in OverKeys. The keyboard disappears from your screen but stays in the OBS preview and your recording.
 
