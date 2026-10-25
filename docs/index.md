@@ -12,6 +12,7 @@ Welcome to the OverKeys documentation! This guide will help you get started with
 - [Preferences](user-guide/preferences.md) - Configure OverKeys to match your needs
 - [Text Settings](user-guide/text.md) - Tune key label sizing for long labels and top labels
 - [Learning Mode](user-guide/learning-mode.md) - Use the specialized color scheme for learning new layouts
+- [Only Visible in Recordings](user-guide/capture-only-mode.md) - Hide the keyboard on your screen while recordings still capture it
 - [Supported Layouts](../README.md#features) - View the list of built-in keyboard layouts
 
 ## Advanced Features
