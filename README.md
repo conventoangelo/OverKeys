@@ -150,7 +150,7 @@ This project was initially developed to help with the creator's system-wide prac
   </details>
 - **Customizable styles**: Change colors, fonts, sizes, offsets, and key styles
 - **Auto-hide**: The keyboard hides automatically when not in use
-- **[Only visible in recordings](/docs/user-guide/capture-only-mode.md)**: Hide the keyboard on your own screen while OBS and other window-capture tools still record it
+- **[Only visible in recordings](windows only)(/docs/user-guide/capture-only-mode.md)**: Hide the keyboard on your own screen while OBS and other window-capture tools still record it
 - **Keymap styles**: Supports staggered, matrix, and split matrix (5-col and [6-col](/docs/advanced/6-column-layouts.md)) styles
 - **User configurations**: Add and use [custom keyboard layouts](/docs/advanced/custom-layouts.md) through configuration files
 - **Key modifiers**: Add top labels and held-state keys to custom layouts with [key modifier objects](/docs/advanced/key-modifiers.md)
