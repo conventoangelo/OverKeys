@@ -1,3 +1,30 @@
+> [!IMPORTANT]
+> **This is not the original OverKeys project.**
+> This repository is a modified copy (fork) of [conventoangelo/OverKeys](https://github.com/conventoangelo/OverKeys). All credit for OverKeys goes to the original author and contributors. The original project is the one to use for official releases and support.
+>
+> I added one feature and submitted it to the original project as a pull request: [conventoangelo/OverKeys#221](https://github.com/conventoangelo/OverKeys/pull/221). Until the original author has reviewed it, I'm publishing my version here so it can be used right away. If the pull request is merged, this fork becomes unnecessary and you should switch to the original.
+
+## What is different from the original
+
+| Change | Details |
+| --- | --- |
+| **Only visible in recordings** (new) | New toggle in Preferences > General. Hides the keyboard on your own screen while OBS Window Capture and similar tools can still record it. See [the feature description](docs/user-guide/capture-only-mode.md). |
+
+Nothing else is changed. The files touched by this feature are:
+
+- `lib/services/capture_mode_service.dart` (new)
+- `lib/providers/preferences_provider.dart`
+- `lib/widgets/tabs/general_tab.dart`
+- `lib/services/method_call_handler.dart`
+- `lib/app.dart`
+- `README.md` and `docs/` (documentation)
+
+This fork may receive updates, for example to keep it in sync with the original or to fix issues in the added feature. It is not affiliated with or endorsed by the original author.
+
+Licensed under the **GNU General Public License v3.0**, the same license as the original. See [LICENSE](LICENSE).
+
+---
+
 <a id="readme-top"></a>
 
 <br />
@@ -150,7 +177,7 @@ This project was initially developed to help with the creator's system-wide prac
   </details>
 - **Customizable styles**: Change colors, fonts, sizes, offsets, and key styles
 - **Auto-hide**: The keyboard hides automatically when not in use
-- **[Only visible in recordings](windows only)(/docs/user-guide/capture-only-mode.md)**: Hide the keyboard on your own screen while OBS and other window-capture tools still record it
+- **[Only visible in recordings](/docs/user-guide/capture-only-mode.md)**: Hide the keyboard on your own screen while OBS and other window-capture tools still record it
 - **Keymap styles**: Supports staggered, matrix, and split matrix (5-col and [6-col](/docs/advanced/6-column-layouts.md)) styles
 - **User configurations**: Add and use [custom keyboard layouts](/docs/advanced/custom-layouts.md) through configuration files
 - **Key modifiers**: Add top labels and held-state keys to custom layouts with [key modifier objects](/docs/advanced/key-modifiers.md)
