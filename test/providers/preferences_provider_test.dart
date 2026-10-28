@@ -11,6 +11,7 @@ void main() {
 
         expect(state.launchAtStartup, false);
         expect(state.hideAtStartup, false);
+        expect(state.captureOnlyMode, false);
         expect(state.autoHideEnabled, false);
         expect(state.reactiveShiftEnabled, true);
         expect(state.autoHideDuration, 0.5);
@@ -62,19 +63,23 @@ void main() {
         final original = PreferencesState(
           launchAtStartup: false,
           hideAtStartup: false,
+          captureOnlyMode: false,
           autoHideEnabled: false,
         );
 
         final updated = original.copyWith(
           launchAtStartup: true,
           hideAtStartup: true,
+          captureOnlyMode: true,
           autoHideEnabled: true,
         );
 
         expect(updated.launchAtStartup, true);
         expect(updated.hideAtStartup, true);
+        expect(updated.captureOnlyMode, true);
         expect(updated.autoHideEnabled, true);
         expect(original.launchAtStartup, false);
+        expect(original.captureOnlyMode, false);
       });
 
       test('creates copy with updated auto-hide settings', () {
@@ -188,6 +193,7 @@ void main() {
       test('serializes PreferencesState to JSON', () {
         final state = PreferencesState(
           launchAtStartup: true,
+          captureOnlyMode: true,
           autoHideEnabled: true,
           autoHideDuration: 2.5,
           opacity: 0.8,
@@ -197,6 +203,7 @@ void main() {
         final json = state.toJson();
 
         expect(json['launchAtStartup'], true);
+        expect(json['captureOnlyMode'], true);
         expect(json['autoHideEnabled'], true);
         expect(json['autoHideDuration'], 2.5);
         expect(json['opacity'], 0.8);
@@ -207,6 +214,7 @@ void main() {
         final json = {
           'launchAtStartup': true,
           'hideAtStartup': true,
+          'captureOnlyMode': true,
           'autoHideEnabled': true,
           'autoHideDuration': 3.0,
           'opacity': 0.75,
@@ -219,6 +227,7 @@ void main() {
 
         expect(state.launchAtStartup, true);
         expect(state.hideAtStartup, true);
+        expect(state.captureOnlyMode, true);
         expect(state.autoHideEnabled, true);
         expect(state.autoHideDuration, 3.0);
         expect(state.opacity, 0.75);
@@ -242,6 +251,7 @@ void main() {
       test('round-trip serialization preserves state', () {
         final original = PreferencesState(
           launchAtStartup: true,
+          captureOnlyMode: true,
           autoHideEnabled: true,
           autoHideDuration: 2.0,
           opacity: 0.9,
@@ -254,6 +264,7 @@ void main() {
         final roundTrip = PreferencesState.fromJson(json);
 
         expect(roundTrip.launchAtStartup, original.launchAtStartup);
+        expect(roundTrip.captureOnlyMode, original.captureOnlyMode);
         expect(roundTrip.autoHideEnabled, original.autoHideEnabled);
         expect(roundTrip.autoHideDuration, original.autoHideDuration);
         expect(roundTrip.opacity, original.opacity);

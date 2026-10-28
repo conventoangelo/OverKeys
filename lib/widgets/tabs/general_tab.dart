@@ -59,6 +59,16 @@ class _GeneralTabState extends ConsumerState<GeneralTab> {
           },
         ),
         ToggleOption(
+          label: 'Only visible in recordings',
+          value: prefsState.captureOnlyMode,
+          subtitle:
+              'Hides the keyboard on your screen, but capture tools that record the OverKeys window (e.g. OBS Window Capture) still see it',
+          onChanged: (value) {
+            ref.read(preferencesProvider.notifier).updateCaptureOnlyMode(value);
+            widget.onUpdateMainWindow('updateCaptureOnlyMode', value);
+          },
+        ),
+        ToggleOption(
           label: 'Auto-hide keyboard',
           value: prefsState.autoHideEnabled,
           onChanged: (value) {

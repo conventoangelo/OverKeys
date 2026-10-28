@@ -10,6 +10,7 @@ class PreferencesState {
   // General settings
   final bool launchAtStartup;
   final bool hideAtStartup;
+  final bool captureOnlyMode;
   final bool autoHideEnabled;
   final bool reactiveShiftEnabled;
   final double autoHideDuration;
@@ -72,6 +73,7 @@ class PreferencesState {
   PreferencesState({
     this.launchAtStartup = false,
     this.hideAtStartup = false,
+    this.captureOnlyMode = false,
     this.autoHideEnabled = false,
     this.reactiveShiftEnabled = true,
     this.autoHideDuration = 0.5,
@@ -97,6 +99,7 @@ class PreferencesState {
   PreferencesState copyWith({
     bool? launchAtStartup,
     bool? hideAtStartup,
+    bool? captureOnlyMode,
     bool? autoHideEnabled,
     bool? reactiveShiftEnabled,
     double? autoHideDuration,
@@ -121,6 +124,7 @@ class PreferencesState {
     return PreferencesState(
       launchAtStartup: launchAtStartup ?? this.launchAtStartup,
       hideAtStartup: hideAtStartup ?? this.hideAtStartup,
+      captureOnlyMode: captureOnlyMode ?? this.captureOnlyMode,
       autoHideEnabled: autoHideEnabled ?? this.autoHideEnabled,
       reactiveShiftEnabled: reactiveShiftEnabled ?? this.reactiveShiftEnabled,
       autoHideDuration: autoHideDuration ?? this.autoHideDuration,
@@ -155,6 +159,7 @@ class PreferencesState {
     return {
       'launchAtStartup': launchAtStartup,
       'hideAtStartup': hideAtStartup,
+      'captureOnlyMode': captureOnlyMode,
       'autoHideEnabled': autoHideEnabled,
       'reactiveShiftEnabled': reactiveShiftEnabled,
       'autoHideDuration': autoHideDuration,
@@ -184,6 +189,7 @@ class PreferencesState {
     return PreferencesState(
       launchAtStartup: json['launchAtStartup'] as bool? ?? false,
       hideAtStartup: json['hideAtStartup'] as bool? ?? false,
+      captureOnlyMode: json['captureOnlyMode'] as bool? ?? false,
       autoHideEnabled: json['autoHideEnabled'] as bool? ?? false,
       reactiveShiftEnabled: json['reactiveShiftEnabled'] as bool? ?? true,
       autoHideDuration: (json['autoHideDuration'] as num?)?.toDouble() ?? 0.5,
@@ -220,6 +226,10 @@ class PreferencesNotifier extends _$PreferencesNotifier {
 
   void updateHideAtStartup(bool value) {
     state = state.copyWith(hideAtStartup: value);
+  }
+
+  void updateCaptureOnlyMode(bool value) {
+    state = state.copyWith(captureOnlyMode: value);
   }
 
   void updateAutoHideEnabled(bool value) {

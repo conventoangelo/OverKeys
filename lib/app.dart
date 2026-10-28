@@ -9,6 +9,7 @@ import 'package:hotkey_manager/hotkey_manager.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:tray_manager/tray_manager.dart';
 import 'package:window_manager/window_manager.dart';
+import 'package:overkeys/services/capture_mode_service.dart';
 import 'package:overkeys/services/kanata_service.dart';
 import 'package:overkeys/services/state_service.dart';
 import 'package:overkeys/services/hotkey_service.dart';
@@ -79,6 +80,9 @@ class _MainAppState extends ConsumerState<MainApp>
     final keyboardState = ref.read(keyboardProvider);
     if (keyboardState.showTopRow) {
       _adjustWindowSize();
+    }
+    if (prefsState.captureOnlyMode) {
+      CaptureModeService().apply(true);
     }
     if (prefsState.autoHideEnabled) {
       _resetAutoHideTimer();

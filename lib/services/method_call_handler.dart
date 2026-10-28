@@ -7,6 +7,7 @@ import 'package:overkeys/models/keyboard_layouts.dart';
 import 'package:overkeys/providers/app_state_provider.dart';
 import 'package:overkeys/providers/keyboard_provider.dart';
 import 'package:overkeys/providers/preferences_provider.dart';
+import 'package:overkeys/services/capture_mode_service.dart';
 import 'package:overkeys/services/kanata_service.dart';
 import 'package:overkeys/services/startup_service.dart';
 import '../utils/logger.dart';
@@ -63,6 +64,11 @@ class MethodCallHandler {
       case 'updateHideAtStartup':
         final hideAtStartup = _safeArgument<bool>(call.arguments, false);
         prefsNotifier.updateHideAtStartup(hideAtStartup);
+
+      case 'updateCaptureOnlyMode':
+        final captureOnlyMode = _safeArgument<bool>(call.arguments, false);
+        prefsNotifier.updateCaptureOnlyMode(captureOnlyMode);
+        CaptureModeService().apply(captureOnlyMode);
 
       case 'updateAutoHideEnabled':
         // Auto hide toggle is handled by caller in app.dart
