@@ -1,30 +1,3 @@
-> [!IMPORTANT]
-> **This is not the original OverKeys project.**
-> This repository is a modified copy (fork) of [conventoangelo/OverKeys](https://github.com/conventoangelo/OverKeys). All credit for OverKeys goes to the original author and contributors. The original project is the one to use for official releases and support.
->
-> I added one feature and submitted it to the original project as a pull request: [conventoangelo/OverKeys#221](https://github.com/conventoangelo/OverKeys/pull/221). Until the original author has reviewed it, I'm publishing my version here so it can be used right away. If the pull request is merged, this fork becomes unnecessary and you should switch to the original.
-
-## What is different from the original
-
-| Change | Details |
-| --- | --- |
-| **Only visible in recordings** (new) | New toggle in Preferences > General. Hides the keyboard on your own screen while OBS Window Capture and similar tools can still record it. See [the feature description](docs/user-guide/capture-only-mode.md). |
-
-Nothing else is changed. The files touched by this feature are:
-
-- `lib/services/capture_mode_service.dart` (new)
-- `lib/providers/preferences_provider.dart`
-- `lib/widgets/tabs/general_tab.dart`
-- `lib/services/method_call_handler.dart`
-- `lib/app.dart`
-- `README.md` and `docs/` (documentation)
-
-This fork may receive updates, for example to keep it in sync with the original or to fix issues in the added feature. It is not affiliated with or endorsed by the original author.
-
-Licensed under the **GNU General Public License v3.0**, the same license as the original. See [LICENSE](LICENSE).
-
----
-
 <a id="readme-top"></a>
 
 <br />
